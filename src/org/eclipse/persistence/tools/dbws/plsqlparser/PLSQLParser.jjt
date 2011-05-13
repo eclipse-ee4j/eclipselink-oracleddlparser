@@ -1,0 +1,292 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * which accompanies this distribution. 
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at 
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
+ ******************************************************************************/
+options {
+    STATIC = true;
+    UNICODE_INPUT = true;
+    JAVA_UNICODE_ESCAPE = false;
+    IGNORE_CASE = true;
+    VISITOR = true;
+    NODE_CLASS = "PLSQLNode";
+    SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
+	/*
+	MULTI=false
+	NODE_USES_PARSER=false
+	TRACK_TOKENS=false
+	NODE_PREFIX=AST
+	NODE_EXTENDS=
+	NODE_FACTORY=
+	*/
+}
+PARSER_BEGIN(PLSQLParser)
+/*******************************************************************************
+ * Copyright (c) 2011 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * which accompanies this distribution. 
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at 
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
+ ******************************************************************************/
+package org.eclipse.persistence.tools.dbws.plsqlparser;
+
+public class PLSQLParser {
+
+    public PLSQLParser() {
+      super();
+    }
+    
+    public static void main( String args[] ) throws ParseException {
+        PLSQLParser p = null ;
+        if (args.length < 1) {
+            System.out.println("Reading from stdin") ;
+            p = new PLSQLParser(System.in) ;
+        }
+        else {
+            try {
+                p = new PLSQLParser(new java.io.DataInputStream(
+                                new java.io.FileInputStream(args[0]))) ;
+            }
+            catch (java.io.FileNotFoundException e) {
+                System.out.println("File " + args[0] +
+                                " not found. Reading from stdin") ;
+                p = new PLSQLParser(System.in) ;
+            }
+        }
+        SimpleNode sn = p.parsePLSQLPackage();
+        sn.dump(">");
+    }
+}
+
+PARSER_END(PLSQLParser)
+
+// white-space
+SKIP: {
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+// comments
+SKIP: {
+    <COMMENT_LINE: "--" (~["\n","\r"])* ("\n"|"\r"|"\r\n") >
+}
+
+SKIP:{
+    <COMMENT_BLOCK: "/*" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/">
+}
+
+// PLSQL keywords (not a complete list)
+TOKEN: {
+      <K_AS: "AS" >
+	| <K_AUTHID: "AUTHID" >
+	| <K_AUTONOMOUS_TRANSACTION: "AUTONOMOUS_TRANSACTION">
+	| <K_CREATE: "CREATE" >
+	| <K_CURRENT_USER: "CURRENT_USER" >
+	| <K_CURSOR: "CURSOR" >
+    | <K_DEFAULT: "DEFAULT" >
+    | <K_DEFINER: "DEFINER" >
+	| <K_DETERMINISTIC: "DETERMINISTIC" >
+	| <K_END: "END" >
+    | <K_EXCEPTION_INIT: "EXCEPTION_INIT" >
+	| <K_FUNCTION: "FUNCTION" >
+	| <K_INLINE: "INLINE" >
+	| <K_IS: "IS" >
+	| <K_OR: "OR" >
+    | <K_NO: "'NO'" >
+	| <K_PACKAGE: "PACKAGE" >
+	| <K_PARALLEL_ENABLE: "PARALLEL_ENABLE" >
+	| <K_PIPELINED: "PIPELINED" >
+	| <K_PRAGMA: "PRAGMA">  
+    | <K_PROCEDURE: "PROCEDURE">      
+	| <K_REPLACE: "REPLACE" >   
+    | <K_RESTRICT_REFERENCES: "RESTRICT_REFERENCES" >   
+	| <K_RESULT_CACHE: "RESULT_CACHE" >
+	| <K_RETURN: "RETURN" >  
+    | <K_RNDS: "RNDS" >
+    | <K_RNPS: "RNPS" >
+	| <K_SERIALLY_REUSABLE: "SERIALLY_REUSABLE" >
+    | <K_TRUST: "TRUST" >
+	| <K_TYPE: "TYPE" >
+    | <K_WNDS: "WNDS" >
+    | <K_WNPS: "WNPS" >
+    | <K_YES: "'YES'" >
+}
+
+// basic operators
+TOKEN: {
+      < ASSIGN: ":=" >
+	| < ASTERISK: "*" >
+	| < CLOSEPAREN: ")" >
+	| < CONCAT: "||" >
+    | < COLON: ":" >
+	| < DOT: "." >
+	| < EQUAL: "=" >
+	| < GREATER: ">" >
+	| < GREATEREQUAL: ">=" >
+	| < JOINPLUS: "(+)" >
+	| < LESS: "<" >
+	| < LESSEQUAL: "<=" >
+	| < MINUS: "-" >
+	| < NOTEQUAL2: "<>" >
+	| < NOTEQUAL: "!=" >
+	| < OPENPAREN: "(" >
+	| < PLUS: "+" >
+	| < QUESTIONMARK: "?" >
+	| < ROWTYPE: "%ROWTYPE" >
+	| < SEMICOLON: ";" >
+	| < SLASH: "/" >
+	| < TILDE: "~" >
+    | < TYPE: "%TYPE" >
+}
+
+TOKEN : { // numeric literals
+    <S_NUMBER: <FLOAT>
+        | <FLOAT> ( ["e","E"] ([ "-","+"])? <FLOAT> )?
+      >
+    | <#FLOAT: <INTEGER>
+	    | <INTEGER> ( "." <INTEGER> )?
+	    | "." <INTEGER>
+      >
+    | <#INTEGER: ( <DIGIT> )+ >
+    | <#DIGIT: ["0" - "9"] >
+}
+
+TOKEN:
+{
+    <S_IDENTIFIER: (<LETTER>)+ (<DIGIT> | <LETTER> | <SPECIAL_CHARS>)* >
+  | <#LETTER: ["a"-"z", "A"-"Z"] >
+  | <#SPECIAL_CHARS: "$" | "_" | "#" | "@" >
+  | <S_BIND: ":" ( <S_NUMBER> | <S_IDENTIFIER> ("." <S_IDENTIFIER>)?) >
+  | <S_CHAR_LITERAL: "'" (~["'"])* "'" ("'" (~["'"])* "'")*>
+  | <S_QUOTED_IDENTIFIER: "\"" (~["\n","\r","\""])* "\"" >
+}
+
+String OracleObjectName():
+{}
+{
+    <S_IDENTIFIER>
+    {return token.image;}
+  | <S_QUOTED_IDENTIFIER>
+    {String s = token.image; return s.substring(1, s.length() - 1);}
+}
+
+// stripped-down version of PLSQL grammar: only parses package specifications
+SimpleNode parsePLSQLPackage():
+{String schema = null;
+ String packageName = null;}
+{     "CREATE" [ "OR" "REPLACE" ] "PACKAGE" [LOOKAHEAD(2) schema=OracleObjectName() "." ] packageName=OracleObjectName()
+     [ "AUTHID" [ "CURRENT_USER" | "DEFINER" ]]
+     [ "AS" | "IS" ]
+     (
+        typeDeclaration()
+        | cursorDeclaration()
+        | functionDeclaration()
+        | procedureDeclaration()
+        | pragmaDeclaration()
+     )*
+     "END" [ OracleObjectName() ] ";"
+    {
+      if (schema != null) {
+        jjtThis.jjtSetValue(schema + "." + packageName);      }      else {
+        jjtThis.jjtSetValue(packageName);      }
+      return jjtThis;
+    }
+}
+
+SimpleNode typeDeclaration():
+{Token t = null;}
+{
+    "TYPE" t=<S_IDENTIFIER> "IS" 
+        typeDeclarationBody()
+    ";"
+    {
+      jjtThis.jjtSetValue(t.image);
+      return jjtThis;
+    }
+}
+
+SimpleNode cursorDeclaration():
+{Token t = null;}
+{
+    "CURSOR" t=<S_IDENTIFIER>
+    ";"
+    {
+      jjtThis.jjtSetValue(t.image);
+      return jjtThis;
+    }
+}
+
+SimpleNode functionDeclaration():
+{Token t = null;}
+{
+    "FUNCTION" t=<S_IDENTIFIER>
+        functionDeclarationBody()
+        "RETURN" <S_IDENTIFIER> [ "%TYPE" | "%ROWTYPE" ]
+        [ "DETERMINISTIC" | "PIPELINED" | "PARALLEL_ENABLE" | "RESULT_CACHE" ]
+    ";"
+    {
+      jjtThis.jjtSetValue(t.image);
+      return jjtThis;
+    }
+}
+
+SimpleNode procedureDeclaration():
+{Token t = null;}
+{
+    "PROCEDURE" t=<S_IDENTIFIER>
+        procedureDeclarationBody()
+    ";"
+    {
+      jjtThis.jjtSetValue(t.image);
+      return jjtThis;
+    }
+}
+
+void pragmaDeclaration():
+{}
+{    "PRAGMA"
+    [ "AUTONOMOUS_TRANSACTION"
+    | "EXCEPTION_INIT" "(" <S_IDENTIFIER> "," < S_NUMBER> ")"
+    | "SERIALLY_REUSABLE"
+    | "INLINE" "(" <S_IDENTIFIER> "," [ "'YES'" | "'NO'" ] ")"
+    | "RESTRICT_REFERENCES" "(" [ <S_IDENTIFIER> | "DEFAULT" ]
+        ( "," [ "RNDS" | "WNDS" | "RNPS" | "WNPS" | "TRUST"] )+ ")"
+    ]
+    ";"
+}
+
+void typeDeclarationBody():
+{}
+{
+   < ~[] >
+   ";"
+}
+
+void functionDeclarationBody():
+{}
+{
+   < ~[] >
+   ";"
+}
+
+void procedureDeclarationBody():
+{}
+{
+   < ~[] >
+   ";"
+}
