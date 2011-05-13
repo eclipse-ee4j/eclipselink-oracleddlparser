@@ -195,12 +195,14 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
       jj_consume_token(SEMICOLON);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
+      PLSQLPackageNode packageNode = new PLSQLPackageNode();
       if (schema != null) {
-        jjtn000.jjtSetValue(schema + "." + packageName);
+        packageNode.setPackageName(schema + "." + packageName);
       }
       else {
-        jjtn000.jjtSetValue(packageName);
+        packageNode.setPackageName(packageName);
       }
+      ((PLSQLNode)jjtn000).setPackageNode(packageNode);
       {if (true) return jjtn000;}
     } catch (Throwable jjte000) {
       if (jjtc000) {

@@ -2,6 +2,8 @@ package org.eclipse.persistence.tools.dbws.plsqlparser;
 
 @SuppressWarnings("all")
 public class PLSQLNode extends SimpleNode {
+    
+    protected PLSQLPackageNode packageNode;
 
     public PLSQLNode(int id) {
         super(id);
@@ -9,6 +11,14 @@ public class PLSQLNode extends SimpleNode {
 
     public PLSQLNode(PLSQLParser p, int id) {
         super(p, id);
+    }
+
+    public PLSQLPackageNode getPackageNode() {
+        return packageNode;
+    }
+
+    public void setPackageNode(PLSQLPackageNode packageNode) {
+        this.packageNode = packageNode;
     }
 
     @Override

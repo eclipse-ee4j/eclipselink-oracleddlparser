@@ -201,9 +201,11 @@ SimpleNode parsePLSQLPackage():
      )*
      "END" [ OracleObjectName() ] ";"
     {
+      PLSQLPackageNode packageNode = new PLSQLPackageNode();
       if (schema != null) {
-        jjtThis.jjtSetValue(schema + "." + packageName);      }      else {
-        jjtThis.jjtSetValue(packageName);      }
+        packageNode.setPackageName(schema + "." + packageName);      }      else {
+        packageNode.setPackageName(packageName);      }
+      ((PLSQLNode)jjtThis).setPackageNode(packageNode);
       return jjtThis;
     }
 }

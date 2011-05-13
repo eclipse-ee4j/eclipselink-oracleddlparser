@@ -9,11 +9,13 @@ import java.io.StringReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertEquals;
 
 //EclipseLink imports
+import org.eclipse.persistence.tools.dbws.plsqlparser.PLSQLNode;
+import org.eclipse.persistence.tools.dbws.plsqlparser.PLSQLPackageNode;
 import org.eclipse.persistence.tools.dbws.plsqlparser.ParseException;
 import org.eclipse.persistence.tools.dbws.plsqlparser.PLSQLParser;
-import org.eclipse.persistence.tools.dbws.plsqlparser.SimpleNode;
 
 public class PLSQLParserTest {
 
@@ -27,36 +29,72 @@ public class PLSQLParserTest {
             }
         });
 	}
-	
-	static final String TEST_PACKAGE = 
-	    "CREATE OR REPLACE PACKAGE \"SCOTT\".\"CURSOR_TEST\" AS\n" +
-	        "TYPE EREC IS RECORD (\n" +
-    	        "FLAG PLS_INTEGER,\n" +
-    	        "EMPNO NUMBER(4),\n" +
-    	        "ENAME VARCHAR2(10),\n" +
-    	        "JOB VARCHAR2(9)\n" +
-    	    ");\n" +
-    	    "TYPE EREC_CURSOR IS REF CURSOR RETURN EREC;\n" +
-    	    "PROCEDURE EPROC(PARM1 IN VARCHAR2 DEFAULT 'bbb', PARM2 IN EREC, PARM3 OUT INTEGER, PARM4 OUT EREC_CURSOR);\n" +
-    	    "FUNCTION EFUNC(PARM1 IN VARCHAR2 := 'bbb') RETURN EREC_CURSOR;\n" +
-	    "END CURSOR_TEST;";
-	@Test
-	public void packageTest() throws ParseException  {
-	    parser.ReInit(new StringReader(TEST_PACKAGE));
-		SimpleNode plsqlPackageNode = null;
-		boolean worked = true;
+
+    static final String PACKAGE_NAME = "CURSOR_TEST";
+    static final String DOT_NAME = "SCOTT.CURSOR_TEST";
+    static final String QUOTED_DOT_NAME = "\"SCOTT\".\"CURSOR_TEST\"";
+    static final String EMPTY_PACKAGE_PREFIX = 
+        "CREATE OR REPLACE PACKAGE ";
+    static final String EMPTY_PACKAGE_SUFFIX = " AS\n" +
+        "END CURSOR_TEST;";
+    @Test
+    public void testEmptyPackage() throws ParseException  {
+        parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
+            EMPTY_PACKAGE_SUFFIX));
+        PLSQLNode rootNode = null;
+        boolean worked = true;
         String message = "";
         try {
-            plsqlPackageNode = parser.parsePLSQLPackage();
+            rootNode = (PLSQLNode)parser.parsePLSQLPackage();
         }
         catch (ParseException pe) {
             //pe.printStackTrace();
             message = pe.getMessage();
             worked = false;
         }
-        assertTrue("test package did not parse correctly:\n" + message, worked);
-		if (worked) {
-		    plsqlPackageNode.dump(">");
-		}
+        assertTrue("empty package did not parse correctly:\n" + message, worked);
+        PLSQLPackageNode packageNode = rootNode.getPackageNode();
+        assertEquals("incorrect package name", packageNode.getPackageName(), PACKAGE_NAME);
+    }
+	
+	@Test
+	public void testEmptyPackageDN() throws ParseException  {
+        parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + DOT_NAME +
+            EMPTY_PACKAGE_SUFFIX));
+		PLSQLNode rootNode = null;
+		boolean worked = true;
+        String message = "";
+        try {
+            rootNode = (PLSQLNode)parser.parsePLSQLPackage();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("empty package did not parse correctly:\n" + message, worked);
+        PLSQLPackageNode packageNode = rootNode.getPackageNode();
+        assertEquals("incorrect package name", packageNode.getPackageName(), DOT_NAME);
 	}
+    
+    @Test
+    public void testEmptyPackageQDN() throws ParseException  {
+        parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + QUOTED_DOT_NAME +
+            EMPTY_PACKAGE_SUFFIX));
+        PLSQLNode rootNode = null;
+        boolean worked = true;
+        String message = "";
+        try {
+            rootNode = (PLSQLNode)parser.parsePLSQLPackage();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("empty package did not parse correctly:\n" + message, worked);
+        PLSQLPackageNode packageNode = rootNode.getPackageNode();
+        //NB: PLSQLParser strips-off the quotes
+        assertEquals("incorrect package name", packageNode.getPackageName(), DOT_NAME);
+    }
 }

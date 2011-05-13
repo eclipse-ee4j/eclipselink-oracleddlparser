@@ -238,9 +238,11 @@ SimpleNode parsePLSQLPackage():
     }
 /*@egen*/
     {
+      PLSQLPackageNode packageNode = new PLSQLPackageNode();
       if (schema != null) {
-        jjtn000.jjtSetValue(schema + "." + packageName);      }      else {
-        jjtn000.jjtSetValue(packageName);      }
+        packageNode.setPackageName(schema + "." + packageName);      }      else {
+        packageNode.setPackageName(packageName);      }
+      ((PLSQLNode)jjtn000).setPackageNode(packageNode);
       return jjtn000;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
