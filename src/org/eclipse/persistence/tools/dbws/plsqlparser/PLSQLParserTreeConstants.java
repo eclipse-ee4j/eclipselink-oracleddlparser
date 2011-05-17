@@ -3,29 +3,61 @@ package org.eclipse.persistence.tools.dbws.plsqlparser;
 
 public interface PLSQLParserTreeConstants
 {
-  public int JJTORACLEOBJECTNAME = 0;
+  public int JJTVOID = 0;
   public int JJTPARSEPLSQLPACKAGE = 1;
-  public int JJTTYPEDECLARATION = 2;
-  public int JJTCURSORDECLARATION = 3;
-  public int JJTFUNCTIONDECLARATION = 4;
-  public int JJTPROCEDUREDECLARATION = 5;
-  public int JJTPRAGMADECLARATION = 6;
-  public int JJTTYPEDECLARATIONBODY = 7;
-  public int JJTFUNCTIONDECLARATIONBODY = 8;
-  public int JJTPROCEDUREDECLARATIONBODY = 9;
+  public int JJTENDPACKAGESPEC = 2;
+  public int JJTPACKAGESPEC = 3;
+  public int JJTVARIABLEDECLARATION = 4;
+  public int JJTDATATYPE = 5;
+  public int JJTTYPESPEC = 6;
+  public int JJTCOLUMNSPEC = 7;
+  public int JJTTABLESPEC = 8;
+  public int JJTTYPEDECLARATION = 9;
+  public int JJTRECORDDECLARATION = 10;
+  public int JJTFIELDDECLARATION = 11;
+  public int JJTFIELDTYPE = 12;
+  public int JJTSUBTYPEDECLARATION = 13;
+  public int JJTPLSQLTABLEDECLARATION = 14;
+  public int JJTVARRAYDECLARATION = 15;
+  public int JJTREFCURSORDECLARATION = 16;
+  public int JJTCURSORDECLARATION = 17;
+  public int JJTPROCEDURESPEC = 18;
+  public int JJTARGUMENTLIST = 19;
+  public int JJTFUNCTIONSPEC = 20;
+  public int JJTARGUMENT = 21;
+  public int JJTEXCEPTIONDECLARATION = 22;
+  public int JJTPRAGMADECLARATION = 23;
+  public int JJTSKIPTOSEMICOLON = 24;
+  public int JJTSKIPTONEXTARG = 25;
 
 
   public String[] jjtNodeName = {
-    "OracleObjectName",
+    "void",
     "parsePLSQLPackage",
+    "endPackageSpec",
+    "packageSpec",
+    "variableDeclaration",
+    "datatype",
+    "typeSpec",
+    "columnSpec",
+    "tableSpec",
     "typeDeclaration",
+    "recordDeclaration",
+    "fieldDeclaration",
+    "fieldType",
+    "subtypeDeclaration",
+    "plsqlTableDeclaration",
+    "varrayDeclaration",
+    "refCursorDeclaration",
     "cursorDeclaration",
-    "functionDeclaration",
-    "procedureDeclaration",
+    "procedureSpec",
+    "argumentList",
+    "functionSpec",
+    "argument",
+    "exceptionDeclaration",
     "pragmaDeclaration",
-    "typeDeclarationBody",
-    "functionDeclarationBody",
-    "procedureDeclarationBody",
+    "skipToSemicolon",
+    "skipToNextArg",
   };
 }
-/* JavaCC - OriginalChecksum=5037cef57a114955a6eb70a8bf7bc9c8 (do not edit this line) */
+/* JavaCC - OriginalChecksum=a1612ace0e7aacdd28f9554a4bcfc971 (do not edit this line) */
