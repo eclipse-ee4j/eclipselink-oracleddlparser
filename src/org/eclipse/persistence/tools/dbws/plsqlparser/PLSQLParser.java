@@ -41,22 +41,15 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
     }
 
   static final public String OracleObjectName() throws ParseException {
- /*@bgen(jjtree) OracleObjectName */
-  PLSQLNode jjtn000 = new PLSQLNode(JJTORACLEOBJECTNAME);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+    trace_call("OracleObjectName");
     try {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case S_IDENTIFIER:
         jj_consume_token(S_IDENTIFIER);
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
      {if (true) return token.image;}
         break;
       case S_QUOTED_IDENTIFIER:
         jj_consume_token(S_QUOTED_IDENTIFIER);
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
      String s = token.image; {if (true) return s.substring(1, s.length() - 1);}
         break;
       default:
@@ -64,135 +57,106 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
         jj_consume_token(-1);
         throw new ParseException();
       }
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-      }
-    }
     throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("OracleObjectName");
+    }
   }
 
 // stripped-down version of PLSQL grammar: only parses package specifications
   static final public SimpleNode parsePLSQLPackage() throws ParseException {
+    trace_call("parsePLSQLPackage");
+    try {
  /*@bgen(jjtree) parsePLSQLPackage */
  PLSQLNode jjtn000 = new PLSQLNode(JJTPARSEPLSQLPACKAGE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);String schema = null;
  String packageName = null;
-    try {
-      jj_consume_token(K_CREATE);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_OR:
-        jj_consume_token(K_OR);
-        jj_consume_token(K_REPLACE);
-        break;
-      default:
-        jj_la1[1] = jj_gen;
-        ;
-      }
-      jj_consume_token(K_PACKAGE);
-      if (jj_2_1(2)) {
-        schema = OracleObjectName();
-        jj_consume_token(DOT);
-      } else {
-        ;
-      }
-      packageName = OracleObjectName();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_AUTHID:
-        jj_consume_token(K_AUTHID);
+      try {
+        jj_consume_token(K_CREATE);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_CURRENT_USER:
-        case K_DEFINER:
+        case K_OR:
+          jj_consume_token(K_OR);
+          jj_consume_token(K_REPLACE);
+          break;
+        default:
+          jj_la1[1] = jj_gen;
+          ;
+        }
+        jj_consume_token(K_PACKAGE);
+        if (jj_2_1(2)) {
+          schema = OracleObjectName();
+          jj_consume_token(O_DOT);
+        } else {
+          ;
+        }
+        packageName = OracleObjectName();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_AUTHID:
+          jj_consume_token(K_AUTHID);
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case K_CURRENT_USER:
-            jj_consume_token(K_CURRENT_USER);
-            break;
           case K_DEFINER:
-            jj_consume_token(K_DEFINER);
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case K_CURRENT_USER:
+              jj_consume_token(K_CURRENT_USER);
+              break;
+            case K_DEFINER:
+              jj_consume_token(K_DEFINER);
+              break;
+            default:
+              jj_la1[2] = jj_gen;
+              jj_consume_token(-1);
+              throw new ParseException();
+            }
             break;
           default:
-            jj_la1[2] = jj_gen;
+            jj_la1[3] = jj_gen;
+            ;
+          }
+          break;
+        default:
+          jj_la1[4] = jj_gen;
+          ;
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_AS:
+        case K_IS:
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_AS:
+            jj_consume_token(K_AS);
+            break;
+          case K_IS:
+            jj_consume_token(K_IS);
+            break;
+          default:
+            jj_la1[5] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
           break;
         default:
-          jj_la1[3] = jj_gen;
+          jj_la1[6] = jj_gen;
           ;
         }
-        break;
-      default:
-        jj_la1[4] = jj_gen;
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_AS:
-      case K_IS:
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_AS:
-          jj_consume_token(K_AS);
-          break;
-        case K_IS:
-          jj_consume_token(K_IS);
-          break;
-        default:
-          jj_la1[5] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
+        label_1:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_CURSOR:
+          case K_FUNCTION:
+          case K_PRAGMA:
+          case K_PROCEDURE:
+          case K_TYPE:
+          case S_IDENTIFIER:
+            ;
+            break;
+          default:
+            jj_la1[7] = jj_gen;
+            break label_1;
+          }
+          packageSpec();
         }
-        break;
-      default:
-        jj_la1[6] = jj_gen;
-        ;
-      }
-      label_1:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_CURSOR:
-        case K_FUNCTION:
-        case K_PRAGMA:
-        case K_PROCEDURE:
-        case K_TYPE:
-          ;
-          break;
-        default:
-          jj_la1[7] = jj_gen;
-          break label_1;
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_TYPE:
-          typeDeclaration();
-          break;
-        case K_CURSOR:
-          cursorDeclaration();
-          break;
-        case K_FUNCTION:
-          functionDeclaration();
-          break;
-        case K_PROCEDURE:
-          procedureDeclaration();
-          break;
-        case K_PRAGMA:
-          pragmaDeclaration();
-          break;
-        default:
-          jj_la1[8] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-      }
-      jj_consume_token(K_END);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case S_IDENTIFIER:
-      case S_QUOTED_IDENTIFIER:
-        OracleObjectName();
-        break;
-      default:
-        jj_la1[9] = jj_gen;
-        ;
-      }
-      jj_consume_token(SEMICOLON);
+        endPackageSpec();
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       PLSQLPackageNode packageNode = new PLSQLPackageNode();
@@ -203,8 +167,9 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
         packageNode.setPackageName(packageName);
       }
       ((PLSQLNode)jjtn000).setPackageNode(packageNode);
+      jjtn000.jjtSetValue(packageNode.getPackageName());
       {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
+      } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
         jjtc000 = false;
@@ -218,30 +183,1146 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
         {if (true) throw (ParseException)jjte000;}
       }
       {if (true) throw (Error)jjte000;}
-    } finally {
+      } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
       }
-    }
+      }
     throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("parsePLSQLPackage");
+    }
+  }
+
+  static final public void endPackageSpec() throws ParseException {
+    trace_call("endPackageSpec");
+    try {
+ /*@bgen(jjtree) endPackageSpec */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTENDPACKAGESPEC);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);String packageName = null;
+      try {
+        jj_consume_token(K_END);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case S_IDENTIFIER:
+        case S_QUOTED_IDENTIFIER:
+          packageName = OracleObjectName();
+          break;
+        default:
+          jj_la1[8] = jj_gen;
+          ;
+        }
+        jj_consume_token(O_SEMICOLON);
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    } finally {
+      trace_return("endPackageSpec");
+    }
+  }
+
+  static final public void packageSpec() throws ParseException {
+    trace_call("packageSpec");
+    try {
+ /*@bgen(jjtree) packageSpec */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTPACKAGESPEC);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        if (jj_2_2(2)) {
+          variableDeclaration();
+        } else {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_TYPE:
+            typeDeclaration();
+            break;
+          case K_CURSOR:
+            cursorDeclaration();
+            break;
+          case K_PROCEDURE:
+            procedureSpec();
+            break;
+          case K_FUNCTION:
+            functionSpec();
+            break;
+          case S_IDENTIFIER:
+            exceptionDeclaration();
+            break;
+          case K_PRAGMA:
+            pragmaDeclaration();
+            break;
+          default:
+            jj_la1[9] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+        }
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    } finally {
+      trace_return("packageSpec");
+    }
+  }
+
+  static final public void variableDeclaration() throws ParseException {
+    trace_call("variableDeclaration");
+    try {
+ /*@bgen(jjtree) variableDeclaration */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTVARIABLEDECLARATION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        jj_consume_token(S_IDENTIFIER);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_CONSTANT:
+          jj_consume_token(K_CONSTANT);
+          break;
+        default:
+          jj_la1[10] = jj_gen;
+          ;
+        }
+        typeSpec();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_NOT:
+          jj_consume_token(K_NOT);
+          jj_consume_token(K_NULL);
+          break;
+        default:
+          jj_la1[11] = jj_gen;
+          ;
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_DEFAULT:
+        case O_ASSIGN:
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_ASSIGN:
+            jj_consume_token(O_ASSIGN);
+            break;
+          case K_DEFAULT:
+            jj_consume_token(K_DEFAULT);
+            break;
+          default:
+            jj_la1[12] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+          break;
+        default:
+          jj_la1[13] = jj_gen;
+          ;
+        }
+        skipToSemicolon();
+        jj_consume_token(O_SEMICOLON);
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    } finally {
+      trace_return("variableDeclaration");
+    }
+  }
+
+  static final public String numberWithSize() throws ParseException {
+    trace_call("numberWithSize");
+    try {
+ Token precision = null;
+ Token scale = null;
+ Token t = null;
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_NUMBER:
+        jj_consume_token(K_NUMBER);
+        break;
+      case K_NUMERIC:
+        jj_consume_token(K_NUMERIC);
+        break;
+      case K_DECIMAL:
+        jj_consume_token(K_DECIMAL);
+        break;
+      case K_DEC:
+        jj_consume_token(K_DEC);
+        break;
+      default:
+        jj_la1[14] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+                                                         t = token;
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case O_OPENPAREN:
+        jj_consume_token(O_OPENPAREN);
+        precision = jj_consume_token(S_NUMBER);
+        label_2:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_COMMA:
+            ;
+            break;
+          default:
+            jj_la1[15] = jj_gen;
+            break label_2;
+          }
+          jj_consume_token(O_COMMA);
+          scale = jj_consume_token(S_NUMBER);
+        }
+        jj_consume_token(O_CLOSEPAREN);
+        break;
+      default:
+        jj_la1[16] = jj_gen;
+        ;
+      }
+      StringBuilder sb = new StringBuilder(t.image);
+      if (precision != null) {
+        sb.append("(");
+        sb.append(precision.image);
+      }
+      if (scale != null) {
+        sb.append(",");
+        sb.append(scale.image);
+      }
+      if (precision != null) {
+        sb.append(")");
+      }
+      {if (true) return sb.toString();}
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("numberWithSize");
+    }
+  }
+
+  static final public String varchar2WithSize() throws ParseException {
+    trace_call("varchar2WithSize");
+    try {
+ Token size = null;
+ Token t = null;
+      jj_consume_token(K_VARCHAR2);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_VARYING:
+        jj_consume_token(K_VARYING);
+        break;
+      default:
+        jj_la1[17] = jj_gen;
+        ;
+      }
+                                      t = token;
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case O_OPENPAREN:
+        jj_consume_token(O_OPENPAREN);
+        size = jj_consume_token(S_NUMBER);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_BYTE:
+        case K_CHAR:
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_BYTE:
+            jj_consume_token(K_BYTE);
+            break;
+          case K_CHAR:
+            jj_consume_token(K_CHAR);
+            break;
+          default:
+            jj_la1[18] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+          break;
+        default:
+          jj_la1[19] = jj_gen;
+          ;
+        }
+        jj_consume_token(O_CLOSEPAREN);
+        break;
+      default:
+        jj_la1[20] = jj_gen;
+        ;
+      }
+      if (jj_2_4(2)) {
+        jj_consume_token(K_CHARACTER);
+        jj_consume_token(K_SET);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case S_IDENTIFIER:
+        case S_QUOTED_IDENTIFIER:
+          if (jj_2_3(2)) {
+            jj_consume_token(S_IDENTIFIER);
+          } else {
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case S_IDENTIFIER:
+            case S_QUOTED_IDENTIFIER:
+              columnSpec();
+              jj_consume_token(K_CHARSET);
+              break;
+            default:
+              jj_la1[21] = jj_gen;
+              jj_consume_token(-1);
+              throw new ParseException();
+            }
+          }
+          break;
+        default:
+          jj_la1[22] = jj_gen;
+          ;
+        }
+      } else {
+        ;
+      }
+      StringBuilder sb = new StringBuilder(t.image);
+      if (size != null) {
+        sb.append("(");
+        sb.append(size.image);
+        sb.append(")");
+      }
+      {if (true) return sb.toString();}
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("varchar2WithSize");
+    }
+  }
+
+  static final public void datatype() throws ParseException {
+    trace_call("datatype");
+    try {
+ /*@bgen(jjtree) datatype */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTDATATYPE);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);String s = null;
+      try {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_BINARY_INTEGER:
+          jj_consume_token(K_BINARY_INTEGER);
+          break;
+        case K_BINARY_FLOAT:
+          jj_consume_token(K_BINARY_FLOAT);
+          break;
+        case K_BINARY_DOUBLE:
+          jj_consume_token(K_BINARY_DOUBLE);
+          break;
+        case K_NATURAL:
+          jj_consume_token(K_NATURAL);
+          break;
+        case K_POSITIVE:
+          jj_consume_token(K_POSITIVE);
+          break;
+        case K_DEC:
+        case K_DECIMAL:
+        case K_NUMBER:
+        case K_NUMERIC:
+          s = numberWithSize();
+                           jjtree.closeNodeScope(jjtn000, true);
+                           jjtc000 = false;
+                          token.image = s;
+          break;
+        case K_LONG:
+          jj_consume_token(K_LONG);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_RAW:
+            jj_consume_token(K_RAW);
+            break;
+          default:
+            jj_la1[23] = jj_gen;
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            jj_la1[24] = jj_gen;
+            ;
+          }
+          break;
+        case K_RAW:
+          jj_consume_token(K_RAW);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            jj_la1[25] = jj_gen;
+            ;
+          }
+          break;
+        case K_BOOLEAN:
+          jj_consume_token(K_BOOLEAN);
+          break;
+        case K_DATE:
+          jj_consume_token(K_DATE);
+          break;
+        default:
+          jj_la1[58] = jj_gen;
+          if (jj_2_11(2)) {
+            jj_consume_token(K_INTERVAL);
+            jj_consume_token(K_DAY);
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case O_OPENPAREN:
+              jj_consume_token(O_OPENPAREN);
+              jj_consume_token(S_NUMBER);
+              jj_consume_token(O_CLOSEPAREN);
+              break;
+            default:
+              jj_la1[26] = jj_gen;
+              ;
+            }
+            jj_consume_token(K_TO);
+            jj_consume_token(K_SECONDS);
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case O_OPENPAREN:
+              jj_consume_token(O_OPENPAREN);
+              jj_consume_token(S_NUMBER);
+              jj_consume_token(O_CLOSEPAREN);
+              break;
+            default:
+              jj_la1[27] = jj_gen;
+              ;
+            }
+          } else {
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case K_INTERVAL:
+              jj_consume_token(K_INTERVAL);
+              jj_consume_token(K_YEAR);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[28] = jj_gen;
+                ;
+              }
+              jj_consume_token(K_TO);
+              jj_consume_token(K_MONTH);
+              break;
+            case K_TIME:
+            case K_TIMESTAMP:
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_TIME:
+                jj_consume_token(K_TIME);
+                break;
+              case K_TIMESTAMP:
+                jj_consume_token(K_TIMESTAMP);
+                break;
+              default:
+                jj_la1[29] = jj_gen;
+                jj_consume_token(-1);
+                throw new ParseException();
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[30] = jj_gen;
+                ;
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_WITH:
+                jj_consume_token(K_WITH);
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case K_LOCAL:
+                  jj_consume_token(K_LOCAL);
+                  break;
+                default:
+                  jj_la1[31] = jj_gen;
+                  ;
+                }
+                jj_consume_token(K_TIME);
+                jj_consume_token(K_ZONE);
+                break;
+              default:
+                jj_la1[32] = jj_gen;
+                ;
+              }
+              break;
+            case K_INTEGER:
+              jj_consume_token(K_INTEGER);
+              break;
+            case K_INT:
+              jj_consume_token(K_INT);
+              break;
+            case K_SMALLINT:
+              jj_consume_token(K_SMALLINT);
+              break;
+            case K_FLOAT:
+              jj_consume_token(K_FLOAT);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[33] = jj_gen;
+                ;
+              }
+              break;
+            case K_REAL:
+              jj_consume_token(K_REAL);
+              break;
+            case K_MLSLABEL:
+              jj_consume_token(K_MLSLABEL);
+              break;
+            case K_PLS_INTEGER:
+              jj_consume_token(K_PLS_INTEGER);
+              break;
+            case K_BLOB:
+              jj_consume_token(K_BLOB);
+              break;
+            case K_NCLOB:
+              jj_consume_token(K_NCLOB);
+              break;
+            case K_BFILE:
+              jj_consume_token(K_BFILE);
+              break;
+            case K_ROWID:
+              jj_consume_token(K_ROWID);
+              break;
+            case K_UROWIDD:
+              jj_consume_token(K_UROWIDD);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[34] = jj_gen;
+                ;
+              }
+              break;
+            case K_DOUBLE:
+              jj_consume_token(K_DOUBLE);
+              jj_consume_token(K_PRECISION);
+              break;
+            case K_CHAR:
+              jj_consume_token(K_CHAR);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_VARYING:
+                jj_consume_token(K_VARYING);
+                break;
+              default:
+                jj_la1[35] = jj_gen;
+                ;
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case K_BYTE:
+                case K_CHAR:
+                  switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                  case K_BYTE:
+                    jj_consume_token(K_BYTE);
+                    break;
+                  case K_CHAR:
+                    jj_consume_token(K_CHAR);
+                    break;
+                  default:
+                    jj_la1[36] = jj_gen;
+                    jj_consume_token(-1);
+                    throw new ParseException();
+                  }
+                  break;
+                default:
+                  jj_la1[37] = jj_gen;
+                  ;
+                }
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[38] = jj_gen;
+                ;
+              }
+              if (jj_2_6(2)) {
+                jj_consume_token(K_CHARACTER);
+                jj_consume_token(K_SET);
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case S_IDENTIFIER:
+                case S_QUOTED_IDENTIFIER:
+                  if (jj_2_5(2)) {
+                    jj_consume_token(S_IDENTIFIER);
+                  } else {
+                    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                    case S_IDENTIFIER:
+                    case S_QUOTED_IDENTIFIER:
+                      columnSpec();
+                      jj_consume_token(K_CHARSET);
+                      break;
+                    default:
+                      jj_la1[39] = jj_gen;
+                      jj_consume_token(-1);
+                      throw new ParseException();
+                    }
+                  }
+                  break;
+                default:
+                  jj_la1[40] = jj_gen;
+                  ;
+                }
+              } else {
+                ;
+              }
+              break;
+            case K_VARCHAR:
+              jj_consume_token(K_VARCHAR);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_VARYING:
+                jj_consume_token(K_VARYING);
+                break;
+              default:
+                jj_la1[41] = jj_gen;
+                ;
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case K_BYTE:
+                case K_CHAR:
+                  switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                  case K_BYTE:
+                    jj_consume_token(K_BYTE);
+                    break;
+                  case K_CHAR:
+                    jj_consume_token(K_CHAR);
+                    break;
+                  default:
+                    jj_la1[42] = jj_gen;
+                    jj_consume_token(-1);
+                    throw new ParseException();
+                  }
+                  break;
+                default:
+                  jj_la1[43] = jj_gen;
+                  ;
+                }
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[44] = jj_gen;
+                ;
+              }
+              if (jj_2_8(2)) {
+                jj_consume_token(K_CHARACTER);
+                jj_consume_token(K_SET);
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case S_IDENTIFIER:
+                case S_QUOTED_IDENTIFIER:
+                  if (jj_2_7(2)) {
+                    jj_consume_token(S_IDENTIFIER);
+                  } else {
+                    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                    case S_IDENTIFIER:
+                    case S_QUOTED_IDENTIFIER:
+                      columnSpec();
+                      jj_consume_token(K_CHARSET);
+                      break;
+                    default:
+                      jj_la1[45] = jj_gen;
+                      jj_consume_token(-1);
+                      throw new ParseException();
+                    }
+                  }
+                  break;
+                default:
+                  jj_la1[46] = jj_gen;
+                  ;
+                }
+              } else {
+                ;
+              }
+              break;
+            case K_VARCHAR2:
+              s = varchar2WithSize();
+                             jjtree.closeNodeScope(jjtn000, true);
+                             jjtc000 = false;
+                            token.image = s;
+              break;
+            case K_CHARACTER:
+              jj_consume_token(K_CHARACTER);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_VARYING:
+                jj_consume_token(K_VARYING);
+                break;
+              default:
+                jj_la1[47] = jj_gen;
+                ;
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[48] = jj_gen;
+                ;
+              }
+              break;
+            case K_NCHAR:
+              jj_consume_token(K_NCHAR);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_VARYING:
+                jj_consume_token(K_VARYING);
+                break;
+              default:
+                jj_la1[49] = jj_gen;
+                ;
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[50] = jj_gen;
+                ;
+              }
+              break;
+            case K_NVARCHAR:
+              jj_consume_token(K_NVARCHAR);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[51] = jj_gen;
+                ;
+              }
+              break;
+            case K_NVARCHAR2:
+              jj_consume_token(K_NVARCHAR2);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[52] = jj_gen;
+                ;
+              }
+              break;
+            case K_NATIONAL:
+              jj_consume_token(K_NATIONAL);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_CHARACTER:
+                jj_consume_token(K_CHARACTER);
+                break;
+              case K_CHAR:
+                jj_consume_token(K_CHAR);
+                break;
+              default:
+                jj_la1[53] = jj_gen;
+                jj_consume_token(-1);
+                throw new ParseException();
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_VARYING:
+                jj_consume_token(K_VARYING);
+                break;
+              default:
+                jj_la1[54] = jj_gen;
+                ;
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[55] = jj_gen;
+                ;
+              }
+              break;
+            case K_CLOB:
+              jj_consume_token(K_CLOB);
+              if (jj_2_10(2)) {
+                jj_consume_token(K_CHARACTER);
+                jj_consume_token(K_SET);
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case S_IDENTIFIER:
+                case S_QUOTED_IDENTIFIER:
+                  if (jj_2_9(2)) {
+                    jj_consume_token(S_IDENTIFIER);
+                  } else {
+                    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                    case S_IDENTIFIER:
+                    case S_QUOTED_IDENTIFIER:
+                      columnSpec();
+                      jj_consume_token(K_CHARSET);
+                      break;
+                    default:
+                      jj_la1[56] = jj_gen;
+                      jj_consume_token(-1);
+                      throw new ParseException();
+                    }
+                  }
+                  break;
+                default:
+                  jj_la1[57] = jj_gen;
+                  ;
+                }
+              } else {
+                ;
+              }
+              break;
+            default:
+              jj_la1[59] = jj_gen;
+              jj_consume_token(-1);
+              throw new ParseException();
+            }
+          }
+        }
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    } finally {
+      trace_return("datatype");
+    }
+  }
+
+  static final public String typeSpec() throws ParseException {
+    trace_call("typeSpec");
+    try {
+ /*@bgen(jjtree) typeSpec */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTTYPESPEC);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);String s = null;
+      try {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_BFILE:
+        case K_BINARY_DOUBLE:
+        case K_BINARY_FLOAT:
+        case K_BINARY_INTEGER:
+        case K_BLOB:
+        case K_BOOLEAN:
+        case K_CHAR:
+        case K_CHARACTER:
+        case K_CLOB:
+        case K_DATE:
+        case K_DEC:
+        case K_DECIMAL:
+        case K_DOUBLE:
+        case K_FLOAT:
+        case K_INT:
+        case K_INTEGER:
+        case K_INTERVAL:
+        case K_LONG:
+        case K_MLSLABEL:
+        case K_NATIONAL:
+        case K_NATURAL:
+        case K_NCHAR:
+        case K_NCLOB:
+        case K_NUMBER:
+        case K_NUMERIC:
+        case K_NVARCHAR2:
+        case K_NVARCHAR:
+        case K_PLS_INTEGER:
+        case K_POSITIVE:
+        case K_RAW:
+        case K_REAL:
+        case K_ROWID:
+        case K_SMALLINT:
+        case K_TIME:
+        case K_TIMESTAMP:
+        case K_UROWIDD:
+        case K_VARCHAR2:
+        case K_VARCHAR:
+          datatype();
+                 jjtree.closeNodeScope(jjtn000, true);
+                 jjtc000 = false;
+                {if (true) return token.image;}
+          break;
+        default:
+          jj_la1[61] = jj_gen;
+          if (jj_2_12(3)) {
+            s = columnSpec();
+            jj_consume_token(K_TYPE2);
+                                              jjtree.closeNodeScope(jjtn000, true);
+                                              jjtc000 = false;
+                                             {if (true) return s+token.image;}
+          } else if (jj_2_13(3)) {
+            s = tableSpec();
+            jj_consume_token(K_ROWTYPE);
+                                               jjtree.closeNodeScope(jjtn000, true);
+                                               jjtc000 = false;
+                                              {if (true) return s+token.image;}
+          } else {
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case S_IDENTIFIER:
+            case S_QUOTED_IDENTIFIER:
+              s = typeName();
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_OPENPAREN:
+                jj_consume_token(O_OPENPAREN);
+                jj_consume_token(S_NUMBER);
+                jj_consume_token(O_CLOSEPAREN);
+                break;
+              default:
+                jj_la1[60] = jj_gen;
+                ;
+              }
+                                                                 jjtree.closeNodeScope(jjtn000, true);
+                                                                 jjtc000 = false;
+                                                                {if (true) return s+token.image;}
+              break;
+            default:
+              jj_la1[62] = jj_gen;
+              jj_consume_token(-1);
+              throw new ParseException();
+            }
+          }
+        }
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("typeSpec");
+    }
+  }
+
+  static final public String columnSpec() throws ParseException {
+    trace_call("columnSpec");
+    try {
+ /*@bgen(jjtree) columnSpec */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTCOLUMNSPEC);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        OracleObjectName();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case O_DOT:
+          jj_consume_token(O_DOT);
+          OracleObjectName();
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_DOT:
+            jj_consume_token(O_DOT);
+            OracleObjectName();
+            break;
+          default:
+            jj_la1[63] = jj_gen;
+            ;
+          }
+          break;
+        default:
+          jj_la1[64] = jj_gen;
+          ;
+        }
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+     {if (true) return token.image;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("columnSpec");
+    }
+  }
+
+  static final public String tableSpec() throws ParseException {
+    trace_call("tableSpec");
+    try {
+ /*@bgen(jjtree) tableSpec */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTTABLESPEC);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        OracleObjectName();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case O_DOT:
+          jj_consume_token(O_DOT);
+          OracleObjectName();
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_ATSIGN:
+            jj_consume_token(O_ATSIGN);
+            jj_consume_token(S_IDENTIFIER);
+            break;
+          default:
+            jj_la1[65] = jj_gen;
+            ;
+          }
+          break;
+        default:
+          jj_la1[66] = jj_gen;
+          ;
+        }
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+     {if (true) return token.image;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("tableSpec");
+    }
+  }
+
+  static final public String typeName() throws ParseException {
+    trace_call("typeName");
+    try {
+      OracleObjectName();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case O_DOT:
+        jj_consume_token(O_DOT);
+        OracleObjectName();
+        break;
+      default:
+        jj_la1[67] = jj_gen;
+        ;
+      }
+     {if (true) return token.image;}
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("typeName");
+    }
   }
 
   static final public SimpleNode typeDeclaration() throws ParseException {
+    trace_call("typeDeclaration");
+    try {
  /*@bgen(jjtree) typeDeclaration */
  PLSQLNode jjtn000 = new PLSQLNode(JJTTYPEDECLARATION);
  boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);Token t = null;
-    try {
-      jj_consume_token(K_TYPE);
-      t = jj_consume_token(S_IDENTIFIER);
-      jj_consume_token(K_IS);
-      typeDeclarationBody();
-      jj_consume_token(SEMICOLON);
+ jjtree.openNodeScope(jjtn000);String s = null;
+      try {
+        jj_consume_token(K_TYPE);
+        s = typeName();
+        jj_consume_token(K_IS);
+        aTypeDeclaration();
+        jj_consume_token(O_SEMICOLON);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
-      jjtn000.jjtSetValue(t.image);
+      jjtn000.jjtSetValue(s);
       {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
+      } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
         jjtc000 = false;
@@ -255,100 +1336,705 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
         {if (true) throw (ParseException)jjte000;}
       }
       {if (true) throw (Error)jjte000;}
-    } finally {
+      } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
       }
-    }
+      }
     throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("typeDeclaration");
+    }
+  }
+
+  static final public void aTypeDeclaration() throws ParseException {
+    trace_call("aTypeDeclaration");
+    try {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_RECORD:
+        recordDeclaration();
+        break;
+      case K_SUBTYPE:
+        subtypeDeclaration();
+        break;
+      case K_TABLE:
+        plsqlTableDeclaration();
+        break;
+      case K_VARRAY:
+      case K_VARYING:
+        varrayDeclaration();
+        break;
+      case K_REF:
+        refCursorDeclaration();
+        break;
+      default:
+        jj_la1[68] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("aTypeDeclaration");
+    }
+  }
+
+  static final public SimpleNode recordDeclaration() throws ParseException {
+    trace_call("recordDeclaration");
+    try {
+ /*@bgen(jjtree) recordDeclaration */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTRECORDDECLARATION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        jj_consume_token(K_RECORD);
+        jj_consume_token(O_OPENPAREN);
+        fieldDeclarations();
+        jj_consume_token(O_CLOSEPAREN);
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      {if (true) return jjtn000;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("recordDeclaration");
+    }
+  }
+
+  static final public void fieldDeclarations() throws ParseException {
+    trace_call("fieldDeclarations");
+    try {
+      fieldDeclaration();
+      label_3:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case O_COMMA:
+          ;
+          break;
+        default:
+          jj_la1[69] = jj_gen;
+          break label_3;
+        }
+        jj_consume_token(O_COMMA);
+        fieldDeclaration();
+      }
+    } finally {
+      trace_return("fieldDeclarations");
+    }
+  }
+
+  static final public SimpleNode fieldDeclaration() throws ParseException {
+    trace_call("fieldDeclaration");
+    try {
+ /*@bgen(jjtree) fieldDeclaration */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTFIELDDECLARATION);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);String s = null;
+      try {
+        s = typeName();
+        fieldType();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_NOT:
+          jj_consume_token(K_NOT);
+          jj_consume_token(K_NULL);
+          break;
+        default:
+          jj_la1[70] = jj_gen;
+          ;
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_DEFAULT:
+        case O_ASSIGN:
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_ASSIGN:
+            jj_consume_token(O_ASSIGN);
+            break;
+          case K_DEFAULT:
+            jj_consume_token(K_DEFAULT);
+            break;
+          default:
+            jj_la1[71] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+          break;
+        default:
+          jj_la1[72] = jj_gen;
+          ;
+        }
+        skipToNextArg();
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtn000.jjtSetValue(s);
+      {if (true) return jjtn000;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("fieldDeclaration");
+    }
+  }
+
+  static final public SimpleNode fieldType() throws ParseException {
+    trace_call("fieldType");
+    try {
+ /*@bgen(jjtree) fieldType */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTFIELDTYPE);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);String s = null;
+      try {
+        s = typeSpec();
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtn000.jjtSetValue(s);
+      {if (true) return jjtn000;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("fieldType");
+    }
+  }
+
+  static final public void subtypeDeclaration() throws ParseException {
+    trace_call("subtypeDeclaration");
+    try {
+ /*@bgen(jjtree) subtypeDeclaration */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTSUBTYPEDECLARATION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        jj_consume_token(K_SUBTYPE);
+        OracleObjectName();
+        jj_consume_token(K_IS);
+        datatype();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_RANGE:
+          jj_consume_token(K_RANGE);
+          jj_consume_token(S_NUMBER);
+          jj_consume_token(O_DOUBLEDOT);
+          jj_consume_token(S_NUMBER);
+          break;
+        case S_NUMBER:
+          jj_consume_token(S_NUMBER);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_COMMA:
+            jj_consume_token(O_COMMA);
+            jj_consume_token(S_NUMBER);
+            break;
+          default:
+            jj_la1[73] = jj_gen;
+            ;
+          }
+          break;
+        case K_CHARACTER:
+          jj_consume_token(K_CHARACTER);
+          jj_consume_token(K_SET);
+          jj_consume_token(S_IDENTIFIER);
+          break;
+        default:
+          jj_la1[74] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_NOT:
+          jj_consume_token(K_NOT);
+          jj_consume_token(K_NULL);
+          break;
+        default:
+          jj_la1[75] = jj_gen;
+          ;
+        }
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    } finally {
+      trace_return("subtypeDeclaration");
+    }
+  }
+
+  static final public SimpleNode plsqlTableDeclaration() throws ParseException {
+    trace_call("plsqlTableDeclaration");
+    try {
+ /*@bgen(jjtree) plsqlTableDeclaration */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTPLSQLTABLEDECLARATION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        jj_consume_token(K_TABLE);
+        jj_consume_token(K_OF);
+        datatype();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_NOT:
+          jj_consume_token(K_NOT);
+          jj_consume_token(K_NULL);
+          break;
+        default:
+          jj_la1[76] = jj_gen;
+          ;
+        }
+        jj_consume_token(K_INDEX);
+        jj_consume_token(K_BY);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_PLS_INTEGER:
+          jj_consume_token(K_PLS_INTEGER);
+          break;
+        case K_BINARY_INTEGER:
+          jj_consume_token(K_BINARY_INTEGER);
+          break;
+        case K_VARCHAR2:
+          jj_consume_token(K_VARCHAR2);
+          jj_consume_token(O_OPENPAREN);
+          jj_consume_token(S_NUMBER);
+          jj_consume_token(O_CLOSEPAREN);
+          break;
+        case K_STRING:
+          jj_consume_token(K_STRING);
+          jj_consume_token(O_OPENPAREN);
+          jj_consume_token(S_NUMBER);
+          jj_consume_token(O_CLOSEPAREN);
+          break;
+        default:
+          jj_la1[77] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      {if (true) return jjtn000;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("plsqlTableDeclaration");
+    }
+  }
+
+  static final public SimpleNode varrayDeclaration() throws ParseException {
+    trace_call("varrayDeclaration");
+    try {
+ /*@bgen(jjtree) varrayDeclaration */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTVARRAYDECLARATION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_VARRAY:
+          jj_consume_token(K_VARRAY);
+          break;
+        case K_VARYING:
+          jj_consume_token(K_VARYING);
+          jj_consume_token(K_ARRAY);
+          break;
+        default:
+          jj_la1[78] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        jj_consume_token(O_OPENPAREN);
+        jj_consume_token(S_NUMBER);
+        jj_consume_token(O_CLOSEPAREN);
+        jj_consume_token(K_OF);
+        datatype();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_NOT:
+          jj_consume_token(K_NOT);
+          jj_consume_token(K_NULL);
+          break;
+        default:
+          jj_la1[79] = jj_gen;
+          ;
+        }
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      {if (true) return jjtn000;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("varrayDeclaration");
+    }
+  }
+
+  static final public SimpleNode refCursorDeclaration() throws ParseException {
+    trace_call("refCursorDeclaration");
+    try {
+ /*@bgen(jjtree) refCursorDeclaration */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTREFCURSORDECLARATION);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);String s = null;
+      try {
+        jj_consume_token(K_REF);
+        jj_consume_token(K_CURSOR);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_RETURN:
+          jj_consume_token(K_RETURN);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case S_IDENTIFIER:
+          case S_QUOTED_IDENTIFIER:
+            if (jj_2_14(3)) {
+              s = columnSpec();
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_TYPE2:
+                jj_consume_token(K_TYPE2);
+                break;
+              default:
+                jj_la1[80] = jj_gen;
+                ;
+              }
+            } else if (jj_2_15(3)) {
+              s = tableSpec();
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_ROWTYPE:
+                jj_consume_token(K_ROWTYPE);
+                break;
+              default:
+                jj_la1[81] = jj_gen;
+                ;
+              }
+            } else {
+              jj_consume_token(-1);
+              throw new ParseException();
+            }
+            break;
+          default:
+            jj_la1[82] = jj_gen;
+            ;
+          }
+          break;
+        default:
+          jj_la1[83] = jj_gen;
+          ;
+        }
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtn000.jjtSetValue(s);
+      {if (true) return jjtn000;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("refCursorDeclaration");
+    }
   }
 
   static final public SimpleNode cursorDeclaration() throws ParseException {
+    trace_call("cursorDeclaration");
+    try {
  /*@bgen(jjtree) cursorDeclaration */
  PLSQLNode jjtn000 = new PLSQLNode(JJTCURSORDECLARATION);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);Token t = null;
-    try {
-      jj_consume_token(K_CURSOR);
-      t = jj_consume_token(S_IDENTIFIER);
-      jj_consume_token(SEMICOLON);
+      try {
+        jj_consume_token(K_CURSOR);
+        t = jj_consume_token(S_IDENTIFIER);
+        jj_consume_token(O_SEMICOLON);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetValue(t.image);
       {if (true) return jjtn000;}
-    } finally {
+      } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
       }
-    }
+      }
     throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("cursorDeclaration");
+    }
   }
 
-  static final public SimpleNode functionDeclaration() throws ParseException {
- /*@bgen(jjtree) functionDeclaration */
- PLSQLNode jjtn000 = new PLSQLNode(JJTFUNCTIONDECLARATION);
+// Procedure Specification
+  static final public SimpleNode procedureSpec() throws ParseException {
+    trace_call("procedureSpec");
+    try {
+ /*@bgen(jjtree) procedureSpec */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTPROCEDURESPEC);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);Token t = null;
-    try {
-      jj_consume_token(K_FUNCTION);
-      t = jj_consume_token(S_IDENTIFIER);
-      functionDeclarationBody();
-      jj_consume_token(K_RETURN);
-      jj_consume_token(S_IDENTIFIER);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case ROWTYPE:
-      case TYPE:
+      try {
+        jj_consume_token(K_PROCEDURE);
+        t = jj_consume_token(S_IDENTIFIER);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case TYPE:
-          jj_consume_token(TYPE);
-          break;
-        case ROWTYPE:
-          jj_consume_token(ROWTYPE);
+        case O_OPENPAREN:
+          jj_consume_token(O_OPENPAREN);
+          argumentList();
+          jj_consume_token(O_CLOSEPAREN);
           break;
         default:
-          jj_la1[10] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
+          jj_la1[84] = jj_gen;
+          ;
         }
-        break;
-      default:
-        jj_la1[11] = jj_gen;
-        ;
+        jj_consume_token(O_SEMICOLON);
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtn000.jjtSetValue(t.image);
+      {if (true) return jjtn000;}
+      } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
       }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_DETERMINISTIC:
-      case K_PARALLEL_ENABLE:
-      case K_PIPELINED:
-      case K_RESULT_CACHE:
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+      } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+      }
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("procedureSpec");
+    }
+  }
+
+  static final public void argumentList() throws ParseException {
+    trace_call("argumentList");
+    try {
+ /*@bgen(jjtree) argumentList */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTARGUMENTLIST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        argument();
+        label_4:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_COMMA:
+            ;
+            break;
+          default:
+            jj_la1[85] = jj_gen;
+            break label_4;
+          }
+          jj_consume_token(O_COMMA);
+          argument();
+        }
+      } catch (Throwable jjte000) {
+     if (jjtc000) {
+       jjtree.clearNodeScope(jjtn000);
+       jjtc000 = false;
+     } else {
+       jjtree.popNode();
+     }
+     if (jjte000 instanceof RuntimeException) {
+       {if (true) throw (RuntimeException)jjte000;}
+     }
+     if (jjte000 instanceof ParseException) {
+       {if (true) throw (ParseException)jjte000;}
+     }
+     {if (true) throw (Error)jjte000;}
+      } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+      }
+    } finally {
+      trace_return("argumentList");
+    }
+  }
+
+  static final public SimpleNode functionSpec() throws ParseException {
+    trace_call("functionSpec");
+    try {
+ /*@bgen(jjtree) functionSpec */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTFUNCTIONSPEC);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);Token t = null;
+      try {
+        jj_consume_token(K_FUNCTION);
+        t = jj_consume_token(S_IDENTIFIER);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case O_OPENPAREN:
+          jj_consume_token(O_OPENPAREN);
+          argumentList();
+          jj_consume_token(O_CLOSEPAREN);
+          break;
+        default:
+          jj_la1[86] = jj_gen;
+          ;
+        }
+        jj_consume_token(K_RETURN);
+        OracleObjectName();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_ROWTYPE:
+        case K_TYPE2:
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_TYPE2:
+            jj_consume_token(K_TYPE2);
+            break;
+          case K_ROWTYPE:
+            jj_consume_token(K_ROWTYPE);
+            break;
+          default:
+            jj_la1[87] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+          break;
+        default:
+          jj_la1[88] = jj_gen;
+          ;
+        }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_DETERMINISTIC:
-          jj_consume_token(K_DETERMINISTIC);
-          break;
-        case K_PIPELINED:
-          jj_consume_token(K_PIPELINED);
-          break;
         case K_PARALLEL_ENABLE:
-          jj_consume_token(K_PARALLEL_ENABLE);
-          break;
+        case K_PIPELINED:
         case K_RESULT_CACHE:
-          jj_consume_token(K_RESULT_CACHE);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_DETERMINISTIC:
+            jj_consume_token(K_DETERMINISTIC);
+            break;
+          case K_PIPELINED:
+            jj_consume_token(K_PIPELINED);
+            break;
+          case K_PARALLEL_ENABLE:
+            jj_consume_token(K_PARALLEL_ENABLE);
+            break;
+          case K_RESULT_CACHE:
+            jj_consume_token(K_RESULT_CACHE);
+            break;
+          default:
+            jj_la1[89] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
           break;
         default:
-          jj_la1[12] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
+          jj_la1[90] = jj_gen;
+          ;
         }
-        break;
-      default:
-        jj_la1[13] = jj_gen;
-        ;
-      }
-      jj_consume_token(SEMICOLON);
+        jj_consume_token(O_SEMICOLON);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetValue(t.image);
       {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
+      } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
         jjtc000 = false;
@@ -362,234 +2048,251 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
         {if (true) throw (ParseException)jjte000;}
       }
       {if (true) throw (Error)jjte000;}
-    } finally {
+      } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
       }
-    }
+      }
     throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("functionSpec");
+    }
   }
 
-  static final public SimpleNode procedureDeclaration() throws ParseException {
- /*@bgen(jjtree) procedureDeclaration */
- PLSQLNode jjtn000 = new PLSQLNode(JJTPROCEDUREDECLARATION);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);Token t = null;
+  static final public void argument() throws ParseException {
+    trace_call("argument");
     try {
-      jj_consume_token(K_PROCEDURE);
-      t = jj_consume_token(S_IDENTIFIER);
-      procedureDeclarationBody();
-      jj_consume_token(SEMICOLON);
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetValue(t.image);
-      {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
+ /*@bgen(jjtree) argument */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTARGUMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        skipToNextArg();
+      } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
       }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
     } finally {
+      trace_return("argument");
+    }
+  }
+
+  static final public void exceptionDeclaration() throws ParseException {
+    trace_call("exceptionDeclaration");
+    try {
+ /*@bgen(jjtree) exceptionDeclaration */
+  PLSQLNode jjtn000 = new PLSQLNode(JJTEXCEPTIONDECLARATION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+      try {
+        jj_consume_token(S_IDENTIFIER);
+        jj_consume_token(K_EXCEPTION);
+        jj_consume_token(O_SEMICOLON);
+      } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
       }
+      }
+    } finally {
+      trace_return("exceptionDeclaration");
     }
-    throw new Error("Missing return statement in function");
   }
 
   static final public void pragmaDeclaration() throws ParseException {
+    trace_call("pragmaDeclaration");
+    try {
  /*@bgen(jjtree) pragmaDeclaration */
   PLSQLNode jjtn000 = new PLSQLNode(JJTPRAGMADECLARATION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-    try {
-      jj_consume_token(K_PRAGMA);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_AUTONOMOUS_TRANSACTION:
-      case K_EXCEPTION_INIT:
-      case K_INLINE:
-      case K_RESTRICT_REFERENCES:
-      case K_SERIALLY_REUSABLE:
+      try {
+        jj_consume_token(K_PRAGMA);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_AUTONOMOUS_TRANSACTION:
-          jj_consume_token(K_AUTONOMOUS_TRANSACTION);
-          break;
         case K_EXCEPTION_INIT:
-          jj_consume_token(K_EXCEPTION_INIT);
-          jj_consume_token(OPENPAREN);
-          jj_consume_token(S_IDENTIFIER);
-          jj_consume_token(74);
-          jj_consume_token(S_NUMBER);
-          jj_consume_token(CLOSEPAREN);
-          break;
-        case K_SERIALLY_REUSABLE:
-          jj_consume_token(K_SERIALLY_REUSABLE);
-          break;
         case K_INLINE:
-          jj_consume_token(K_INLINE);
-          jj_consume_token(OPENPAREN);
-          jj_consume_token(S_IDENTIFIER);
-          jj_consume_token(74);
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case K_NO:
-          case K_YES:
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_YES:
-              jj_consume_token(K_YES);
-              break;
-            case K_NO:
-              jj_consume_token(K_NO);
-              break;
-            default:
-              jj_la1[14] = jj_gen;
-              jj_consume_token(-1);
-              throw new ParseException();
-            }
-            break;
-          default:
-            jj_la1[15] = jj_gen;
-            ;
-          }
-          jj_consume_token(CLOSEPAREN);
-          break;
         case K_RESTRICT_REFERENCES:
-          jj_consume_token(K_RESTRICT_REFERENCES);
-          jj_consume_token(OPENPAREN);
+        case K_SERIALLY_REUSABLE:
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case K_DEFAULT:
-          case S_IDENTIFIER:
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case S_IDENTIFIER:
-              jj_consume_token(S_IDENTIFIER);
-              break;
-            case K_DEFAULT:
-              jj_consume_token(K_DEFAULT);
-              break;
-            default:
-              jj_la1[16] = jj_gen;
-              jj_consume_token(-1);
-              throw new ParseException();
-            }
+          case K_AUTONOMOUS_TRANSACTION:
+            jj_consume_token(K_AUTONOMOUS_TRANSACTION);
             break;
-          default:
-            jj_la1[17] = jj_gen;
-            ;
-          }
-          label_2:
-          while (true) {
-            jj_consume_token(74);
+          case K_EXCEPTION_INIT:
+            jj_consume_token(K_EXCEPTION_INIT);
+            jj_consume_token(O_OPENPAREN);
+            jj_consume_token(S_IDENTIFIER);
+            jj_consume_token(O_COMMA);
+            jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          case K_SERIALLY_REUSABLE:
+            jj_consume_token(K_SERIALLY_REUSABLE);
+            break;
+          case K_INLINE:
+            jj_consume_token(K_INLINE);
+            jj_consume_token(O_OPENPAREN);
+            jj_consume_token(S_IDENTIFIER);
+            jj_consume_token(O_COMMA);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_RNDS:
-            case K_RNPS:
-            case K_TRUST:
-            case K_WNDS:
-            case K_WNPS:
+            case K_NO:
+            case K_YES:
               switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case K_RNDS:
-                jj_consume_token(K_RNDS);
+              case K_YES:
+                jj_consume_token(K_YES);
                 break;
-              case K_WNDS:
-                jj_consume_token(K_WNDS);
-                break;
-              case K_RNPS:
-                jj_consume_token(K_RNPS);
-                break;
-              case K_WNPS:
-                jj_consume_token(K_WNPS);
-                break;
-              case K_TRUST:
-                jj_consume_token(K_TRUST);
+              case K_NO:
+                jj_consume_token(K_NO);
                 break;
               default:
-                jj_la1[18] = jj_gen;
+                jj_la1[91] = jj_gen;
                 jj_consume_token(-1);
                 throw new ParseException();
               }
               break;
             default:
-              jj_la1[19] = jj_gen;
+              jj_la1[92] = jj_gen;
               ;
             }
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          case K_RESTRICT_REFERENCES:
+            jj_consume_token(K_RESTRICT_REFERENCES);
+            jj_consume_token(O_OPENPAREN);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case 74:
-              ;
+            case K_DEFAULT:
+            case S_IDENTIFIER:
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case S_IDENTIFIER:
+                jj_consume_token(S_IDENTIFIER);
+                break;
+              case K_DEFAULT:
+                jj_consume_token(K_DEFAULT);
+                break;
+              default:
+                jj_la1[93] = jj_gen;
+                jj_consume_token(-1);
+                throw new ParseException();
+              }
               break;
             default:
-              jj_la1[20] = jj_gen;
-              break label_2;
+              jj_la1[94] = jj_gen;
+              ;
             }
+            label_5:
+            while (true) {
+              jj_consume_token(O_COMMA);
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_RNDS:
+              case K_RNPS:
+              case K_TRUST:
+              case K_WNDS:
+              case K_WNPS:
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case K_RNDS:
+                  jj_consume_token(K_RNDS);
+                  break;
+                case K_WNDS:
+                  jj_consume_token(K_WNDS);
+                  break;
+                case K_RNPS:
+                  jj_consume_token(K_RNPS);
+                  break;
+                case K_WNPS:
+                  jj_consume_token(K_WNPS);
+                  break;
+                case K_TRUST:
+                  jj_consume_token(K_TRUST);
+                  break;
+                default:
+                  jj_la1[95] = jj_gen;
+                  jj_consume_token(-1);
+                  throw new ParseException();
+                }
+                break;
+              default:
+                jj_la1[96] = jj_gen;
+                ;
+              }
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case O_COMMA:
+                ;
+                break;
+              default:
+                jj_la1[97] = jj_gen;
+                break label_5;
+              }
+            }
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            jj_la1[98] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
           }
-          jj_consume_token(CLOSEPAREN);
           break;
         default:
-          jj_la1[21] = jj_gen;
-          jj_consume_token(-1);
-          throw new ParseException();
+          jj_la1[99] = jj_gen;
+          ;
         }
-        break;
-      default:
-        jj_la1[22] = jj_gen;
-        ;
-      }
-      jj_consume_token(SEMICOLON);
-    } finally {
+        jj_consume_token(O_SEMICOLON);
+      } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
       }
+      }
+    } finally {
+      trace_return("pragmaDeclaration");
     }
   }
 
-  static final public void typeDeclarationBody() throws ParseException {
- /*@bgen(jjtree) typeDeclarationBody */
-  PLSQLNode jjtn000 = new PLSQLNode(JJTTYPEDECLARATIONBODY);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+  static void skipToSemicolon() throws ParseException {
+    trace_call("skipToSemicolon");
     try {
-      jj_consume_token(75);
-      jj_consume_token(SEMICOLON);
+                        /*@bgen(jjtree) skipToSemicolon */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTSKIPTOSEMICOLON);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+ try {Token tok;
+    while (true) {
+        tok = getToken(1);
+        if (tok.kind == O_SEMICOLON) {
+            break;
+        }
+        tok = getNextToken();
+    }/*@bgen(jjtree)*/
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
     } finally {
-     if (jjtc000) {
-       jjtree.closeNodeScope(jjtn000, true);
-     }
+      trace_return("skipToSemicolon");
     }
   }
 
-  static final public void functionDeclarationBody() throws ParseException {
- /*@bgen(jjtree) functionDeclarationBody */
-  PLSQLNode jjtn000 = new PLSQLNode(JJTFUNCTIONDECLARATIONBODY);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+  static void skipToNextArg() throws ParseException {
+    trace_call("skipToNextArg");
     try {
-      jj_consume_token(76);
-      jj_consume_token(SEMICOLON);
+                      /*@bgen(jjtree) skipToNextArg */
+ PLSQLNode jjtn000 = new PLSQLNode(JJTSKIPTONEXTARG);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+ try {Token tok;
+    while (true) {
+        tok = getToken(1);
+        if (tok.kind == O_COMMA || tok.kind == O_CLOSEPAREN) {
+            break;
+        }
+        tok = getNextToken();
+    }/*@bgen(jjtree)*/
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
     } finally {
-     if (jjtc000) {
-       jjtree.closeNodeScope(jjtn000, true);
-     }
-    }
-  }
-
-  static final public void procedureDeclarationBody() throws ParseException {
- /*@bgen(jjtree) procedureDeclarationBody */
-  PLSQLNode jjtn000 = new PLSQLNode(JJTPROCEDUREDECLARATIONBODY);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-    try {
-      jj_consume_token(77);
-      jj_consume_token(SEMICOLON);
-    } finally {
-     if (jjtc000) {
-       jjtree.closeNodeScope(jjtn000, true);
-     }
+      trace_return("skipToNextArg");
     }
   }
 
@@ -600,36 +2303,505 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
     finally { jj_save(0, xla); }
   }
 
-  static private boolean jj_3_1() {
-    if (jj_3R_3()) return true;
-    if (jj_scan_token(DOT)) return true;
-    return false;
+  static private boolean jj_2_2(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_2(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_5() {
-    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
-    return false;
+  static private boolean jj_2_3(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_3(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(2, xla); }
   }
 
-  static private boolean jj_3R_4() {
+  static private boolean jj_2_4(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_4(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(3, xla); }
+  }
+
+  static private boolean jj_2_5(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_5(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(4, xla); }
+  }
+
+  static private boolean jj_2_6(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_6(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(5, xla); }
+  }
+
+  static private boolean jj_2_7(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_7(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(6, xla); }
+  }
+
+  static private boolean jj_2_8(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_8(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(7, xla); }
+  }
+
+  static private boolean jj_2_9(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_9(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(8, xla); }
+  }
+
+  static private boolean jj_2_10(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_10(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(9, xla); }
+  }
+
+  static private boolean jj_2_11(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_11(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(10, xla); }
+  }
+
+  static private boolean jj_2_12(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_12(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(11, xla); }
+  }
+
+  static private boolean jj_2_13(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_13(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(12, xla); }
+  }
+
+  static private boolean jj_2_14(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_14(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(13, xla); }
+  }
+
+  static private boolean jj_2_15(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_15(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(14, xla); }
+  }
+
+  static private boolean jj_3_3() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
-  static private boolean jj_3R_3() {
+  static private boolean jj_3R_24() {
+    if (jj_scan_token(K_FLOAT)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_23() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_4()) {
+    if (jj_scan_token(165)) {
     jj_scanpos = xsp;
-    if (jj_3R_5()) return true;
+    if (jj_scan_token(166)) return true;
     }
+    return false;
+  }
+
+  static private boolean jj_3R_22() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_11() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    if (jj_scan_token(K_DAY)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_21() {
+    if (jj_scan_token(K_RAW)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_20() {
+    if (jj_scan_token(K_LONG)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_19() {
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(17)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(16)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(15)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(95)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(121)) {
+    jj_scanpos = xsp;
+    if (jj_3R_19()) {
+    jj_scanpos = xsp;
+    if (jj_3R_20()) {
+    jj_scanpos = xsp;
+    if (jj_3R_21()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(20)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(39)) {
+    jj_scanpos = xsp;
+    if (jj_3_11()) {
+    jj_scanpos = xsp;
+    if (jj_3R_22()) {
+    jj_scanpos = xsp;
+    if (jj_3R_23()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(72)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(71)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(158)) {
+    jj_scanpos = xsp;
+    if (jj_3R_24()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(130)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(90)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(120)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(18)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(98)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(14)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(146)) {
+    jj_scanpos = xsp;
+    if (jj_3R_25()) {
+    jj_scanpos = xsp;
+    if (jj_3R_26()) {
+    jj_scanpos = xsp;
+    if (jj_3R_27()) {
+    jj_scanpos = xsp;
+    if (jj_3R_28()) {
+    jj_scanpos = xsp;
+    if (jj_3R_29()) {
+    jj_scanpos = xsp;
+    if (jj_3R_30()) {
+    jj_scanpos = xsp;
+    if (jj_3R_31()) {
+    jj_scanpos = xsp;
+    if (jj_3R_32()) {
+    jj_scanpos = xsp;
+    if (jj_3R_33()) {
+    jj_scanpos = xsp;
+    if (jj_3R_34()) {
+    jj_scanpos = xsp;
+    if (jj_3R_35()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3_14() {
+    if (jj_3R_8()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(172)) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3_9() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_4() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_11()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_15() {
+    if (jj_3R_9()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(147)) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3R_37() {
+    if (jj_scan_token(K_VARCHAR2)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_7() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_5() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_18() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_9() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_14()) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3R_36() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(106)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(107)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(43)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(42)) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_13()) jj_scanpos = xsp;
+    return false;
+  }
+
+  static private boolean jj_3_10() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_16() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_13() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(K_ROWTYPE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_12() {
+    if (jj_3R_8()) return true;
+    if (jj_scan_token(K_TYPE2)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_15()) {
+    jj_scanpos = xsp;
+    if (jj_3_12()) {
+    jj_scanpos = xsp;
+    if (jj_3_13()) {
+    jj_scanpos = xsp;
+    if (jj_3R_16()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_15() {
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(31)) jj_scanpos = xsp;
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_35() {
+    if (jj_scan_token(K_CLOB)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_34() {
+    if (jj_scan_token(K_NATIONAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_33() {
+    if (jj_scan_token(K_NVARCHAR2)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_32() {
+    if (jj_scan_token(K_NVARCHAR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_8() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_31() {
+    if (jj_scan_token(K_NCHAR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_30() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_6() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_29() {
+    if (jj_3R_37()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_28() {
+    if (jj_scan_token(K_VARCHAR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_27() {
+    if (jj_scan_token(K_CHAR)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_26() {
+    if (jj_scan_token(K_DOUBLE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_25() {
+    if (jj_scan_token(K_UROWIDD)) return true;
     return false;
   }
 
   static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
   static public PLSQLParserTokenManager token_source;
-  static SimpleCharStream jj_input_stream;
+  static JavaCharStream jj_input_stream;
   /** Current token. */
   static public Token token;
   /** Next token. */
@@ -638,25 +2810,50 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[23];
+  static final private int[] jj_la1 = new int[100];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
+  static private int[] jj_la1_3;
+  static private int[] jj_la1_4;
+  static private int[] jj_la1_5;
+  static private int[] jj_la1_6;
+  static private int[] jj_la1_7;
   static {
       jj_la1_init_0();
       jj_la1_init_1();
       jj_la1_init_2();
+      jj_la1_init_3();
+      jj_la1_init_4();
+      jj_la1_init_5();
+      jj_la1_init_6();
+      jj_la1_init_7();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x400000,0x9000,0x9000,0x200,0x200100,0x200100,0x18082000,0x18082000,0x0,0x0,0x0,0x86010000,0x86010000,0x800000,0x800000,0x4000,0x4000,0x0,0x0,0x0,0x40140400,0x40140400,};
+      jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x800,0x400,0x400,0x0,0x0,0x0,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3000000,0x3000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3000000,0x3000000,0x0,0x0,0x0,0x0,0x3000000,0x3000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x6000000,0x0,0x0,0x0,0x0,0x138000,0x16044000,0x0,0x1617c000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4000000,0x0,0x0,0x20000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2000,0x2000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20,0x20,0x0,0x88000000,0x88000000,0x0,0x0,0x100,0x100,0x0,0x0,0xd6,0xd6,0x0,0x8,0x8,};
+      jj_la1_1 = new int[] {0x0,0x0,0x4020,0x4020,0x0,0x0,0x0,0x80000040,0x0,0x80000040,0x0,0x0,0x2000,0x2000,0xc00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc80,0x20020000,0x0,0x20020c80,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2000,0x2000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8000,0x8000,0x0,0x0,0x2000,0x2000,0x0,0x0,0x0,0x1000000,0x1000000,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x210,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x210,0x0,0x0,0x0,0x0,0x0,0x0,0x10,0x10,0x0,0x0,0x400,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x800,0x800,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80200000,0x44000580,0x0,0xc4200580,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20,0x20,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[1];
+   private static void jj_la1_init_3() {
+      jj_la1_3 = new int[] {0x0,0x20000,0x0,0x0,0x0,0x0,0x0,0x24000000,0x0,0x24000000,0x0,0x80,0x0,0x0,0xc00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2000c00,0x1003006,0x0,0x3003c06,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80,0x0,0x0,0x0,0x80000000,0x80,0x80,0x1000000,0x0,0x80,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xa00000,0xa00000,0x20,0x20,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+   }
+   private static void jj_la1_init_4() {
+      jj_la1_4 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x40040004,0x0,0x40040005,0x0,0x0,0x0,0x0,0x0,0x0,0x18,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x0,0x400,0x0,0x0,0x0,0x80000,0x80000,0x200,0x200,0x0,0x0,0x0,0x0,0xc000,0xc000,0x0,0x1000100,0x1000100,};
+   }
+   private static void jj_la1_init_5() {
+      jj_la1_5 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800,0x0,0x800,0x0,0x0,0x80000000,0x80000000,0x0,0x0,0x0,0x400000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x60,0x0,0x0,0x800000,0x0,0x0,0x400000,0x0,0x0,0x0,0x0,0x0,0x400000,0x0,0x0,0x0,0x0,0x0,0x400000,0x0,0x400000,0x0,0x0,0x0,0x0,0x400000,0x0,0x0,0x0,0x0,0x1a0060,0x0,0x1a0060,0x0,0x0,0x0,0x0,0x0,0x0,0x60000c,0x0,0x0,0x80000000,0x80000000,0x0,0x0,0x0,0x0,0x80001,0x600000,0x0,0x1000,0x0,0x0,0x0,0x0,0x0,0x0,0x1000,0x1000,0x0,0x0,0x20000000,0x20000000,0x0,0x0,0x6000400,0x6000400,0x0,0x0,0x0,};
+   }
+   private static void jj_la1_init_6() {
+      jj_la1_6 = new int[] {0x40000000,0x0,0x0,0x0,0x0,0x0,0x0,0x40000000,0x40000000,0x40000000,0x0,0x0,0x0,0x0,0x0,0x20,0x80000,0x0,0x0,0x0,0x80000,0x40000000,0x40000000,0x0,0x80000,0x80000,0x80000,0x80000,0x80000,0x0,0x80000,0x0,0x0,0x80000,0x80000,0x0,0x0,0x0,0x80000,0x40000000,0x40000000,0x0,0x0,0x0,0x80000,0x40000000,0x40000000,0x0,0x80000,0x0,0x80000,0x80000,0x80000,0x0,0x0,0x80000,0x40000000,0x40000000,0x0,0x0,0x80000,0x0,0x40000000,0x40,0x40,0x2,0x40,0x40,0x0,0x20,0x0,0x0,0x0,0x20,0x4000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40000000,0x0,0x80000,0x20,0x80000,0x0,0x0,0x0,0x0,0x0,0x0,0x40000000,0x40000000,0x0,0x0,0x20,0x0,0x0,};
+   }
+   private static void jj_la1_init_7() {
+      jj_la1_7 = new int[] {0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x8,0x0,0x0,0x0,0x0,0x8,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x8,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+   }
+  static final private JJCalls[] jj_2_rtns = new JJCalls[15];
   static private boolean jj_rescan = false;
   static private int jj_gc = 0;
 
@@ -673,12 +2870,12 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
       throw new Error();
     }
     jj_initialized_once = true;
-    try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
+    try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new PLSQLParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 100; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -694,7 +2891,7 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 100; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -707,12 +2904,12 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
       throw new Error();
     }
     jj_initialized_once = true;
-    jj_input_stream = new SimpleCharStream(stream, 1, 1);
+    jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new PLSQLParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 100; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -724,7 +2921,7 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 100; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -741,7 +2938,7 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 100; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -752,7 +2949,7 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 23; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 100; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -773,6 +2970,7 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
           }
         }
       }
+      trace_token(token, "");
       return token;
     }
     token = oldToken;
@@ -810,6 +3008,7 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
     jj_gen++;
+      trace_token(token, " (in getNextToken)");
     return token;
   }
 
@@ -864,12 +3063,12 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[78];
+    boolean[] la1tokens = new boolean[228];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 23; i++) {
+    for (int i = 0; i < 100; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -881,10 +3080,25 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
           if ((jj_la1_2[i] & (1<<j)) != 0) {
             la1tokens[64+j] = true;
           }
+          if ((jj_la1_3[i] & (1<<j)) != 0) {
+            la1tokens[96+j] = true;
+          }
+          if ((jj_la1_4[i] & (1<<j)) != 0) {
+            la1tokens[128+j] = true;
+          }
+          if ((jj_la1_5[i] & (1<<j)) != 0) {
+            la1tokens[160+j] = true;
+          }
+          if ((jj_la1_6[i] & (1<<j)) != 0) {
+            la1tokens[192+j] = true;
+          }
+          if ((jj_la1_7[i] & (1<<j)) != 0) {
+            la1tokens[224+j] = true;
+          }
         }
       }
     }
-    for (int i = 0; i < 78; i++) {
+    for (int i = 0; i < 228; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -901,17 +3115,60 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
     return new ParseException(token, exptokseq, tokenImage);
   }
 
-  /** Enable tracing. */
+  static private int trace_indent = 0;
+  static private boolean trace_enabled = true;
+
+/** Enable tracing. */
   static final public void enable_tracing() {
+    trace_enabled = true;
   }
 
-  /** Disable tracing. */
+/** Disable tracing. */
   static final public void disable_tracing() {
+    trace_enabled = false;
+  }
+
+  static private void trace_call(String s) {
+    if (trace_enabled) {
+      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
+      System.out.println("Call:   " + s);
+    }
+    trace_indent = trace_indent + 2;
+  }
+
+  static private void trace_return(String s) {
+    trace_indent = trace_indent - 2;
+    if (trace_enabled) {
+      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
+      System.out.println("Return: " + s);
+    }
+  }
+
+  static private void trace_token(Token t, String where) {
+    if (trace_enabled) {
+      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
+      System.out.print("Consumed token: <" + tokenImage[t.kind]);
+      if (t.kind != 0 && !tokenImage[t.kind].equals("\"" + t.image + "\"")) {
+        System.out.print(": \"" + t.image + "\"");
+      }
+      System.out.println(" at line " + t.beginLine + " column " + t.beginColumn + ">" + where);
+    }
+  }
+
+  static private void trace_scan(Token t1, int t2) {
+    if (trace_enabled) {
+      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
+      System.out.print("Visited token: <" + tokenImage[t1.kind]);
+      if (t1.kind != 0 && !tokenImage[t1.kind].equals("\"" + t1.image + "\"")) {
+        System.out.print(": \"" + t1.image + "\"");
+      }
+      System.out.println(" at line " + t1.beginLine + " column " + t1.beginColumn + ">; Expected token: <" + tokenImage[t2] + ">");
+    }
   }
 
   static private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 15; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -919,6 +3176,20 @@ public class PLSQLParser/*@bgen(jjtree)*/implements PLSQLParserTreeConstants, PL
           jj_la = p.arg; jj_lastpos = jj_scanpos = p.first;
           switch (i) {
             case 0: jj_3_1(); break;
+            case 1: jj_3_2(); break;
+            case 2: jj_3_3(); break;
+            case 3: jj_3_4(); break;
+            case 4: jj_3_5(); break;
+            case 5: jj_3_6(); break;
+            case 6: jj_3_7(); break;
+            case 7: jj_3_8(); break;
+            case 8: jj_3_9(); break;
+            case 9: jj_3_10(); break;
+            case 10: jj_3_11(); break;
+            case 11: jj_3_12(); break;
+            case 12: jj_3_13(); break;
+            case 13: jj_3_14(); break;
+            case 14: jj_3_15(); break;
           }
         }
         p = p.next;
