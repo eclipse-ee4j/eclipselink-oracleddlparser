@@ -11,20 +11,18 @@
  *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
  ******************************************************************************/
 options {
+    MULTI = false;
     STATIC = true;
     UNICODE_INPUT = true;
-    JAVA_UNICODE_ESCAPE = false;
+    JAVA_UNICODE_ESCAPE = true;
     IGNORE_CASE = true;
     VISITOR = true;
     NODE_CLASS = "PLSQLNode";
+    NODE_USES_PARSER = false;
     SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
-	/*
-	MULTI=false
-	NODE_USES_PARSER=false
-	TRACK_TOKENS=false
-	NODE_PREFIX=AST
-	NODE_EXTENDS=
-	NODE_FACTORY=
+    /*
+    TRACK_TOKENS = true;
+    DEBUG_PARSER = true;
 	*/
 }
 PARSER_BEGIN(PLSQLParser)
@@ -90,51 +88,199 @@ SKIP:{
     <COMMENT_BLOCK: "/*" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/">
 }
 
-// PLSQL keywords (not a complete list)
+// PLSQL keywords (NB: may not be a complete list)
 TOKEN: {
-      <K_AS: "AS" >
+    <K_A: "A" >
+	| <K_ARRAY: "ARRAY" >
+	| <K_AS: "AS" >
 	| <K_AUTHID: "AUTHID" >
-	| <K_AUTONOMOUS_TRANSACTION: "AUTONOMOUS_TRANSACTION">
+	| <K_AUTOMATIC: "AUTOMATIC" >
+	| <K_AUTONOMOUS_TRANSACTION: "AUTONOMOUS_TRANSACTION" >
+	| <K_BFILE: "BFILE" >
+	| <K_BINARY_DOUBLE: "BINARY_DOUBLE" >
+	| <K_BINARY_FLOAT: "BINARY_FLOAT" >
+	| <K_BINARY_INTEGER: "BINARY_INTEGER" >
+	| <K_BLOB: "BLOB" >
+	| <K_BODY: "BODY" >
+	| <K_BOOLEAN: "BOOLEAN" >
+	| <K_BUILTIN: "BUILTIN" >
+	| <K_BULK: "BULK" >
+	| <K_BYTE: "BYTE" >
+	| <K_CHAR: "CHAR" >
+	| <K_CHARACTER: "CHARACTER" >
+	| <K_CHARSET: "%CHARSET" >
+	| <K_CLOB: "CLOB" >
+	| <K_CLOSE: "CLOSE" >
+	| <K_COLLECT: "COLLECT" >
+	| <K_CONSTANT: "CONSTANT" >
+	| <K_COUNT: "COUNT" >
 	| <K_CREATE: "CREATE" >
+	| <K_CROSS: "CROSS" >
+	| <K_CUBE: "CUBE" >
+	| <K_CURRENT_OF: "CURRENT_OF" >
 	| <K_CURRENT_USER: "CURRENT_USER" >
 	| <K_CURSOR: "CURSOR" >
-    | <K_DEFAULT: "DEFAULT" >
-    | <K_DEFINER: "DEFINER" >
+	| <K_DATE: "DATE" >
+	| <K_DAY: "DAY" >
+	| <K_DBTIMEZONE: "DBTIMEZONE" >
+	| <K_DEC: "DEC" >
+	| <K_DECIMAL: "DECIMAL" >
+	| <K_DECREMENT: "DECREMENT" >
+	| <K_DEFAULT: "DEFAULT" >
+	| <K_DEFINER: "DEFINER" >
 	| <K_DETERMINISTIC: "DETERMINISTIC" >
+	| <K_DIMENSION: "DIMENSION" >
+	| <K_DOUBLE: "DOUBLE" >
+	| <K_ELSIF: "ELSIF" >
+	| <K_EMPTY: "EMPTY" >
 	| <K_END: "END" >
-    | <K_EXCEPTION_INIT: "EXCEPTION_INIT" >
+	| <K_EQUALS_PATH: "EQUALS_PATH" >
+	| <K_ESCAPE: "ESCAPE" >
+    | <K_EXCEPTION: "EXCEPTION" >
+	| <K_EXCEPTION_INIT: "EXCEPTION_INIT" >
+	| <K_EXIT: "EXIT" >
+	| <K_FALSE: "FALSE" >
+	| <K_FIPSFLAG: "FIPSFLAG" >
+	| <K_FIRST: "FIRST" >
+	| <K_FLOAT: "FLOAT" >
+	| <K_FULL: "FULL" >
 	| <K_FUNCTION: "FUNCTION" >
+	| <K_GROUPING: "GROUPING" >
+	| <K_IGNORE: "IGNORE" >
+	| <K_INCREMENT: "INCREMENT" >
+	| <K_INFINITE: "INFINITE" >
 	| <K_INLINE: "INLINE" >
+	| <K_INNER: "INNER" >
+	| <K_INT: "INT" >
+	| <K_INTEGER: "INTEGER" >
+	| <K_INTERFACE: "INTERFACE" >
+	| <K_INTERVAL: "INTERVAL" >
 	| <K_IS: "IS" >
+	| <K_ITERATE: "ITERATE" >
+	| <K_JOIN: "JOIN" >
+	| <K_KEEP: "KEEP" >
+	| <K_LAST: "LAST" >
+	| <K_LEFT: "LEFT" >
+	| <K_LIKE2: "LIKE2" >
+	| <K_LIKE4: "LIKE4" >
+	| <K_LIKEC: "LIKEC" >
+	| <K_LOCAL: "LOCAL" >
+	| <K_LONG: "LONG" >
+	| <K_LOOP: "LOOP" >
+	| <K_MAIN: "MAIN" >
+	| <K_MEASURES: "MEASURES" >
+	| <K_MEMBER: "MEMBER" >
+	| <K_MLSLABEL: "MLSLABEL" >
+	| <K_MODEL: "MODEL" >
+	| <K_MONTH: "MONTH" >
+	| <K_NAN: "NAN" >
+	| <K_NATIONAL: "NATIONAL" >
+	| <K_NATURAL: "NATURAL" >
+	| <K_NAV: "NAV" >
+	| <K_NCHAR: "NCHAR" >
+	| <K_NCLOB: "NCLOB" >
+	| <K_NEW: "NEW" >
+	| <K_NEW_NAMES: "NEW_NAMES" >
+	| <K_NO: "'NO'" >
+	| <K_NOCYCLE: "NOCYCLE" >
+	| <K_NOTNULL: "NOT NULL" >
+	| <K_NULLS: "NULLS" >
+	| <K_NUMBER: "NUMBER" >
+	| <K_NUMERIC: "NUMERIC" >
+	| <K_NVARCHAR2: "NVARCHAR2" >
+	| <K_NVARCHAR: "NVARCHAR" >
+	| <K_ONLY: "ONLY" >
+	| <K_OPEN: "OPEN" >
 	| <K_OR: "OR" >
-    | <K_NO: "'NO'" >
+	| <K_OUT: "OUT" >
+	| <K_OUTER: "OUTER" >
 	| <K_PACKAGE: "PACKAGE" >
 	| <K_PARALLEL_ENABLE: "PARALLEL_ENABLE" >
+	| <K_PARTITION: "PARTITION" >
 	| <K_PIPELINED: "PIPELINED" >
-	| <K_PRAGMA: "PRAGMA">  
-    | <K_PROCEDURE: "PROCEDURE">      
-	| <K_REPLACE: "REPLACE" >   
-    | <K_RESTRICT_REFERENCES: "RESTRICT_REFERENCES" >   
+	| <K_PLS_INTEGER: "PLS_INTEGER" >
+	| <K_POSITIVE: "POSITIVE" >
+	| <K_PRAGMA: "PRAGMA" >
+	| <K_PRECISION: "PRECISION" >
+	| <K_PRESENT: "PRESENT" >
+	| <K_PROCEDURE: "PROCEDURE">     
+	| <K_RAISE: "RAISE" >
+	| <K_RANGE: "RANGE" >
+	| <K_RAW: "RAW" >     
+	| <K_READ: "READ" >
+	| <K_REAL: "REAL" >
+	| <K_RECORD: "RECORD" >
+	| <K_REF: "REF" >
+	| <K_REFERENCE: "REFERENCE" >
+	| <K_REGEXP_LIKE: "REGEXP_LIKE" >
+	| <K_REPLACE: "REPLACE" > 
+	| <K_RESTRICT_REFERENCES: "RESTRICT_REFERENCES" >   
 	| <K_RESULT_CACHE: "RESULT_CACHE" >
 	| <K_RETURN: "RETURN" >  
-    | <K_RNDS: "RNDS" >
-    | <K_RNPS: "RNPS" >
+	| <K_RETURNING: "RETURNING" >
+	| <K_REVERSE: "REVERSE" >
+	| <K_RIGHT: "RIGHT" >
+	| <K_RNDS: "RNDS" >
+	| <K_RNPS: "RNPS" >
+	| <K_ROLLBACK: "ROLLBACK" >
+	| <K_ROLLUP: "ROLLUP" >
+	| <K_ROWID: "ROWID" >
+    | <K_ROWTYPE: "%ROWTYPE" >
+	| <K_RULES: "RULES" >
+	| <K_SECOND: "SECOND" >
+	| <K_SECONDS: "SECONDS" >
+	| <K_SEQUENTIAL: "SEQUENTIAL" >
 	| <K_SERIALLY_REUSABLE: "SERIALLY_REUSABLE" >
-    | <K_TRUST: "TRUST" >
+	| <K_SESSIONTIMEZONE: "SESSIONTIMEZONE" >
+	| <K_SET: "SET" >
+	| <K_SETS: "SETS" >
+	| <K_SIBLINGS: "SIBLINGS" >
+	| <K_SINGLE: "SINGLE" >
+	| <K_SMALLINT: "SMALLINT" >
+	| <K_SOME: "SOME" >
+	| <K_SUBMUlookISET: "SUBMUlookISET" >
+	| <K_SUBTYPE: "SUBTYPE" >
+	| <K_THE: "THE" >
+	| <K_TIME: "TIME" >
+	| <K_TIMESTAMP: "TIMESTAMP" >
+	| <K_TO: "TO" >
+	| <K_TRANSACTION: "TRANSACTION" >
+    | <K_TRUE: "TRUE" >
+	| <K_TRUST: "TRUST" >
 	| <K_TYPE: "TYPE" >
-    | <K_WNDS: "WNDS" >
-    | <K_WNPS: "WNPS" >
-    | <K_YES: "'YES'" >
+    | <K_TYPE2: "%TYPE" >
+	| <K_UNDER_PATH: "UNDER_PATH" >
+	| <K_UNTIL: "UNTIL" >
+	| <K_UPDATED: "UPDATED" >
+	| <K_UPSERT: "UPSERT" >
+	| <K_UROWIDD: "UROWID" >
+	| <K_USING: "USING" >
+	| <K_VARCHAR2: "VARCHAR2" >
+	| <K_VARCHAR: "VARCHAR" >
+	| <K_VARRAY: "VARRAY" >
+	| <K_VARYING: "VARYING" >
+    | <K_WITH: "WITH" >
+	| <K_WHILE: "WHILE" >
+	| <K_WNDS: "WNDS" >
+	| <K_WNPS: "WNPS" >
+	| <K_WORK: "WORK" >
+	| <K_YEAR: "YEAR" >
+	| <K_YES: "'YES'" >
+	| <K_ZONE: "ZONE" >
 }
 
-// basic operators
+// basic character operators
 TOKEN: {
       < ASSIGN: ":=" >
 	| < ASTERISK: "*" >
+    | < ATSIGN: "@" >
 	| < CLOSEPAREN: ")" >
 	| < CONCAT: "||" >
     | < COLON: ":" >
+    | < COMMA: "," >
 	| < DOT: "." >
+    | < DOLLAR: "$" >
+    | < PERCENT: "%" >
 	| < EQUAL: "=" >
 	| < GREATER: ">" >
 	| < GREATEREQUAL: ">=" >
@@ -146,12 +292,11 @@ TOKEN: {
 	| < NOTEQUAL: "!=" >
 	| < OPENPAREN: "(" >
 	| < PLUS: "+" >
+    | < POUND: "#" >
 	| < QUESTIONMARK: "?" >
-	| < ROWTYPE: "%ROWTYPE" >
 	| < SEMICOLON: ";" >
 	| < SLASH: "/" >
 	| < TILDE: "~" >
-    | < TYPE: "%TYPE" >
 }
 
 TOKEN : { // numeric literals
@@ -190,16 +335,10 @@ SimpleNode parsePLSQLPackage():
 {String schema = null;
  String packageName = null;}
 {     "CREATE" [ "OR" "REPLACE" ] "PACKAGE" [LOOKAHEAD(2) schema=OracleObjectName() "." ] packageName=OracleObjectName()
-     [ "AUTHID" [ "CURRENT_USER" | "DEFINER" ]]
+     [ "AUTHID" [ "CURRENT_USER" | "DEFINER" ] ]
      [ "AS" | "IS" ]
-     (
-        typeDeclaration()
-        | cursorDeclaration()
-        | functionDeclaration()
-        | procedureDeclaration()
-        | pragmaDeclaration()
-     )*
-     "END" [ OracleObjectName() ] ";"
+         ( packageSpec() )*
+     endPackageSpec()
     {
       PLSQLPackageNode packageNode = new PLSQLPackageNode();
       if (schema != null) {
@@ -210,16 +349,206 @@ SimpleNode parsePLSQLPackage():
     }
 }
 
-SimpleNode typeDeclaration():
-{Token t = null;}
+void endPackageSpec():
+{String packageName = null;} 
+{    "END" [ packageName=OracleObjectName() ] ";"
+    {
+      if (packageName != null) {
+        //TODO - find PLSQLPackageNode by name
+        System.identityHashCode(jjtThis);
+      }
+      else {
+        //TODO - get 'current' PLSQLPackageNode
+        System.identityHashCode(jjtThis);
+      }
+    }
+}
+
+void packageSpec():
+{}
 {
-    "TYPE" t=<S_IDENTIFIER> "IS" 
-        typeDeclarationBody()
+    LOOKAHEAD(2) variableDeclaration()
+    | typeDeclaration()
+    | cursorDeclaration()
+    | procedureSpec()
+    | functionSpec()
+    | exceptionDeclaration()
+    | pragmaDeclaration()
+}
+
+void variableDeclaration():
+{}
+{
+    <S_IDENTIFIER> [ "CONSTANT" ] typeSpec() [ "NOT NULL" ]
+        [[ ":=" | "DEFAULT" ] expr_skipToSemicolon() ]
+    ";"}
+
+void datatype():
+{}
+{
+    "BINARY_INTEGER"
+    | "BINARY_FLOAT"
+    | "BINARY_DOUBLE"
+    | "NATURAL"
+    | "POSITIVE"
+    | ( "NUMBER" | "NUMERIC" | "DECIMAL" | "DEC" ) [ "(" <S_NUMBER> ( "," <S_NUMBER> )* ")" ]
+    | "LONG" [ "RAW" ] [ "(" <S_NUMBER> ")" ]
+    | "RAW" [ "(" <S_NUMBER> ")" ]
+    | "BOOLEAN"
+    | "DATE"
+    | LOOKAHEAD(2) "INTERVAL" "DAY" [ "(" <S_NUMBER> ")" ] "TO" "SECONDS" [ "(" <S_NUMBER> ")" ]
+    | "INTERVAL" "YEAR" [ "(" <S_NUMBER> ")" ] "TO" "MONTH"
+    | ( "TIME" |"TIMESTAMP") [ "(" <S_NUMBER> ")" ] [ "WITH" [ "LOCAL"] "TIME" "ZONE" ]
+    | "INTEGER"
+    | "INT"
+    | "SMALLINT"
+    | "FLOAT" [ "(" <S_NUMBER> ")" ]
+    | "REAL"
+    | "MLSLABEL"
+    | "PLS_INTEGER"
+    | "BLOB"
+    | "NCLOB"
+    | "BFILE"
+    | "ROWID"
+    | "UROWID" [ "(" <S_NUMBER> ")" ]
+    | "DOUBLE" "PRECISION"
+    | "CHAR" [ "VARYING" ] [ "(" <S_NUMBER> [ "BYTE" | "CHAR" ] ")" ] [ "CHARACTER" "SET" [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() "%CHARSET" ] ]
+    | "VARCHAR" [ "VARYING" ] [ "(" <S_NUMBER> [ "BYTE" | "CHAR" ] ")" ] [ "CHARACTER" "SET" [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() "%CHARSET" ] ]
+    | "VARCHAR2" [ "VARYING" ] [ "(" <S_NUMBER> [ "BYTE" | "CHAR" ] ")" ] [ "CHARACTER" "SET" [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() "%CHARSET" ] ]
+    | "CHARACTER" [ "VARYING" ] [ "(" <S_NUMBER> ")" ] 
+    | "NCHAR" [ "VARYING" ] [ "(" <S_NUMBER> ")" ] 
+    | "NVARCHAR" [ "(" <S_NUMBER> ")" ] 
+    | "NVARCHAR2" [ "(" <S_NUMBER> ")" ]
+    | "NATIONAL" ( "CHARACTER" |"CHAR" ) [ "VARYING" ] [ "(" <S_NUMBER> ")" ] 
+    | "CLOB" [ "CHARACTER" "SET" [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() "%CHARSET" ] ]
+}
+
+void typeSpec():
+{}
+{  
+    datatype()
+    | LOOKAHEAD(3) columnSpec() "%TYPE"
+    | LOOKAHEAD(3) tableSpec() "%ROWTYPE"
+    | typeName() [ "(" <S_NUMBER> ")" ]   
+}
+
+String columnSpec():
+{}
+{
+    OracleObjectName() [ "." OracleObjectName() [ "." OracleObjectName() ] ]
+    {return token.image;}
+}
+
+String tableSpec():
+{}
+{
+    OracleObjectName() [ "." OracleObjectName() [ <ATSIGN> <S_IDENTIFIER> ] ]
+    {return token.image;}
+}
+
+String typeName():
+{}
+{
+    OracleObjectName() [ "." OracleObjectName() ]
+    {return token.image;}
+}
+
+JAVACODE
+void expr_skipToSemicolon() {
+	Token tok;
+	while (true) {
+        tok = getToken(1);
+        if (tok.kind == SEMICOLON) {
+            break;
+        }
+        tok = getNextToken();
+    }
+}
+
+JAVACODE
+void expr_skipToNextArg() {
+    Token tok;
+    while (true) {
+        tok = getToken(1);
+        if (tok.kind == COMMA || tok.kind == CLOSEPAREN) {
+            break;
+        }
+        tok = getNextToken();
+    }
+}
+    
+SimpleNode typeDeclaration():
+{String s = null;}
+{
+    "TYPE" s=typeName() "IS" 
+        aTypeDeclaration() 
     ";"
     {
-      jjtThis.jjtSetValue(t.image);
+      jjtThis.jjtSetValue(s);
       return jjtThis;
     }
+}
+
+void aTypeDeclaration():
+{}
+{
+    recordDeclaration()
+    | subtypeDeclaration()
+    | plsqlTableDeclaration()
+    | varrayDeclaration()
+    | refCursorDeclaration()
+}
+
+void subtypeDeclaration():
+{}
+{
+    expr_skipToSemicolon()
+}
+
+SimpleNode recordDeclaration():
+{}
+{
+    "RECORD" "("
+        fieldDeclarations()
+    ")"
+    {
+      return jjtThis;
+    }
+}
+
+void fieldDeclarations():
+{}
+{
+    fieldDeclaration() ( "," fieldDeclaration() )*
+}
+
+SimpleNode fieldDeclaration():
+{String s = null;}
+{
+    s=typeName() typeSpec() [ "NOT NULL" ]
+        [[ ":=" | "DEFAULT" ] expr_skipToNextArg() ]
+    {
+      jjtThis.jjtSetValue(s);
+      return jjtThis;
+    }
+}
+
+void plsqlTableDeclaration():
+{}
+{
+    expr_skipToSemicolon()
+}
+
+void varrayDeclaration():
+{}
+{
+    expr_skipToSemicolon()
+}
+
+void refCursorDeclaration():
+{}
+{
+    expr_skipToSemicolon()
 }
 
 SimpleNode cursorDeclaration():
@@ -233,11 +562,36 @@ SimpleNode cursorDeclaration():
     }
 }
 
-SimpleNode functionDeclaration():
+void cursorSpec():
+{}
+{
+   expr_skipToSemicolon()
+}
+
+// Procedure Specification
+SimpleNode procedureSpec():
+{Token t = null;}
+{
+    "PROCEDURE" t=<S_IDENTIFIER>
+        [ "(" argumentList() ")" ]
+    ";" 
+    {
+      jjtThis.jjtSetValue(t.image);
+      return jjtThis;
+    }
+}
+
+void argumentList():
+{}
+{
+   argument() ( "," argument() )*
+}
+
+SimpleNode functionSpec():
 {Token t = null;}
 {
     "FUNCTION" t=<S_IDENTIFIER>
-        functionDeclarationBody()
+        argumentList()
         "RETURN" <S_IDENTIFIER> [ "%TYPE" | "%ROWTYPE" ]
         [ "DETERMINISTIC" | "PIPELINED" | "PARALLEL_ENABLE" | "RESULT_CACHE" ]
     ";"
@@ -247,16 +601,17 @@ SimpleNode functionDeclaration():
     }
 }
 
-SimpleNode procedureDeclaration():
-{Token t = null;}
+void argument():
+{}
 {
-    "PROCEDURE" t=<S_IDENTIFIER>
-        procedureDeclarationBody()
+   expr_skipToNextArg()
+}
+
+void exceptionDeclaration():
+{}
+{
+    <S_IDENTIFIER> "EXCEPTION" 
     ";"
-    {
-      jjtThis.jjtSetValue(t.image);
-      return jjtThis;
-    }
 }
 
 void pragmaDeclaration():
@@ -270,25 +625,4 @@ void pragmaDeclaration():
         ( "," [ "RNDS" | "WNDS" | "RNPS" | "WNPS" | "TRUST"] )+ ")"
     ]
     ";"
-}
-
-void typeDeclarationBody():
-{}
-{
-   < ~[] >
-   ";"
-}
-
-void functionDeclarationBody():
-{}
-{
-   < ~[] >
-   ";"
-}
-
-void procedureDeclarationBody():
-{}
-{
-   < ~[] >
-   ";"
 }
