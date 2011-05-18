@@ -18,13 +18,9 @@ options {
     IGNORE_CASE = true;
     VISITOR = true;
     NODE_CLASS = "PLSQLNode";
-    NODE_USES_PARSER = false;
     SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
-    DEBUG_PARSER = true;
-    /*
     TRACK_TOKENS = true;
-    DEBUG_PARSER = true;
-	*/
+    //DEBUG_PARSER = true;
 }
 PARSER_BEGIN(PLSQLParser)
 /*******************************************************************************
@@ -147,6 +143,7 @@ TOKEN: {
 	| <K_FUNCTION: "FUNCTION">
 	| <K_GROUPING: "GROUPING">
 	| <K_IGNORE: "IGNORE">
+    | <K_IN: "IN">
 	| <K_INCREMENT: "INCREMENT">
     | <K_INDEX: "INDEX">
 	| <K_INFINITE: "INFINITE">
@@ -184,6 +181,7 @@ TOKEN: {
 	| <K_NEW_NAMES: "NEW_NAMES">
 	| <K_NO: "'NO'">
 	| <K_NOCYCLE: "NOCYCLE">
+	| <K_NOCOPY: "NOCOPY">
     | <K_NOT: "NOT">
 	| <K_NULL: "NULL">
 	| <K_NULLS: "NULLS">
@@ -329,17 +327,8 @@ TOKEN:
   | <S_QUOTED_IDENTIFIER: "\"" (~["\n","\r","\""])* "\"" >
 }
 
-String OracleObjectName() #void:
-{}
-{
-    <S_IDENTIFIER>
-    {return token.image;}
-  | <S_QUOTED_IDENTIFIER>
-    {String s = token.image; return s.substring(1, s.length() - 1);}
-}
-
 // stripped-down version of PLSQL grammar: only parses package specifications
-SimpleNode parsePLSQLPackage():
+PLSQLNode parsePLSQLPackage():
 {String schema = null;
  String packageName = null;}
 {
@@ -347,8 +336,9 @@ SimpleNode parsePLSQLPackage():
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] packageName=OracleObjectName()
         [ <K_AUTHID> [ <K_CURRENT_USER> | <K_DEFINER> ] ]
         [ <K_AS> | <K_IS> ]
-         ( packageSpec() )*
-     endPackageSpec()
+         ( packageDeclaration() )*
+     <K_END> [ packageName=OracleObjectName() ] <O_SEMICOLON>
+     <EOF>
     {
       PLSQLPackageNode packageNode = new PLSQLPackageNode();
       if (schema != null) {
@@ -360,15 +350,7 @@ SimpleNode parsePLSQLPackage():
     }
 }
 
-void endPackageSpec():
-{String packageName = null;} 
-{    <K_END> [ packageName=OracleObjectName() ] <O_SEMICOLON>
-    {
-      //TODO - find PLSQLPackageNode by name and 'close' it
-    }
-}
-
-void packageSpec():
+void packageDeclaration() #void:
 {}
 {
     LOOKAHEAD(2) variableDeclaration()
@@ -384,58 +366,28 @@ void variableDeclaration():
 {}
 {
     <S_IDENTIFIER> [ <K_CONSTANT> ] typeSpec() [ <K_NOT> <K_NULL> ]
-        [[ <O_ASSIGN> | < K_DEFAULT> ] skipToSemicolon() ]
+        [ variableDefaultAssignment() ]
     <O_SEMICOLON>}
 
-String numberWithSize() #void:
-{Token precision = null;
- Token scale = null;
- Token t = null;
-}
-{    (<K_NUMBER> |<K_NUMERIC> | <K_DECIMAL> | <K_DEC> ) { t = token; }
-         [ <O_OPENPAREN> precision=<S_NUMBER> ( <O_COMMA> scale=<S_NUMBER> )* <O_CLOSEPAREN> ]
-    {
-      StringBuilder sb = new StringBuilder(t.image);
-      if (precision != null) {
-        sb.append("(");
-        sb.append(precision.image);      }
-      if (scale != null) {
-        sb.append(",");
-        sb.append(scale.image);
-      }
-      if (precision != null) {
-        sb.append(")");
-      }      return sb.toString();
-    }
-}
-
-String varchar2WithSize() #void:
-{Token size = null;
- Token t = null;
-}
+void variableDefaultAssignment() #void:
+{}
 {
-    ( <K_VARCHAR2> [ <K_VARYING> ]) { t = token; } [ <O_OPENPAREN> size=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
-        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
-    {
-      StringBuilder sb = new StringBuilder(t.image);
-      if (size != null) {
-        sb.append("(");
-        sb.append(size.image);
-        sb.append(")");
-      }
-      return sb.toString();
-    }        }
-
-void datatype():
-{String s = null;
+    ( <O_ASSIGN> | <K_DEFAULT> ) skipToSemiColon()
 }
+
+void datatype() #void:
+{}
 {
     <K_BINARY_INTEGER>
     | <K_BINARY_FLOAT>
     | <K_BINARY_DOUBLE>
     | <K_NATURAL>
     | <K_POSITIVE>
-    | s=numberWithSize() {token.image = s;}
+    | ( <K_NUMBER>
+        | <K_NUMERIC>
+        | <K_DECIMAL>
+        | <K_DEC>
+      ) [ <O_OPENPAREN> <S_NUMBER> ( <O_COMMA> <S_NUMBER> )* <O_CLOSEPAREN> ]
     | <K_LONG> [ <K_RAW> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_RAW> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_BOOLEAN>
@@ -462,7 +414,8 @@ void datatype():
         [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] 
     | <K_VARCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
         [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] 
-    | s=varchar2WithSize() {token.image = s;}
+    | <K_VARCHAR2> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
+        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
     | <K_CHARACTER> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] 
     | <K_NCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] 
     | <K_NVARCHAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] 
@@ -474,20 +427,32 @@ void datatype():
 String typeSpec():
 {String s = null;}
 {
-    datatype() {return token.image;}
-    | LOOKAHEAD(3) s=columnSpec() <K_TYPE2> {return s+token.image;}
-    | LOOKAHEAD(3) s=tableSpec() <K_ROWTYPE> {return s+token.image;}
-    | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] {return s+token.image;}  
+    (      datatype()
+    | LOOKAHEAD(3) columnSpec() <K_TYPE2>
+    | LOOKAHEAD(3) tableSpec() <K_ROWTYPE>
+    | typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
+    )
+    {
+      Token first = jjtThis.jjtGetFirstToken();
+      Token last = jjtThis.jjtGetLastToken();
+      Token cur = first;
+      StringBuilder sb = new StringBuilder();
+      sb.append(first.image);
+      while (cur != last) {
+          cur = cur.next;
+          sb.append(cur.image);      }
+      jjtThis.jjtSetValue(sb.toString());
+      return sb.toString();    }
 }
 
-String columnSpec():
+String columnSpec() #void:
 {}
 {
     OracleObjectName() [ <O_DOT> OracleObjectName() [ <O_DOT> OracleObjectName() ] ]
     {return token.image;}
 }
 
-String tableSpec():
+String tableSpec() #void:
 {}
 {
     OracleObjectName() [ <O_DOT> OracleObjectName() [ <O_ATSIGN> <S_IDENTIFIER> ] ]
@@ -501,7 +466,7 @@ String typeName() #void:
     {return token.image;}
 }
     
-SimpleNode typeDeclaration():
+PLSQLNode typeDeclaration():
 {String s = null;}
 {
     <K_TYPE> s=typeName() <K_IS>
@@ -523,15 +488,14 @@ void aTypeDeclaration() #void:
     | refCursorDeclaration()
 }
 
-SimpleNode recordDeclaration():
+PLSQLNode recordDeclaration():
 {}
 {
     <K_RECORD> <O_OPENPAREN>
         fieldDeclarations()
     <O_CLOSEPAREN>
-    {
-      return jjtThis;
-    }
+    { jjtThis.jjtSetValue("RECORD");
+      return jjtThis; }
 }
 
 void fieldDeclarations() #void:
@@ -540,28 +504,18 @@ void fieldDeclarations() #void:
     fieldDeclaration() ( <O_COMMA> fieldDeclaration() )*
 }
 
-SimpleNode fieldDeclaration():
-{String s = null;}
+PLSQLNode fieldDeclaration():
+{String s = null;
+}
 {
-    s=typeName() fieldType() [ <K_NOT> <K_NULL> ] 
-        [[ <O_ASSIGN> | <K_DEFAULT> ] skipToNextArg() ]
+    s=typeName() typeSpec() [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
     {
       jjtThis.jjtSetValue(s);
       return jjtThis;
     }
 }
 
-SimpleNode fieldType():
-{String s = null;}
-{
-    s=typeSpec()
-    {
-      jjtThis.jjtSetValue(s);
-      return jjtThis;
-    }
-}
-
-void subtypeDeclaration():
+PLSQLNode subtypeDeclaration():
 {}
 {
     <K_SUBTYPE> OracleObjectName() <K_IS> datatype()
@@ -569,9 +523,10 @@ void subtypeDeclaration():
         | <S_NUMBER> [ <O_COMMA> <S_NUMBER> ]
         | <K_CHARACTER> <K_SET> <S_IDENTIFIER>
         ) [ <K_NOT> <K_NULL> ] 
+    { return jjtThis; }
 }
 
-SimpleNode plsqlTableDeclaration():
+PLSQLNode plsqlTableDeclaration():
 {}
 {
     <K_TABLE> <K_OF> datatype() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
@@ -583,7 +538,7 @@ SimpleNode plsqlTableDeclaration():
     { return jjtThis; }
 }
 
-SimpleNode varrayDeclaration():
+PLSQLNode varrayDeclaration():
 {}
 {
     ( <K_VARRAY> | <K_VARYING> <K_ARRAY> ) <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
@@ -591,20 +546,28 @@ SimpleNode varrayDeclaration():
     { return jjtThis; }
 }
 
-SimpleNode refCursorDeclaration():
+PLSQLNode refCursorDeclaration():
 {String s = null;}
 {
-    <K_REF> <K_CURSOR>
-        [   <K_RETURN> [LOOKAHEAD(3) s=columnSpec() [ <K_TYPE2> ]
-            | LOOKAHEAD(3) s=tableSpec() [ <K_ROWTYPE> ] ]
-        ]
+    <K_REF> <K_CURSOR> [ refCursorTypeSpec() ]
     {
-      jjtThis.jjtSetValue(s);
+      jjtThis.jjtSetValue("REF CURSOR");
       return jjtThis;
     }
 }
 
-SimpleNode cursorDeclaration():
+PLSQLNode refCursorTypeSpec():
+{String s = null;}
+{
+    <K_RETURN> [LOOKAHEAD(3) s=columnSpec() [ <K_TYPE2> ]
+    | LOOKAHEAD(3) s=tableSpec() [ <K_ROWTYPE> ] ]
+    {
+      jjtThis.jjtSetValue("RETURN " +s);
+      return jjtThis;
+    }
+}
+
+PLSQLNode cursorDeclaration():
 {Token t = null;}
 {
     <K_CURSOR> t=<S_IDENTIFIER>
@@ -616,52 +579,96 @@ SimpleNode cursorDeclaration():
 }
 
 // Procedure Specification
-SimpleNode procedureSpec():
+PLSQLNode procedureSpec():
 {Token t = null;}
 {
     <K_PROCEDURE> t=<S_IDENTIFIER>
         [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ]
     <O_SEMICOLON> 
     {
-      jjtThis.jjtSetValue(t.image);
+      jjtThis.jjtSetValue("PROCEDURE " + t.image);
       return jjtThis;
     }
 }
 
-void argumentList():
+void argumentList() #void:
 {}
 {
    argument() ( <O_COMMA> argument() )*
 }
 
-SimpleNode functionSpec():
+// Function Specification
+PLSQLNode functionSpec():
 {Token t = null;}
 {
     <K_FUNCTION> t=<S_IDENTIFIER>
         [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ]
-        <K_RETURN> OracleObjectName() [ <K_TYPE2> | <K_ROWTYPE> ]
+        functionReturnSpec()
         [ <K_DETERMINISTIC> | <K_PIPELINED> | <K_PARALLEL_ENABLE> | <K_RESULT_CACHE> ]
     <O_SEMICOLON> 
     {
-      jjtThis.jjtSetValue(t.image);
+      jjtThis.jjtSetValue("FUNCTION " + t.image);
       return jjtThis;
     }
 }
 
-void argument():
-{}
-{
-   skipToNextArg()
+PLSQLNode functionReturnSpec():
+{}{    (<K_RETURN> typeSpec())
+    {
+      jjtThis.jjtSetValue("RETURN");
+      return jjtThis;
+    }
 }
 
-void exceptionDeclaration():
+PLSQLNode argument():
+{Token t = null;
+ Token directionToken = null;
+ String direction = null;
+}
+{
+    t=<S_IDENTIFIER> [( LOOKAHEAD(2) directionToken=<K_IN> | directionToken=<K_OUT> | direction=inOut())]
+        [ <K_NOCOPY> ] typeSpec() [ argumentDefaultAssignment() ]
+    {
+      if (directionToken != null) {
+          jjtThis.jjtSetValue(directionToken.image + " " + t.image);
+      }
+      else if (direction != null) {
+          jjtThis.jjtSetValue(direction + " " + t.image);
+      }
+      else {
+          // by default, arguments are IN
+          jjtThis.jjtSetValue("IN " + t.image);
+      }
+      return jjtThis;
+    }
+}
+
+
+String inOut() #void:
+{}
+{
+    <K_IN> <K_OUT>
+    { return "IN OUT"; }
+}   
+
+PLSQLNode argumentDefaultAssignment():
+{}
+{
+    ( <O_ASSIGN> | <K_DEFAULT> ) skipToNextArg()
+    {
+      jjtThis.jjtSetValue(" (optional)");
+      return jjtThis;
+    }
+}    
+
+void exceptionDeclaration() #void:
 {}
 {
     <S_IDENTIFIER> <K_EXCEPTION> 
     <O_SEMICOLON>
 }
 
-void pragmaDeclaration():
+void pragmaDeclaration() #void:
 {}
 {    <K_PRAGMA>
     [ <K_AUTONOMOUS_TRANSACTION>
@@ -674,26 +681,37 @@ void pragmaDeclaration():
     <O_SEMICOLON>
 }
 
-JAVACODE
-void skipToSemicolon() {
-    Token tok;
-    while (true) {
-        tok = getToken(1);
-        if (tok.kind == O_SEMICOLON) {
-            break;
-        }
-        tok = getNextToken();
+String OracleObjectName() #void:
+{}
+{
+    <S_IDENTIFIER>
+    {return token.image;}
+  | <S_QUOTED_IDENTIFIER>
+    {
+      String s = token.image;
+      return s.substring(1, s.length() - 1); // strip-off quotes
     }
 }
 
-JAVACODE
-void skipToNextArg() {
-    Token tok;
-    while (true) {
-        tok = getToken(1);
-        if (tok.kind == O_COMMA || tok.kind == O_CLOSEPAREN) {
-            break;
+void skipToSemiColon() #void:
+{}
+{
+    {
+        Token t = getNextToken();
+        while (t.kind != O_SEMICOLON) {          t = getNextToken();
         }
-        tok = getNextToken();
+        token_source.input_stream.backup(1);
+    }
+}
+
+void skipToNextArg() #void:
+{}
+{   
+    {
+        Token t = getNextToken();
+        while (t.kind != O_COMMA && t.kind != O_CLOSEPAREN) {
+          t = getNextToken();
+        }
+        token_source.input_stream.backup(1);
     }
 }
