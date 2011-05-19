@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
- * which accompanies this distribution. 
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
+ * which accompanies this distribution.
  * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at 
+ * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
@@ -25,11 +25,11 @@ options {
 PARSER_BEGIN(PLSQLParser)
 /*******************************************************************************
  * Copyright (c) 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
- * which accompanies this distribution. 
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
+ * which accompanies this distribution.
  * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at 
+ * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
@@ -42,7 +42,7 @@ public class PLSQLParser {
     public PLSQLParser() {
       super();
     }
-    
+
     public static void main( String args[] ) throws ParseException {
         PLSQLParser p = null ;
         if (args.length < 1) {
@@ -85,222 +85,221 @@ SKIP:{
 
 // PLSQL keywords (NB: may not be a complete list)
 TOKEN: {
-    <K_A: "A">
-	| <K_ARRAY: "ARRAY">
-	| <K_AS: "AS">
-	| <K_AUTHID: "AUTHID">
-	| <K_AUTOMATIC: "AUTOMATIC">
-	| <K_AUTONOMOUS_TRANSACTION: "AUTONOMOUS_TRANSACTION">
-	| <K_BFILE: "BFILE">
-	| <K_BINARY_DOUBLE: "BINARY_DOUBLE">
-	| <K_BINARY_FLOAT: "BINARY_FLOAT">
-	| <K_BINARY_INTEGER: "BINARY_INTEGER">
-	| <K_BLOB: "BLOB">
-	| <K_BODY: "BODY">
-	| <K_BOOLEAN: "BOOLEAN">
-	| <K_BUILTIN: "BUILTIN">
-	| <K_BULK: "BULK">
-    | <K_BY: "BY">
-	| <K_BYTE: "BYTE">
-	| <K_CHAR: "CHAR">
-	| <K_CHARACTER: "CHARACTER">
-	| <K_CHARSET: "%CHARSET">
-	| <K_CLOB: "CLOB">
-	| <K_CLOSE: "CLOSE">
-	| <K_COLLECT: "COLLECT">
-	| <K_CONSTANT: "CONSTANT">
-	| <K_COUNT: "COUNT">
-	| <K_CREATE: "CREATE">
-	| <K_CROSS: "CROSS">
-	| <K_CUBE: "CUBE">
-	| <K_CURRENT_OF: "CURRENT_OF">
-	| <K_CURRENT_USER: "CURRENT_USER">
-	| <K_CURSOR: "CURSOR">
-	| <K_DATE: "DATE">
-	| <K_DAY: "DAY">
-	| <K_DBTIMEZONE: "DBTIMEZONE">
-	| <K_DEC: "DEC">
-	| <K_DECIMAL: "DECIMAL">
-	| <K_DECREMENT: "DECREMENT">
-	| <K_DEFAULT: "DEFAULT">
-	| <K_DEFINER: "DEFINER">
-	| <K_DETERMINISTIC: "DETERMINISTIC">
-	| <K_DIMENSION: "DIMENSION">
-	| <K_DOUBLE: "DOUBLE">
-	| <K_ELSIF: "ELSIF">
-	| <K_EMPTY: "EMPTY">
-	| <K_END: "END">
-	| <K_EQUALS_PATH: "EQUALS_PATH">
-	| <K_ESCAPE: "ESCAPE">
-    | <K_EXCEPTION: "EXCEPTION">
-	| <K_EXCEPTION_INIT: "EXCEPTION_INIT">
-	| <K_EXIT: "EXIT">
-	| <K_FALSE: "FALSE">
-	| <K_FIPSFLAG: "FIPSFLAG">
-	| <K_FIRST: "FIRST">
-	| <K_FLOAT: "FLOAT">
-	| <K_FULL: "FULL">
-	| <K_FUNCTION: "FUNCTION">
-	| <K_GROUPING: "GROUPING">
-	| <K_IGNORE: "IGNORE">
-    | <K_IN: "IN">
-	| <K_INCREMENT: "INCREMENT">
-    | <K_INDEX: "INDEX">
-	| <K_INFINITE: "INFINITE">
-	| <K_INLINE: "INLINE">
-	| <K_INNER: "INNER">
-	| <K_INT: "INT">
-	| <K_INTEGER: "INTEGER">
-	| <K_INTERFACE: "INTERFACE">
-	| <K_INTERVAL: "INTERVAL">
-	| <K_IS: "IS">
-	| <K_ITERATE: "ITERATE">
-	| <K_JOIN: "JOIN">
-	| <K_KEEP: "KEEP">
-	| <K_LAST: "LAST">
-	| <K_LEFT: "LEFT">
-	| <K_LIKE2: "LIKE2">
-	| <K_LIKE4: "LIKE4">
-	| <K_LIKEC: "LIKEC">
-	| <K_LOCAL: "LOCAL">
-	| <K_LONG: "LONG">
-	| <K_LOOP: "LOOP">
-	| <K_MAIN: "MAIN">
-	| <K_MEASURES: "MEASURES">
-	| <K_MEMBER: "MEMBER">
-	| <K_MLSLABEL: "MLSLABEL">
-	| <K_MODEL: "MODEL">
-	| <K_MONTH: "MONTH">
-	| <K_NAN: "NAN">
-	| <K_NATIONAL: "NATIONAL">
-	| <K_NATURAL: "NATURAL">
-	| <K_NAV: "NAV">
-	| <K_NCHAR: "NCHAR">
-	| <K_NCLOB: "NCLOB">
-	| <K_NEW: "NEW">
-	| <K_NEW_NAMES: "NEW_NAMES">
-	| <K_NO: "'NO'">
-	| <K_NOCYCLE: "NOCYCLE">
-	| <K_NOCOPY: "NOCOPY">
-    | <K_NOT: "NOT">
-	| <K_NULL: "NULL">
-	| <K_NULLS: "NULLS">
-	| <K_NUMBER: "NUMBER">
-	| <K_NUMERIC: "NUMERIC">
-	| <K_NVARCHAR2: "NVARCHAR2">
-	| <K_NVARCHAR: "NVARCHAR">
-    | <K_OF: "OF">
-	| <K_ONLY: "ONLY">
-	| <K_OPEN: "OPEN">
-	| <K_OR: "OR">
-	| <K_OUT: "OUT">
-	| <K_OUTER: "OUTER">
-	| <K_PACKAGE: "PACKAGE">
-	| <K_PARALLEL_ENABLE: "PARALLEL_ENABLE">
-	| <K_PARTITION: "PARTITION">
-	| <K_PIPELINED: "PIPELINED">
-	| <K_PLS_INTEGER: "PLS_INTEGER">
-	| <K_POSITIVE: "POSITIVE">
-	| <K_PRAGMA: "PRAGMA">
-	| <K_PRECISION: "PRECISION">
-	| <K_PRESENT: "PRESENT">
-	| <K_PROCEDURE: "PROCEDURE">     
-	| <K_RAISE: "RAISE">
-	| <K_RANGE: "RANGE">
-	| <K_RAW: "RAW">     
-	| <K_READ: "READ">
-	| <K_REAL: "REAL">
-	| <K_RECORD: "RECORD">
-	| <K_REF: "REF">
-	| <K_REFERENCE: "REFERENCE">
-	| <K_REGEXP_LIKE: "REGEXP_LIKE">
-	| <K_REPLACE: "REPLACE"> 
-	| <K_RESTRICT_REFERENCES: "RESTRICT_REFERENCES">   
-	| <K_RESULT_CACHE: "RESULT_CACHE">
-	| <K_RETURN: "RETURN">  
-	| <K_RETURNING: "RETURNING">
-	| <K_REVERSE: "REVERSE">
-	| <K_RIGHT: "RIGHT">
-	| <K_RNDS: "RNDS">
-	| <K_RNPS: "RNPS">
-	| <K_ROLLBACK: "ROLLBACK">
-	| <K_ROLLUP: "ROLLUP">
-	| <K_ROWID: "ROWID">
-    | <K_ROWTYPE: "%ROWTYPE">
-	| <K_RULES: "RULES">
-	| <K_SECOND: "SECOND">
-	| <K_SECONDS: "SECONDS">
-	| <K_SEQUENTIAL: "SEQUENTIAL">
-	| <K_SERIALLY_REUSABLE: "SERIALLY_REUSABLE">
-	| <K_SESSIONTIMEZONE: "SESSIONTIMEZONE">
-	| <K_SET: "SET">
-	| <K_SETS: "SETS">
-	| <K_SIBLINGS: "SIBLINGS">
-	| <K_SINGLE: "SINGLE">
-	| <K_SMALLINT: "SMALLINT">
-	| <K_SOME: "SOME">
-    | <K_STRING: "STRING">
-	| <K_SUBMUlookISET: "SUBMUlookISET">
-	| <K_SUBTYPE: "SUBTYPE">
-    | <K_TABLE: "TABLE">
-	| <K_THE: "THE">
-	| <K_TIME: "TIME">
-	| <K_TIMESTAMP: "TIMESTAMP">
-	| <K_TO: "TO">
-	| <K_TRANSACTION: "TRANSACTION">
-    | <K_TRUE: "TRUE">
-	| <K_TRUST: "TRUST">
-	| <K_TYPE: "TYPE">
-    | <K_TYPE2: "%TYPE">
-	| <K_UNDER_PATH: "UNDER_PATH">
-	| <K_UNTIL: "UNTIL">
-	| <K_UPDATED: "UPDATED">
-	| <K_UPSERT: "UPSERT">
-	| <K_UROWIDD: "UROWID">
-	| <K_USING: "USING">
-	| <K_VARCHAR2: "VARCHAR2">
-	| <K_VARCHAR: "VARCHAR">
-	| <K_VARRAY: "VARRAY">
-	| <K_VARYING: "VARYING">
-    | <K_WITH: "WITH">
-	| <K_WHILE: "WHILE">
-	| <K_WNDS: "WNDS">
-	| <K_WNPS: "WNPS">
-	| <K_WORK: "WORK">
-	| <K_YEAR: "YEAR">
-	| <K_YES: "'YES'">
-	| <K_ZONE: "ZONE">
+          <K_A: "A">
+        | <K_ARRAY: "ARRAY">
+        | <K_AS: "AS">
+        | <K_AUTHID: "AUTHID">
+        | <K_AUTOMATIC: "AUTOMATIC">
+        | <K_AUTONOMOUS_TRANSACTION: "AUTONOMOUS_TRANSACTION">
+        | <K_BFILE: "BFILE">
+        | <K_BINARY_DOUBLE: "BINARY_DOUBLE">
+        | <K_BINARY_FLOAT: "BINARY_FLOAT">
+        | <K_BINARY_INTEGER: "BINARY_INTEGER">
+        | <K_BLOB: "BLOB">
+        | <K_BODY: "BODY">
+        | <K_BOOLEAN: "BOOLEAN">
+        | <K_BUILTIN: "BUILTIN">
+        | <K_BULK: "BULK">
+        | <K_BY: "BY">
+        | <K_BYTE: "BYTE">
+        | <K_CHAR: "CHAR">
+        | <K_CHARACTER: "CHARACTER">
+        | <K_CHARSET: "%CHARSET">
+        | <K_CLOB: "CLOB">
+        | <K_CLOSE: "CLOSE">
+        | <K_COLLECT: "COLLECT">
+        | <K_CONSTANT: "CONSTANT">
+        | <K_COUNT: "COUNT">
+        | <K_CREATE: "CREATE">
+        | <K_CROSS: "CROSS">
+        | <K_CUBE: "CUBE">
+        | <K_CURRENT_OF: "CURRENT_OF">
+        | <K_CURRENT_USER: "CURRENT_USER">
+        | <K_CURSOR: "CURSOR">
+        | <K_DATE: "DATE">
+        | <K_DAY: "DAY">
+        | <K_DBTIMEZONE: "DBTIMEZONE">
+        | <K_DEC: "DEC">
+        | <K_DECIMAL: "DECIMAL">
+        | <K_DECREMENT: "DECREMENT">
+        | <K_DEFAULT: "DEFAULT">
+        | <K_DEFINER: "DEFINER">
+        | <K_DETERMINISTIC: "DETERMINISTIC">
+        | <K_DIMENSION: "DIMENSION">
+        | <K_DOUBLE: "DOUBLE">
+        | <K_ELSIF: "ELSIF">
+        | <K_EMPTY: "EMPTY">
+        | <K_END: "END">
+        | <K_EQUALS_PATH: "EQUALS_PATH">
+        | <K_ESCAPE: "ESCAPE">
+        | <K_EXCEPTION: "EXCEPTION">
+        | <K_EXCEPTION_INIT: "EXCEPTION_INIT">
+        | <K_EXIT: "EXIT">
+        | <K_FALSE: "FALSE">
+        | <K_FIPSFLAG: "FIPSFLAG">
+        | <K_FIRST: "FIRST">
+        | <K_FLOAT: "FLOAT">
+        | <K_FULL: "FULL">
+        | <K_FUNCTION: "FUNCTION">
+        | <K_GROUPING: "GROUPING">
+        | <K_IGNORE: "IGNORE">
+        | <K_IN: "IN">
+        | <K_INCREMENT: "INCREMENT">
+        | <K_INDEX: "INDEX">
+        | <K_INFINITE: "INFINITE">
+        | <K_INLINE: "INLINE">
+        | <K_INNER: "INNER">
+        | <K_INT: "INT">
+        | <K_INTEGER: "INTEGER">
+        | <K_INTERFACE: "INTERFACE">
+        | <K_INTERVAL: "INTERVAL">
+        | <K_IS: "IS">
+        | <K_ITERATE: "ITERATE">
+        | <K_JOIN: "JOIN">
+        | <K_KEEP: "KEEP">
+        | <K_LAST: "LAST">
+        | <K_LEFT: "LEFT">
+        | <K_LIKE2: "LIKE2">
+        | <K_LIKE4: "LIKE4">
+        | <K_LIKEC: "LIKEC">
+        | <K_LOCAL: "LOCAL">
+        | <K_LONG: "LONG">
+        | <K_LOOP: "LOOP">
+        | <K_MAIN: "MAIN">
+        | <K_MEASURES: "MEASURES">
+        | <K_MEMBER: "MEMBER">
+        | <K_MLSLABEL: "MLSLABEL">
+        | <K_MODEL: "MODEL">
+        | <K_MONTH: "MONTH">
+        | <K_NAN: "NAN">
+        | <K_NATIONAL: "NATIONAL">
+        | <K_NATURAL: "NATURAL">
+        | <K_NAV: "NAV">
+        | <K_NCHAR: "NCHAR">
+        | <K_NCLOB: "NCLOB">
+        | <K_NEW_NAMES: "NEW_NAMES">
+        | <K_NO: "'NO'">
+        | <K_NOCYCLE: "NOCYCLE">
+        | <K_NOCOPY: "NOCOPY">
+        | <K_NOT: "NOT">
+        | <K_NULL: "NULL">
+        | <K_NULLS: "NULLS">
+        | <K_NUMBER: "NUMBER">
+        | <K_NUMERIC: "NUMERIC">
+        | <K_NVARCHAR2: "NVARCHAR2">
+        | <K_NVARCHAR: "NVARCHAR">
+        | <K_OF: "OF">
+        | <K_ONLY: "ONLY">
+        | <K_OPEN: "OPEN">
+        | <K_OR: "OR">
+        | <K_OUT: "OUT">
+        | <K_OUTER: "OUTER">
+        | <K_PACKAGE: "PACKAGE">
+        | <K_PARALLEL_ENABLE: "PARALLEL_ENABLE">
+        | <K_PARTITION: "PARTITION">
+        | <K_PIPELINED: "PIPELINED">
+        | <K_PLS_INTEGER: "PLS_INTEGER">
+        | <K_POSITIVE: "POSITIVE">
+        | <K_PRAGMA: "PRAGMA">
+        | <K_PRECISION: "PRECISION">
+        | <K_PRESENT: "PRESENT">
+        | <K_PROCEDURE: "PROCEDURE">
+        | <K_RAISE: "RAISE">
+        | <K_RANGE: "RANGE">
+        | <K_RAW: "RAW">
+        | <K_READ: "READ">
+        | <K_REAL: "REAL">
+        | <K_RECORD: "RECORD">
+        | <K_REF: "REF">
+        | <K_REFERENCE: "REFERENCE">
+        | <K_REGEXP_LIKE: "REGEXP_LIKE">
+        | <K_REPLACE: "REPLACE">
+        | <K_RESTRICT_REFERENCES: "RESTRICT_REFERENCES">
+        | <K_RESULT_CACHE: "RESULT_CACHE">
+        | <K_RETURN: "RETURN">
+        | <K_RETURNING: "RETURNING">
+        | <K_REVERSE: "REVERSE">
+        | <K_RIGHT: "RIGHT">
+        | <K_RNDS: "RNDS">
+        | <K_RNPS: "RNPS">
+        | <K_ROLLBACK: "ROLLBACK">
+        | <K_ROLLUP: "ROLLUP">
+        | <K_ROWID: "ROWID">
+        | <K_ROWTYPE: "%ROWTYPE">
+        | <K_RULES: "RULES">
+        | <K_SECOND: "SECOND">
+        | <K_SECONDS: "SECONDS">
+        | <K_SEQUENTIAL: "SEQUENTIAL">
+        | <K_SERIALLY_REUSABLE: "SERIALLY_REUSABLE">
+        | <K_SESSIONTIMEZONE: "SESSIONTIMEZONE">
+        | <K_SET: "SET">
+        | <K_SETS: "SETS">
+        | <K_SIBLINGS: "SIBLINGS">
+        | <K_SINGLE: "SINGLE">
+        | <K_SMALLINT: "SMALLINT">
+        | <K_SOME: "SOME">
+        | <K_STRING: "STRING">
+        | <K_SUBMUlookISET: "SUBMUlookISET">
+        | <K_SUBTYPE: "SUBTYPE">
+        | <K_TABLE: "TABLE">
+        | <K_THE: "THE">
+        | <K_TIME: "TIME">
+        | <K_TIMESTAMP: "TIMESTAMP">
+        | <K_TO: "TO">
+        | <K_TRANSACTION: "TRANSACTION">
+        | <K_TRUE: "TRUE">
+        | <K_TRUST: "TRUST">
+        | <K_TYPE: "TYPE">
+        | <K_TYPE2: "%TYPE">
+        | <K_UNDER_PATH: "UNDER_PATH">
+        | <K_UNTIL: "UNTIL">
+        | <K_UPDATED: "UPDATED">
+        | <K_UPSERT: "UPSERT">
+        | <K_UROWIDD: "UROWID">
+        | <K_USING: "USING">
+        | <K_VARCHAR2: "VARCHAR2">
+        | <K_VARCHAR: "VARCHAR">
+        | <K_VARRAY: "VARRAY">
+        | <K_VARYING: "VARYING">
+        | <K_WITH: "WITH">
+        | <K_WHILE: "WHILE">
+        | <K_WNDS: "WNDS">
+        | <K_WNPS: "WNPS">
+        | <K_WORK: "WORK">
+        | <K_YEAR: "YEAR">
+        | <K_YES: "'YES'">
+        | <K_ZONE: "ZONE">
 }
 
 // operators
 TOKEN: {
-      <O_ASSIGN: ":=">
-	| <O_ASTERISK: "*">
-    | <O_ATSIGN: "@">
-	| <O_CLOSEPAREN: ")">
-	| <O_CONCAT: "||">
-    | <O_COLON: ":">
-    | <O_COMMA: ",">
-	| <O_DOT: ".">
-    | <O_DOUBLEDOT: "..">
-    | <O_DOLLAR: "$">
-    | <O_PERCENT: "%">
-	| <O_EQUAL: "=">
-	| <O_GREATER: ">">
-	| <O_GREATEREQUAL: ">=">
-	| <O_JOINPLUS: "(+)">
-	| <O_LESS: "<">
-	| <O_LESSEQUAL: "<=">
-	| <O_MINUS: "-">
-	| <O_NOTEQUAL2: "<>">
-	| <O_NOTEQUAL: "!=">
-	| <O_OPENPAREN: "(">
-	| <O_PLUS: "+">
-    | <O_POUND: "#">
-	| <O_QUESTIONMARK: "?">
-	| <O_SEMICOLON: ";">
-	| <O_SLASH: "/">
-	| <O_TILDE: "~">
+          <O_ASSIGN: ":=">
+        | <O_ASTERISK: "*">
+        | <O_ATSIGN: "@">
+        | <O_CLOSEPAREN: ")">
+        | <O_CONCAT: "||">
+        | <O_COLON: ":">
+        | <O_COMMA: ",">
+        | <O_DOT: ".">
+        | <O_DOUBLEDOT: "..">
+        | <O_DOLLAR: "$">
+        | <O_PERCENT: "%">
+        | <O_EQUAL: "=">
+        | <O_GREATER: ">">
+        | <O_GREATEREQUAL: ">=">
+        | <O_JOINPLUS: "(+)">
+        | <O_LESS: "<">
+        | <O_LESSEQUAL: "<=">
+        | <O_MINUS: "-">
+        | <O_NOTEQUAL2: "<>">
+        | <O_NOTEQUAL: "!=">
+        | <O_OPENPAREN: "(">
+        | <O_PLUS: "+">
+        | <O_POUND: "#">
+        | <O_QUESTIONMARK: "?">
+        | <O_SEMICOLON: ";">
+        | <O_SLASH: "/">
+        | <O_TILDE: "~">
 }
 
 // numeric literals
@@ -309,8 +308,8 @@ TOKEN : {
         | <FLOAT> ( ["e","E"] ([ "-","+"])? <FLOAT> )?
       >
     | <#FLOAT: <INTEGER>
-	    | <INTEGER> ( "." <INTEGER> )?
-	    | "." <INTEGER>
+            | <INTEGER> ( "." <INTEGER> )?
+            | "." <INTEGER>
       >
     | <#INTEGER: ( <DIGIT> )+ >
     | <#DIGIT: ["0" - "9"] >
@@ -411,16 +410,16 @@ void datatype() #void:
     | <K_UROWIDD> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_DOUBLE> <K_PRECISION>
     | <K_CHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
-        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] 
+        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
     | <K_VARCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
-        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] 
+        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
     | <K_VARCHAR2> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
         [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
-    | <K_CHARACTER> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] 
-    | <K_NCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] 
-    | <K_NVARCHAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] 
+    | <K_CHARACTER> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
+    | <K_NCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
+    | <K_NVARCHAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_NVARCHAR2> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_NATIONAL> ( <K_CHARACTER> | <K_CHAR> ) [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] 
+    | <K_NATIONAL> ( <K_CHARACTER> | <K_CHAR> ) [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_CLOB> [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
 }
 
@@ -465,12 +464,12 @@ String typeName() #void:
     OracleObjectName() [ <O_DOT> OracleObjectName() ]
     {return token.image;}
 }
-    
+
 PLSQLNode typeDeclaration():
 {String s = null;}
 {
     <K_TYPE> s=typeName() <K_IS>
-        aTypeDeclaration() 
+        aTypeDeclaration()
     <O_SEMICOLON>
     {
       jjtThis.jjtSetValue(s);
@@ -522,20 +521,42 @@ PLSQLNode subtypeDeclaration():
         ( <K_RANGE> <S_NUMBER> <O_DOUBLEDOT> <S_NUMBER>
         | <S_NUMBER> [ <O_COMMA> <S_NUMBER> ]
         | <K_CHARACTER> <K_SET> <S_IDENTIFIER>
-        ) [ <K_NOT> <K_NULL> ] 
+        ) [ <K_NOT> <K_NULL> ]
     { return jjtThis; }
 }
 
 PLSQLNode plsqlTableDeclaration():
 {}
 {
-    <K_TABLE> <K_OF> datatype() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
-        ( <K_PLS_INTEGER >
-        | <K_BINARY_INTEGER>
-        | <K_VARCHAR2> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
-        | <K_STRING> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
-        )
-    { return jjtThis; }
+    <K_TABLE> <K_OF> typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
+        plsqlTableIndexByDeclaration()
+    {
+      jjtThis.jjtSetValue("TABLE OF");
+      return jjtThis;
+    }
+}
+
+PLSQLNode plsqlTableIndexByDeclaration():
+{}
+{
+    ( <K_PLS_INTEGER >
+    | <K_BINARY_INTEGER>
+    | <K_VARCHAR2> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
+    | <K_STRING> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
+    )
+    {
+      Token first = jjtThis.jjtGetFirstToken();
+      Token last = jjtThis.jjtGetLastToken();
+      Token cur = first;
+      StringBuilder sb = new StringBuilder("INDEX BY ");
+      sb.append(first.image);
+      while (cur != last) {
+          cur = cur.next;
+          sb.append(cur.image);
+      }
+      jjtThis.jjtSetValue(sb.toString());
+      return jjtThis;
+    }
 }
 
 PLSQLNode varrayDeclaration():
@@ -584,7 +605,7 @@ PLSQLNode procedureSpec():
 {
     <K_PROCEDURE> t=<S_IDENTIFIER>
         [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ]
-    <O_SEMICOLON> 
+    <O_SEMICOLON>
     {
       jjtThis.jjtSetValue("PROCEDURE " + t.image);
       return jjtThis;
@@ -605,7 +626,7 @@ PLSQLNode functionSpec():
         [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ]
         functionReturnSpec()
         [ <K_DETERMINISTIC> | <K_PIPELINED> | <K_PARALLEL_ENABLE> | <K_RESULT_CACHE> ]
-    <O_SEMICOLON> 
+    <O_SEMICOLON>
     {
       jjtThis.jjtSetValue("FUNCTION " + t.image);
       return jjtThis;
@@ -622,17 +643,13 @@ PLSQLNode functionReturnSpec():
 
 PLSQLNode argument():
 {Token t = null;
- Token directionToken = null;
  String direction = null;
 }
 {
-    t=<S_IDENTIFIER> [( LOOKAHEAD(2) directionToken=<K_IN> | directionToken=<K_OUT> | direction=inOut())]
+    t=<S_IDENTIFIER> [(direction=direction())]
         [ <K_NOCOPY> ] typeSpec() [ argumentDefaultAssignment() ]
     {
-      if (directionToken != null) {
-          jjtThis.jjtSetValue(directionToken.image + " " + t.image);
-      }
-      else if (direction != null) {
+      if (direction != null) {
           jjtThis.jjtSetValue(direction + " " + t.image);
       }
       else {
@@ -643,13 +660,13 @@ PLSQLNode argument():
     }
 }
 
-
-String inOut() #void:
+String direction() #void:
 {}
 {
-    <K_IN> <K_OUT>
-    { return "IN OUT"; }
-}   
+    LOOKAHEAD(2) <K_IN> <K_OUT> { return "IN OUT"; }
+    | <K_IN> { return "IN"; }
+    | <K_OUT>  { return "OUT"; }
+}
 
 PLSQLNode argumentDefaultAssignment():
 {}
@@ -659,12 +676,12 @@ PLSQLNode argumentDefaultAssignment():
       jjtThis.jjtSetValue(" (optional)");
       return jjtThis;
     }
-}    
+}
 
 void exceptionDeclaration() #void:
 {}
 {
-    <S_IDENTIFIER> <K_EXCEPTION> 
+    <S_IDENTIFIER> <K_EXCEPTION>
     <O_SEMICOLON>
 }
 
@@ -698,7 +715,8 @@ void skipToSemiColon() #void:
 {
     {
         Token t = getNextToken();
-        while (t.kind != O_SEMICOLON) {          t = getNextToken();
+        while (t.kind != O_SEMICOLON) {
+	    t = getNextToken();
         }
         token_source.input_stream.backup(1);
     }
@@ -706,7 +724,7 @@ void skipToSemiColon() #void:
 
 void skipToNextArg() #void:
 {}
-{   
+{
     {
         Token t = getNextToken();
         while (t.kind != O_COMMA && t.kind != O_CLOSEPAREN) {
