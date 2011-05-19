@@ -31,7 +31,7 @@ public class PLSQLParserTest {
         });
 	}
     
-    static void parse(String expectedPackageName) {
+    static PLSQLNode parse(String expectedPackageName) {
         boolean worked = true;
         String message = "";
         PLSQLNode parseNode = null;
@@ -47,6 +47,7 @@ public class PLSQLParserTest {
         PLSQLPackageNode packageNode = parseNode.getPackageNode();
         assertEquals("incorrect package name", packageNode.getPackageName(), expectedPackageName);
         //parseNode.dump("");
+        return parseNode;
     }
 
     static final String PACKAGE_NAME = "CURSOR_TEST";
