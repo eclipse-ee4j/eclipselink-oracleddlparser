@@ -30,6 +30,24 @@ public class PLSQLParserTest {
             }
         });
 	}
+    
+    static void parse(String expectedPackageName) {
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parsePLSQLPackage();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(expectedPackageName + " did not parse correctly:\n" + message, worked);
+        PLSQLPackageNode packageNode = parseNode.getPackageNode();
+        assertEquals("incorrect package name", packageNode.getPackageName(), expectedPackageName);
+        //parseNode.dump("");
+    }
 
     static final String PACKAGE_NAME = "CURSOR_TEST";
     static final String DOT_NAME = "SCOTT.CURSOR_TEST";
@@ -38,89 +56,39 @@ public class PLSQLParserTest {
         "CREATE OR REPLACE PACKAGE ";
     static final String EMPTY_PACKAGE_BODY = " AS \n";
     static final String EMPTY_PACKAGE_SUFFIX =
-        "END CURSOR_TEST;";
+        "END CURSOR_TEST;"; 
     //@Ignore
     @Test
     public void testEmptyPackage() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
-        PLSQLNode rootNode = null;
-        boolean worked = true;
-        String message = "";
-        try {
-            rootNode = (PLSQLNode)parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("empty package did not parse correctly:\n" + message, worked);
-        PLSQLPackageNode packageNode = rootNode.getPackageNode();
-        assertEquals("incorrect package name", packageNode.getPackageName(), PACKAGE_NAME);
+        parse(PACKAGE_NAME);
     }
-
+    
     //@Ignore
     @Test
 	public void testEmptyPackageDN() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + DOT_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
-		PLSQLNode rootNode = null;
-		boolean worked = true;
-        String message = "";
-        try {
-            rootNode = (PLSQLNode)parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("empty package DN did not parse correctly:\n" + message, worked);
-        PLSQLPackageNode packageNode = rootNode.getPackageNode();
-        assertEquals("incorrect package name", packageNode.getPackageName(), DOT_NAME);
+        parse(DOT_NAME);
 	}
-
+    
     //@Ignore
     @Test
     public void testEmptyPackageQDN()  {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + QUOTED_DOT_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
-        PLSQLNode rootNode = null;
-        boolean worked = true;
-        String message = "";
-        try {
-            rootNode = (PLSQLNode)parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("empty package QDN did not parse correctly:\n" + message, worked);
-        PLSQLPackageNode packageNode = rootNode.getPackageNode();
-        //NB: PLSQLParser strips-off the quotes
-        assertEquals("incorrect package name", packageNode.getPackageName(), DOT_NAME);
+        parse(DOT_NAME);
     }
 
     static final String VARIABLE_DECLARATION =
-        "urban_legend  CONSTANT BOOLEAN := FALSE; -- PL/SQL-only data type\n";
+        "urban_legend  CONSTANT BOOLEAN := FALSE; -- PL/SQL-only data type\n"; 
     //@Ignore
     @Test
     public void testVariableDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + VARIABLE_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        boolean worked = true;
-        String message = "";
-        try {
-            parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("package with variable declaration did not parse correctly:\n" + message, worked);
+        parse(PACKAGE_NAME);
     }
 
     static final String SIMPLE_RECORD_DECLARATION =
@@ -129,25 +97,13 @@ public class PLSQLParserTest {
             "EMPNO NUMBER(4),\n" +
             "ENAME VARCHAR2(10),\n" +
             "JOB VARCHAR2(9)\n" +
-        ");";
+        ");"; 
     //@Ignore
     @Test
     public void testSimpleRecordDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + SIMPLE_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        boolean worked = true;
-        String message = "";
-        PLSQLNode parseNode = null;
-        try {
-            parseNode = parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("package with simple record declaration did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
+        parse(PACKAGE_NAME);
     }
 
     static final String COMPLEX_RECORD_DECLARATION =
@@ -156,72 +112,36 @@ public class PLSQLParserTest {
             "EMPNO EMPNO%TYPE,\n" +
             "ENAME SCOTT.ENAME%TYPE,\n" +
             "JOB VARCHAR2(9)\n" +
-        ");";
+        ");"; 
     //@Ignore
     @Test
     public void testComplexRecordDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + COMPLEX_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        boolean worked = true;
-        String message = "";
-        PLSQLNode parseNode = null;
-        try {
-            parseNode = parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("package with complex record declaration did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
+        parse(PACKAGE_NAME);
     }
     
     static final String NESTED_RECORD_DECLARATION =
         "TYPE DREC IS RECORD (\n" +
             "DEPT NUMBER(4),\n" +
             "EMP EREC\n" +
-        ");";
+        ");"; 
     //@Ignore
     @Test
     public void testNestedRecordDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + NESTED_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        boolean worked = true;
-        String message = "";
-        PLSQLNode parseNode = null;
-        try {
-            parseNode = parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("package with complex nested record declaration did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
+        parse(PACKAGE_NAME);
     }
     
     static final String WEAK_REF_CURSOR_DECLARATION =
-        "TYPE rcursor IS REF CURSOR;";
+        "TYPE rcursor IS REF CURSOR;"; 
     //@Ignore
     @Test
     public void testWeakRefCursorDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + WEAK_REF_CURSOR_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        boolean worked = true;
-        String message = "";
-        PLSQLNode parseNode = null;
-        try {
-            parseNode = parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("package with weak ref cursor declaration did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
+        parse(PACKAGE_NAME);
     }
     
     static final String TYPED_REF_CURSOR_DECLARATION =
@@ -231,29 +151,18 @@ public class PLSQLParserTest {
             "ENAME EMP.ENAME%TYPE,\n" +
             "JOB VARCHAR2(9)\n" +
         ");\n" +
-        "TYPE EREC_CURSOR IS REF CURSOR RETURN EREC;";
+        "TYPE EREC_CURSOR IS REF CURSOR RETURN EREC;"; 
     //@Ignore
     @Test
     public void testTypedRefCursorDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + TYPED_REF_CURSOR_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        boolean worked = true;
-        String message = "";
-        PLSQLNode parseNode = null;
-        try {
-            parseNode = parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("package with typed ref cursor declaration did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
+        parse(PACKAGE_NAME);
     }
-    
-    static final String YMS_DECLARATION =
-        "CREATE OR REPLACE PACKAGE yms_pkg\n" +
+
+    static final String QUALCOMM_PACKAGE = "yms_pkg";
+    static final String QUALCOMM_DECLARATION =
+        "CREATE OR REPLACE PACKAGE " + QUALCOMM_PACKAGE + "\n" +
         "AS\n" +
         "\n" +
         "   TYPE rMetadataRecord IS RECORD (\n" +
@@ -326,24 +235,133 @@ public class PLSQLParserTest {
         "   FUNCTION is_reconciled_data (indataflowid data_flow.data_flow_id%TYPE := 3)\n" +
         "      RETURN VARCHAR2;\n" +
         "\n" +
-        "END yms_pkg;";
+        "END yms_pkg;";  
     //@Ignore
     @Test
-    public void testYMSDeclaration() {
-        parser.ReInit(new StringReader(YMS_DECLARATION));
-        boolean worked = true;
+    public void testQualcommPackage() {
+        parser.ReInit(new StringReader(QUALCOMM_DECLARATION));
+        parse(QUALCOMM_PACKAGE);
+    }
 
-        String message = "";
-        PLSQLNode parseNode = null;
-        try {
-            parseNode = parser.parsePLSQLPackage();
-        }
-        catch (ParseException pe) {
-            //pe.printStackTrace();
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("YMS package did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
+    static final String SOME_PACKAGE = "SOMEPACKAGE";
+    static final String SOME_PACKAGE_DECLARATION =
+        "CREATE OR REPLACE PACKAGE " + SOME_PACKAGE + " AS\n" +
+            "TYPE TBL1 IS TABLE OF VARCHAR2(111) INDEX BY BINARY_INTEGER;\n" +
+            "TYPE TBL2 IS TABLE OF NUMBER INDEX BY BINARY_INTEGER;\n" +
+            "TYPE ARECORD IS RECORD (\n" +
+                "T1 TBL1,\n" +
+                "T2 TBL2,\n" +
+                "T3 BOOLEAN\n" +
+            ");\n" +
+            "TYPE TBL3 IS TABLE OF ARECORD INDEX BY PLS_INTEGER;\n" +
+            "TYPE TBL4 IS TABLE OF TBL2 INDEX BY PLS_INTEGER;\n" +
+            "PROCEDURE P1(SIMPLARRAY IN TBL1, FOO IN VARCHAR2);\n" +
+            "PROCEDURE P2(OLD IN TBL2, NEW IN TBL2);\n" +
+            "PROCEDURE P3(RECARRAY IN TBL3);\n" +
+            "PROCEDURE P4(REC IN ARECORD);\n" +
+            "PROCEDURE P5(OLDREC IN ARECORD, NEWREC OUT ARECORD);\n" +
+            "PROCEDURE P6(BAR IN TBL4);\n" +
+            "PROCEDURE P7(SIMPLARRAY IN TBL1, FOO IN VARCHAR2);\n" +
+            "PROCEDURE P7(SIMPLARRAY IN TBL1, FOO IN VARCHAR2, BAR IN VARCHAR2);\n" +
+            "PROCEDURE P8(FOO IN VARCHAR2);\n" +
+            "PROCEDURE P8(FOO IN VARCHAR2, BAR IN VARCHAR2);\n" +
+            "FUNCTION F1(OLDREC IN ARECORD, FOO IN VARCHAR2) RETURN ARECORD;\n" +
+            "FUNCTION F2(OLD IN TBL2, SIMPLARRAY IN TBL1) RETURN TBL2;\n" +
+            "FUNCTION F3(SIMPLARRAY IN TBL1, OLDVAR IN VARCHAR2) RETURN VARCHAR2;\n" +
+            "FUNCTION F4(RECARRAY IN TBL3, OLDREC IN ARECORD) RETURN TBL3;\n" +
+        "END SOMEPACKAGE;";   
+    //@Ignore
+    @Test
+    public void testSomePackage() {
+        parser.ReInit(new StringReader(SOME_PACKAGE_DECLARATION));
+        parse(SOME_PACKAGE);
+    }
+
+    static final String ANOTHER_ADVANCED_DEMO_PACKAGE = "ANOTHER_ADVANCED_DEMO";
+    static final String ANOTHER_ADVANCED_DEMO_PACKAGE_DECLARATION =
+        "CREATE OR REPLACE PACKAGE " + ANOTHER_ADVANCED_DEMO_PACKAGE + " AS\n" +
+            "FUNCTION BUILDEMPARRAY(NUM IN INTEGER) RETURN EMP_INFO_ARRAY;\n" +
+        "END;";
+    //@Ignore
+    @Test
+    public void testAdvancedDemoPackage() {
+        parser.ReInit(new StringReader(ANOTHER_ADVANCED_DEMO_PACKAGE_DECLARATION));
+        parse(ANOTHER_ADVANCED_DEMO_PACKAGE);
+    }
+
+    static final String ADVANCED_OBJECT_DEMO_PACKAGE = "ADVANCED_OBJECT_DEMO";
+    static final String ADVANCED_OBJECT_DEMO_PACKAGE_DECLARATION =
+        "CREATE OR REPLACE PACKAGE " + ADVANCED_OBJECT_DEMO_PACKAGE + " AS\n" +
+        "FUNCTION ECHOREGION(AREGION IN REGION) RETURN REGION;\n" +
+        "FUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN EMP_ADDRESS) RETURN EMP_ADDRESS;\n" +
+        "FUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN EMP_OBJECT) RETURN EMP_OBJECT;\n" +
+        "END;";
+    //@Ignore
+    @Test
+    public void testAdvancedObjectDemoPackage() {
+        parser.ReInit(new StringReader(ADVANCED_OBJECT_DEMO_PACKAGE_DECLARATION));
+        parse(ADVANCED_OBJECT_DEMO_PACKAGE);
+    }
+
+    static final String TEST_TYPES_PACKAGE = "TEST_TYPES";
+    static final String TEST_TYPES_PACKAGE_DECLARATION = 
+        "CREATE OR REPLACE PACKAGE " + TEST_TYPES_PACKAGE + " AS\n" +
+            "FUNCTION ECHO_INTEGER (PINTEGER IN INTEGER) RETURN INTEGER;\n" +
+            "FUNCTION ECHO_SMALLINT(PSMALLINT IN SMALLINT) RETURN SMALLINT;\n" +
+            "FUNCTION ECHO_NUMERIC (PNUMERIC IN NUMERIC) RETURN NUMERIC;\n" +
+            "FUNCTION ECHO_DEC (PDEC IN DEC) RETURN DEC;\n" +
+            "FUNCTION ECHO_DECIMAL (PDECIMAL IN DECIMAL) RETURN DECIMAL;\n" +
+            "FUNCTION ECHO_NUMBER (PNUMBER IN NUMBER) RETURN NUMBER;\n" +
+            "FUNCTION ECHO_VARCHAR(PVARCHAR IN VARCHAR) RETURN VARCHAR;\n" +
+            "FUNCTION ECHO_VARCHAR2 (PINPUTVARCHAR IN VARCHAR2) RETURN VARCHAR2;\n" +
+            "FUNCTION ECHO_CHAR (PINPUTCHAR IN CHAR) RETURN CHAR;\n" +
+            "FUNCTION ECHO_REAL (PREAL IN REAL) RETURN REAL;\n" +
+            "FUNCTION ECHO_FLOAT (PINPUTFLOAT IN FLOAT) RETURN FLOAT;\n" +
+            "FUNCTION ECHO_DOUBLE (PDOUBLE IN DOUBLE PRECISION) RETURN DOUBLE PRECISION;\n" +
+            "FUNCTION ECHO_DATE (PINPUTDATE IN DATE) RETURN DATE;\n" +
+            "FUNCTION ECHO_TIMESTAMP (PINPUTTS IN TIMESTAMP) RETURN TIMESTAMP;\n" +
+            "FUNCTION ECHO_CLOB (PINPUTCLOB IN CLOB) RETURN CLOB;\n" +
+            "FUNCTION ECHO_BLOB (PINPUTBLOB IN BLOB) RETURN BLOB;\n" +
+            "FUNCTION ECHO_LONG (PLONG IN LONG) RETURN LONG;\n" +
+            "FUNCTION ECHO_LONG_RAW (PLONGRAW IN LONG RAW) RETURN LONG RAW;\n" +
+            "FUNCTION ECHO_RAW(PRAW IN RAW) RETURN RAW;\n" +
+        "END;";
+    //@Ignore
+    @Test
+    public void testTypesPackage() {
+        parser.ReInit(new StringReader(TEST_TYPES_PACKAGE_DECLARATION));
+        parse(TEST_TYPES_PACKAGE);
+    }
+
+    static final String LTBL_PACKAGE = "LTBL_PKG";
+    static final String LTBL_PACKAGE_DECLARATION = 
+        "CREATE OR REPLACE PACKAGE " + LTBL_PACKAGE + " AS\n" +
+            "TYPE LTBL_REC IS RECORD(\n" +
+                "EMPNO LTBL.EMPNO%TYPE,\n" +
+                "FNAME LTBL.FNAME%TYPE,\n" +
+                "LNAME LTBL.LNAME%TYPE\n" +
+            ");\n" +
+            "TYPE LTBL_TAB IS TABLE OF LTBL_REC INDEX BY BINARY_INTEGER;\n" +
+            "PROCEDURE LTBL_QUERY(BLOCK_DATA IN OUT LTBL_TAB, P_EMPNO IN NUMBER);\n" +
+        "END;";
+    //@Ignore
+    @Test
+    public void testLTBLPackage() {
+        parser.ReInit(new StringReader(LTBL_PACKAGE_DECLARATION));
+        parse(LTBL_PACKAGE);
+    }
+    
+    static final String TESMAN_PACKAGE = "TESMANPACK";
+    static final String TESMAN_PACKAGE_DECLARATION = 
+        "CREATE OR REPLACE PACKAGE " + TESMAN_PACKAGE + " AS\n" +
+            "FUNCTION TESMANFUNC17(PARAM1 IN INTEGER) RETURN TESMAN_TABLE2%ROWTYPE;\n" +
+            "PROCEDURE TESMANPROC17(PARAM1 IN INTEGER, REC OUT TESMAN_TABLE2%ROWTYPE);\n" +
+            "PROCEDURE TESMANPROC17b(OLDREC IN TESMAN_TABLE3%ROWTYPE, NEWREC OUT TESMAN_TABLE3%ROWTYPE);\n" +
+        "END TESMANPACK;";
+    //@Ignore
+    @Test
+    public void testTesmanPackage() {
+        parser.ReInit(new StringReader(TESMAN_PACKAGE_DECLARATION));
+        parse(TESMAN_PACKAGE);
     }
 }
