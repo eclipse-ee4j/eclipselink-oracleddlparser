@@ -4,11 +4,19 @@ package org.eclipse.persistence.tools.dbws.plsqlparser.test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 //JUnit4 imports
 import org.junit.BeforeClass;
-import org.junit.Ignore;
+//import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.fail;
+
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertEquals;
 
@@ -20,18 +28,128 @@ import org.eclipse.persistence.tools.dbws.plsqlparser.PLSQLParser;
 
 public class PLSQLParserTest {
 
-	//fixture
+    static final String DATABASE_USERNAME_KEY = "db.user";
+    static final String DATABASE_PASSWORD_KEY = "db.pwd";
+    static final String DATABASE_URL_KEY = "db.url";
+    static final String DATABASE_DRIVER_KEY = "db.driver";
+    static final String DEFAULT_DATABASE_USERNAME = "scott";
+    static final String DEFAULT_DATABASE_PASSWORD = "tiger";
+    static final String DEFAULT_DATABASE_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
+    static final String DEFAULT_DATABASE_DRIVER = "oracle.jdbc.OracleDriver";
+
+    static final String DBMS_METADATA_DDL_STMT_SUFFIX =
+        "', SYS_CONTEXT('USERENV', 'CURRENT_USER')) AS RESULT FROM DUAL";
+    static final String DBMS_METADATA_SESSION_TRANSFORM_STMT =
+        "BEGIN " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'PRETTY',TRUE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR',TRUE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'CONSTRAINTS', TRUE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'CONSTRAINTS_AS_ALTER', TRUE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'REF_CONSTRAINTS',FALSE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SEGMENT_ATTRIBUTES',FALSE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'STORAGE',FALSE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'TABLESPACE',FALSE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SPECIFICATION',TRUE); " +
+            "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'BODY',FALSE); " +
+        "END;";
+
+	//fixtures
+    static String username;
+    static String password;
+    static String url;
+    static String driver;
+    static Connection conn;
 	static PLSQLParser parser = null;
+	
 	@BeforeClass
-	static public void setUp() {
+	static public void setUp() throws ClassNotFoundException, SQLException {
+        username = System.getProperty(DATABASE_USERNAME_KEY, DEFAULT_DATABASE_USERNAME);
+        password = System.getProperty(DATABASE_PASSWORD_KEY, DEFAULT_DATABASE_PASSWORD);
+        url = System.getProperty(DATABASE_URL_KEY, DEFAULT_DATABASE_URL);
+        driver = System.getProperty(DATABASE_DRIVER_KEY, DEFAULT_DATABASE_DRIVER);
+        Class.forName(driver);
+        conn = DriverManager.getConnection(url, username, password);
+        CallableStatement callableStatement = conn.prepareCall(DBMS_METADATA_SESSION_TRANSFORM_STMT);
+        boolean worked = true;
+        String msg = "";
+        try {
+            callableStatement.execute();
+        }
+        catch (SQLException e) {
+           worked = false;
+           msg = e.getMessage();
+        }
+        if (!worked) {
+            fail(msg);
+        }
         parser = new PLSQLParser(new InputStream() {
             public int read() throws IOException {
                 return 0;
             }
         });
 	}
+
+    static String getDDL(String psSpec) {
+        String ddl = null;
+        try {
+            PreparedStatement ps = conn.prepareStatement(psSpec);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            ddl = rs.getString("RESULT").trim();
+            try {
+                rs.close();
+                ps.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (ddl.endsWith("/")) {
+            ddl = (String)ddl.subSequence(0, ddl.length()-1);
+        }
+        return ddl;
+    }
     
-    static PLSQLNode parse(String expectedPackageName) {
+    static final String DBMS_METADATA_GET_PACKAGE_DDL_STMT_PREFIX =
+        "SELECT DBMS_METADATA.GET_DDL('PACKAGE_SPEC', '";
+	static String getDDLForPackage(String packageName) {
+	    return getDDL(DBMS_METADATA_GET_PACKAGE_DDL_STMT_PREFIX + packageName +
+            DBMS_METADATA_DDL_STMT_SUFFIX);
+	}
+
+    static final String DBMS_METADATA_GET_PROCEDURE_DDL_STMT_PREFIX =
+        "SELECT DBMS_METADATA.GET_DDL('PROCEDURE', '";
+    static String getDDLForProcedure(String procedureName) {
+        return getDDL(DBMS_METADATA_GET_PROCEDURE_DDL_STMT_PREFIX + procedureName +
+            DBMS_METADATA_DDL_STMT_SUFFIX);
+    }
+
+    static final String DBMS_METADATA_GET_FUNCTION_DDL_STMT_PREFIX =
+        "SELECT DBMS_METADATA.GET_DDL('FUNCTION', '";
+    static String getDDLForFunction(String functionName) {
+        return getDDL(DBMS_METADATA_GET_FUNCTION_DDL_STMT_PREFIX + functionName +
+            DBMS_METADATA_DDL_STMT_SUFFIX);
+    }
+
+    static final String DBMS_METADATA_GET_TABLE_DDL_STMT_PREFIX =
+        "SELECT DBMS_METADATA.GET_DDL('TABLE', '";
+    static String getDDLForTable(String tableName) {
+        String ddl = getDDL(DBMS_METADATA_GET_TABLE_DDL_STMT_PREFIX + tableName +
+            DBMS_METADATA_DDL_STMT_SUFFIX);
+        return ddl;
+    }
+
+    static final String DBMS_METADATA_GET_TYPE_DDL_STMT_PREFIX =
+        "SELECT DBMS_METADATA.GET_DDL('TYPE_SPEC', '";
+    static String getDDLForType(String typeName) {
+        return getDDL(DBMS_METADATA_GET_TYPE_DDL_STMT_PREFIX + typeName +
+            DBMS_METADATA_DDL_STMT_SUFFIX);
+    }
+    
+    static PLSQLNode parsePackage(String expectedPackageName) {
         boolean worked = true;
         String message = "";
         PLSQLNode parseNode = null;
@@ -46,7 +164,6 @@ public class PLSQLParserTest {
         assertTrue(expectedPackageName + " did not parse correctly:\n" + message, worked);
         PLSQLPackageNode packageNode = parseNode.getPackageNode();
         assertEquals("incorrect package name", packageNode.getPackageName(), expectedPackageName);
-        //parseNode.dump("");
         return parseNode;
     }
 
@@ -63,7 +180,8 @@ public class PLSQLParserTest {
     public void testEmptyPackage() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
-        parse(PACKAGE_NAME);
+        PLSQLNode plsqlNode = parsePackage(PACKAGE_NAME);
+        plsqlNode.dump("");
     }
     
     //@Ignore
@@ -71,7 +189,8 @@ public class PLSQLParserTest {
 	public void testEmptyPackageDN() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + DOT_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
-        parse(DOT_NAME);
+        PLSQLNode plsqlNode = parsePackage(DOT_NAME);
+        plsqlNode.dump("");
 	}
     
     //@Ignore
@@ -79,7 +198,8 @@ public class PLSQLParserTest {
     public void testEmptyPackageQDN()  {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + QUOTED_DOT_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
-        parse(DOT_NAME);
+        PLSQLNode plsqlNode = parsePackage(DOT_NAME);
+        plsqlNode.dump("");
     }
 
     static final String VARIABLE_DECLARATION =
@@ -89,7 +209,8 @@ public class PLSQLParserTest {
     public void testVariableDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + VARIABLE_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        parse(PACKAGE_NAME);
+        PLSQLNode plsqlNode = parsePackage(PACKAGE_NAME);
+        plsqlNode.dump("");
     }
 
     static final String SIMPLE_RECORD_DECLARATION =
@@ -104,7 +225,8 @@ public class PLSQLParserTest {
     public void testSimpleRecordDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + SIMPLE_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        parse(PACKAGE_NAME);
+        PLSQLNode plsqlNode = parsePackage(PACKAGE_NAME);
+        plsqlNode.dump("");
     }
 
     static final String COMPLEX_RECORD_DECLARATION =
@@ -119,7 +241,8 @@ public class PLSQLParserTest {
     public void testComplexRecordDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + COMPLEX_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        parse(PACKAGE_NAME);
+        PLSQLNode plsqlNode = parsePackage(PACKAGE_NAME);
+        plsqlNode.dump("");
     }
     
     static final String NESTED_RECORD_DECLARATION =
@@ -132,7 +255,8 @@ public class PLSQLParserTest {
     public void testNestedRecordDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + NESTED_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        parse(PACKAGE_NAME);
+        PLSQLNode plsqlNode = parsePackage(PACKAGE_NAME);
+        plsqlNode.dump("");
     }
     
     static final String WEAK_REF_CURSOR_DECLARATION =
@@ -142,7 +266,8 @@ public class PLSQLParserTest {
     public void testWeakRefCursorDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + WEAK_REF_CURSOR_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        parse(PACKAGE_NAME);
+        PLSQLNode plsqlNode = parsePackage(PACKAGE_NAME);
+        plsqlNode.dump("");
     }
     
     static final String TYPED_REF_CURSOR_DECLARATION =
@@ -158,7 +283,8 @@ public class PLSQLParserTest {
     public void testTypedRefCursorDeclaration() {
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + TYPED_REF_CURSOR_DECLARATION + EMPTY_PACKAGE_SUFFIX));
-        parse(PACKAGE_NAME);
+        PLSQLNode plsqlNode = parsePackage(PACKAGE_NAME);
+        plsqlNode.dump("");
     }
 
     static final String QUALCOMM_PACKAGE = "yms_pkg";
@@ -241,128 +367,265 @@ public class PLSQLParserTest {
     @Test
     public void testQualcommPackage() {
         parser.ReInit(new StringReader(QUALCOMM_DECLARATION));
-        parse(QUALCOMM_PACKAGE);
+        PLSQLNode plsqlNode = parsePackage(QUALCOMM_PACKAGE);
+        plsqlNode.dump("");
+    }
+
+    //@Ignore
+    @Test
+    public void testCursorTestPackageFromDatabase() {
+        String ddlForPackage = getDDLForPackage(PACKAGE_NAME);
+        parser.ReInit(new StringReader(ddlForPackage));
+        PLSQLNode plsqlNode = parsePackage(DOT_NAME);
+        plsqlNode.dump("");
     }
 
     static final String SOME_PACKAGE = "SOMEPACKAGE";
-    static final String SOME_PACKAGE_DECLARATION =
-        "CREATE OR REPLACE PACKAGE " + SOME_PACKAGE + " AS\n" +
-            "TYPE TBL1 IS TABLE OF VARCHAR2(111) INDEX BY BINARY_INTEGER;\n" +
-            "TYPE TBL2 IS TABLE OF NUMBER INDEX BY BINARY_INTEGER;\n" +
-            "TYPE ARECORD IS RECORD (\n" +
-                "T1 TBL1,\n" +
-                "T2 TBL2,\n" +
-                "T3 BOOLEAN\n" +
-            ");\n" +
-            "TYPE TBL3 IS TABLE OF ARECORD INDEX BY PLS_INTEGER;\n" +
-            "TYPE TBL4 IS TABLE OF TBL2 INDEX BY PLS_INTEGER;\n" +
-            "PROCEDURE P1(SIMPLARRAY IN TBL1, FOO IN VARCHAR2);\n" +
-            "PROCEDURE P2(OLD IN TBL2, NEW IN TBL2);\n" +
-            "PROCEDURE P3(RECARRAY IN TBL3);\n" +
-            "PROCEDURE P4(REC IN ARECORD);\n" +
-            "PROCEDURE P5(OLDREC IN ARECORD, NEWREC OUT ARECORD);\n" +
-            "PROCEDURE P6(BAR IN TBL4);\n" +
-            "PROCEDURE P7(SIMPLARRAY IN TBL1, FOO IN VARCHAR2);\n" +
-            "PROCEDURE P7(SIMPLARRAY IN TBL1, FOO IN VARCHAR2, BAR IN VARCHAR2);\n" +
-            "PROCEDURE P8(FOO IN VARCHAR2);\n" +
-            "PROCEDURE P8(FOO IN VARCHAR2, BAR IN VARCHAR2);\n" +
-            "FUNCTION F1(OLDREC IN ARECORD, FOO IN VARCHAR2) RETURN ARECORD;\n" +
-            "FUNCTION F2(OLD IN TBL2, SIMPLARRAY IN TBL1) RETURN TBL2;\n" +
-            "FUNCTION F3(SIMPLARRAY IN TBL1, OLDVAR IN VARCHAR2) RETURN VARCHAR2;\n" +
-            "FUNCTION F4(RECARRAY IN TBL3, OLDREC IN ARECORD) RETURN TBL3;\n" +
-        "END SOMEPACKAGE;";   
     //@Ignore
     @Test
-    public void testSomePackage() {
-        parser.ReInit(new StringReader(SOME_PACKAGE_DECLARATION));
-        parse(SOME_PACKAGE);
+    public void testSomePackageFromDatabase() {
+        String ddlForPackage = getDDLForPackage(SOME_PACKAGE);
+        parser.ReInit(new StringReader(ddlForPackage));
+        PLSQLNode plsqlNode = parsePackage(username.toUpperCase() + "." + SOME_PACKAGE);
+        plsqlNode.dump("");
     }
 
     static final String ANOTHER_ADVANCED_DEMO_PACKAGE = "ANOTHER_ADVANCED_DEMO";
-    static final String ANOTHER_ADVANCED_DEMO_PACKAGE_DECLARATION =
-        "CREATE OR REPLACE PACKAGE " + ANOTHER_ADVANCED_DEMO_PACKAGE + " AS\n" +
-            "FUNCTION BUILDEMPARRAY(NUM IN INTEGER) RETURN EMP_INFO_ARRAY;\n" +
-        "END;";
     //@Ignore
     @Test
-    public void testAdvancedDemoPackage() {
-        parser.ReInit(new StringReader(ANOTHER_ADVANCED_DEMO_PACKAGE_DECLARATION));
-        parse(ANOTHER_ADVANCED_DEMO_PACKAGE);
+    public void testAnotherAdvancedDemoPackageFromDatabase() {
+        String ddlForPackage = getDDLForPackage(ANOTHER_ADVANCED_DEMO_PACKAGE);
+        parser.ReInit(new StringReader(ddlForPackage));
+        PLSQLNode plsqlNode = parsePackage(username.toUpperCase() + "." + ANOTHER_ADVANCED_DEMO_PACKAGE);
+        plsqlNode.dump("");
     }
 
     static final String ADVANCED_OBJECT_DEMO_PACKAGE = "ADVANCED_OBJECT_DEMO";
-    static final String ADVANCED_OBJECT_DEMO_PACKAGE_DECLARATION =
-        "CREATE OR REPLACE PACKAGE " + ADVANCED_OBJECT_DEMO_PACKAGE + " AS\n" +
-        "FUNCTION ECHOREGION(AREGION IN REGION) RETURN REGION;\n" +
-        "FUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN EMP_ADDRESS) RETURN EMP_ADDRESS;\n" +
-        "FUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN EMP_OBJECT) RETURN EMP_OBJECT;\n" +
-        "END;";
     //@Ignore
     @Test
-    public void testAdvancedObjectDemoPackage() {
-        parser.ReInit(new StringReader(ADVANCED_OBJECT_DEMO_PACKAGE_DECLARATION));
-        parse(ADVANCED_OBJECT_DEMO_PACKAGE);
+    public void testAdvancedObjectDemoPackageFromDatabase() {
+        String ddlForPackage = getDDLForPackage(ADVANCED_OBJECT_DEMO_PACKAGE);
+        parser.ReInit(new StringReader(ddlForPackage));
+        PLSQLNode plsqlNode = parsePackage(username.toUpperCase() + "." + ADVANCED_OBJECT_DEMO_PACKAGE);
+        plsqlNode.dump("");
     }
-
+    
     static final String TEST_TYPES_PACKAGE = "TEST_TYPES";
-    static final String TEST_TYPES_PACKAGE_DECLARATION = 
-        "CREATE OR REPLACE PACKAGE " + TEST_TYPES_PACKAGE + " AS\n" +
-            "FUNCTION ECHO_INTEGER (PINTEGER IN INTEGER) RETURN INTEGER;\n" +
-            "FUNCTION ECHO_SMALLINT(PSMALLINT IN SMALLINT) RETURN SMALLINT;\n" +
-            "FUNCTION ECHO_NUMERIC (PNUMERIC IN NUMERIC) RETURN NUMERIC;\n" +
-            "FUNCTION ECHO_DEC (PDEC IN DEC) RETURN DEC;\n" +
-            "FUNCTION ECHO_DECIMAL (PDECIMAL IN DECIMAL) RETURN DECIMAL;\n" +
-            "FUNCTION ECHO_NUMBER (PNUMBER IN NUMBER) RETURN NUMBER;\n" +
-            "FUNCTION ECHO_VARCHAR(PVARCHAR IN VARCHAR) RETURN VARCHAR;\n" +
-            "FUNCTION ECHO_VARCHAR2 (PINPUTVARCHAR IN VARCHAR2) RETURN VARCHAR2;\n" +
-            "FUNCTION ECHO_CHAR (PINPUTCHAR IN CHAR) RETURN CHAR;\n" +
-            "FUNCTION ECHO_REAL (PREAL IN REAL) RETURN REAL;\n" +
-            "FUNCTION ECHO_FLOAT (PINPUTFLOAT IN FLOAT) RETURN FLOAT;\n" +
-            "FUNCTION ECHO_DOUBLE (PDOUBLE IN DOUBLE PRECISION) RETURN DOUBLE PRECISION;\n" +
-            "FUNCTION ECHO_DATE (PINPUTDATE IN DATE) RETURN DATE;\n" +
-            "FUNCTION ECHO_TIMESTAMP (PINPUTTS IN TIMESTAMP) RETURN TIMESTAMP;\n" +
-            "FUNCTION ECHO_CLOB (PINPUTCLOB IN CLOB) RETURN CLOB;\n" +
-            "FUNCTION ECHO_BLOB (PINPUTBLOB IN BLOB) RETURN BLOB;\n" +
-            "FUNCTION ECHO_LONG (PLONG IN LONG) RETURN LONG;\n" +
-            "FUNCTION ECHO_LONG_RAW (PLONGRAW IN LONG RAW) RETURN LONG RAW;\n" +
-            "FUNCTION ECHO_RAW(PRAW IN RAW) RETURN RAW;\n" +
-        "END;";
     //@Ignore
     @Test
-    public void testTypesPackage() {
-        parser.ReInit(new StringReader(TEST_TYPES_PACKAGE_DECLARATION));
-        parse(TEST_TYPES_PACKAGE);
+    public void testTestTypesPackageFromDatabase() {
+        String ddlForPackage = getDDLForPackage(TEST_TYPES_PACKAGE);
+        parser.ReInit(new StringReader(ddlForPackage));
+        PLSQLNode plsqlNode = parsePackage(username.toUpperCase() + "." + TEST_TYPES_PACKAGE);
+        plsqlNode.dump("");
     }
 
     static final String LTBL_PACKAGE = "LTBL_PKG";
-    static final String LTBL_PACKAGE_DECLARATION = 
-        "CREATE OR REPLACE PACKAGE " + LTBL_PACKAGE + " AS\n" +
-            "TYPE LTBL_REC IS RECORD(\n" +
-                "EMPNO LTBL.EMPNO%TYPE,\n" +
-                "FNAME LTBL.FNAME%TYPE,\n" +
-                "LNAME LTBL.LNAME%TYPE\n" +
-            ");\n" +
-            "TYPE LTBL_TAB IS TABLE OF LTBL_REC INDEX BY BINARY_INTEGER;\n" +
-            "PROCEDURE LTBL_QUERY(BLOCK_DATA IN OUT LTBL_TAB, P_EMPNO IN NUMBER);\n" +
-        "END;";
     //@Ignore
     @Test
-    public void testLTBLPackage() {
-        parser.ReInit(new StringReader(LTBL_PACKAGE_DECLARATION));
-        parse(LTBL_PACKAGE);
+    public void testLTBLPackageFromDatabase() {
+        String ddlForPackage = getDDLForPackage(LTBL_PACKAGE);
+        parser.ReInit(new StringReader(ddlForPackage));
+        PLSQLNode plsqlNode = parsePackage(username.toUpperCase() + "." + LTBL_PACKAGE);
+        plsqlNode.dump("");
     }
     
     static final String TESMAN_PACKAGE = "TESMANPACK";
-    static final String TESMAN_PACKAGE_DECLARATION = 
-        "CREATE OR REPLACE PACKAGE " + TESMAN_PACKAGE + " AS\n" +
-            "FUNCTION TESMANFUNC17(PARAM1 IN INTEGER) RETURN TESMAN_TABLE2%ROWTYPE;\n" +
-            "PROCEDURE TESMANPROC17(PARAM1 IN INTEGER, REC OUT TESMAN_TABLE2%ROWTYPE);\n" +
-            "PROCEDURE TESMANPROC17b(OLDREC IN TESMAN_TABLE3%ROWTYPE, NEWREC OUT TESMAN_TABLE3%ROWTYPE);\n" +
-        "END TESMANPACK;";
     //@Ignore
     @Test
-    public void testTesmanPackage() {
-        parser.ReInit(new StringReader(TESMAN_PACKAGE_DECLARATION));
-        parse(TESMAN_PACKAGE);
+    public void testTesmanFromDatabase() {
+        String ddlForPackage = getDDLForPackage(TESMAN_PACKAGE);
+        parser.ReInit(new StringReader(ddlForPackage));
+        PLSQLNode plsqlNode = parsePackage(username.toUpperCase() + "." + TESMAN_PACKAGE);
+        plsqlNode.dump("");
+    }
+    
+    static final String TOPLEVEL_PROCEDURE_BOOL_IN_TEST = "BOOL_IN_TEST";
+    //@Ignore
+    @Test
+    public void testTopLevelProcedure_BoolInTest() {
+        String ddl = getDDLForProcedure(TOPLEVEL_PROCEDURE_BOOL_IN_TEST);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseTopLevelProcedure();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(TOPLEVEL_PROCEDURE_BOOL_IN_TEST + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
+    }
+    
+    static final String TOPLEVEL_FUNCTION_BUILDTBL2 = "BUILDTBL2";
+    //@Ignore
+    @Test
+    public void testTopLevelFunction_BUILDTBL2() {
+        String ddl = getDDLForFunction(TOPLEVEL_FUNCTION_BUILDTBL2);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseTopLevelFunction();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(TOPLEVEL_FUNCTION_BUILDTBL2 + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
+    }
+    
+    static final String TYPE_EMP_INFO = "EMP_INFO";
+    //@Ignore
+    @Test
+    public void testType_EMP_INFO() {
+        String ddl = getDDLForType(TYPE_EMP_INFO);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseType();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(TYPE_EMP_INFO + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
+    }
+
+    static final String TYPE_SOMEPACKAGE_TBL1 = "SOMEPACKAGE_TBL1";
+    //@Ignore
+    @Test
+    public void testType_SOMEPACKAGE_TBL1() {
+        String ddl = getDDLForType(TYPE_SOMEPACKAGE_TBL1);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseType();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(TYPE_SOMEPACKAGE_TBL1 + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
+    }
+    
+    static final String TABLE_BONUS = "BONUS";
+    //@Ignore
+    @Test
+    public void testTable_Bonus() {
+        String ddl = getDDLForTable(TABLE_BONUS);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseTable();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(TABLE_BONUS + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
+    }
+    
+    static final String TEMP_TABLE = "TAXABLE_EMP";
+    //@Ignore
+    @Test
+    public void testTempTable_TaxableEmp() {
+        String ddl = getDDLForTable(TEMP_TABLE);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseTable();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(TEMP_TABLE + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
+    }
+    
+    static final String TABLE_XR_VEE_ARRAY_EMP = "XR_VEE_ARRAY_EMP";
+    //@Ignore
+    @Test
+    public void testTable_XR_VEE_ARRAY_EMP() {
+        String ddl = getDDLForTable(TABLE_XR_VEE_ARRAY_EMP);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseTable();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(TABLE_XR_VEE_ARRAY_EMP + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
+    }
+
+    static final String NESTED_TABLE_LTBL = "LTBL_PKG_LTBL_TAB";
+    //@Ignore
+    @Test
+    public void testNestedTable_LTBL_PKG_LTBL_TAB() {
+        String ddl = getDDLForType(NESTED_TABLE_LTBL);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseType();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(NESTED_TABLE_LTBL + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
+    }
+
+    static final String VARRAY_TYPE = "EMP_INFO_ARRAY";
+    //@Ignore
+    @Test
+    public void testVarray_EMP_INFO_ARRAY() {
+        String ddl = getDDLForType(VARRAY_TYPE);
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        PLSQLNode parseNode = null;
+        try {
+            parseNode = parser.parseType();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(VARRAY_TYPE + " did not parse correctly:\n" + message, worked);
+        parseNode.dump("");
     }
 }
