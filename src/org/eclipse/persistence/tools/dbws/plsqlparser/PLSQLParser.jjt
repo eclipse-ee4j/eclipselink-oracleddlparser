@@ -37,6 +37,7 @@ PARSER_BEGIN(PLSQLParser)
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.plsqlparser;
 
+@SuppressWarnings("unused")
 public class PLSQLParser {
 
     public PLSQLParser() {
