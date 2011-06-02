@@ -12,7 +12,7 @@
  * Contributors:
  *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
  ******************************************************************************/
-package org.eclipse.persistence.tools.dbws.plsqlparser;
+package org.eclipse.persistence.tools.dbws.metadata.parser;
 
 /**
  * Describes the input token stream.
@@ -140,4 +140,4 @@ public class Token implements java.io.Serializable {
   }
 
 }
-/* JavaCC - OriginalChecksum=c6a41449a865be607262a7ece2c46509 (do not edit this line) */
+/* JavaCC - OriginalChecksum=91cbf792ae4b7072b5ff380a74f7e52f (do not edit this line) */

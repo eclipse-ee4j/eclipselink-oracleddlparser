@@ -1,4 +1,4 @@
-package org.eclipse.persistence.tools.dbws.plsqlparser;
+package org.eclipse.persistence.tools.dbws.metadata;
 
 public class PLSQLPackageNode {
 

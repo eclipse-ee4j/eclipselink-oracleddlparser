@@ -12,7 +12,7 @@
  * Contributors:
  *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
  ******************************************************************************/
-package org.eclipse.persistence.tools.dbws.plsqlparser;
+package org.eclipse.persistence.tools.dbws.metadata.parser;
 
 /**
  * An implementation of interface CharStream, where the stream is assumed to
@@ -630,4 +630,4 @@ class JavaCharStream
   }
 
 }
-/* JavaCC - OriginalChecksum=48c7920d698ad76069d60d34f69ef370 (do not edit this line) */
+/* JavaCC - OriginalChecksum=54d69cd04cf8e142b387edfdb31d7f3f (do not edit this line) */

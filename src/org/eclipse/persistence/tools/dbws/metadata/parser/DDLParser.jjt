@@ -17,12 +17,12 @@ options {
     JAVA_UNICODE_ESCAPE = true;
     IGNORE_CASE = true;
     VISITOR = true;
-    NODE_CLASS = "PLSQLNode";
+    NODE_CLASS = "ParseNode";
     SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
     TRACK_TOKENS = true;
     //DEBUG_PARSER = true;
 }
-PARSER_BEGIN(PLSQLParser)
+PARSER_BEGIN(DDLParser)
 /*******************************************************************************
  * Copyright (c) 2011 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
@@ -35,30 +35,32 @@ PARSER_BEGIN(PLSQLParser)
  * Contributors:
  *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
  ******************************************************************************/
-package org.eclipse.persistence.tools.dbws.plsqlparser;
+package org.eclipse.persistence.tools.dbws.metadata.parser;
+
+import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageNode;
 
 @SuppressWarnings("unused")
-public class PLSQLParser {
+public class DDLParser {
 
-    public PLSQLParser() {
+    public DDLParser() {
       super();
     }
 
     public static void main( String args[] ) throws ParseException {
-        PLSQLParser p = null ;
+        DDLParser p = null ;
         if (args.length < 1) {
             System.out.println("Reading from stdin") ;
-            p = new PLSQLParser(System.in) ;
+            p = new DDLParser(System.in) ;
         }
         else {
             try {
-                p = new PLSQLParser(new java.io.DataInputStream(
+                p = new DDLParser(new java.io.DataInputStream(
                                 new java.io.FileInputStream(args[0]))) ;
             }
             catch (java.io.FileNotFoundException e) {
                 System.out.println("File " + args[0] +
                                 " not found. Reading from stdin") ;
-                p = new PLSQLParser(System.in) ;
+                p = new DDLParser(System.in) ;
             }
         }
         SimpleNode sn = p.parsePLSQLPackage();
@@ -66,7 +68,7 @@ public class PLSQLParser {
     }
 }
 
-PARSER_END(PLSQLParser)
+PARSER_END(DDLParser)
 
 // white-space
 SKIP: {
@@ -344,7 +346,7 @@ TOKEN:
 
 // stripped-down version of PLSQL grammar: only parses package/top-level specifications
 
-PLSQLNode parsePLSQLPackage():
+ParseNode parsePLSQLPackage():
 {String schema = null;
  String packageName = null;}
 {
@@ -360,14 +362,14 @@ PLSQLNode parsePLSQLPackage():
       if (schema != null) {
         packageNode.setPackageName(schema + "." + packageName);      }      else {
         packageNode.setPackageName(packageName);      }
-      ((PLSQLNode)jjtThis).setPackageNode(packageNode);
-      jjtThis.jjtSetValue(packageNode.getPackageName());
+      //TODO - need some place to stash packageNode
+      jjtThis.jjtSetValue(packageName);
       return jjtThis;
     }
 }
 
 // procedure at 'top-level'
-PLSQLNode parseTopLevelProcedure():
+ParseNode parseTopLevelProcedure():
 {String schema = null;
  String procedureName = null;}
 {
@@ -391,7 +393,7 @@ PLSQLNode parseTopLevelProcedure():
 }
 
 // function at 'top-level'
-PLSQLNode parseTopLevelFunction():
+ParseNode parseTopLevelFunction():
 {String schema = null;
  String procedureName = null;}
 {
@@ -415,7 +417,7 @@ PLSQLNode parseTopLevelFunction():
 }
 
 // tables at 'top-level'
-PLSQLNode parseTable():
+ParseNode parseTable():
 {String schema = null;
  String tableName = null;}
 {
@@ -441,7 +443,7 @@ PLSQLNode parseTable():
     }
 }
 
-PLSQLNode alterDeclaration():
+ParseNode alterDeclaration():
 {String pk = null;
 }
 {
@@ -458,7 +460,7 @@ PLSQLNode alterDeclaration():
 }
 
 // types at 'top-level'
-PLSQLNode parseType():
+ParseNode parseType():
 {String schema = null;
  String typeName = null;
  boolean varray = false;
@@ -499,7 +501,7 @@ void columnDeclarations() #void:
     columnDeclaration() ( <O_COMMA> columnDeclaration() )*     
 }
 
-PLSQLNode columnDeclaration():
+ParseNode columnDeclaration():
 {String s = null;
  String pk = null;
  boolean notNull = false;
@@ -655,7 +657,7 @@ String typeName() #void:
     {return token.image;}
 }
 
-PLSQLNode typeDeclaration():
+ParseNode typeDeclaration():
 {String s = null;}
 {
     <K_TYPE> s=typeName() <K_IS>
@@ -677,7 +679,7 @@ void aTypeDeclaration() #void:
     | refCursorDeclaration()
 }
 
-PLSQLNode recordDeclaration():
+ParseNode recordDeclaration():
 {}
 {
     <K_RECORD> <O_OPENPAREN>
@@ -693,7 +695,7 @@ void fieldDeclarations() #void:
     fieldDeclaration() ( <O_COMMA> fieldDeclaration() )*
 }
 
-PLSQLNode fieldDeclaration():
+ParseNode fieldDeclaration():
 {String s = null;
 }
 {
@@ -704,7 +706,7 @@ PLSQLNode fieldDeclaration():
     }
 }
 
-PLSQLNode subtypeDeclaration():
+ParseNode subtypeDeclaration():
 {}
 {
     <K_SUBTYPE> OracleObjectName() <K_IS> datatype()
@@ -715,7 +717,7 @@ PLSQLNode subtypeDeclaration():
     { return jjtThis; }
 }
 
-PLSQLNode plsqlTableDeclaration():
+ParseNode plsqlTableDeclaration():
 {}
 {
     <K_TABLE> <K_OF> typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
@@ -726,7 +728,7 @@ PLSQLNode plsqlTableDeclaration():
     }
 }
 
-PLSQLNode plsqlTableIndexByDeclaration():
+ParseNode plsqlTableIndexByDeclaration():
 {}
 {
     ( <K_PLS_INTEGER >
@@ -749,7 +751,7 @@ PLSQLNode plsqlTableIndexByDeclaration():
     }
 }
 
-PLSQLNode varrayDeclaration():
+ParseNode varrayDeclaration():
 {}
 {
     ( <K_VARRAY> | <K_VARYING> <K_ARRAY> ) <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
@@ -757,7 +759,7 @@ PLSQLNode varrayDeclaration():
     { return jjtThis; }
 }
 
-PLSQLNode refCursorDeclaration():
+ParseNode refCursorDeclaration():
 {String s = null;}
 {
     <K_REF> <K_CURSOR> [ refCursorTypeSpec() ]
@@ -767,7 +769,7 @@ PLSQLNode refCursorDeclaration():
     }
 }
 
-PLSQLNode refCursorTypeSpec():
+ParseNode refCursorTypeSpec():
 {String s = null;}
 {
     <K_RETURN> [LOOKAHEAD(3) s=columnSpec() [ <K_TYPE2> ]
@@ -778,7 +780,7 @@ PLSQLNode refCursorTypeSpec():
     }
 }
 
-PLSQLNode cursorDeclaration():
+ParseNode cursorDeclaration():
 {Token t = null;}
 {
     <K_CURSOR> t=<S_IDENTIFIER>
@@ -790,7 +792,7 @@ PLSQLNode cursorDeclaration():
 }
 
 // Procedure Specification
-PLSQLNode procedureSpec():
+ParseNode procedureSpec():
 {Token t = null;}
 {
     <K_PROCEDURE> t=<S_IDENTIFIER>
@@ -809,7 +811,7 @@ void argumentList() #void:
 }
 
 // Function Specification
-PLSQLNode functionSpec():
+ParseNode functionSpec():
 {Token t = null;}
 {
     <K_FUNCTION> t=<S_IDENTIFIER>
@@ -823,7 +825,7 @@ PLSQLNode functionSpec():
     }
 }
 
-PLSQLNode functionReturnSpec():
+ParseNode functionReturnSpec():
 {}{    (<K_RETURN> typeSpec())
     {
       jjtThis.jjtSetValue("RETURN");
@@ -831,7 +833,7 @@ PLSQLNode functionReturnSpec():
     }
 }
 
-PLSQLNode argument():
+ParseNode argument():
 {Token t = null;
  String direction = null;
 }
@@ -858,7 +860,7 @@ String direction() #void:
     | <K_OUT>  { return "OUT"; }
 }
 
-PLSQLNode argumentDefaultAssignment():
+ParseNode argumentDefaultAssignment():
 {}
 {
     ( <O_ASSIGN> | <K_DEFAULT> ) skipToNextArg()
