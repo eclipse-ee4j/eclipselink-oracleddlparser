@@ -1,9 +1,14 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class PLSQLPackageNode {
+public class PLSQLPackageType implements MetadataType {
 
-    public PLSQLPackageNode() {
+    public PLSQLPackageType() {
         super();
+    }
+
+    //sorta
+    public boolean isNested() {
+        return false;
     }
 
     protected String packageName;

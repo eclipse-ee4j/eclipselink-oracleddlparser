@@ -13,38 +13,29 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata.parser;
 
-import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageNode;
+//javase imports
+import java.io.InputStream;
+import java.util.Stack;
+
+//metadata imports
+import org.eclipse.persistence.tools.dbws.metadata.*;
 
 @SuppressWarnings("unused")
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLParserConstants {/*@bgen(jjtree)*/
-  protected static JJTDDLParserState jjtree = new JJTDDLParserState();
+  protected JJTDDLParserState jjtree = new JJTDDLParserState();
+    protected Stack<MetadataType> typeStack = new Stack<MetadataType>();
+    protected MetadataTypesRepository typesRepository = new MetadataTypesRepository();
+
     public DDLParser() {
-      super();
+        super();
     }
 
-    public static void main( String args[] ) throws ParseException {
-        DDLParser p = null ;
-        if (args.length < 1) {
-            System.out.println("Reading from stdin") ;
-            p = new DDLParser(System.in) ;
-        }
-        else {
-            try {
-                p = new DDLParser(new java.io.DataInputStream(
-                                new java.io.FileInputStream(args[0]))) ;
-            }
-            catch (java.io.FileNotFoundException e) {
-                System.out.println("File " + args[0] +
-                                " not found. Reading from stdin") ;
-                p = new DDLParser(System.in) ;
-            }
-        }
-        SimpleNode sn = p.parsePLSQLPackage();
-        sn.dump(">");
+    public void setTypesRepository(MetadataTypesRepository typesRepository) {
+        this.typesRepository = typesRepository;
     }
 
 // stripped-down version of PLSQL grammar: only parses package/top-level specifications
-  static final public ParseNode parsePLSQLPackage() throws ParseException {
+  final public ParseNode parsePLSQLPackage() throws ParseException {
  /*@bgen(jjtree) parsePLSQLPackage */
  ParseNode jjtn000 = new ParseNode(JJTPARSEPLSQLPACKAGE);
  boolean jjtc000 = true;
@@ -70,6 +61,14 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         ;
       }
       packageName = OracleObjectName();
+          PLSQLPackageType packageType = new PLSQLPackageType();
+          if (schema != null) {
+            packageType.setPackageName(schema + "." + packageName);
+          }
+          else {
+            packageType.setPackageName(packageName);
+          }
+          typeStack.push(packageType);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_AUTHID:
         jj_consume_token(K_AUTHID);
@@ -150,14 +149,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetLastToken(getToken(0));
-      PLSQLPackageNode packageNode = new PLSQLPackageNode();
-      if (schema != null) {
-        packageNode.setPackageName(schema + "." + packageName);
-      }
-      else {
-        packageNode.setPackageName(packageName);
-      }
-      //TODO - need some place to stash packageNode
       jjtn000.jjtSetValue(packageName);
       {if (true) return jjtn000;}
     } catch (Throwable jjte000) {
@@ -184,7 +175,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
 // procedure at 'top-level'
-  static final public ParseNode parseTopLevelProcedure() throws ParseException {
+  final public ParseNode parseTopLevelProcedure() throws ParseException {
  /*@bgen(jjtree) parseTopLevelProcedure */
  ParseNode jjtn000 = new ParseNode(JJTPARSETOPLEVELPROCEDURE);
  boolean jjtc000 = true;
@@ -279,7 +270,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
 // function at 'top-level'
-  static final public ParseNode parseTopLevelFunction() throws ParseException {
+  final public ParseNode parseTopLevelFunction() throws ParseException {
  /*@bgen(jjtree) parseTopLevelFunction */
  ParseNode jjtn000 = new ParseNode(JJTPARSETOPLEVELFUNCTION);
  boolean jjtc000 = true;
@@ -375,12 +366,13 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
 // tables at 'top-level'
-  static final public ParseNode parseTable() throws ParseException {
+  final public MetadataType parseTable() throws ParseException {
  /*@bgen(jjtree) parseTable */
  ParseNode jjtn000 = new ParseNode(JJTPARSETABLE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));String schema = null;
+ jjtn000.jjtSetFirstToken(getToken(1));TableType table = null;
+ String schema = null;
  String tableName = null;
     try {
       jj_consume_token(K_CREATE);
@@ -401,6 +393,11 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         ;
       }
       tableName = OracleObjectName();
+            table = new TableType(tableName);
+                    if (schema != null) {
+                         table.setSchema(schema);
+                    }
+                    typeStack.push(table);
       jj_consume_token(O_OPENPAREN);
       columnDeclarations();
       jj_consume_token(O_CLOSEPAREN);
@@ -449,20 +446,10 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         jj_consume_token(O_SEMICOLON);
       }
       jj_consume_token(0);
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-      StringBuilder sb = new StringBuilder("TABLE ");
-      if (schema != null) {
-         sb.append(schema);
-         sb.append(".");
-         sb.append(tableName);
-      }
-      else {
-         sb.append(tableName);
-      }
-      jjtn000.jjtSetValue(sb.toString());
-      {if (true) return jjtn000;}
+       jjtree.closeNodeScope(jjtn000, true);
+       jjtc000 = false;
+       jjtn000.jjtSetLastToken(getToken(0));
+         {if (true) return typeStack.pop();}
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -486,7 +473,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode alterDeclaration() throws ParseException {
+  final public ParseNode alterDeclaration() throws ParseException {
  /*@bgen(jjtree) alterDeclaration */
  ParseNode jjtn000 = new ParseNode(JJTALTERDECLARATION);
  boolean jjtc000 = true;
@@ -536,7 +523,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
 // types at 'top-level'
-  static final public ParseNode parseType() throws ParseException {
+  final public ParseNode parseType() throws ParseException {
  /*@bgen(jjtree) parseType */
  ParseNode jjtn000 = new ParseNode(JJTPARSETYPE);
  boolean jjtc000 = true;
@@ -653,7 +640,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public void columnDeclarations() throws ParseException {
+  final public void columnDeclarations() throws ParseException {
     columnDeclaration();
     label_3:
     while (true) {
@@ -670,7 +657,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
   }
 
-  static final public ParseNode columnDeclaration() throws ParseException {
+  final public ParseNode columnDeclaration() throws ParseException {
  /*@bgen(jjtree) columnDeclaration */
  ParseNode jjtn000 = new ParseNode(JJTCOLUMNDECLARATION);
  boolean jjtc000 = true;
@@ -679,14 +666,20 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  String pk = null;
  boolean notNull = false;
     try {
+        MetadataType enclosingType = typeStack.peek();
       s = OracleObjectName();
+            if (enclosingType.isNested()) {
+                FieldType column = new FieldType(s);
+                ((NestedType)enclosingType).addField(column);
+                typeStack.push(column);
+            }
       columnTypeSpec();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_NOT:
         jj_consume_token(K_NOT);
         jj_consume_token(K_NULL);
         jj_consume_token(K_ENABLE);
-                                                                         notNull = true;
+                                                        notNull = true;
         break;
       default:
         jj_la1[26] = jj_gen;
@@ -695,6 +688,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetLastToken(getToken(0));
+      if (enclosingType.isNested()) {
+          typeStack.pop();
+      }
       StringBuilder sb = new StringBuilder();
       if (notNull) {
         sb.append("(NOT NULL)");
@@ -725,7 +721,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public String columnTypeSpec() throws ParseException {
+  final public String columnTypeSpec() throws ParseException {
  /*@bgen(jjtree) columnTypeSpec */
  ParseNode jjtn000 = new ParseNode(JJTCOLUMNTYPESPEC);
  boolean jjtc000 = true;
@@ -829,7 +825,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public void packageDeclaration() throws ParseException {
+  final public void packageDeclaration() throws ParseException {
     if (jj_2_6(2)) {
       variableDeclaration();
     } else {
@@ -860,7 +856,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
   }
 
-  static final public void variableDeclaration() throws ParseException {
+  final public void variableDeclaration() throws ParseException {
  /*@bgen(jjtree) variableDeclaration */
   ParseNode jjtn000 = new ParseNode(JJTVARIABLEDECLARATION);
   boolean jjtc000 = true;
@@ -918,7 +914,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
   }
 
-  static final public void variableDefaultAssignment() throws ParseException {
+  final public void variableDefaultAssignment() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_ASSIGN:
       jj_consume_token(O_ASSIGN);
@@ -934,7 +930,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     skipToSemiColon();
   }
 
-  static final public void datatype() throws ParseException {
+  final public void datatype() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_BINARY_INTEGER:
       jj_consume_token(K_BINARY_INTEGER);
@@ -1537,7 +1533,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
   }
 
-  static final public String typeSpec() throws ParseException {
+  final public String typeSpec() throws ParseException {
  /*@bgen(jjtree) typeSpec */
  ParseNode jjtn000 = new ParseNode(JJTTYPESPEC);
  boolean jjtc000 = true;
@@ -1653,7 +1649,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public String columnSpec() throws ParseException {
+  final public String columnSpec() throws ParseException {
     OracleObjectName();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_DOT:
@@ -1677,7 +1673,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public String tableSpec() throws ParseException {
+  final public String tableSpec() throws ParseException {
     OracleObjectName();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_DOT:
@@ -1701,7 +1697,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public String typeName() throws ParseException {
+  final public String typeName() throws ParseException {
     OracleObjectName();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_DOT:
@@ -1716,7 +1712,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode typeDeclaration() throws ParseException {
+  final public ParseNode typeDeclaration() throws ParseException {
  /*@bgen(jjtree) typeDeclaration */
  ParseNode jjtn000 = new ParseNode(JJTTYPEDECLARATION);
  boolean jjtc000 = true;
@@ -1756,7 +1752,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public void aTypeDeclaration() throws ParseException {
+  final public void aTypeDeclaration() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_RECORD:
       recordDeclaration();
@@ -1781,7 +1777,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
   }
 
-  static final public ParseNode recordDeclaration() throws ParseException {
+  final public ParseNode recordDeclaration() throws ParseException {
  /*@bgen(jjtree) recordDeclaration */
   ParseNode jjtn000 = new ParseNode(JJTRECORDDECLARATION);
   boolean jjtc000 = true;
@@ -1820,7 +1816,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public void fieldDeclarations() throws ParseException {
+  final public void fieldDeclarations() throws ParseException {
     fieldDeclaration();
     label_5:
     while (true) {
@@ -1837,7 +1833,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
   }
 
-  static final public ParseNode fieldDeclaration() throws ParseException {
+  final public ParseNode fieldDeclaration() throws ParseException {
  /*@bgen(jjtree) fieldDeclaration */
  ParseNode jjtn000 = new ParseNode(JJTFIELDDECLARATION);
  boolean jjtc000 = true;
@@ -1892,7 +1888,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode subtypeDeclaration() throws ParseException {
+  final public ParseNode subtypeDeclaration() throws ParseException {
  /*@bgen(jjtree) subtypeDeclaration */
   ParseNode jjtn000 = new ParseNode(JJTSUBTYPEDECLARATION);
   boolean jjtc000 = true;
@@ -1968,7 +1964,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode plsqlTableDeclaration() throws ParseException {
+  final public ParseNode plsqlTableDeclaration() throws ParseException {
  /*@bgen(jjtree) plsqlTableDeclaration */
   ParseNode jjtn000 = new ParseNode(JJTPLSQLTABLEDECLARATION);
   boolean jjtc000 = true;
@@ -2018,7 +2014,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode plsqlTableIndexByDeclaration() throws ParseException {
+  final public ParseNode plsqlTableIndexByDeclaration() throws ParseException {
  /*@bgen(jjtree) plsqlTableIndexByDeclaration */
   ParseNode jjtn000 = new ParseNode(JJTPLSQLTABLEINDEXBYDECLARATION);
   boolean jjtc000 = true;
@@ -2072,7 +2068,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode varrayDeclaration() throws ParseException {
+  final public ParseNode varrayDeclaration() throws ParseException {
  /*@bgen(jjtree) varrayDeclaration */
   ParseNode jjtn000 = new ParseNode(JJTVARRAYDECLARATION);
   boolean jjtc000 = true;
@@ -2133,7 +2129,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode refCursorDeclaration() throws ParseException {
+  final public ParseNode refCursorDeclaration() throws ParseException {
  /*@bgen(jjtree) refCursorDeclaration */
  ParseNode jjtn000 = new ParseNode(JJTREFCURSORDECLARATION);
  boolean jjtc000 = true;
@@ -2178,7 +2174,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode refCursorTypeSpec() throws ParseException {
+  final public ParseNode refCursorTypeSpec() throws ParseException {
  /*@bgen(jjtree) refCursorTypeSpec */
  ParseNode jjtn000 = new ParseNode(JJTREFCURSORTYPESPEC);
  boolean jjtc000 = true;
@@ -2246,7 +2242,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode cursorDeclaration() throws ParseException {
+  final public ParseNode cursorDeclaration() throws ParseException {
  /*@bgen(jjtree) cursorDeclaration */
  ParseNode jjtn000 = new ParseNode(JJTCURSORDECLARATION);
  boolean jjtc000 = true;
@@ -2271,7 +2267,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
 // Procedure Specification
-  static final public ParseNode procedureSpec() throws ParseException {
+  final public ParseNode procedureSpec() throws ParseException {
  /*@bgen(jjtree) procedureSpec */
  ParseNode jjtn000 = new ParseNode(JJTPROCEDURESPEC);
  boolean jjtc000 = true;
@@ -2319,7 +2315,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public void argumentList() throws ParseException {
+  final public void argumentList() throws ParseException {
     argument();
     label_6:
     while (true) {
@@ -2337,7 +2333,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
 // Function Specification
-  static final public ParseNode functionSpec() throws ParseException {
+  final public ParseNode functionSpec() throws ParseException {
  /*@bgen(jjtree) functionSpec */
  ParseNode jjtn000 = new ParseNode(JJTFUNCTIONSPEC);
  boolean jjtc000 = true;
@@ -2414,7 +2410,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode functionReturnSpec() throws ParseException {
+  final public ParseNode functionReturnSpec() throws ParseException {
  /*@bgen(jjtree) functionReturnSpec */
   ParseNode jjtn000 = new ParseNode(JJTFUNCTIONRETURNSPEC);
   boolean jjtc000 = true;
@@ -2451,7 +2447,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode argument() throws ParseException {
+  final public ParseNode argument() throws ParseException {
  /*@bgen(jjtree) argument */
  ParseNode jjtn000 = new ParseNode(JJTARGUMENT);
  boolean jjtc000 = true;
@@ -2521,7 +2517,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public String direction() throws ParseException {
+  final public String direction() throws ParseException {
     if (jj_2_20(2)) {
       jj_consume_token(K_IN);
       jj_consume_token(K_OUT);
@@ -2545,7 +2541,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public ParseNode argumentDefaultAssignment() throws ParseException {
+  final public ParseNode argumentDefaultAssignment() throws ParseException {
  /*@bgen(jjtree) argumentDefaultAssignment */
   ParseNode jjtn000 = new ParseNode(JJTARGUMENTDEFAULTASSIGNMENT);
   boolean jjtc000 = true;
@@ -2593,13 +2589,13 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public void exceptionDeclaration() throws ParseException {
+  final public void exceptionDeclaration() throws ParseException {
     jj_consume_token(S_IDENTIFIER);
     jj_consume_token(K_EXCEPTION);
     jj_consume_token(O_SEMICOLON);
   }
 
-  static final public void pragmaDeclaration() throws ParseException {
+  final public void pragmaDeclaration() throws ParseException {
     jj_consume_token(K_PRAGMA);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_AUTONOMOUS_TRANSACTION:
@@ -2731,7 +2727,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     jj_consume_token(O_SEMICOLON);
   }
 
-  static final public String OracleObjectName() throws ParseException {
+  final public String OracleObjectName() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case S_IDENTIFIER:
       jj_consume_token(S_IDENTIFIER);
@@ -2751,7 +2747,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-  static final public void skipToSemiColon() throws ParseException {
+  final public void skipToSemiColon() throws ParseException {
         Token t = getNextToken();
         while (t.kind != O_SEMICOLON) {
                 t = getNextToken();
@@ -2759,7 +2755,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         token_source.input_stream.backup(1);
   }
 
-  static final public void skipToNextArg() throws ParseException {
+  final public void skipToNextArg() throws ParseException {
         Token t = getNextToken();
         while (t.kind != O_COMMA && t.kind != O_CLOSEPAREN) {
             t = getNextToken();
@@ -2767,7 +2763,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         token_source.input_stream.backup(1);
   }
 
-  static final public void skipToEnd() throws ParseException {
+  final public void skipToEnd() throws ParseException {
       /** skip through all the tokens. */
       Token t = getNextToken();
       while (t.kind != EOF) {
@@ -2775,226 +2771,158 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       }
   }
 
-  static private boolean jj_2_1(int xla) {
+  private boolean jj_2_1(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_1(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(0, xla); }
   }
 
-  static private boolean jj_2_2(int xla) {
+  private boolean jj_2_2(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_2(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_2_3(int xla) {
+  private boolean jj_2_3(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
   }
 
-  static private boolean jj_2_4(int xla) {
+  private boolean jj_2_4(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_4(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(3, xla); }
   }
 
-  static private boolean jj_2_5(int xla) {
+  private boolean jj_2_5(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_5(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(4, xla); }
   }
 
-  static private boolean jj_2_6(int xla) {
+  private boolean jj_2_6(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_6(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(5, xla); }
   }
 
-  static private boolean jj_2_7(int xla) {
+  private boolean jj_2_7(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_7(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(6, xla); }
   }
 
-  static private boolean jj_2_8(int xla) {
+  private boolean jj_2_8(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_8(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(7, xla); }
   }
 
-  static private boolean jj_2_9(int xla) {
+  private boolean jj_2_9(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_9(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(8, xla); }
   }
 
-  static private boolean jj_2_10(int xla) {
+  private boolean jj_2_10(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_10(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(9, xla); }
   }
 
-  static private boolean jj_2_11(int xla) {
+  private boolean jj_2_11(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_11(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(10, xla); }
   }
 
-  static private boolean jj_2_12(int xla) {
+  private boolean jj_2_12(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_12(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(11, xla); }
   }
 
-  static private boolean jj_2_13(int xla) {
+  private boolean jj_2_13(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_13(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(12, xla); }
   }
 
-  static private boolean jj_2_14(int xla) {
+  private boolean jj_2_14(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_14(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(13, xla); }
   }
 
-  static private boolean jj_2_15(int xla) {
+  private boolean jj_2_15(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_15(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(14, xla); }
   }
 
-  static private boolean jj_2_16(int xla) {
+  private boolean jj_2_16(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_16(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(15, xla); }
   }
 
-  static private boolean jj_2_17(int xla) {
+  private boolean jj_2_17(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_17(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(16, xla); }
   }
 
-  static private boolean jj_2_18(int xla) {
+  private boolean jj_2_18(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_18(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(17, xla); }
   }
 
-  static private boolean jj_2_19(int xla) {
+  private boolean jj_2_19(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_19(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(18, xla); }
   }
 
-  static private boolean jj_2_20(int xla) {
+  private boolean jj_2_20(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_20(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(19, xla); }
   }
 
-  static private boolean jj_3R_9() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(35)) jj_scanpos = xsp;
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_11() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_11() {
-    if (jj_3R_8()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_16()) jj_scanpos = xsp;
-    return false;
-  }
-
-  static private boolean jj_3_9() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_7() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_10() {
-    if (jj_3R_8()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_15()) jj_scanpos = xsp;
-    return false;
-  }
-
-  static private boolean jj_3_6() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1() {
+  private boolean jj_3_1() {
     if (jj_3R_8()) return true;
     if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
-  static private boolean jj_3_14() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_18() {
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_17() {
-    if (jj_3R_11()) return true;
-    if (jj_scan_token(K_ROWTYPE)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_16() {
-    if (jj_3R_10()) return true;
-    if (jj_scan_token(K_TYPE2)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_17() {
+  private boolean jj_3R_17() {
     if (jj_3R_19()) return true;
     return false;
   }
 
-  static private boolean jj_3R_14() {
+  private boolean jj_3R_14() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_17()) {
@@ -3010,23 +2938,17 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  static private boolean jj_3R_13() {
+  private boolean jj_3R_13() {
     if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
     return false;
   }
 
-  static private boolean jj_3_4() {
-    if (jj_3R_8()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_37() {
+  private boolean jj_3R_37() {
     if (jj_scan_token(K_CLOB)) return true;
     return false;
   }
 
-  static private boolean jj_3R_8() {
+  private boolean jj_3R_8() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_12()) {
@@ -3036,80 +2958,86 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  static private boolean jj_3R_12() {
+  private boolean jj_3R_12() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
-  static private boolean jj_3R_36() {
+  private boolean jj_3R_36() {
     if (jj_scan_token(K_NATIONAL)) return true;
     return false;
   }
 
-  static private boolean jj_3R_35() {
+  private boolean jj_3R_35() {
     if (jj_scan_token(K_NVARCHAR2)) return true;
     return false;
   }
 
-  static private boolean jj_3_12() {
+  private boolean jj_3_12() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
-  static private boolean jj_3R_34() {
+  private boolean jj_3R_34() {
     if (jj_scan_token(K_NVARCHAR)) return true;
     return false;
   }
 
-  static private boolean jj_3R_33() {
+  private boolean jj_3R_33() {
     if (jj_scan_token(K_NCHAR)) return true;
     return false;
   }
 
-  static private boolean jj_3_10() {
+  private boolean jj_3_10() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
-  static private boolean jj_3R_32() {
+  private boolean jj_3R_32() {
     if (jj_scan_token(K_CHARACTER)) return true;
     return false;
   }
 
-  static private boolean jj_3_8() {
+  private boolean jj_3_8() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
-  static private boolean jj_3R_31() {
+  private boolean jj_3R_31() {
     if (jj_scan_token(K_VARCHAR2)) return true;
     return false;
   }
 
-  static private boolean jj_3R_30() {
+  private boolean jj_3R_30() {
     if (jj_scan_token(K_VARCHAR)) return true;
     return false;
   }
 
-  static private boolean jj_3R_29() {
+  private boolean jj_3R_29() {
     if (jj_scan_token(K_CHAR)) return true;
     return false;
   }
 
-  static private boolean jj_3R_28() {
+  private boolean jj_3_4() {
+    if (jj_3R_8()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_28() {
     if (jj_scan_token(K_DOUBLE)) return true;
     return false;
   }
 
-  static private boolean jj_3R_27() {
+  private boolean jj_3R_27() {
     if (jj_scan_token(K_UROWIDD)) return true;
     return false;
   }
 
-  static private boolean jj_3_18() {
+  private boolean jj_3_18() {
     if (jj_3R_10()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -3117,12 +3045,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  static private boolean jj_3R_26() {
+  private boolean jj_3R_26() {
     if (jj_scan_token(K_FLOAT)) return true;
     return false;
   }
 
-  static private boolean jj_3_19() {
+  private boolean jj_3_19() {
     if (jj_3R_11()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -3130,7 +3058,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  static private boolean jj_3R_25() {
+  private boolean jj_3R_25() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(181)) {
@@ -3140,34 +3068,28 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  static private boolean jj_3_3() {
-    if (jj_3R_8()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_24() {
+  private boolean jj_3R_24() {
     if (jj_scan_token(K_INTERVAL)) return true;
     return false;
   }
 
-  static private boolean jj_3_15() {
+  private boolean jj_3_15() {
     if (jj_scan_token(K_INTERVAL)) return true;
     if (jj_scan_token(K_DAY)) return true;
     return false;
   }
 
-  static private boolean jj_3R_23() {
+  private boolean jj_3R_23() {
     if (jj_scan_token(K_RAW)) return true;
     return false;
   }
 
-  static private boolean jj_3R_22() {
+  private boolean jj_3R_22() {
     if (jj_scan_token(K_LONG)) return true;
     return false;
   }
 
-  static private boolean jj_3R_21() {
+  private boolean jj_3R_21() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(116)) {
@@ -3183,19 +3105,25 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  static private boolean jj_3R_16() {
+  private boolean jj_3R_16() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_8()) return true;
     return false;
   }
 
-  static private boolean jj_3_20() {
+  private boolean jj_3_20() {
     if (jj_scan_token(K_IN)) return true;
     if (jj_scan_token(K_OUT)) return true;
     return false;
   }
 
-  static private boolean jj_3R_19() {
+  private boolean jj_3_3() {
+    if (jj_3R_8()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(20)) {
@@ -3304,47 +3232,114 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  static private boolean jj_3R_15() {
+  private boolean jj_3R_15() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_8()) return true;
     return false;
   }
 
-  static private boolean jj_3_13() {
+  private boolean jj_3_13() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
-  static private boolean jj_3_5() {
+  private boolean jj_3R_20() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_9() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(35)) jj_scanpos = xsp;
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    if (jj_3R_8()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_16()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
     if (jj_3R_8()) return true;
     if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
-  static private boolean jj_3_2() {
+  private boolean jj_3_7() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
     if (jj_3R_8()) return true;
     if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
-  static private boolean jj_3R_20() {
+  private boolean jj_3R_10() {
     if (jj_3R_8()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_15()) jj_scanpos = xsp;
     return false;
   }
 
-  static private boolean jj_initialized_once = false;
+  private boolean jj_3_6() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3_14() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18() {
+    if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3_17() {
+    if (jj_3R_11()) return true;
+    if (jj_scan_token(K_ROWTYPE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_16() {
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(K_TYPE2)) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
-  static public DDLParserTokenManager token_source;
-  static JavaCharStream jj_input_stream;
+  public DDLParserTokenManager token_source;
+  JavaCharStream jj_input_stream;
   /** Current token. */
-  static public Token token;
+  public Token token;
   /** Next token. */
-  static public Token jj_nt;
-  static private int jj_ntk;
-  static private Token jj_scanpos, jj_lastpos;
-  static private int jj_la;
-  static private int jj_gen;
-  static final private int[] jj_la1 = new int[123];
+  public Token jj_nt;
+  private int jj_ntk;
+  private Token jj_scanpos, jj_lastpos;
+  private int jj_la;
+  private int jj_gen;
+  final private int[] jj_la1 = new int[123];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -3387,9 +3382,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
    private static void jj_la1_init_7() {
       jj_la1_7 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x4000,0x84000,0x0,0x8,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80,0x0,0x0,0x8,0x84000,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x8,0x8,0x8,0x8,0x8,0x0,0x8,0x0,0x0,0x8,0x8,0x0,0x0,0x0,0x8,0x84000,0x84000,0x0,0x0,0x0,0x8,0x84000,0x84000,0x0,0x0,0x0,0x8,0x84000,0x84000,0x0,0x8,0x0,0x8,0x8,0x8,0x0,0x0,0x8,0x84000,0x84000,0x0,0x0,0x8,0x0,0x84000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x84000,0x8,0x0,0x8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4000,0x4000,0x0,0x0,0x0,0x0,0x0,0x84000,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[20];
-  static private boolean jj_rescan = false;
-  static private int jj_gc = 0;
+  final private JJCalls[] jj_2_rtns = new JJCalls[20];
+  private boolean jj_rescan = false;
+  private int jj_gc = 0;
 
   /** Constructor with InputStream. */
   public DDLParser(java.io.InputStream stream) {
@@ -3397,13 +3392,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
   /** Constructor with InputStream and supplied encoding */
   public DDLParser(java.io.InputStream stream, String encoding) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new DDLParserTokenManager(jj_input_stream);
     token = new Token();
@@ -3414,11 +3402,11 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream) {
+  public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream, String encoding) {
+  public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -3431,13 +3419,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   /** Constructor. */
   public DDLParser(java.io.Reader stream) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new DDLParserTokenManager(jj_input_stream);
     token = new Token();
@@ -3448,7 +3429,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.Reader stream) {
+  public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -3461,13 +3442,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   /** Constructor with generated Token Manager. */
   public DDLParser(DDLParserTokenManager tm) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
@@ -3487,7 +3461,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  static private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -3512,8 +3486,8 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
   static private final class LookaheadSuccess extends java.lang.Error { }
-  static final private LookaheadSuccess jj_ls = new LookaheadSuccess();
-  static private boolean jj_scan_token(int kind) {
+  final private LookaheadSuccess jj_ls = new LookaheadSuccess();
+  private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
       jj_la--;
       if (jj_scanpos.next == null) {
@@ -3536,7 +3510,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
 
 /** Get the next Token. */
-  static final public Token getNextToken() {
+  final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -3545,7 +3519,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
 /** Get the specific Token. */
-  static final public Token getToken(int index) {
+  final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -3554,20 +3528,20 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return t;
   }
 
-  static private int jj_ntk() {
+  private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
-  static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
-  static private int[] jj_expentry;
-  static private int jj_kind = -1;
-  static private int[] jj_lasttokens = new int[100];
-  static private int jj_endpos;
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private int[] jj_expentry;
+  private int jj_kind = -1;
+  private int[] jj_lasttokens = new int[100];
+  private int jj_endpos;
 
-  static private void jj_add_error_token(int kind, int pos) {
+  private void jj_add_error_token(int kind, int pos) {
     if (pos >= 100) return;
     if (pos == jj_endpos + 1) {
       jj_lasttokens[jj_endpos++] = kind;
@@ -3593,7 +3567,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
   /** Generate ParseException. */
-  static public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.clear();
     boolean[] la1tokens = new boolean[244];
     if (jj_kind >= 0) {
@@ -3648,14 +3622,14 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
   /** Enable tracing. */
-  static final public void enable_tracing() {
+  final public void enable_tracing() {
   }
 
   /** Disable tracing. */
-  static final public void disable_tracing() {
+  final public void disable_tracing() {
   }
 
-  static private void jj_rescan_token() {
+  private void jj_rescan_token() {
     jj_rescan = true;
     for (int i = 0; i < 20; i++) {
     try {
@@ -3693,7 +3667,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     jj_rescan = false;
   }
 
-  static private void jj_save(int index, int xla) {
+  private void jj_save(int index, int xla) {
     JJCalls p = jj_2_rtns[index];
     while (p.gen > jj_gen) {
       if (p.next == null) { p = p.next = new JJCalls(); break; }
@@ -3709,4 +3683,26 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     JJCalls next;
   }
 
+    /*
+    public static void main( String args[] ) throws ParseException {
+        DDLParser p = null ;
+        if (args.length < 1) {
+            System.out.println("Reading from stdin") ;
+            p = new DDLParser(System.in) ;
+        }
+        else {
+            try {
+                p = new DDLParser(new java.io.DataInputStream(
+                                new java.io.FileInputStream(args[0]))) ;
+            }
+            catch (java.io.FileNotFoundException e) {
+                System.out.println("File " + args[0] +
+                                " not found. Reading from stdin") ;
+                p = new DDLParser(System.in) ;
+            }
+        }
+        SimpleNode sn = p.parsePLSQLPackage();
+        sn.dump(">");
+    }
+    */
 }

@@ -1,7 +1,5 @@
 package org.eclipse.persistence.tools.dbws.metadata.parser;
 
-import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageNode;
-
 @SuppressWarnings("all")
 public class ParseNode extends SimpleNode {
 

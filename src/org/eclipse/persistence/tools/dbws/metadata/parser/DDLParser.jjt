@@ -12,7 +12,8 @@
  ******************************************************************************/
 options {
     MULTI = false;
-    STATIC = true;
+    //STATIC = true;
+    STATIC = false;
     UNICODE_INPUT = true;
     JAVA_UNICODE_ESCAPE = true;
     IGNORE_CASE = true;
@@ -37,15 +38,28 @@ PARSER_BEGIN(DDLParser)
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata.parser;
 
-import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageNode;
+//javase imports
+import java.io.InputStream;
+import java.util.Stack;
+
+//metadata imports
+import org.eclipse.persistence.tools.dbws.metadata.*;
 
 @SuppressWarnings("unused")
 public class DDLParser {
 
+    protected Stack<MetadataType> typeStack = new Stack<MetadataType>();
+    protected MetadataTypesRepository typesRepository = new MetadataTypesRepository();
+
     public DDLParser() {
-      super();
+        super();
     }
 
+    public void setTypesRepository(MetadataTypesRepository typesRepository) {
+        this.typesRepository = typesRepository;
+    }
+
+    /*
     public static void main( String args[] ) throws ParseException {
         DDLParser p = null ;
         if (args.length < 1) {
@@ -66,6 +80,7 @@ public class DDLParser {
         SimpleNode sn = p.parsePLSQLPackage();
         sn.dump(">");
     }
+    */
 }
 
 PARSER_END(DDLParser)
@@ -352,17 +367,22 @@ ParseNode parsePLSQLPackage():
 {
     <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_PACKAGE>
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] packageName=OracleObjectName()
+        {
+          PLSQLPackageType packageType = new PLSQLPackageType();
+          if (schema != null) {
+            packageType.setPackageName(schema + "." + packageName);
+          }
+          else {
+            packageType.setPackageName(packageName);
+          }
+          typeStack.push(packageType);
+        }
         [ <K_AUTHID> [ <K_CURRENT_USER> | <K_DEFINER> ] ]
         [ <K_AS> | <K_IS> ]
          ( packageDeclaration() )*
      <K_END> [ packageName=OracleObjectName() ] <O_SEMICOLON>
      <EOF>
     {
-      PLSQLPackageNode packageNode = new PLSQLPackageNode();
-      if (schema != null) {
-        packageNode.setPackageName(schema + "." + packageName);      }      else {
-        packageNode.setPackageName(packageName);      }
-      //TODO - need some place to stash packageNode
       jjtThis.jjtSetValue(packageName);
       return jjtThis;
     }
@@ -417,30 +437,27 @@ ParseNode parseTopLevelFunction():
 }
 
 // tables at 'top-level'
-ParseNode parseTable():
-{String schema = null;
+MetadataType parseTable():
+{TableType table = null;
+ String schema = null;
  String tableName = null;}
 {
     <K_CREATE> [ <K_GLOBAL> <K_TEMPORARY> ] <K_TABLE> 
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] tableName=OracleObjectName()
+        {
+            table = new TableType(tableName);
+		    if (schema != null) {
+		         table.setSchema(schema);
+		    }
+		    typeStack.push(table);        }
         <O_OPENPAREN> columnDeclarations() <O_CLOSEPAREN>
          [ <K_ON> <K_COMMIT > [<K_DELETE> | <K_PRESERVE> ] <K_ROWS> ]
          <O_SEMICOLON>
         ( alterDeclaration() <O_SEMICOLON> ) *
      <EOF>
-    {
-      StringBuilder sb = new StringBuilder("TABLE ");
-      if (schema != null) {
-         sb.append(schema);
-         sb.append(".");
-         sb.append(tableName);
-      }
-      else {
-         sb.append(tableName);
-      }
-      jjtThis.jjtSetValue(sb.toString());
-      return jjtThis;
-    }
+     {
+         return typeStack.pop();
+     }
 }
 
 ParseNode alterDeclaration():
@@ -507,8 +524,20 @@ ParseNode columnDeclaration():
  boolean notNull = false;
 }
 {
-    s=OracleObjectName() columnTypeSpec() [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
     {
+        MetadataType enclosingType = typeStack.peek();    }
+    s=OracleObjectName()
+        {
+            if (enclosingType.isNested()) {                FieldType column = new FieldType(s);
+                ((NestedType)enclosingType).addField(column);
+                typeStack.push(column);
+            }        }
+        columnTypeSpec() [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
+    {
+      
+      if (enclosingType.isNested()) {
+          typeStack.pop();
+      }
       StringBuilder sb = new StringBuilder();
       if (notNull) {
         sb.append("(NOT NULL)");

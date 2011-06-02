@@ -13,7 +13,8 @@
  ******************************************************************************/
 options {
                   
-    STATIC = true;
+    //STATIC = true;
+    STATIC = false;
     UNICODE_INPUT = true;
     JAVA_UNICODE_ESCAPE = true;
     IGNORE_CASE = true;
@@ -38,18 +39,31 @@ PARSER_BEGIN(DDLParser)
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata.parser;
 
-import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageNode;
+//javase imports
+import java.io.InputStream;
+import java.util.Stack;
+
+//metadata imports
+import org.eclipse.persistence.tools.dbws.metadata.*;
 
 @SuppressWarnings("unused")
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
-  protected static JJTDDLParserState jjtree = new JJTDDLParserState();
+  protected JJTDDLParserState jjtree = new JJTDDLParserState();
 
 /*@egen*/
 
+    protected Stack<MetadataType> typeStack = new Stack<MetadataType>();
+    protected MetadataTypesRepository typesRepository = new MetadataTypesRepository();
+
     public DDLParser() {
-      super();
+        super();
     }
 
+    public void setTypesRepository(MetadataTypesRepository typesRepository) {
+        this.typesRepository = typesRepository;
+    }
+
+    /*
     public static void main( String args[] ) throws ParseException {
         DDLParser p = null ;
         if (args.length < 1) {
@@ -70,6 +84,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*
         SimpleNode sn = p.parsePLSQLPackage();
         sn.dump(">");
     }
+    */
 }
 
 PARSER_END(DDLParser)
@@ -363,6 +378,16 @@ ParseNode parsePLSQLPackage():
 /*@egen*/
     <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_PACKAGE>
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] packageName=OracleObjectName()
+        {
+          PLSQLPackageType packageType = new PLSQLPackageType();
+          if (schema != null) {
+            packageType.setPackageName(schema + "." + packageName);
+          }
+          else {
+            packageType.setPackageName(packageName);
+          }
+          typeStack.push(packageType);
+        }
         [ <K_AUTHID> [ <K_CURRENT_USER> | <K_DEFINER> ] ]
         [ <K_AS> | <K_IS> ]
          ( packageDeclaration() )*
@@ -375,11 +400,6 @@ ParseNode parsePLSQLPackage():
     }
 /*@egen*/
     {
-      PLSQLPackageNode packageNode = new PLSQLPackageNode();
-      if (schema != null) {
-        packageNode.setPackageName(schema + "." + packageName);      }      else {
-        packageNode.setPackageName(packageName);      }
-      //TODO - need some place to stash packageNode
       jjtn000.jjtSetValue(packageName);
       return jjtn000;
     }/*@bgen(jjtree)*/
@@ -523,43 +543,40 @@ ParseNode parseTopLevelFunction():
 }
 
 // tables at 'top-level'
-ParseNode parseTable():
+MetadataType parseTable():
 {/*@bgen(jjtree) parseTable */
  ParseNode jjtn000 = new ParseNode(JJTPARSETABLE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
-/*@egen*/String schema = null;
+/*@egen*/TableType table = null;
+ String schema = null;
  String tableName = null;}
 {/*@bgen(jjtree) parseTable */
     try {
 /*@egen*/
     <K_CREATE> [ <K_GLOBAL> <K_TEMPORARY> ] <K_TABLE> 
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] tableName=OracleObjectName()
+        {
+            table = new TableType(tableName);
+		    if (schema != null) {
+		         table.setSchema(schema);
+		    }
+		    typeStack.push(table);        }
         <O_OPENPAREN> columnDeclarations() <O_CLOSEPAREN>
          [ <K_ON> <K_COMMIT > [<K_DELETE> | <K_PRESERVE> ] <K_ROWS> ]
          <O_SEMICOLON>
         ( alterDeclaration() <O_SEMICOLON> ) *
      <EOF>/*@bgen(jjtree)*/
-    {
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-    }
+     {
+       jjtree.closeNodeScope(jjtn000, true);
+       jjtc000 = false;
+       jjtn000.jjtSetLastToken(getToken(0));
+     }
 /*@egen*/
-    {
-      StringBuilder sb = new StringBuilder("TABLE ");
-      if (schema != null) {
-         sb.append(schema);
-         sb.append(".");
-         sb.append(tableName);
-      }
-      else {
-         sb.append(tableName);
-      }
-      jjtn000.jjtSetValue(sb.toString());
-      return jjtn000;
-    }/*@bgen(jjtree)*/
+     {
+         return typeStack.pop();
+     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -722,7 +739,15 @@ ParseNode columnDeclaration():
 {/*@bgen(jjtree) columnDeclaration */
     try {
 /*@egen*/
-    s=OracleObjectName() columnTypeSpec() [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]/*@bgen(jjtree)*/
+    {
+        MetadataType enclosingType = typeStack.peek();    }
+    s=OracleObjectName()
+        {
+            if (enclosingType.isNested()) {                FieldType column = new FieldType(s);
+                ((NestedType)enclosingType).addField(column);
+                typeStack.push(column);
+            }        }
+        columnTypeSpec() [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
@@ -730,6 +755,10 @@ ParseNode columnDeclaration():
     }
 /*@egen*/
     {
+      
+      if (enclosingType.isNested()) {
+          typeStack.pop();
+      }
       StringBuilder sb = new StringBuilder();
       if (notNull) {
         sb.append("(NOT NULL)");
