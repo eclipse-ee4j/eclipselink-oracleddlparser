@@ -12,7 +12,7 @@
  * Contributors:
  *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
  ******************************************************************************/
-package org.eclipse.persistence.tools.dbws.plsqlparser;
+package org.eclipse.persistence.tools.dbws.metadata.parser;
 
 /** Token Manager Error. */
 public class TokenMgrError extends Error
@@ -156,4 +156,4 @@ public class TokenMgrError extends Error
     this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason);
   }
 }
-/* JavaCC - OriginalChecksum=332aaa43c1e2c6958f5b628e6c2f6569 (do not edit this line) */
+/* JavaCC - OriginalChecksum=51aaf9970a4abb0d7566f83d08b746b2 (do not edit this line) */

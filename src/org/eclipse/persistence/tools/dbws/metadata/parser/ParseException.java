@@ -12,7 +12,7 @@
  * Contributors:
  *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
  ******************************************************************************/
-package org.eclipse.persistence.tools.dbws.plsqlparser;
+package org.eclipse.persistence.tools.dbws.metadata.parser;
 
 /**
  * This exception is thrown when parse errors are encountered.
@@ -196,4 +196,4 @@ public class ParseException extends Exception {
    }
 
 }
-/* JavaCC - OriginalChecksum=f5c866b0c38667ceef16ccf18f6b3661 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f482a3c09a9c53b7b2501b25f4dfc8d4 (do not edit this line) */
