@@ -3,61 +3,61 @@ package org.eclipse.persistence.tools.dbws.plsqlparser;
 
 public interface PLSQLParserTreeConstants
 {
-  public int JJTVOID = 0;
-  public int JJTPARSEPLSQLPACKAGE = 1;
-  public int JJTENDPACKAGESPEC = 2;
-  public int JJTPACKAGESPEC = 3;
-  public int JJTVARIABLEDECLARATION = 4;
-  public int JJTDATATYPE = 5;
-  public int JJTTYPESPEC = 6;
-  public int JJTCOLUMNSPEC = 7;
-  public int JJTTABLESPEC = 8;
-  public int JJTTYPEDECLARATION = 9;
-  public int JJTRECORDDECLARATION = 10;
-  public int JJTFIELDDECLARATION = 11;
-  public int JJTFIELDTYPE = 12;
-  public int JJTSUBTYPEDECLARATION = 13;
-  public int JJTPLSQLTABLEDECLARATION = 14;
-  public int JJTVARRAYDECLARATION = 15;
-  public int JJTREFCURSORDECLARATION = 16;
-  public int JJTCURSORDECLARATION = 17;
-  public int JJTPROCEDURESPEC = 18;
-  public int JJTARGUMENTLIST = 19;
-  public int JJTFUNCTIONSPEC = 20;
-  public int JJTARGUMENT = 21;
-  public int JJTEXCEPTIONDECLARATION = 22;
-  public int JJTPRAGMADECLARATION = 23;
-  public int JJTSKIPTOSEMICOLON = 24;
-  public int JJTSKIPTONEXTARG = 25;
+  public int JJTPARSEPLSQLPACKAGE = 0;
+  public int JJTPARSETOPLEVELPROCEDURE = 1;
+  public int JJTPARSETOPLEVELFUNCTION = 2;
+  public int JJTPARSETABLE = 3;
+  public int JJTALTERDECLARATION = 4;
+  public int JJTPARSETYPE = 5;
+  public int JJTVOID = 6;
+  public int JJTCOLUMNDECLARATION = 7;
+  public int JJTCOLUMNTYPESPEC = 8;
+  public int JJTVARIABLEDECLARATION = 9;
+  public int JJTTYPESPEC = 10;
+  public int JJTTYPEDECLARATION = 11;
+  public int JJTRECORDDECLARATION = 12;
+  public int JJTFIELDDECLARATION = 13;
+  public int JJTSUBTYPEDECLARATION = 14;
+  public int JJTPLSQLTABLEDECLARATION = 15;
+  public int JJTPLSQLTABLEINDEXBYDECLARATION = 16;
+  public int JJTVARRAYDECLARATION = 17;
+  public int JJTREFCURSORDECLARATION = 18;
+  public int JJTREFCURSORTYPESPEC = 19;
+  public int JJTCURSORDECLARATION = 20;
+  public int JJTPROCEDURESPEC = 21;
+  public int JJTFUNCTIONSPEC = 22;
+  public int JJTFUNCTIONRETURNSPEC = 23;
+  public int JJTARGUMENT = 24;
+  public int JJTARGUMENTDEFAULTASSIGNMENT = 25;
 
 
   public String[] jjtNodeName = {
-    "void",
     "parsePLSQLPackage",
-    "endPackageSpec",
-    "packageSpec",
+    "parseTopLevelProcedure",
+    "parseTopLevelFunction",
+    "parseTable",
+    "alterDeclaration",
+    "parseType",
+    "void",
+    "columnDeclaration",
+    "columnTypeSpec",
     "variableDeclaration",
-    "datatype",
     "typeSpec",
-    "columnSpec",
-    "tableSpec",
     "typeDeclaration",
     "recordDeclaration",
     "fieldDeclaration",
-    "fieldType",
     "subtypeDeclaration",
     "plsqlTableDeclaration",
+    "plsqlTableIndexByDeclaration",
     "varrayDeclaration",
     "refCursorDeclaration",
+    "refCursorTypeSpec",
     "cursorDeclaration",
     "procedureSpec",
-    "argumentList",
     "functionSpec",
+    "functionReturnSpec",
     "argument",
-    "exceptionDeclaration",
-    "pragmaDeclaration",
-    "skipToSemicolon",
-    "skipToNextArg",
+    "argumentDefaultAssignment",
   };
 }
-/* JavaCC - OriginalChecksum=a1612ace0e7aacdd28f9554a4bcfc971 (do not edit this line) */
+/* JavaCC - OriginalChecksum=62610c7e0fed69a15982bc134f424d46 (do not edit this line) */
