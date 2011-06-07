@@ -178,8 +178,8 @@ public class DDLParserTest {
     static final String EMPTY_PACKAGE_BODY = " AS \n";
     static final String EMPTY_PACKAGE_SUFFIX =
         "END CURSOR_TEST;"; 
-    @Ignore
-    //@Test
+    //@Ignore
+    @Test
     public void testEmptyPackage() {
         parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
