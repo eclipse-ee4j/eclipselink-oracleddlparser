@@ -1,32 +1,39 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class FieldType implements MetadataType {
+public class FieldType implements DatabaseType {
 
-    protected String name;
-    protected MetadataType dataType;
+    protected String fieldName;
+    protected DatabaseType dataType;
 
-    public FieldType(String name) {
-        this.name = name;
+    public FieldType(String fieldName) {
+        this.fieldName = fieldName;
     }
 
-    public boolean isNested() {
-        return false;
+    public String getTypeName() {
+        return dataType.getTypeName();
     }
 
-    public String getName() {
-        return name;
+    public boolean isSimple() {
+        return dataType.isSimple();
+    }
+    public boolean isComplex() {
+        return dataType.isComplex();
     }
 
-    public MetadataType getDataType() {
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public DatabaseType getDataType() {
         return dataType;
     }
-    public void setDataType(MetadataType dataType) {
+    public void setDataType(DatabaseType dataType) {
         this.dataType = dataType;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(name);
+        StringBuilder sb = new StringBuilder(fieldName);
         sb.append("\t");
         if (dataType == null) {
             sb.append("unknown datatype");
@@ -36,5 +43,4 @@ public class FieldType implements MetadataType {
         }
         return sb.toString();
     }
-
 }

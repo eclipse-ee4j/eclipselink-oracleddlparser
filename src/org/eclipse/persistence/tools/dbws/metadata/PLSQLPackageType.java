@@ -1,14 +1,20 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class PLSQLPackageType implements MetadataType {
+public class PLSQLPackageType implements ComplexDatabaseType {
 
     public PLSQLPackageType() {
         super();
     }
 
-    //sorta
-    public boolean isNested() {
+    public String getTypeName() {
+        return "PL/SQL Package";
+    }
+
+    public boolean isSimple() {
         return false;
+    }
+    public boolean isComplex() {
+        return true;
     }
 
     protected String packageName;
@@ -19,5 +25,9 @@ public class PLSQLPackageType implements MetadataType {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public void addEnclosedType(DatabaseType enclosedType) {
+       
     }
 }

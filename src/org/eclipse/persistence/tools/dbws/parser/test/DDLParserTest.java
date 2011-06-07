@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
 import static junit.framework.Assert.assertTrue;
 
 //EclipseLink imports
-import org.eclipse.persistence.tools.dbws.metadata.MetadataTypesRepository;
+import org.eclipse.persistence.tools.dbws.metadata.DatabaseTypesRepository;
 import org.eclipse.persistence.tools.dbws.metadata.TableType;
 import org.eclipse.persistence.tools.dbws.metadata.parser.ParseNode;
 import org.eclipse.persistence.tools.dbws.metadata.parser.DDLParser;
@@ -86,7 +86,7 @@ public class DDLParserTest {
                 return 0;
             }
         });
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
 	}
 
     static String getDDL(String psSpec) {
@@ -154,7 +154,7 @@ public class DDLParserTest {
         String message = "";
         ParseNode parseNode = null;
         try {
-            parser.setTypesRepository(new MetadataTypesRepository());
+            parser.setTypesRepository(new DatabaseTypesRepository());
             parseNode = parser.parsePLSQLPackage();
         }
         catch (ParseException pe) {
@@ -181,7 +181,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testEmptyPackage() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(PACKAGE_NAME);
@@ -191,7 +191,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
 	public void testEmptyPackageDN() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + DOT_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(DOT_NAME);
@@ -201,7 +201,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testEmptyPackageQDN()  {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + QUOTED_DOT_NAME +
             EMPTY_PACKAGE_BODY + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(DOT_NAME);
@@ -213,7 +213,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testVariableDeclaration() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + VARIABLE_DECLARATION + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(PACKAGE_NAME);
@@ -230,7 +230,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testSimpleRecordDeclaration() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + SIMPLE_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(PACKAGE_NAME);
@@ -247,7 +247,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testComplexRecordDeclaration() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + COMPLEX_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(PACKAGE_NAME);
@@ -262,7 +262,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testNestedRecordDeclaration() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + NESTED_RECORD_DECLARATION + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(PACKAGE_NAME);
@@ -274,7 +274,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testWeakRefCursorDeclaration() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + WEAK_REF_CURSOR_DECLARATION + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(PACKAGE_NAME);
@@ -292,7 +292,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testTypedRefCursorDeclaration() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
             EMPTY_PACKAGE_BODY + TYPED_REF_CURSOR_DECLARATION + EMPTY_PACKAGE_SUFFIX));
         ParseNode plsqlNode = parsePackage(PACKAGE_NAME);
@@ -378,7 +378,7 @@ public class DDLParserTest {
     @Ignore
     //@Test
     public void testQualcommPackage() {
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(QUALCOMM_DECLARATION));
         ParseNode plsqlNode = parsePackage(QUALCOMM_PACKAGE);
         plsqlNode.dump("");
@@ -388,7 +388,7 @@ public class DDLParserTest {
     //@Test
     public void testCursorTestPackageFromDatabase() {
         String ddlForPackage = getDDLForPackage(PACKAGE_NAME);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddlForPackage));
         ParseNode plsqlNode = parsePackage(DOT_NAME);
         plsqlNode.dump("");
@@ -399,7 +399,7 @@ public class DDLParserTest {
     //@Test
     public void testSomePackageFromDatabase() {
         String ddlForPackage = getDDLForPackage(SOME_PACKAGE);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddlForPackage));
         ParseNode plsqlNode = parsePackage(username.toUpperCase() + "." + SOME_PACKAGE);
         plsqlNode.dump("");
@@ -410,7 +410,7 @@ public class DDLParserTest {
     //@Test
     public void testAnotherAdvancedDemoPackageFromDatabase() {
         String ddlForPackage = getDDLForPackage(ANOTHER_ADVANCED_DEMO_PACKAGE);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddlForPackage));
         ParseNode plsqlNode = parsePackage(username.toUpperCase() + "." + ANOTHER_ADVANCED_DEMO_PACKAGE);
         plsqlNode.dump("");
@@ -431,7 +431,7 @@ public class DDLParserTest {
     //@Test
     public void testTestTypesPackageFromDatabase() {
         String ddlForPackage = getDDLForPackage(TEST_TYPES_PACKAGE);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddlForPackage));
         ParseNode plsqlNode = parsePackage(username.toUpperCase() + "." + TEST_TYPES_PACKAGE);
         plsqlNode.dump("");
@@ -442,7 +442,7 @@ public class DDLParserTest {
     //@Test
     public void testLTBLPackageFromDatabase() {
         String ddlForPackage = getDDLForPackage(LTBL_PACKAGE);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddlForPackage));
         ParseNode plsqlNode = parsePackage(username.toUpperCase() + "." + LTBL_PACKAGE);
         plsqlNode.dump("");
@@ -453,7 +453,7 @@ public class DDLParserTest {
     //@Test
     public void testTesmanFromDatabase() {
         String ddlForPackage = getDDLForPackage(TESMAN_PACKAGE);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddlForPackage));
         ParseNode plsqlNode = parsePackage(username.toUpperCase() + "." + TESMAN_PACKAGE);
         plsqlNode.dump("");
@@ -464,7 +464,7 @@ public class DDLParserTest {
     //@Test
     public void testTopLevelProcedure_BoolInTest() {
         String ddl = getDDLForProcedure(TOPLEVEL_PROCEDURE_BOOL_IN_TEST);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
@@ -486,7 +486,7 @@ public class DDLParserTest {
     //@Test
     public void testTopLevelFunction_BUILDTBL2() {
         String ddl = getDDLForFunction(TOPLEVEL_FUNCTION_BUILDTBL2);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
@@ -508,7 +508,7 @@ public class DDLParserTest {
     //@Test
     public void testType_EMP_INFO() {
         String ddl = getDDLForType(TYPE_EMP_INFO);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
@@ -530,7 +530,7 @@ public class DDLParserTest {
     //@Test
     public void testType_SOMEPACKAGE_TBL1() {
         String ddl = getDDLForType(TYPE_SOMEPACKAGE_TBL1);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
@@ -552,7 +552,7 @@ public class DDLParserTest {
     @Test
     public void testTable_Bonus() {
         String ddl = getDDLForTable(TABLE_BONUS);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
@@ -574,7 +574,7 @@ public class DDLParserTest {
     @Test
     public void testTempTable_TaxableEmp() {
         String ddl = getDDLForTable(TEMP_TABLE);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
@@ -596,7 +596,7 @@ public class DDLParserTest {
     @Test
     public void testTable_XR_VEE_ARRAY_EMP() {
         String ddl = getDDLForTable(TABLE_XR_VEE_ARRAY_EMP);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
@@ -618,7 +618,7 @@ public class DDLParserTest {
     //@Test
     public void testNestedTable_LTBL_PKG_LTBL_TAB() {
         String ddl = getDDLForType(NESTED_TABLE_LTBL);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
@@ -640,7 +640,7 @@ public class DDLParserTest {
     //@Test
     public void testVarray_EMP_INFO_ARRAY() {
         String ddl = getDDLForType(VARRAY_TYPE);
-        parser.setTypesRepository(new MetadataTypesRepository());
+        parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";

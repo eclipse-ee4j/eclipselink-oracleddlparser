@@ -48,14 +48,14 @@ import org.eclipse.persistence.tools.dbws.metadata.*;
 @SuppressWarnings("unused")
 public class DDLParser {
 
-    protected Stack<MetadataType> typeStack = new Stack<MetadataType>();
-    protected MetadataTypesRepository typesRepository = new MetadataTypesRepository();
+    protected Stack<DatabaseType> typeStack = new Stack<DatabaseType>();
+    protected DatabaseTypesRepository typesRepository = new DatabaseTypesRepository();
 
     public DDLParser() {
         super();
     }
 
-    public void setTypesRepository(MetadataTypesRepository typesRepository) {
+    public void setTypesRepository(DatabaseTypesRepository typesRepository) {
         this.typesRepository = typesRepository;
     }
 
@@ -288,7 +288,7 @@ TOKEN: {
         | <K_UNTIL: "UNTIL">
         | <K_UPDATED: "UPDATED">
         | <K_UPSERT: "UPSERT">
-        | <K_UROWIDD: "UROWID">
+        | <K_UROWID: "UROWID">
         | <K_USING: "USING">
         | <K_VARCHAR2: "VARCHAR2">
         | <K_VARCHAR: "VARCHAR">
@@ -437,7 +437,7 @@ ParseNode parseTopLevelFunction():
 }
 
 // tables at 'top-level'
-MetadataType parseTable():
+DatabaseType parseTable():
 {TableType table = null;
  String schema = null;
  String tableName = null;}
@@ -525,17 +525,17 @@ ParseNode columnDeclaration():
 }
 {
     {
-        MetadataType enclosingType = typeStack.peek();    }
+        DatabaseType enclosingType = typeStack.peek();    }
     s=OracleObjectName()
         {
-            if (enclosingType.isNested()) {                FieldType column = new FieldType(s);
-                ((NestedType)enclosingType).addField(column);
+            if (enclosingType.isComplex()) {                FieldType column = new FieldType(s);
+                ((ComplexDatabaseType)enclosingType).addEnclosedType(column);
                 typeStack.push(column);
             }        }
         columnTypeSpec() [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
     {
       
-      if (enclosingType.isNested()) {
+      if (enclosingType.isComplex()) {
           typeStack.pop();
       }
       StringBuilder sb = new StringBuilder();
@@ -596,40 +596,93 @@ void variableDefaultAssignment() #void:
 }
 
 void datatype() #void:
-{}
+{Token t = null;
+ Token precision = null;
+ Token scale = null;}
 {
-    <K_BINARY_INTEGER>
-    | <K_BINARY_FLOAT>
-    | <K_BINARY_DOUBLE>
-    | <K_NATURAL>
-    | <K_POSITIVE>
-    | ( <K_NUMBER>
-        | <K_NUMERIC>
-        | <K_DECIMAL>
-        | <K_DEC>
-      ) [ <O_OPENPAREN> <S_NUMBER> ( <O_COMMA> <S_NUMBER> )* <O_CLOSEPAREN> ]
+    <K_BINARY_INTEGER>  { typeStack.push(UnsizedType.BINARY_INTEGER_TYPE);}
+    | <K_BINARY_FLOAT>  { typeStack.push(UnsizedType.BINARY_FLOAT_TYPE);}
+    | <K_BINARY_DOUBLE> { typeStack.push(UnsizedType.BINARY_DOUBLE_TYPE);}
+    | <K_NATURAL>       { typeStack.push(UnsizedType.NATURAL_TYPE);}
+    | <K_POSITIVE>      { typeStack.push(UnsizedType.POSITIVE_TYPE);}
+    | ( t=<K_NUMBER>
+        | t=<K_NUMERIC>
+        | t=<K_DECIMAL>
+        | t=<K_DEC>
+      ) [ <O_OPENPAREN> precision=<S_NUMBER> ( <O_COMMA> scale=<S_NUMBER> )* <O_CLOSEPAREN> ]
+        {
+            DatabaseType dt = null;
+            Long sl;
+            Long pl;
+            if (t.kind == K_NUMBER || t.kind == K_NUMERIC) {
+                if (precision == null) {
+                    dt = new NumericType();
+                }
+	            else {
+	                pl = Long.decode(precision.image);
+	                if (scale == null) {
+                        dt = new NumericType(pl);
+                    }
+                    else {
+                        sl = Long.decode(scale.image);
+                        dt = new NumericType(pl, sl);
+	                }
+	            }
+            }
+            else  if (t.kind == K_DECIMAL || t.kind == K_DEC) {
+                if (precision == null) {
+                    dt = new DecimalType();
+                }
+                else {
+                    pl = Long.decode(precision.image);
+                    if (scale == null) {
+                        dt = new DecimalType(pl);
+                    }
+                    else {
+                        sl = Long.decode(scale.image);
+                        dt = new DecimalType(pl, sl);
+                    }
+                }
+            }            typeStack.push(dt);         }
     | <K_LONG> [ <K_RAW> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_RAW> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_BOOLEAN>
-    | <K_DATE>
+    | <K_BOOLEAN> { typeStack.push(UnsizedType.BOOLEAN_TYPE);}
+    | <K_DATE> { typeStack.push(UnsizedType.DATE_TYPE);}
     | LOOKAHEAD(2) <K_INTERVAL> <K_DAY> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_SECONDS> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_INTERVAL> <K_YEAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_MONTH>
-    | ( <K_TIME>
-        | <K_TIMESTAMP>
+    | ( <K_TIME> { typeStack.push(UnsizedType.TIME_TYPE);}
+        | <K_TIMESTAMP> { typeStack.push(UnsizedType.TIMESTAMP_TYPE);}
       ) [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] [ <K_WITH> [ <K_LOCAL> ] <K_TIME> <K_ZONE> ]
-    | <K_INTEGER>
-    | <K_INT>
-    | <K_SMALLINT>
-    | <K_FLOAT> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_REAL>
-    | <K_MLSLABEL>
-    | <K_PLS_INTEGER>
-    | <K_BLOB >
+    | <K_INTEGER>  { typeStack.push(UnsizedType.INTEGER_TYPE);}
+    | <K_INT>      { typeStack.push(UnsizedType.INTEGER_TYPE);}
+    | <K_SMALLINT> { typeStack.push(UnsizedType.SMALLINT_TYPE);}
+    | <K_FLOAT> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (precision == null) {
+              typeStack.push(new FloatType());
+          }
+          else {
+           pl = Long.decode(precision.image);
+           FloatType ft = new FloatType(pl);
+           typeStack.push(ft);          }
+        }
+    | <K_REAL> { typeStack.push(new RealType());}
+    | <K_MLSLABEL> { typeStack.push(UnsizedType.MLSLABEL_TYPE);}
+    | <K_PLS_INTEGER> { typeStack.push(UnsizedType.PLS_INTEGER_TYPE);}
+    | <K_BLOB > { typeStack.push(new BlobType());}
     | <K_NCLOB>
     | <K_BFILE>
-    | <K_ROWID>
-    | <K_UROWIDD> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_DOUBLE> <K_PRECISION>
+    | <K_ROWID> { typeStack.push(UnsizedType.ROWID_TYPE);}
+    | <K_UROWID> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (precision == null) {
+              typeStack.push(new URowIdType());
+          }
+          else {
+              pl = Long.decode(precision.image);
+              typeStack.push(new URowIdType(pl));
+          }        }
+    | <K_DOUBLE> <K_PRECISION> { typeStack.push(new DoubleType());}
     | <K_CHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
         [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
     | <K_VARCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
@@ -641,7 +694,7 @@ void datatype() #void:
     | <K_NVARCHAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_NVARCHAR2> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_NATIONAL> ( <K_CHARACTER> | <K_CHAR> ) [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_CLOB> [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
+    | <K_CLOB> [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] { typeStack.push(new ClobType());}
 }
 
 String typeSpec():
