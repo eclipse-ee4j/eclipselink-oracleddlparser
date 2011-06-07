@@ -4,7 +4,7 @@ package org.eclipse.persistence.tools.dbws.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableType implements NestedType {
+public class TableType implements ComplexDatabaseType {
 
     protected String name;
     protected String schema;
@@ -14,7 +14,14 @@ public class TableType implements NestedType {
         this.name = name;
     }
 
-    public boolean isNested() {
+    public String getTypeName() {
+        return "TABLE";
+    }
+
+    public boolean isSimple() {
+        return false;
+    }
+    public boolean isComplex() {
         return true;
     }
 
@@ -22,8 +29,8 @@ public class TableType implements NestedType {
        this.schema = schema;
     }
 
-    public void addField(FieldType column) {
-        columns.add(column);
+    public void addEnclosedType(DatabaseType enclosedType) {
+        columns.add((FieldType)enclosedType);
     }
 
     @Override
