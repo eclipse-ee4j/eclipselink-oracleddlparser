@@ -1,6 +1,6 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class FieldType implements DatabaseType {
+public class FieldType implements ComplexDatabaseType {
 
     protected String fieldName;
     protected DatabaseType dataType;
@@ -14,11 +14,21 @@ public class FieldType implements DatabaseType {
     }
 
     public boolean isSimple() {
-        return dataType.isSimple();
+    	if (dataType != null) {
+    		return dataType.isSimple();
+    	}
+    	return false;
     }
     public boolean isComplex() {
-        return dataType.isComplex();
+    	if (dataType != null) {
+    		return dataType.isComplex();
+    	}
+    	return true;
     }
+
+	public void addEnclosedType(DatabaseType enclosedType) {
+		setDataType(enclosedType);
+	}
 
     public String getFieldName() {
         return fieldName;
