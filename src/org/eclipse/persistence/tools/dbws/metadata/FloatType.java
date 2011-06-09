@@ -1,9 +1,10 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
 public class FloatType extends PrecisionType {
-    
+
+	static long DEFAULT_PRECISON = 38l;
     public FloatType() {
-        super("FLOAT", 38);
+        super("FLOAT", DEFAULT_PRECISON);
     }
 
     public FloatType(long precision) {
@@ -14,4 +15,8 @@ public class FloatType extends PrecisionType {
         super("FLOAT", precision, 0);
     }
 
+	@Override
+	public long getDefaultPrecision() {
+		return DEFAULT_PRECISON;
+	}
 }

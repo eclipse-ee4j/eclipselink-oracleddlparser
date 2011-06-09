@@ -178,8 +178,8 @@ public class DDLParserTest {
     static final String EMPTY_PACKAGE_BODY = " AS \n";
     static final String EMPTY_PACKAGE_SUFFIX =
         "END CURSOR_TEST;"; 
-    //@Ignore
-    @Test
+    @Ignore
+    //@Test
     public void testEmptyPackage() {
         parser.setTypesRepository(new DatabaseTypesRepository());
         parser.ReInit(new StringReader(EMPTY_PACKAGE_PREFIX + PACKAGE_NAME +
@@ -548,8 +548,8 @@ public class DDLParserTest {
     }
     
     static final String TABLE_BONUS = "BONUS";
-    //@Ignore
-    @Test
+    @Ignore
+    //@Test
     public void testTable_Bonus() {
         String ddl = getDDLForTable(TABLE_BONUS);
         parser.setTypesRepository(new DatabaseTypesRepository());
@@ -570,8 +570,8 @@ public class DDLParserTest {
     }
     
     static final String TEMP_TABLE = "TAXABLE_EMP";
-    //@Ignore
-    @Test
+    @Ignore
+    //@Test
     public void testTempTable_TaxableEmp() {
         String ddl = getDDLForTable(TEMP_TABLE);
         parser.setTypesRepository(new DatabaseTypesRepository());
@@ -610,6 +610,28 @@ public class DDLParserTest {
             worked = false;
         }
         assertTrue(TABLE_XR_VEE_ARRAY_EMP + " did not parse correctly:\n" + message, worked);
+        System.out.println(table.toString());
+    }
+    
+    static final String TABLE_SUBIMAGEINFO = "SUBIMAGEINFO";
+    //@Ignore
+    @Test
+    public void testTable_SUBIMAGEINFO() {
+        String ddl = getDDLForTable(TABLE_SUBIMAGEINFO);
+        parser.setTypesRepository(new DatabaseTypesRepository());
+        parser.ReInit(new StringReader(ddl));
+        boolean worked = true;
+        String message = "";
+        TableType table = null;
+        try {
+            table = (TableType)parser.parseTable();
+        }
+        catch (ParseException pe) {
+            //pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue(TABLE_SUBIMAGEINFO + " did not parse correctly:\n" + message, worked);
         System.out.println(table.toString());
     }
 

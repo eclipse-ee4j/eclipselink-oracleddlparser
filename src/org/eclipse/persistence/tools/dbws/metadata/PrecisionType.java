@@ -24,6 +24,8 @@ public abstract class PrecisionType implements SimpleDatabaseType {
     public long getPrecision() {
         return precision;
     }
+    
+    public abstract long getDefaultPrecision();
 
     public long getScale() {
         return scale;
@@ -34,5 +36,19 @@ public abstract class PrecisionType implements SimpleDatabaseType {
     public boolean isComplex() {
         return false;
     }
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder(typeName);
+		if (precision != getDefaultPrecision()) {
+			sb.append('(');
+			sb.append(precision);
+			if (scale != 0) {
+				sb.append(',');
+				sb.append(scale);
+			}
+			sb.append(')');
+		}
+		return sb.toString();
+	}
 
 }

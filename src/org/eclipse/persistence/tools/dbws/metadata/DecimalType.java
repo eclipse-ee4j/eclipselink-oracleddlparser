@@ -1,9 +1,10 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
 public class DecimalType extends PrecisionType {
-    
+
+	static long DEFAULT_PRECISON = 5l;
     public DecimalType() {
-        super("DECIMAL", 5);
+        super("DECIMAL", DEFAULT_PRECISON);
     }
 
     public DecimalType(long precision) {
@@ -14,4 +15,8 @@ public class DecimalType extends PrecisionType {
         super("DECIMAL", precision, scale);
     }
 
+	@Override
+	public long getDefaultPrecision() {
+		return DEFAULT_PRECISON;
+	}
 }
