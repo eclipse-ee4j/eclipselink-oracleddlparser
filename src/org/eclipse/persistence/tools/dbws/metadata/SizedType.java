@@ -27,4 +27,14 @@ public abstract class SizedType implements SimpleDatabaseType {
         return false;
     }
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder(typeName);
+		if (size != 0) {
+			sb.append('(');
+			sb.append(size);
+			sb.append(')');
+		}
+		return sb.toString();
+	}
+
 }

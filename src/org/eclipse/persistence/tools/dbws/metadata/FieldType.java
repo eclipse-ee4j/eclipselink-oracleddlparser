@@ -4,6 +4,8 @@ public class FieldType implements ComplexDatabaseType {
 
     protected String fieldName;
     protected DatabaseType dataType;
+    protected boolean notNull = false;
+    protected boolean pk = false;
 
     public FieldType(String fieldName) {
         this.fieldName = fieldName;
@@ -24,6 +26,26 @@ public class FieldType implements ComplexDatabaseType {
     		return dataType.isComplex();
     	}
     	return true;
+    }
+    
+    public boolean notNull() {
+    	return notNull;
+    }
+    public void setNotNull() {
+    	this.notNull = true;
+    }
+    public void setAllowNull() {
+    	this.notNull = false;
+    }
+    
+    public boolean pk() {
+    	return pk;
+    }
+    public void setPk() {
+    	this.pk = true;
+    }
+    public void unSetPk() {
+    	this.pk = false;
     }
 
 	public void addEnclosedType(DatabaseType enclosedType) {
@@ -50,6 +72,9 @@ public class FieldType implements ComplexDatabaseType {
         }
         else {
             sb.append(dataType.toString());
+        }
+        if (notNull) {
+            sb.append(" (NOT NULL)");
         }
         return sb.toString();
     }

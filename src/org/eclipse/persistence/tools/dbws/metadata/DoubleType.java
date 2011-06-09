@@ -1,9 +1,10 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
 public class DoubleType extends PrecisionType {
-    
+
+	static long DEFAULT_PRECISON = 38l;
     public DoubleType() {
-        super("DOUBLE", 38);
+        super("DOUBLE", DEFAULT_PRECISON);
     }
 
     public DoubleType(long precision) {
@@ -14,4 +15,8 @@ public class DoubleType extends PrecisionType {
         super("DOUBLE", precision, 0);
     }
 
+	@Override
+	public long getDefaultPrecision() {
+		return DEFAULT_PRECISON;
+	}
 }
