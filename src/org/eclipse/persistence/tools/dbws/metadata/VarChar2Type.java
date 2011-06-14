@@ -18,10 +18,13 @@ public class VarChar2Type extends VarCharType {
         super(VarCharType.DEFAULT_SIZE);
         this.typeName = "VARCHAR2";
     }
-
     public VarChar2Type(long size) {
         super(size);
         this.typeName = "VARCHAR2";
     }
+	public VarChar2Type(String typeName, long size) {
+        super(size);
+        this.typeName = typeName;
+	}
 
 }

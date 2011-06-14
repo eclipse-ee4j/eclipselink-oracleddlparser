@@ -52,8 +52,11 @@ import org.eclipse.persistence.tools.dbws.metadata.DecimalType;
 import org.eclipse.persistence.tools.dbws.metadata.DoubleType;
 import org.eclipse.persistence.tools.dbws.metadata.FieldType;
 import org.eclipse.persistence.tools.dbws.metadata.FloatType;
+import org.eclipse.persistence.tools.dbws.metadata.LongType;
+import org.eclipse.persistence.tools.dbws.metadata.LongRawType;
 import org.eclipse.persistence.tools.dbws.metadata.NumericType;
 import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.dbws.metadata.RawType;
 import org.eclipse.persistence.tools.dbws.metadata.RealType;
 import org.eclipse.persistence.tools.dbws.metadata.TableType;
 import org.eclipse.persistence.tools.dbws.metadata.URowIdType;
@@ -664,7 +667,10 @@ void variableDefaultAssignment() #void:
 
 void datatype() #void:
 {Token t = null;
+ DatabaseType dt = null;
  Token precision = null;
+ Long sl;
+ Long pl;
  Token scale = null;}
 {
     <K_BINARY_INTEGER>  { typeStack.push(BINARY_INTEGER_TYPE);}
@@ -678,9 +684,6 @@ void datatype() #void:
         | t=<K_DEC>
       ) [ <O_OPENPAREN> [ precision=<O_ASTERISK > | precision=<S_NUMBER> ] ( <O_COMMA> scale=<S_NUMBER> )* <O_CLOSEPAREN> ]
         {
-            DatabaseType dt = null;
-            Long sl;
-            Long pl;
             if (t.kind == K_NUMBER || t.kind == K_NUMERIC) {
                 if (precision != null && precision.image.equals("*")) {
                     precision = null;                }
@@ -716,8 +719,36 @@ void datatype() #void:
                     }
                 }
             }            typeStack.push(dt);         }
-    | <K_LONG> [ <K_RAW> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_RAW> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
+    | <K_LONG> [ t=<K_RAW> ] [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]	    {
+	      if (t == null) {
+              if (precision == null) {
+                  dt = new LongType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  dt = new LongType(pl);
+              }
+	      }
+	      else {
+              if (precision == null) {
+                  dt = new LongRawType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  dt = new LongRawType(pl);
+              }
+            }
+            typeStack.push(dt);	    }
+    | <K_RAW> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]	    {
+            if (precision == null) {
+                dt = new RawType();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                dt = new RawType(pl);
+            }
+            typeStack.push(dt);
+	    }
     | <K_BOOLEAN> { typeStack.push(BOOLEAN_TYPE);}
     | <K_DATE> { typeStack.push(DATE_TYPE);}
     | LOOKAHEAD(2) <K_INTERVAL> <K_DAY> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_SECONDS> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
