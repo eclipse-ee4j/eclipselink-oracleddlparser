@@ -14,7 +14,7 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public abstract class SizedType extends DatabaseTypeBase {
 
-    protected long size;
+	protected long size;
     
     public SizedType(String typeName, long size) {
         super(typeName);

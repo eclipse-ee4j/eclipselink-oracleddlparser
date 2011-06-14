@@ -27,8 +27,11 @@ import org.eclipse.persistence.tools.dbws.metadata.DecimalType;
 import org.eclipse.persistence.tools.dbws.metadata.DoubleType;
 import org.eclipse.persistence.tools.dbws.metadata.FieldType;
 import org.eclipse.persistence.tools.dbws.metadata.FloatType;
+import org.eclipse.persistence.tools.dbws.metadata.LongType;
+import org.eclipse.persistence.tools.dbws.metadata.LongRawType;
 import org.eclipse.persistence.tools.dbws.metadata.NumericType;
 import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.dbws.metadata.RawType;
 import org.eclipse.persistence.tools.dbws.metadata.RealType;
 import org.eclipse.persistence.tools.dbws.metadata.TableType;
 import org.eclipse.persistence.tools.dbws.metadata.URowIdType;
@@ -1026,7 +1029,10 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   final public void datatype() throws ParseException {
  Token t = null;
+ DatabaseType dt = null;
  Token precision = null;
+ Long sl;
+ Long pl;
  Token scale = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_BINARY_INTEGER:
@@ -1113,9 +1119,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         jj_la1[40] = jj_gen;
         ;
       }
-            DatabaseType dt = null;
-            Long sl;
-            Long pl;
             if (t.kind == K_NUMBER || t.kind == K_NUMERIC) {
                 if (precision != null && precision.image.equals("*")) {
                     precision = null;
@@ -1158,7 +1161,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       jj_consume_token(K_LONG);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_RAW:
-        jj_consume_token(K_RAW);
+        t = jj_consume_token(K_RAW);
         break;
       default:
         jj_la1[41] = jj_gen;
@@ -1167,26 +1170,53 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case O_OPENPAREN:
         jj_consume_token(O_OPENPAREN);
-        jj_consume_token(S_NUMBER);
+        precision = jj_consume_token(S_NUMBER);
         jj_consume_token(O_CLOSEPAREN);
         break;
       default:
         jj_la1[42] = jj_gen;
         ;
       }
+              if (t == null) {
+              if (precision == null) {
+                  dt = new LongType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  dt = new LongType(pl);
+              }
+              }
+              else {
+              if (precision == null) {
+                  dt = new LongRawType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  dt = new LongRawType(pl);
+              }
+            }
+            typeStack.push(dt);
       break;
     case K_RAW:
       jj_consume_token(K_RAW);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case O_OPENPAREN:
         jj_consume_token(O_OPENPAREN);
-        jj_consume_token(S_NUMBER);
+        precision = jj_consume_token(S_NUMBER);
         jj_consume_token(O_CLOSEPAREN);
         break;
       default:
         jj_la1[43] = jj_gen;
         ;
       }
+            if (precision == null) {
+                dt = new RawType();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                dt = new RawType(pl);
+            }
+            typeStack.push(dt);
       break;
     case K_BOOLEAN:
       jj_consume_token(K_BOOLEAN);
@@ -3120,144 +3150,13 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     finally { jj_save(19, xla); }
   }
 
-  private boolean jj_3R_21() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_16() {
-    if (jj_scan_token(O_DOT)) return true;
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3_13() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12() {
-    if (jj_3R_9()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_17()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_37() {
-    if (jj_scan_token(K_FLOAT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_55() {
-    if (jj_scan_token(K_TIMESTAMP)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_36() {
-    if (jj_scan_token(K_SMALLINT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_35() {
-    if (jj_scan_token(K_INT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_34() {
-    if (jj_scan_token(K_INTEGER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_54() {
-    if (jj_scan_token(K_TIME)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_33() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_54()) {
-    jj_scanpos = xsp;
-    if (jj_3R_55()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_32() {
-    if (jj_scan_token(K_INTERVAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3_3() {
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
-  private boolean jj_3_15() {
-    if (jj_scan_token(K_INTERVAL)) return true;
-    if (jj_scan_token(K_DAY)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_31() {
-    if (jj_scan_token(K_DATE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_30() {
-    if (jj_scan_token(K_BOOLEAN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_29() {
-    if (jj_scan_token(K_RAW)) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_28() {
-    if (jj_scan_token(K_LONG)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_11() {
-    if (jj_3R_9()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_16()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_11() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
   private boolean jj_3_7() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(O_DOT)) return true;
+  private boolean jj_3_6() {
+    if (jj_3R_10()) return true;
     return false;
   }
 
@@ -3298,6 +3197,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
+  private boolean jj_3_3() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
   private boolean jj_3_16() {
     if (jj_3R_11()) return true;
     if (jj_scan_token(K_TYPE2)) return true;
@@ -3306,6 +3211,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   private boolean jj_3R_18() {
     if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3322,6 +3233,11 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
     }
     }
+    return false;
+  }
+
+  private boolean jj_3R_28() {
+    if (jj_scan_token(K_LONG)) return true;
     return false;
   }
 
@@ -3363,15 +3279,102 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_1() {
+  private boolean jj_3_12() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3_10() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3_19() {
+    if (jj_3R_12()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(162)) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_8() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_47() {
+    if (jj_scan_token(K_VARCHAR2)) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
     if (jj_3R_9()) return true;
     if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
-  private boolean jj_3_12() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
+  private boolean jj_3R_46() {
+    if (jj_scan_token(K_VARCHAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_45() {
+    if (jj_scan_token(K_CHAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_44() {
+    if (jj_scan_token(K_DOUBLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3_20() {
+    if (jj_scan_token(K_IN)) return true;
+    if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_43() {
+    if (jj_scan_token(K_UROWID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_42() {
+    if (jj_scan_token(K_ROWID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_41() {
+    if (jj_scan_token(K_BLOB)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_40() {
+    if (jj_scan_token(K_PLS_INTEGER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_39() {
+    if (jj_scan_token(K_MLSLABEL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_38() {
+    if (jj_scan_token(K_REAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21() {
+    if (jj_3R_9()) return true;
     return false;
   }
 
@@ -3391,17 +3394,15 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_10() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
+  private boolean jj_3_1() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
-  private boolean jj_3_19() {
-    if (jj_3R_12()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(162)) jj_scanpos = xsp;
+  private boolean jj_3R_16() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_9()) return true;
     return false;
   }
 
@@ -3415,17 +3416,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_8() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_47() {
-    if (jj_scan_token(K_VARCHAR2)) return true;
-    return false;
-  }
-
   private boolean jj_3R_24() {
     if (jj_scan_token(K_BINARY_DOUBLE)) return true;
     return false;
@@ -3436,13 +3426,16 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3R_46() {
-    if (jj_scan_token(K_VARCHAR)) return true;
+  private boolean jj_3_13() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3R_45() {
-    if (jj_scan_token(K_CHAR)) return true;
+  private boolean jj_3R_12() {
+    if (jj_3R_9()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_17()) jj_scanpos = xsp;
     return false;
   }
 
@@ -3560,20 +3553,59 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3R_44() {
-    if (jj_scan_token(K_DOUBLE)) return true;
+  private boolean jj_3R_37() {
+    if (jj_scan_token(K_FLOAT)) return true;
     return false;
   }
 
-  private boolean jj_3R_17() {
-    if (jj_scan_token(O_DOT)) return true;
-    if (jj_3R_9()) return true;
+  private boolean jj_3R_55() {
+    if (jj_scan_token(K_TIMESTAMP)) return true;
     return false;
   }
 
-  private boolean jj_3_20() {
-    if (jj_scan_token(K_IN)) return true;
-    if (jj_scan_token(K_OUT)) return true;
+  private boolean jj_3R_36() {
+    if (jj_scan_token(K_SMALLINT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_35() {
+    if (jj_scan_token(K_INT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_34() {
+    if (jj_scan_token(K_INTEGER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_54() {
+    if (jj_scan_token(K_TIME)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_33() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_54()) {
+    jj_scanpos = xsp;
+    if (jj_3R_55()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_32() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3_15() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    if (jj_scan_token(K_DAY)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_scan_token(K_DATE)) return true;
     return false;
   }
 
@@ -3583,23 +3615,16 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3R_43() {
-    if (jj_scan_token(K_UROWID)) return true;
+  private boolean jj_3R_30() {
+    if (jj_scan_token(K_BOOLEAN)) return true;
     return false;
   }
 
-  private boolean jj_3R_42() {
-    if (jj_scan_token(K_ROWID)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_41() {
-    if (jj_scan_token(K_BLOB)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_40() {
-    if (jj_scan_token(K_PLS_INTEGER)) return true;
+  private boolean jj_3R_11() {
+    if (jj_3R_9()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_16()) jj_scanpos = xsp;
     return false;
   }
 
@@ -3612,13 +3637,18 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3R_39() {
-    if (jj_scan_token(K_MLSLABEL)) return true;
+  private boolean jj_3_11() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3R_38() {
-    if (jj_scan_token(K_REAL)) return true;
+  private boolean jj_3R_29() {
+    if (jj_scan_token(K_RAW)) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 

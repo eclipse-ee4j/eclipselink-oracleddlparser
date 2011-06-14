@@ -22,7 +22,10 @@ public class BlobType extends SizedType {
     public BlobType(long size) {
         super("BLOB", size);
     }
-    
+	public BlobType(String typeName, long size) {
+        super(typeName, size);
+	}
+	
 	@Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
