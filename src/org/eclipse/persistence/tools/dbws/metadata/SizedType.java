@@ -1,35 +1,36 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
+ * which accompanies this distribution.
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *     Mike Norman - June 10 2010, created DDL parser package
+ ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public abstract class SizedType implements SimpleDatabaseType {
+public abstract class SizedType extends DatabaseTypeBase {
 
-    protected String typeName;
     protected long size;
     
     public SizedType(String typeName, long size) {
-        super();
-        this.typeName = typeName;
+        super(typeName);
         this.size = size;
-    }
-
-    public String getTypeName() {
-        return typeName;
     }
 
     public long getSize() {
         return size;
     }
+    
+    public abstract long getDefaultSize();
 
-    public boolean isSimple() {
-        return true;
-    }
-
-    public boolean isComplex() {
-        return false;
-    }
-
+    @Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(typeName);
-		if (size != 0) {
+		StringBuilder sb = new StringBuilder(super.toString());
+		if (size != getDefaultSize()) {
 			sb.append('(');
 			sb.append(size);
 			sb.append(')');
