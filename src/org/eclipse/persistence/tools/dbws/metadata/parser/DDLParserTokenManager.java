@@ -9,14 +9,44 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
+ *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata.parser;
 //javase imports
 import java.io.InputStream;
 import java.util.Stack;
 //metadata imports
-import org.eclipse.persistence.tools.dbws.metadata.*;
+import org.eclipse.persistence.tools.dbws.metadata.BlobType;
+import org.eclipse.persistence.tools.dbws.metadata.ClobType;
+import org.eclipse.persistence.tools.dbws.metadata.ComplexDatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.DatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.DatabaseTypesRepository;
+import org.eclipse.persistence.tools.dbws.metadata.DecimalType;
+import org.eclipse.persistence.tools.dbws.metadata.DoubleType;
+import org.eclipse.persistence.tools.dbws.metadata.FieldType;
+import org.eclipse.persistence.tools.dbws.metadata.FloatType;
+import org.eclipse.persistence.tools.dbws.metadata.NumericType;
+import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.dbws.metadata.RealType;
+import org.eclipse.persistence.tools.dbws.metadata.TableType;
+import org.eclipse.persistence.tools.dbws.metadata.URowIdType;
+import org.eclipse.persistence.tools.dbws.metadata.UnresolvedSizedType;
+import org.eclipse.persistence.tools.dbws.metadata.UnresolvedType;
+import org.eclipse.persistence.tools.dbws.metadata.VarChar2Type;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_FLOAT_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_DOUBLE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BOOLEAN_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.DATE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.MLSLABEL_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.NATURAL_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.PLS_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.POSITIVE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.ROWID_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.SMALLINT_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.TIME_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.TIMESTAMP_TYPE;
 
 /** Token Manager. */
 @SuppressWarnings("all")

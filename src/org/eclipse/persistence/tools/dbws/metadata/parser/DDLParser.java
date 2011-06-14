@@ -9,7 +9,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
+ *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata.parser;
 
@@ -18,7 +18,37 @@ import java.io.InputStream;
 import java.util.Stack;
 
 //metadata imports
-import org.eclipse.persistence.tools.dbws.metadata.*;
+import org.eclipse.persistence.tools.dbws.metadata.BlobType;
+import org.eclipse.persistence.tools.dbws.metadata.ClobType;
+import org.eclipse.persistence.tools.dbws.metadata.ComplexDatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.DatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.DatabaseTypesRepository;
+import org.eclipse.persistence.tools.dbws.metadata.DecimalType;
+import org.eclipse.persistence.tools.dbws.metadata.DoubleType;
+import org.eclipse.persistence.tools.dbws.metadata.FieldType;
+import org.eclipse.persistence.tools.dbws.metadata.FloatType;
+import org.eclipse.persistence.tools.dbws.metadata.NumericType;
+import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.dbws.metadata.RealType;
+import org.eclipse.persistence.tools.dbws.metadata.TableType;
+import org.eclipse.persistence.tools.dbws.metadata.URowIdType;
+import org.eclipse.persistence.tools.dbws.metadata.UnresolvedSizedType;
+import org.eclipse.persistence.tools.dbws.metadata.UnresolvedType;
+import org.eclipse.persistence.tools.dbws.metadata.VarChar2Type;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_FLOAT_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_DOUBLE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BOOLEAN_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.DATE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.MLSLABEL_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.NATURAL_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.PLS_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.POSITIVE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.ROWID_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.SMALLINT_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.TIME_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.TIMESTAMP_TYPE;
 
 @SuppressWarnings("all")
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLParserConstants {/*@bgen(jjtree)*/
@@ -847,10 +877,10 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
           DatabaseType dt = null;
           if (t != null) {
               Long size = Long.decode(t.image);
-              dt = new SizedType(s, size) {};
+              dt = new UnresolvedSizedType(s, size);
           }
           else {
-              dt = new NamedType(s);
+              dt = new UnresolvedType(s);
           }
           typeStack.push(dt);
           {if (true) return dt.toString();}
@@ -1001,23 +1031,23 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_BINARY_INTEGER:
       jj_consume_token(K_BINARY_INTEGER);
-                          typeStack.push(UnsizedType.BINARY_INTEGER_TYPE);
+                          typeStack.push(BINARY_INTEGER_TYPE);
       break;
     case K_BINARY_FLOAT:
       jj_consume_token(K_BINARY_FLOAT);
-                          typeStack.push(UnsizedType.BINARY_FLOAT_TYPE);
+                          typeStack.push(BINARY_FLOAT_TYPE);
       break;
     case K_BINARY_DOUBLE:
       jj_consume_token(K_BINARY_DOUBLE);
-                          typeStack.push(UnsizedType.BINARY_DOUBLE_TYPE);
+                          typeStack.push(BINARY_DOUBLE_TYPE);
       break;
     case K_NATURAL:
       jj_consume_token(K_NATURAL);
-                          typeStack.push(UnsizedType.NATURAL_TYPE);
+                          typeStack.push(NATURAL_TYPE);
       break;
     case K_POSITIVE:
       jj_consume_token(K_POSITIVE);
-                          typeStack.push(UnsizedType.POSITIVE_TYPE);
+                          typeStack.push(POSITIVE_TYPE);
       break;
     case K_DEC:
     case K_DECIMAL:
@@ -1087,7 +1117,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
             Long sl;
             Long pl;
             if (t.kind == K_NUMBER || t.kind == K_NUMERIC) {
-                if (precision.image.equals("*")) {
+                if (precision != null && precision.image.equals("*")) {
                     precision = null;
                 }
                 if (precision == null) {
@@ -1105,6 +1135,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
                     }
             }
             else  if (t.kind == K_DECIMAL || t.kind == K_DEC) {
+                if (precision != null && precision.image.equals("*")) {
+                    precision = null;
+                }
                 if (precision == null) {
                     dt = new DecimalType();
                 }
@@ -1157,11 +1190,11 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       break;
     case K_BOOLEAN:
       jj_consume_token(K_BOOLEAN);
-                    typeStack.push(UnsizedType.BOOLEAN_TYPE);
+                    typeStack.push(BOOLEAN_TYPE);
       break;
     case K_DATE:
       jj_consume_token(K_DATE);
-                 typeStack.push(UnsizedType.DATE_TYPE);
+                 typeStack.push(DATE_TYPE);
       break;
     default:
       jj_la1[82] = jj_gen;
@@ -1213,11 +1246,11 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case K_TIME:
             jj_consume_token(K_TIME);
-                   typeStack.push(UnsizedType.TIME_TYPE);
+                   typeStack.push(TIME_TYPE);
             break;
           case K_TIMESTAMP:
             jj_consume_token(K_TIMESTAMP);
-                          typeStack.push(UnsizedType.TIMESTAMP_TYPE);
+                          typeStack.push(TIMESTAMP_TYPE);
             break;
           default:
             jj_la1[47] = jj_gen;
@@ -1255,15 +1288,15 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
           break;
         case K_INTEGER:
           jj_consume_token(K_INTEGER);
-                     typeStack.push(UnsizedType.INTEGER_TYPE);
+                     typeStack.push(INTEGER_TYPE);
           break;
         case K_INT:
           jj_consume_token(K_INT);
-                     typeStack.push(UnsizedType.INTEGER_TYPE);
+                     typeStack.push(INTEGER_TYPE);
           break;
         case K_SMALLINT:
           jj_consume_token(K_SMALLINT);
-                     typeStack.push(UnsizedType.SMALLINT_TYPE);
+                     typeStack.push(SMALLINT_TYPE);
           break;
         case K_FLOAT:
           jj_consume_token(K_FLOAT);
@@ -1292,11 +1325,11 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
           break;
         case K_MLSLABEL:
           jj_consume_token(K_MLSLABEL);
-                     typeStack.push(UnsizedType.MLSLABEL_TYPE);
+                     typeStack.push(MLSLABEL_TYPE);
           break;
         case K_PLS_INTEGER:
           jj_consume_token(K_PLS_INTEGER);
-                        typeStack.push(UnsizedType.PLS_INTEGER_TYPE);
+                        typeStack.push(PLS_INTEGER_TYPE);
           break;
         case K_BLOB:
           jj_consume_token(K_BLOB);
@@ -1310,7 +1343,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
           break;
         case K_ROWID:
           jj_consume_token(K_ROWID);
-                  typeStack.push(UnsizedType.ROWID_TYPE);
+                  typeStack.push(ROWID_TYPE);
           break;
         case K_UROWID:
           jj_consume_token(K_UROWID);
@@ -3087,265 +3120,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     finally { jj_save(19, xla); }
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_27() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(116)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(117)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(48)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(47)) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_26() {
-    if (jj_scan_token(K_POSITIVE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_12() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_25() {
-    if (jj_scan_token(K_NATURAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24() {
-    if (jj_scan_token(K_BINARY_DOUBLE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_10() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3_19() {
-    if (jj_3R_12()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(162)) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_23() {
-    if (jj_scan_token(K_BINARY_FLOAT)) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_47() {
-    if (jj_scan_token(K_VARCHAR2)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_22()) {
-    jj_scanpos = xsp;
-    if (jj_3R_23()) {
-    jj_scanpos = xsp;
-    if (jj_3R_24()) {
-    jj_scanpos = xsp;
-    if (jj_3R_25()) {
-    jj_scanpos = xsp;
-    if (jj_3R_26()) {
-    jj_scanpos = xsp;
-    if (jj_3R_27()) {
-    jj_scanpos = xsp;
-    if (jj_3R_28()) {
-    jj_scanpos = xsp;
-    if (jj_3R_29()) {
-    jj_scanpos = xsp;
-    if (jj_3R_30()) {
-    jj_scanpos = xsp;
-    if (jj_3R_31()) {
-    jj_scanpos = xsp;
-    if (jj_3_15()) {
-    jj_scanpos = xsp;
-    if (jj_3R_32()) {
-    jj_scanpos = xsp;
-    if (jj_3R_33()) {
-    jj_scanpos = xsp;
-    if (jj_3R_34()) {
-    jj_scanpos = xsp;
-    if (jj_3R_35()) {
-    jj_scanpos = xsp;
-    if (jj_3R_36()) {
-    jj_scanpos = xsp;
-    if (jj_3R_37()) {
-    jj_scanpos = xsp;
-    if (jj_3R_38()) {
-    jj_scanpos = xsp;
-    if (jj_3R_39()) {
-    jj_scanpos = xsp;
-    if (jj_3R_40()) {
-    jj_scanpos = xsp;
-    if (jj_3R_41()) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(108)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(17)) {
-    jj_scanpos = xsp;
-    if (jj_3R_42()) {
-    jj_scanpos = xsp;
-    if (jj_3R_43()) {
-    jj_scanpos = xsp;
-    if (jj_3R_44()) {
-    jj_scanpos = xsp;
-    if (jj_3R_45()) {
-    jj_scanpos = xsp;
-    if (jj_3R_46()) {
-    jj_scanpos = xsp;
-    if (jj_3R_47()) {
-    jj_scanpos = xsp;
-    if (jj_3R_48()) {
-    jj_scanpos = xsp;
-    if (jj_3R_49()) {
-    jj_scanpos = xsp;
-    if (jj_3R_50()) {
-    jj_scanpos = xsp;
-    if (jj_3R_51()) {
-    jj_scanpos = xsp;
-    if (jj_3R_52()) {
-    jj_scanpos = xsp;
-    if (jj_3R_53()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_22() {
-    if (jj_scan_token(K_BINARY_INTEGER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_46() {
-    if (jj_scan_token(K_VARCHAR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_45() {
-    if (jj_scan_token(K_CHAR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_44() {
-    if (jj_scan_token(K_DOUBLE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_17() {
-    if (jj_scan_token(O_DOT)) return true;
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3_20() {
-    if (jj_scan_token(K_IN)) return true;
-    if (jj_scan_token(K_OUT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_43() {
-    if (jj_scan_token(K_UROWID)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_42() {
-    if (jj_scan_token(K_ROWID)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(35)) jj_scanpos = xsp;
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_41() {
-    if (jj_scan_token(K_BLOB)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_40() {
-    if (jj_scan_token(K_PLS_INTEGER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_39() {
-    if (jj_scan_token(K_MLSLABEL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_38() {
-    if (jj_scan_token(K_REAL)) return true;
-    return false;
-  }
-
   private boolean jj_3R_21() {
     if (jj_3R_9()) return true;
     return false;
@@ -3354,11 +3128,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   private boolean jj_3R_16() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_3R_10()) return true;
     return false;
   }
 
@@ -3372,6 +3141,11 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_17()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_3R_10()) return true;
     return false;
   }
 
@@ -3405,12 +3179,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_33() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3426,7 +3194,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_5() {
+  private boolean jj_3_3() {
     if (jj_3R_9()) return true;
     if (jj_scan_token(O_DOT)) return true;
     return false;
@@ -3450,6 +3218,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   private boolean jj_3R_29() {
     if (jj_scan_token(K_RAW)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3586,6 +3360,265 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   private boolean jj_3R_48() {
     if (jj_scan_token(K_CHARACTER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_27() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(116)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(117)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(48)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(47)) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3_10() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3_19() {
+    if (jj_3R_12()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(162)) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_26() {
+    if (jj_scan_token(K_POSITIVE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25() {
+    if (jj_scan_token(K_NATURAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3_8() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_47() {
+    if (jj_scan_token(K_VARCHAR2)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_scan_token(K_BINARY_DOUBLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23() {
+    if (jj_scan_token(K_BINARY_FLOAT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_46() {
+    if (jj_scan_token(K_VARCHAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_45() {
+    if (jj_scan_token(K_CHAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_22()) {
+    jj_scanpos = xsp;
+    if (jj_3R_23()) {
+    jj_scanpos = xsp;
+    if (jj_3R_24()) {
+    jj_scanpos = xsp;
+    if (jj_3R_25()) {
+    jj_scanpos = xsp;
+    if (jj_3R_26()) {
+    jj_scanpos = xsp;
+    if (jj_3R_27()) {
+    jj_scanpos = xsp;
+    if (jj_3R_28()) {
+    jj_scanpos = xsp;
+    if (jj_3R_29()) {
+    jj_scanpos = xsp;
+    if (jj_3R_30()) {
+    jj_scanpos = xsp;
+    if (jj_3R_31()) {
+    jj_scanpos = xsp;
+    if (jj_3_15()) {
+    jj_scanpos = xsp;
+    if (jj_3R_32()) {
+    jj_scanpos = xsp;
+    if (jj_3R_33()) {
+    jj_scanpos = xsp;
+    if (jj_3R_34()) {
+    jj_scanpos = xsp;
+    if (jj_3R_35()) {
+    jj_scanpos = xsp;
+    if (jj_3R_36()) {
+    jj_scanpos = xsp;
+    if (jj_3R_37()) {
+    jj_scanpos = xsp;
+    if (jj_3R_38()) {
+    jj_scanpos = xsp;
+    if (jj_3R_39()) {
+    jj_scanpos = xsp;
+    if (jj_3R_40()) {
+    jj_scanpos = xsp;
+    if (jj_3R_41()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(108)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(17)) {
+    jj_scanpos = xsp;
+    if (jj_3R_42()) {
+    jj_scanpos = xsp;
+    if (jj_3R_43()) {
+    jj_scanpos = xsp;
+    if (jj_3R_44()) {
+    jj_scanpos = xsp;
+    if (jj_3R_45()) {
+    jj_scanpos = xsp;
+    if (jj_3R_46()) {
+    jj_scanpos = xsp;
+    if (jj_3R_47()) {
+    jj_scanpos = xsp;
+    if (jj_3R_48()) {
+    jj_scanpos = xsp;
+    if (jj_3R_49()) {
+    jj_scanpos = xsp;
+    if (jj_3R_50()) {
+    jj_scanpos = xsp;
+    if (jj_3R_51()) {
+    jj_scanpos = xsp;
+    if (jj_3R_52()) {
+    jj_scanpos = xsp;
+    if (jj_3R_53()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_22() {
+    if (jj_scan_token(K_BINARY_INTEGER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_44() {
+    if (jj_scan_token(K_DOUBLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3_20() {
+    if (jj_scan_token(K_IN)) return true;
+    if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_43() {
+    if (jj_scan_token(K_UROWID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_42() {
+    if (jj_scan_token(K_ROWID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_41() {
+    if (jj_scan_token(K_BLOB)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_40() {
+    if (jj_scan_token(K_PLS_INTEGER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_10() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(35)) jj_scanpos = xsp;
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_39() {
+    if (jj_scan_token(K_MLSLABEL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_38() {
+    if (jj_scan_token(K_REAL)) return true;
     return false;
   }
 

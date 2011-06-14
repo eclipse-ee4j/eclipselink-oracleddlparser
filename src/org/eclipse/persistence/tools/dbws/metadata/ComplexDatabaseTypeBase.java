@@ -10,27 +10,18 @@
  * Contributors:
  *     Mike Norman - June 10 2010, created DDL parser package
  ******************************************************************************/
-package org.eclipse.persistence.tools.dbws.metadata.parser;
+package org.eclipse.persistence.tools.dbws.metadata;
 
-@SuppressWarnings("all")
-public class ParseNode extends SimpleNode {
+public abstract class ComplexDatabaseTypeBase extends DatabaseTypeBase implements ComplexDatabaseType {
 
-    public ParseNode(int id) {
-        super(id);
-    }
+    public ComplexDatabaseTypeBase(String typeName) {
+		super(typeName);
+	}
 
-    public ParseNode(DDLParser p, int id) {
-        super(p, id);
-    }
+	@Override
+	public boolean isComplex() {
+		return true;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder(super.toString());
-        if (value != null) {
-            sb.append("[");
-            sb.append(value);
-            sb.append("]");
-        }
-        return sb.toString();
-    }
+	public abstract void addEnclosedType(DatabaseType enclosedType);
 }

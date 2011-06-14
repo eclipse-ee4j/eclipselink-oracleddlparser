@@ -1,13 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
+ * which accompanies this distribution.
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *     Mike Norman - June 10 2010, created DDL parser package
+ ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public abstract class PrecisionType implements SimpleDatabaseType {
+public abstract class PrecisionType extends DatabaseTypeBase {
 
-    protected String typeName;
     protected long precision;
     protected long scale;
     
     public PrecisionType(String typeName, long precision) {
-        this.typeName = typeName;
+        super(typeName);
         this.precision = precision;
         this.scale = 0;
     }
@@ -16,20 +27,16 @@ public abstract class PrecisionType implements SimpleDatabaseType {
         this(typeName, precision);
         this.scale = scale;
     }
-    
-    public String getTypeName() {
-        return typeName;
-    }
 
     public long getPrecision() {
         return precision;
     }
-    
-    public abstract long getDefaultPrecision();
-
     public long getScale() {
         return scale;
     }
+    
+    public abstract long getDefaultPrecision();
+
     public boolean isSimple() {
         return true;
     }
@@ -38,7 +45,7 @@ public abstract class PrecisionType implements SimpleDatabaseType {
     }
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder(typeName);
+		StringBuilder sb = new StringBuilder(super.toString());
 		if (precision != getDefaultPrecision()) {
 			sb.append('(');
 			sb.append(precision);

@@ -9,7 +9,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
+ *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
 options {
                   
@@ -35,7 +35,7 @@ PARSER_BEGIN(DDLParser)
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     Mike Norman - add PLSQL package spec parsing to DBWSBuilder
+ *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata.parser;
 
@@ -44,7 +44,37 @@ import java.io.InputStream;
 import java.util.Stack;
 
 //metadata imports
-import org.eclipse.persistence.tools.dbws.metadata.*;
+import org.eclipse.persistence.tools.dbws.metadata.BlobType;
+import org.eclipse.persistence.tools.dbws.metadata.ClobType;
+import org.eclipse.persistence.tools.dbws.metadata.ComplexDatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.DatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.DatabaseTypesRepository;
+import org.eclipse.persistence.tools.dbws.metadata.DecimalType;
+import org.eclipse.persistence.tools.dbws.metadata.DoubleType;
+import org.eclipse.persistence.tools.dbws.metadata.FieldType;
+import org.eclipse.persistence.tools.dbws.metadata.FloatType;
+import org.eclipse.persistence.tools.dbws.metadata.NumericType;
+import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.dbws.metadata.RealType;
+import org.eclipse.persistence.tools.dbws.metadata.TableType;
+import org.eclipse.persistence.tools.dbws.metadata.URowIdType;
+import org.eclipse.persistence.tools.dbws.metadata.UnresolvedSizedType;
+import org.eclipse.persistence.tools.dbws.metadata.UnresolvedType;
+import org.eclipse.persistence.tools.dbws.metadata.VarChar2Type;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_FLOAT_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BINARY_DOUBLE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.BOOLEAN_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.DATE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.MLSLABEL_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.NATURAL_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.PLS_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.POSITIVE_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.ROWID_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.SMALLINT_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.TIME_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarType.TIMESTAMP_TYPE;
 
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
   protected JJTDDLParserState jjtree = new JJTDDLParserState();
@@ -840,10 +870,10 @@ String columnTypeSpec():
           DatabaseType dt = null;
           if (t != null) {
               Long size = Long.decode(t.image);
-              dt = new SizedType(s, size) {};
+              dt = new UnresolvedSizedType(s, size);
           }
           else {
-              dt = new NamedType(s);
+              dt = new UnresolvedType(s);
           }
           typeStack.push(dt);
           return dt.toString();
@@ -941,11 +971,11 @@ void datatype()      :
  Token precision = null;
  Token scale = null;}
 {
-    <K_BINARY_INTEGER>  { typeStack.push(UnsizedType.BINARY_INTEGER_TYPE);}
-    | <K_BINARY_FLOAT>  { typeStack.push(UnsizedType.BINARY_FLOAT_TYPE);}
-    | <K_BINARY_DOUBLE> { typeStack.push(UnsizedType.BINARY_DOUBLE_TYPE);}
-    | <K_NATURAL>       { typeStack.push(UnsizedType.NATURAL_TYPE);}
-    | <K_POSITIVE>      { typeStack.push(UnsizedType.POSITIVE_TYPE);}
+    <K_BINARY_INTEGER>  { typeStack.push(BINARY_INTEGER_TYPE);}
+    | <K_BINARY_FLOAT>  { typeStack.push(BINARY_FLOAT_TYPE);}
+    | <K_BINARY_DOUBLE> { typeStack.push(BINARY_DOUBLE_TYPE);}
+    | <K_NATURAL>       { typeStack.push(NATURAL_TYPE);}
+    | <K_POSITIVE>      { typeStack.push(POSITIVE_TYPE);}
     | ( t=<K_NUMBER>
         | t=<K_NUMERIC>
         | t=<K_DECIMAL>
@@ -956,7 +986,7 @@ void datatype()      :
             Long sl;
             Long pl;
             if (t.kind == K_NUMBER || t.kind == K_NUMERIC) {
-                if (precision.image.equals("*")) {
+                if (precision != null && precision.image.equals("*")) {
                     precision = null;                }
                 if (precision == null) {
                     dt = new NumericType();
@@ -973,6 +1003,9 @@ void datatype()      :
 	            }
             }
             else  if (t.kind == K_DECIMAL || t.kind == K_DEC) {
+                if (precision != null && precision.image.equals("*")) {
+                    precision = null;
+                }
                 if (precision == null) {
                     dt = new DecimalType();
                 }
@@ -989,16 +1022,16 @@ void datatype()      :
             }            typeStack.push(dt);         }
     | <K_LONG> [ <K_RAW> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_RAW> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_BOOLEAN> { typeStack.push(UnsizedType.BOOLEAN_TYPE);}
-    | <K_DATE> { typeStack.push(UnsizedType.DATE_TYPE);}
+    | <K_BOOLEAN> { typeStack.push(BOOLEAN_TYPE);}
+    | <K_DATE> { typeStack.push(DATE_TYPE);}
     | LOOKAHEAD(2) <K_INTERVAL> <K_DAY> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_SECONDS> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     | <K_INTERVAL> <K_YEAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_MONTH>
-    | ( <K_TIME> { typeStack.push(UnsizedType.TIME_TYPE);}
-        | <K_TIMESTAMP> { typeStack.push(UnsizedType.TIMESTAMP_TYPE);}
+    | ( <K_TIME> { typeStack.push(TIME_TYPE);}
+        | <K_TIMESTAMP> { typeStack.push(TIMESTAMP_TYPE);}
       ) [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] [ <K_WITH> [ <K_LOCAL> ] <K_TIME> <K_ZONE> ]
-    | <K_INTEGER>  { typeStack.push(UnsizedType.INTEGER_TYPE);}
-    | <K_INT>      { typeStack.push(UnsizedType.INTEGER_TYPE);}
-    | <K_SMALLINT> { typeStack.push(UnsizedType.SMALLINT_TYPE);}
+    | <K_INTEGER>  { typeStack.push(INTEGER_TYPE);}
+    | <K_INT>      { typeStack.push(INTEGER_TYPE);}
+    | <K_SMALLINT> { typeStack.push(SMALLINT_TYPE);}
     | <K_FLOAT> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
         {
           if (precision == null) {
@@ -1010,12 +1043,12 @@ void datatype()      :
            typeStack.push(ft);          }
         }
     | <K_REAL> { typeStack.push(new RealType());}
-    | <K_MLSLABEL> { typeStack.push(UnsizedType.MLSLABEL_TYPE);}
-    | <K_PLS_INTEGER> { typeStack.push(UnsizedType.PLS_INTEGER_TYPE);}
+    | <K_MLSLABEL> { typeStack.push(MLSLABEL_TYPE);}
+    | <K_PLS_INTEGER> { typeStack.push(PLS_INTEGER_TYPE);}
     | <K_BLOB > { typeStack.push(new BlobType());}
     | <K_NCLOB>
     | <K_BFILE>
-    | <K_ROWID> { typeStack.push(UnsizedType.ROWID_TYPE);}
+    | <K_ROWID> { typeStack.push(ROWID_TYPE);}
     | <K_UROWID> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
         {
           if (precision == null) {

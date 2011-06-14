@@ -1,29 +1,41 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
+ * which accompanies this distribution.
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *     Mike Norman - June 10 2010, created DDL parser package
+ ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
 //javase imports
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableType implements ComplexDatabaseType {
+public class TableType extends ComplexDatabaseTypeBase {
 
-    protected String name;
+    protected String tableName;
     protected String schema;
     protected List<FieldType> columns = new ArrayList<FieldType>();
     
-    public TableType(String name) {
-        this.name = name;
+    public TableType(String tableName) {
+		super(null);
+		setTableName(tableName);
+	}
+
+    public String getTableName() {
+        return tableName;
     }
 
-    public String getTypeName() {
-        return "TABLE";
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+        super.typeName = "TABLE " + tableName;
     }
 
-    public boolean isSimple() {
-        return false;
-    }
-    public boolean isComplex() {
-        return true;
-    }
 
     public void setSchema(String schema) {
        this.schema = schema;
@@ -49,12 +61,12 @@ public class TableType implements ComplexDatabaseType {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("table ");
+        StringBuilder sb = new StringBuilder("TABLE ");
         if (schema != null) {
             sb.append(schema);
             sb.append(".");
         }
-        sb.append(name);
+        sb.append(tableName);
         sb.append(" (\n");
         for (FieldType col : columns) {
             sb.append("\t");
