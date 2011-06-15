@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public class CharType extends SizedType {
 
 	static long DEFAULT_SIZE = 1l;
@@ -26,6 +28,10 @@ public class CharType extends SizedType {
 	@Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
+	}
+
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

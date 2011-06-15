@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public class LongType extends VarChar2Type {
 
     public LongType() {
@@ -20,5 +22,9 @@ public class LongType extends VarChar2Type {
     public LongType(long size) {
         super("LONG", size);
     }
-	
+
+	@Override
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

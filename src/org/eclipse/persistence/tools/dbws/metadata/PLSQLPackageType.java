@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public class PLSQLPackageType extends ComplexDatabaseTypeBase {
 
 	protected String packageName;
@@ -37,4 +39,8 @@ public class PLSQLPackageType extends ComplexDatabaseTypeBase {
     public void addEnclosedType(DatabaseType enclosedType) {
     	// TODO
     }
+
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

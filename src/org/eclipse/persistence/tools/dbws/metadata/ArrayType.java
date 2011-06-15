@@ -12,7 +12,9 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class ArrayType extends SizedType {
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
+public class ArrayType extends SizedType  {
 
 	static long DEFAULT_SIZE = 0l;
 	
@@ -26,6 +28,10 @@ public class ArrayType extends SizedType {
 	@Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
+	}
+
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }
