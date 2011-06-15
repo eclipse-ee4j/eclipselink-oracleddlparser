@@ -12,10 +12,14 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public interface DatabaseType {
 
     public String getTypeName();
     
     public boolean isResolved();
     public boolean isComplex();
+    
+    public void accept(DatabaseTypeVisitor visitor);
 }

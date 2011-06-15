@@ -16,6 +16,8 @@ package org.eclipse.persistence.tools.dbws.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public class TableType extends ComplexDatabaseTypeBase {
 
     protected String tableName;
@@ -92,4 +94,8 @@ public class TableType extends ComplexDatabaseTypeBase {
         sb.append(")");
         return sb.toString();
     }
+
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

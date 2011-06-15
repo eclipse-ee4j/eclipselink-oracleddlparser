@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public class FieldType implements DatabaseType {
 
     protected String fieldName;
@@ -38,7 +40,7 @@ public class FieldType implements DatabaseType {
 		if (dataType == null) {
 			return false;
 		}
-		return true;
+		return dataType.isResolved();
 	}
 
 	public boolean isComplex() {
@@ -95,4 +97,8 @@ public class FieldType implements DatabaseType {
         }
         return sb.toString();
     }
+
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

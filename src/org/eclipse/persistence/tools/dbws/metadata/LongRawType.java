@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public class LongRawType extends BlobType {
 
     public LongRawType() {
@@ -20,4 +22,10 @@ public class LongRawType extends BlobType {
     public LongRawType(long size) {
         super("LONG RAW", size);
     }
+
+    @Override
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+    
 }

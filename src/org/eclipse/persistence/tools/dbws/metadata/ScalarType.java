@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public enum ScalarType implements DatabaseType {
 
     BIGINT_TYPE("BIGINT"),
@@ -57,6 +59,10 @@ public enum ScalarType implements DatabaseType {
 
 	public boolean isResolved() {
 		return true;
+	}
+
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

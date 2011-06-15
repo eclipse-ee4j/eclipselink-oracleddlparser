@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public class BlobType extends SizedType {
 
 	static long DEFAULT_SIZE = 0l;
@@ -29,6 +31,10 @@ public class BlobType extends SizedType {
 	@Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
+	}
+
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+
 public class UnresolvedType extends DatabaseTypeBase {
     
 	public UnresolvedType(String unresolvedTypeName) {
@@ -24,6 +26,10 @@ public class UnresolvedType extends DatabaseTypeBase {
 
 	public boolean isResolved() {
 		return false;
+	}
+
+	public void accept(DatabaseTypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }
