@@ -12,7 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class FieldType implements ComplexDatabaseType, DatabaseTypeVisitable {
+public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String fieldName;
     protected DatabaseType dataType;
@@ -41,12 +41,12 @@ public class FieldType implements ComplexDatabaseType, DatabaseTypeVisitable {
 		return dataType.isResolved();
 	}
 
-	public boolean isComplex() {
+	public boolean isComposite() {
 		if (dataType == null) {
-			// by default, a Field is 'simple' until otherwise configured 'complex'
+			// by default, a Field is 'simple' until otherwise configured 'composite'
 			return false;
 		}
-		return dataType.isComplex();
+		return dataType.isComposite();
 	}
 
     public String getTypeName() {
@@ -76,7 +76,7 @@ public class FieldType implements ComplexDatabaseType, DatabaseTypeVisitable {
     	this.pk = false;
     }
 
-	public void addEnclosedType(DatabaseType enclosedType) {
+	public void addCompositeType(DatabaseType enclosedType) {
 		setDataType(enclosedType);
 	}
 

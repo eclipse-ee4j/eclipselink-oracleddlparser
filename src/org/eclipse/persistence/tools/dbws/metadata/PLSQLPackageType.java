@@ -15,7 +15,7 @@ package org.eclipse.persistence.tools.dbws.metadata;
 //javase imports
 import java.util.List;
 
-public class PLSQLPackageType implements ComplexDatabaseType, DatabaseTypeVisitable {
+public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
 	protected String packageName;
 	protected List<PLSQLType> types;
@@ -49,7 +49,7 @@ public class PLSQLPackageType implements ComplexDatabaseType, DatabaseTypeVisita
 		return procedures;
 	}
 
-	public void addEnclosedType(DatabaseType enclosedType) {
+	public void addCompositeType(DatabaseType enclosedType) {
     	// TODO
     }
 
@@ -57,7 +57,7 @@ public class PLSQLPackageType implements ComplexDatabaseType, DatabaseTypeVisita
 		return "PACKAGE " + packageName;
 	}
 
-	public boolean isComplex() {
+	public boolean isComposite() {
 		return true;
 	}
 

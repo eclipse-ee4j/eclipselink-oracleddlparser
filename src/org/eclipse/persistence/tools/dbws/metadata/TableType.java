@@ -16,7 +16,7 @@ package org.eclipse.persistence.tools.dbws.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableType extends ComplexDatabaseTypeBase implements ComplexDatabaseType, DatabaseTypeVisitable {
+public class TableType extends CompositeDatabaseTypeBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String tableName;
     protected String schema;
@@ -43,7 +43,7 @@ public class TableType extends ComplexDatabaseTypeBase implements ComplexDatabas
        this.schema = schema;
     }
 
-    public void addEnclosedType(DatabaseType enclosedType) {
+    public void addCompositeType(DatabaseType enclosedType) {
         columns.add((FieldType)enclosedType);
     }
     

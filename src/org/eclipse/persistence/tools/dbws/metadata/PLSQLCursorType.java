@@ -12,7 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class PLSQLCursorType implements ComplexDatabaseType, DatabaseTypeVisitable {
+public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String cursorName;
     protected DatabaseType dataType;
@@ -32,7 +32,7 @@ public class PLSQLCursorType implements ComplexDatabaseType, DatabaseTypeVisitab
         this.dataType = dataType;
     }
 
-	public void addEnclosedType(DatabaseType enclosedType) {
+	public void addCompositeType(DatabaseType enclosedType) {
 		setDataType(enclosedType);
 	}
     
@@ -47,12 +47,12 @@ public class PLSQLCursorType implements ComplexDatabaseType, DatabaseTypeVisitab
 		return dataType.isResolved();
 	}
 
-	public boolean isComplex() {
+	public boolean isComposite() {
 		if (dataType == null) {
-			// by default, a Field is 'simple' until otherwise configured 'complex'
+			// by default, a Field is 'simple' until otherwise configured 'composite'
 			return false;
 		}
-		return dataType.isComplex();
+		return dataType.isComposite();
 	}
 
     public String getTypeName() {

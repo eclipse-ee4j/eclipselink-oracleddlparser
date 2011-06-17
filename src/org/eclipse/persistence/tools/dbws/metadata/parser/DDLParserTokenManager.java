@@ -18,7 +18,7 @@ import java.util.Stack;
 //metadata imports
 import org.eclipse.persistence.tools.dbws.metadata.BlobType;
 import org.eclipse.persistence.tools.dbws.metadata.ClobType;
-import org.eclipse.persistence.tools.dbws.metadata.ComplexDatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.CompositeDatabaseType;
 import org.eclipse.persistence.tools.dbws.metadata.DatabaseType;
 import org.eclipse.persistence.tools.dbws.metadata.DecimalType;
 import org.eclipse.persistence.tools.dbws.metadata.DoubleType;

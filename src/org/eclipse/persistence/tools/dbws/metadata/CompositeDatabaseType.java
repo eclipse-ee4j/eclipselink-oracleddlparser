@@ -12,7 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public interface ComplexDatabaseType extends DatabaseType {
+public interface CompositeDatabaseType extends DatabaseType {
 	
-	public void addEnclosedType(DatabaseType enclosedType);
+	public void addCompositeType(DatabaseType enclosedType);
 }

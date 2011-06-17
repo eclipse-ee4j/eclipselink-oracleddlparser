@@ -4,7 +4,7 @@ package org.eclipse.persistence.tools.dbws.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProcedureType extends ComplexDatabaseTypeBase implements ComplexDatabaseType, DatabaseTypeVisitable {
+public class ProcedureType extends CompositeDatabaseTypeBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String procedureName;
     protected String schema;
@@ -36,7 +36,7 @@ public class ProcedureType extends ComplexDatabaseTypeBase implements ComplexDat
 	}
 
 	@Override
-	public void addEnclosedType(DatabaseType enclosedType) {
+	public void addCompositeType(DatabaseType enclosedType) {
 		//TODO
 	}
 

@@ -12,11 +12,11 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public abstract class ComplexDatabaseTypeBase extends DatabaseTypeBase {
+public abstract class CompositeDatabaseTypeBase extends DatabaseTypeBase {
 
-    public ComplexDatabaseTypeBase(String typeName) {
+    public CompositeDatabaseTypeBase(String typeName) {
 		super(typeName);
 	}
 
-	public abstract void addEnclosedType(DatabaseType enclosedType);
+	public abstract void addCompositeType(DatabaseType enclosedType);
 }

@@ -1,6 +1,6 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class ArgumentType implements ComplexDatabaseType, DatabaseTypeVisitable {
+public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String argumentName;
     protected DatabaseType dataType;
@@ -36,12 +36,12 @@ public class ArgumentType implements ComplexDatabaseType, DatabaseTypeVisitable 
 		return dataType.isResolved();
 	}
 
-	public boolean isComplex() {
+	public boolean isComposite() {
 		if (dataType == null) {
-			// by default, an argument is 'simple' until otherwise configured 'complex'
+			// by default, an argument is 'simple' until otherwise configured 'composite'
 			return false;
 		}
-		return dataType.isComplex();
+		return dataType.isComposite();
 	}
 
     public String getTypeName() {
@@ -61,7 +61,7 @@ public class ArgumentType implements ComplexDatabaseType, DatabaseTypeVisitable 
     	optional = false;
     }
 
-	public void addEnclosedType(DatabaseType enclosedType) {
+	public void addCompositeType(DatabaseType enclosedType) {
 		setDataType(enclosedType);
 	}
 

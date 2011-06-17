@@ -24,7 +24,7 @@ abstract class DatabaseTypeBase {
 		return typeName;
 	}
 
-	public boolean isComplex() {
+	public boolean isComposite() {
 		return true;
 	}
 

@@ -8,7 +8,7 @@ public class PLSQLCollectionType extends PLSQLType implements DatabaseTypeVisita
 	}
 
 	@Override
-	public void addEnclosedType(DatabaseType enclosedType) {
+	public void addCompositeType(DatabaseType enclosedType) {
 	}
 	
 	public void accept(DatabaseTypeVisitor visitor) {
