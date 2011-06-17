@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class DoubleType extends PrecisionType {
+public class DoubleType extends PrecisionType implements DatabaseTypeVisitable {
 
 	static long DEFAULT_PRECISON = 38l;
     public DoubleType() {

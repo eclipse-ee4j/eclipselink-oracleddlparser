@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class BlobType extends SizedType {
+public class BlobType extends SizedType implements DatabaseTypeVisitable {
 
 	static long DEFAULT_SIZE = 0l;
 	

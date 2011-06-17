@@ -12,7 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public abstract class PrecisionType extends DatabaseTypeBase {
+public abstract class PrecisionType extends ScalarDatabaseTypeBase implements ScalarDatabaseType {
 
     protected long precision;
     protected long scale;
@@ -57,5 +57,4 @@ public abstract class PrecisionType extends DatabaseTypeBase {
 		}
 		return sb.toString();
 	}
-
 }

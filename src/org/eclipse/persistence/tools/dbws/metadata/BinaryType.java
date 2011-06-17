@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class BinaryType extends SizedType {
+public class BinaryType extends SizedType implements DatabaseTypeVisitable {
 
 	static long DEFAULT_SIZE = 0l;
 	
@@ -33,5 +31,4 @@ public class BinaryType extends SizedType {
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
-
 }

@@ -12,8 +12,6 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
 public class UnresolvedSizedType extends UnresolvedType {
 
     protected long size;
@@ -27,8 +25,9 @@ public class UnresolvedSizedType extends UnresolvedType {
         return size;
     }
 
-    @Override
+	@Override
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
+
 }

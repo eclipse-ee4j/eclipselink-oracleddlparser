@@ -19,13 +19,12 @@ import static org.junit.Assert.fail;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertFalse;
 
-//EclipseLink imports
-import org.eclipse.persistence.tools.dbws.metadata.DatabaseTypesRepository;
+//DDL parser imports
 import org.eclipse.persistence.tools.dbws.metadata.TableType;
 import org.eclipse.persistence.tools.dbws.metadata.parser.ParseNode;
 import org.eclipse.persistence.tools.dbws.metadata.parser.DDLParser;
 import org.eclipse.persistence.tools.dbws.metadata.parser.ParseException;
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeWalker;
+import org.eclipse.persistence.tools.dbws.metadata.util.DatabaseTypesRepository;
 
 public class DDLParserTest {
 
@@ -569,8 +568,7 @@ public class DDLParserTest {
         }
         assertTrue(TABLE_BONUS + " did not parse correctly:\n" + message, worked);
         UnresolvedTypesListener l = new UnresolvedTypesListener();
-        DatabaseTypeWalker walker = new DatabaseTypeWalker(l);
-        table.accept(walker);
+        l.visit(table);
         assertTrue(TABLE_BONUS + " table should not contain any unresolved column datatypes",
         	l.getUnresolvedTypes().isEmpty());
         System.out.println(table.toString());
@@ -596,8 +594,7 @@ public class DDLParserTest {
         }
         assertTrue(TEMP_TABLE + " did not parse correctly:\n" + message, worked);
         UnresolvedTypesListener l = new UnresolvedTypesListener();
-        DatabaseTypeWalker walker = new DatabaseTypeWalker(l);
-        table.accept(walker);
+        l.visit(table);
         assertTrue(TEMP_TABLE + " table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
         System.out.println(table.toString());
@@ -623,8 +620,7 @@ public class DDLParserTest {
         }
         assertTrue(TABLE_XR_VEE_ARRAY_EMP + " did not parse correctly:\n" + message, worked);
         UnresolvedTypesListener l = new UnresolvedTypesListener();
-        DatabaseTypeWalker walker = new DatabaseTypeWalker(l);
-        table.accept(walker);
+        l.visit(table);
         assertFalse(TABLE_XR_VEE_ARRAY_EMP + " table should contain unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
         System.out.println(table.toString());

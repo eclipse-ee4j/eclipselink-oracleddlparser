@@ -12,8 +12,6 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
 public class VarChar2Type extends VarCharType {
 	
     public VarChar2Type() {
@@ -28,7 +26,7 @@ public class VarChar2Type extends VarCharType {
         super(size);
         this.typeName = typeName;
 	}
-
+	
 	@Override
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);

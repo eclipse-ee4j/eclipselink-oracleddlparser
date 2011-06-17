@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class RealType extends PrecisionType {
+public class RealType extends PrecisionType implements DatabaseTypeVisitable {
 
 	static long DEFAULT_PRECISON = 18;
     public RealType() {
@@ -33,9 +31,8 @@ public class RealType extends PrecisionType {
 	public long getDefaultPrecision() {
 		return DEFAULT_PRECISON;
 	}
-
+	
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
-
 }

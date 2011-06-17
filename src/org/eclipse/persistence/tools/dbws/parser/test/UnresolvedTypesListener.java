@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 //DDL parser imports
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeDefaultListener;
+import org.eclipse.persistence.tools.dbws.metadata.BaseDatabaseTypeVisitor;
+import org.eclipse.persistence.tools.dbws.metadata.UnresolvedSizedType;
+import org.eclipse.persistence.tools.dbws.metadata.UnresolvedType;
 
-public class UnresolvedTypesListener extends DatabaseTypeDefaultListener {
+public class UnresolvedTypesListener extends BaseDatabaseTypeVisitor {
 
 	protected List<String> unresolvedTypes = new ArrayList<String>();
 	
@@ -15,13 +17,12 @@ public class UnresolvedTypesListener extends DatabaseTypeDefaultListener {
 		return unresolvedTypes;
 	}
 
-	@Override
-	public void handleUnresolvedSizedType(String unresolvedTypeName, long size) {
-		unresolvedTypes.add(unresolvedTypeName);
+	public void visit(UnresolvedType unresolvedType) {
+		unresolvedTypes.add(unresolvedType.getTypeName());
 	}
 
-	@Override
-	public void handleUnresolvedType(String unresolvedTypeName) {
-		unresolvedTypes.add(unresolvedTypeName);
+	public void visit(UnresolvedSizedType unresolvedType) {
+		unresolvedTypes.add(unresolvedType.getTypeName());
 	}
+	
 }

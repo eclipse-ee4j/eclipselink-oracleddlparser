@@ -12,19 +12,17 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class FieldType implements ComplexDatabaseType, DatabaseTypeVisitable {
+public class PLSQLCursorType implements ComplexDatabaseType, DatabaseTypeVisitable {
 
-    protected String fieldName;
+    protected String cursorName;
     protected DatabaseType dataType;
-    protected boolean notNull = false;
-    protected boolean pk = false;
-
-    public FieldType(String fieldName) {
-        this.fieldName = fieldName;
+    
+    public PLSQLCursorType(String cursorName) {
+		this.cursorName = cursorName;
     }
 
-    public String getFieldName() {
-        return fieldName;
+    public String getCursorName() {
+        return cursorName;
     }
 
     public DatabaseType getDataType() {
@@ -33,6 +31,14 @@ public class FieldType implements ComplexDatabaseType, DatabaseTypeVisitable {
     public void setDataType(DatabaseType dataType) {
         this.dataType = dataType;
     }
+
+	public void addEnclosedType(DatabaseType enclosedType) {
+		setDataType(enclosedType);
+	}
+    
+	public boolean isWeaklyTypes() {
+		return dataType == null;
+	}
 
 	public boolean isResolved() {
 		if (dataType == null) {
@@ -55,48 +61,9 @@ public class FieldType implements ComplexDatabaseType, DatabaseTypeVisitable {
 		}
 		return dataType.getTypeName();
     }
-    
-    public boolean notNull() {
-    	return notNull;
-    }
-    public void setNotNull() {
-    	this.notNull = true;
-    }
-    public void unSetNotNull() {
-    	this.notNull = false;
-    }
-    
-    public boolean pk() {
-    	return pk;
-    }
-    public void setPk() {
-    	this.pk = true;
-    }
-    public void unSetPk() {
-    	this.pk = false;
-    }
-
-	public void addEnclosedType(DatabaseType enclosedType) {
-		setDataType(enclosedType);
-	}
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder(fieldName);
-        sb.append("\t");
-        if (dataType == null) {
-            sb.append("unknown datatype");
-        }
-        else {
-            sb.append(dataType.toString());
-        }
-        if (notNull) {
-            sb.append(" (NOT NULL)");
-        }
-        return sb.toString();
-    }
 
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
+
 }

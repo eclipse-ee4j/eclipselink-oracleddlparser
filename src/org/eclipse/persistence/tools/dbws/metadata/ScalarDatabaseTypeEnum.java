@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public enum ScalarType implements DatabaseType {
+public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVisitable {
 
     BIGINT_TYPE("BIGINT"),
     BINARY_DOUBLE_TYPE("BINARY_DOUBLE"),
@@ -41,16 +39,12 @@ public enum ScalarType implements DatabaseType {
 
     private final String typeName;
     
-    ScalarType(String typeName) {
+    ScalarDatabaseTypeEnum(String typeName) {
         this.typeName = typeName;
     }
 
     public String getTypeName() {
         return typeName;
-    }
-
-    public boolean isSimple() {
-        return true;
     }
 
     public boolean isComplex() {

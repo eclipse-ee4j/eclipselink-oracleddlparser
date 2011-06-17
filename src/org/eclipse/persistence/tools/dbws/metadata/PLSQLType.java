@@ -12,24 +12,10 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public class ClobType extends SizedType implements DatabaseTypeVisitable {
+public abstract class PLSQLType extends ComplexDatabaseTypeBase implements ComplexDatabaseType {
 
-	static long DEFAULT_SIZE = 0l;
-	
-    public ClobType() {
-        super("CLOB", DEFAULT_SIZE);
+    public PLSQLType(String typeName) {
+        super(typeName);
     }
-    public ClobType(long size) {
-        super("CLOB", size);
-    }
-    
-	@Override
-	public long getDefaultSize() {
-		return DEFAULT_SIZE;
-	}
-
-	public void accept(DatabaseTypeVisitor visitor) {
-		visitor.visit(this);
-	}
 
 }
