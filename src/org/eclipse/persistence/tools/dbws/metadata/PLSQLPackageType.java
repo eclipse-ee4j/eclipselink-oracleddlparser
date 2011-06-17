@@ -12,18 +12,20 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
+//javase imports
+import java.util.List;
 
-public class PLSQLPackageType extends ComplexDatabaseTypeBase {
+public class PLSQLPackageType implements ComplexDatabaseType, DatabaseTypeVisitable {
 
 	protected String packageName;
+	protected List<PLSQLType> types;
+	protected List<PLSQLCursorType> cursors;
+	protected List<ProcedureType> procedures;
 
     public PLSQLPackageType() {
-		super(null);
     }
     
     public PLSQLPackageType(String packageName) {
-		super(null);
 		setPackageName(packageName);
 	}
 
@@ -33,14 +35,54 @@ public class PLSQLPackageType extends ComplexDatabaseTypeBase {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
-        super.typeName = "PL/SQL Package " + packageName;
     }
 
-    public void addEnclosedType(DatabaseType enclosedType) {
+    public List<PLSQLType> getTypes() {
+		return types;
+	}
+
+	public List<PLSQLCursorType> getCursors() {
+		return cursors;
+	}
+
+	public List<ProcedureType> getProcedures() {
+		return procedures;
+	}
+
+	public void addEnclosedType(DatabaseType enclosedType) {
     	// TODO
     }
+
+	public String getTypeName() {
+		return "PACKAGE " + packageName;
+	}
+
+	public boolean isComplex() {
+		return true;
+	}
+
+	public boolean isResolved() {
+		// if any of the enclosed types are unresolved, then this package is unresolved
+		for (PLSQLType type : types) {
+			if (!type.isResolved()) {
+				return false;
+			}
+		}
+		for (PLSQLCursorType cursor : cursors) {
+			if (!cursor.isResolved()) {
+				return false;
+			}
+		}
+		for (ProcedureType procedure : procedures) {
+			if (!procedure.isResolved()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
+
 }

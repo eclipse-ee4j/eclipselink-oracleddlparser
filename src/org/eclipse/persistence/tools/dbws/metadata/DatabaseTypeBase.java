@@ -12,7 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-abstract class DatabaseTypeBase implements DatabaseType {
+abstract class DatabaseTypeBase {
 
 	protected String typeName;
 	
@@ -24,12 +24,12 @@ abstract class DatabaseTypeBase implements DatabaseType {
 		return typeName;
 	}
 
-	public boolean isResolved() {
+	public boolean isComplex() {
 		return true;
 	}
 
-	public boolean isComplex() {
-		return false;
+	public boolean isResolved() {
+		return true;
 	}
 
 	@Override

@@ -10,12 +10,13 @@
  * Contributors:
  *     Mike Norman - June 10 2010, created DDL parser package
  ******************************************************************************/
-package org.eclipse.persistence.tools.dbws.metadata;
+package org.eclipse.persistence.tools.dbws.metadata.util;
 
 //javase imports
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.persistence.tools.dbws.metadata.DatabaseType;
 import org.eclipse.persistence.tools.dbws.metadata.parser.DDLParser;
 
 /**

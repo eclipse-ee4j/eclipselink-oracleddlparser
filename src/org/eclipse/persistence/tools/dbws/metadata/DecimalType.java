@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class DecimalType extends PrecisionType {
+public class DecimalType extends PrecisionType implements DatabaseTypeVisitable {
 
 	static long DEFAULT_PRECISON = 5l;
     public DecimalType() {

@@ -12,15 +12,10 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public abstract class ComplexDatabaseTypeBase extends DatabaseTypeBase implements ComplexDatabaseType {
+public abstract class ComplexDatabaseTypeBase extends DatabaseTypeBase {
 
     public ComplexDatabaseTypeBase(String typeName) {
 		super(typeName);
-	}
-
-	@Override
-	public boolean isComplex() {
-		return true;
 	}
 
 	public abstract void addEnclosedType(DatabaseType enclosedType);

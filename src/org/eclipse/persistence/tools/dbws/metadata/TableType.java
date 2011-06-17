@@ -16,9 +16,7 @@ package org.eclipse.persistence.tools.dbws.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class TableType extends ComplexDatabaseTypeBase {
+public class TableType extends ComplexDatabaseTypeBase implements ComplexDatabaseType, DatabaseTypeVisitable {
 
     protected String tableName;
     protected String schema;
@@ -38,8 +36,10 @@ public class TableType extends ComplexDatabaseTypeBase {
         super.typeName = "TABLE " + tableName;
     }
 
-
-    public void setSchema(String schema) {
+    public String getSchema() {
+		return schema;
+	}
+	public void setSchema(String schema) {
        this.schema = schema;
     }
 

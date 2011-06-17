@@ -12,7 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public abstract class SizedType extends DatabaseTypeBase {
+public abstract class SizedType extends ScalarDatabaseTypeBase implements ScalarDatabaseType {
 
 	protected long size;
     

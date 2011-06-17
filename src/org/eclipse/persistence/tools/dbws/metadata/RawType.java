@@ -12,8 +12,6 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
 public class RawType extends BlobType {
 
     public RawType() {
@@ -22,10 +20,5 @@ public class RawType extends BlobType {
     public RawType(long size) {
         super("RAW", size);
     }
-    
-	@Override
-	public void accept(DatabaseTypeVisitor visitor) {
-		visitor.visit(this);
-	}
 	
 }

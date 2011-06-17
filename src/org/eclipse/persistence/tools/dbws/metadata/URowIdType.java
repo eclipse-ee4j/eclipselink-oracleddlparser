@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class URowIdType extends SizedType {
+public class URowIdType extends SizedType implements DatabaseTypeVisitable {
 	
 	static long DEFAULT_SIZE = 4000l;
 

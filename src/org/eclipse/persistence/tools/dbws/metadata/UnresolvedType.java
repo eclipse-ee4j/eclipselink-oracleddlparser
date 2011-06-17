@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class UnresolvedType extends DatabaseTypeBase {
+public class UnresolvedType extends DatabaseTypeBase implements DatabaseType, DatabaseTypeVisitable {
     
 	public UnresolvedType(String unresolvedTypeName) {
 		super(unresolvedTypeName);

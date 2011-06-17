@@ -12,26 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-import org.eclipse.persistence.tools.dbws.metadata.visit.DatabaseTypeVisitor;
-
-public class ArrayType extends SizedType  {
-
-	static long DEFAULT_SIZE = 0l;
+public interface DatabaseTypeVisitable {
 	
-    public ArrayType() {
-        super("ARRAY", DEFAULT_SIZE);
-    }
-    public ArrayType(long size) {
-        super("ARRAY", size);
-    }
-    
-	@Override
-	public long getDefaultSize() {
-		return DEFAULT_SIZE;
-	}
-
-	public void accept(DatabaseTypeVisitor visitor) {
-		visitor.visit(this);
-	}
+    public void accept(DatabaseTypeVisitor visitor);
 
 }
