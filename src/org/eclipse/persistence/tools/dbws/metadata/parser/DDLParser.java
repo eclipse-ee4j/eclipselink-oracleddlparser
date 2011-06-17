@@ -20,7 +20,7 @@ import java.util.Stack;
 //metadata imports
 import org.eclipse.persistence.tools.dbws.metadata.BlobType;
 import org.eclipse.persistence.tools.dbws.metadata.ClobType;
-import org.eclipse.persistence.tools.dbws.metadata.ComplexDatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.CompositeDatabaseType;
 import org.eclipse.persistence.tools.dbws.metadata.DatabaseType;
 import org.eclipse.persistence.tools.dbws.metadata.DecimalType;
 import org.eclipse.persistence.tools.dbws.metadata.DoubleType;
@@ -747,9 +747,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     try {
         DatabaseType enclosingType = typeStack.peek();
       s = OracleObjectName();
-            if (enclosingType.isComplex()) {
+            if (enclosingType.isComposite()) {
                 FieldType column = new FieldType(s);
-                ((ComplexDatabaseType)enclosingType).addEnclosedType(column);
+                ((CompositeDatabaseType)enclosingType).addCompositeType(column);
                 typeStack.push(column);
             }
       columnTypeSpec();
@@ -767,7 +767,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetLastToken(getToken(0));
-      if (enclosingType.isComplex()) {
+      if (enclosingType.isComposite()) {
           DatabaseType columnType = typeStack.pop();
           FieldType column = (FieldType)typeStack.pop();
           column.setDataType(columnType);

@@ -40,7 +40,7 @@ public abstract class PrecisionType extends ScalarDatabaseTypeBase implements Sc
     public boolean isSimple() {
         return true;
     }
-    public boolean isComplex() {
+    public boolean isComposite() {
         return false;
     }
 

@@ -16,7 +16,7 @@ public interface DatabaseType {
 
     public String getTypeName();
 
-    public boolean isComplex();
+    public boolean isComposite();
 
     public boolean isResolved();
     

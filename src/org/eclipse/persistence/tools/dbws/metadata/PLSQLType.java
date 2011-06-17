@@ -12,7 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
-public abstract class PLSQLType extends ComplexDatabaseTypeBase implements ComplexDatabaseType {
+public abstract class PLSQLType extends CompositeDatabaseTypeBase implements CompositeDatabaseType {
 
     public PLSQLType(String typeName) {
         super(typeName);

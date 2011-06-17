@@ -12,16 +12,12 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
+//javase imports
 import java.util.List;
 
 public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 
-	public void visit(ArgumentType databaseType) {
-		DatabaseType dt = databaseType.getDataType();
-		if (dt != null) {
-			dt.accept(this);
-		}
-	}
+	//scalar visit callbacks
 	public void visit(BinaryType databaseType) {
 	}
 	public void visit(BlobType databaseType) {
@@ -38,46 +34,13 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 	}
 	public void visit(DoubleType databaseType) {
 	}
-	public void visit(FieldType databaseType) {
-		DatabaseType dt = databaseType.getDataType();
-		if (dt != null) {
-			dt.accept(this);
-		}
-	}
 	public void visit(FloatType databaseType) {
 	}
 	public void visit(NumericType databaseType) {
 	}
-	public void visit(PLSQLCursorType databaseType) {
-		DatabaseType dt = databaseType.getDataType();
-		if (dt != null) {
-			dt.accept(this);
-		}
-	}
-	public void visit(PLSQLPackageType databaseType) {
-		//TODO
-	}
-	public void visit(PLSQLRecordType plsqlRecordType) {
-		//TODO
-	}
-	public void visit(PLSQLCollectionType plsqlCollectionType) {
-		//TODO
-	}
-	public void visit(ProcedureType databaseType) {
-		//TODO
-	}
-	public void visit(FunctionType databaseType) {
-		//TODO
-	}
 	public void visit(RealType databaseType) {
 	}
 	public void visit(ScalarDatabaseType databaseType) {
-	}
-	public void visit(TableType databaseType) {
-		List<FieldType> columns = databaseType.getColumns();
-		for (FieldType column : columns) {
-			column.accept(this);
-		}
 	}
 	public void visit(UnresolvedType databaseType) {
 	}
@@ -90,5 +53,102 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 	public void visit(VarChar2Type databaseType) {
 	}
 	public void visit(LongType databaseType) {
+	}
+
+	//composite visit callbacks
+	public void beginVisit(ArgumentType databaseType) {
+	}
+	public void visit(ArgumentType databaseType) {
+		beginVisit(databaseType);
+		DatabaseType dt = databaseType.getDataType();
+		if (dt != null) {
+			dt.accept(this);
+		}
+		endVisit(databaseType);
+	}
+	public void endVisit(ArgumentType databaseType) {
+	}
+	
+	public void beginVisit(FieldType databaseType) {
+	}
+	public void visit(FieldType databaseType) {
+		beginVisit(databaseType);
+		DatabaseType dt = databaseType.getDataType();
+		if (dt != null) {
+			dt.accept(this);
+		}
+		endVisit(databaseType);
+	}
+	public void endVisit(FieldType databaseType) {
+	}
+
+	public void beginVisit(PLSQLCursorType databaseType) {
+	}
+	public void visit(PLSQLCursorType databaseType) {
+		beginVisit(databaseType);
+		DatabaseType dt = databaseType.getDataType();
+		if (dt != null) {
+			dt.accept(this);
+		}
+		endVisit(databaseType);
+	}
+	public void endVisit(PLSQLCursorType databaseType) {
+	}
+
+	public void beginVisit(PLSQLPackageType databaseType) {
+	}
+	public void visit(PLSQLPackageType databaseType) {
+		beginVisit(databaseType);
+		endVisit(databaseType);
+		//TODO
+	}
+	public void endVisit(PLSQLPackageType databaseType) {
+	}
+
+	public void beginVisit(PLSQLRecordType databaseType) {
+	}
+	public void visit(PLSQLRecordType plsqlRecordType) {
+		//TODO
+	}
+	public void endVisit(PLSQLRecordType databaseType) {
+	}
+
+
+	public void beginVisit(PLSQLCollectionType databaseType) {
+	}
+	public void visit(PLSQLCollectionType plsqlCollectionType) {
+		//TODO
+	}
+	public void endVisit(PLSQLCollectionType databaseType) {
+	}
+
+
+	public void beginVisit(ProcedureType databaseType) {
+	}
+	public void visit(ProcedureType databaseType) {
+		//TODO
+	}
+	public void endVisit(ProcedureType databaseType) {
+	}
+
+
+	public void beginVisit(FunctionType databaseType) {
+	}
+	public void visit(FunctionType databaseType) {
+		//TODO
+	}
+	public void endVisit(FunctionType databaseType) {
+	}
+
+
+	public void beginVisit(TableType databaseType) {
+	}
+	public void visit(TableType databaseType) {
+		List<FieldType> columns = databaseType.getColumns();
+		for (FieldType column : columns) {
+			column.accept(this);
+		}
+	}
+	public void endVisit(TableType databaseType) {
 	}
 }

@@ -47,7 +47,7 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
         return typeName;
     }
 
-    public boolean isComplex() {
+    public boolean isComposite() {
         return false;
     }
 

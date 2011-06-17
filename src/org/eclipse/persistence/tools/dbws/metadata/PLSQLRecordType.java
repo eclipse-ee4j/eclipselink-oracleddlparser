@@ -8,7 +8,7 @@ public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable 
 	}
 	
 	@Override
-	public void addEnclosedType(DatabaseType enclosedType) {
+	public void addCompositeType(DatabaseType enclosedType) {
 	}
 
 	public void accept(DatabaseTypeVisitor visitor) {

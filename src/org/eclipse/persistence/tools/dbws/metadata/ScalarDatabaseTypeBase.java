@@ -7,7 +7,7 @@ public abstract class ScalarDatabaseTypeBase extends DatabaseTypeBase {
 	}
 
 	@Override
-	public boolean isComplex() {
+	public boolean isComposite() {
 		return false;
 	}
 }
