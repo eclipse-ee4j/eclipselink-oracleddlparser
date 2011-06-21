@@ -8,7 +8,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     Mike Norman - June 10 2010, created DDL parser package
+ *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata;
 
@@ -105,29 +105,27 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 	}
 	public void visit(PLSQLPackageType databaseType) {
 		beginVisit(databaseType);
-		endVisit(databaseType);
 		//TODO
+		endVisit(databaseType);
 	}
 	public void endVisit(PLSQLPackageType databaseType) {
 	}
 
 	public void beginVisit(PLSQLRecordType databaseType) {
 	}
-	public void visit(PLSQLRecordType plsqlRecordType) {
+	public void visit(PLSQLRecordType databaseType) {
 		//TODO
 	}
 	public void endVisit(PLSQLRecordType databaseType) {
 	}
 
-
 	public void beginVisit(PLSQLCollectionType databaseType) {
 	}
-	public void visit(PLSQLCollectionType plsqlCollectionType) {
+	public void visit(PLSQLCollectionType databaseType) {
 		//TODO
 	}
 	public void endVisit(PLSQLCollectionType databaseType) {
 	}
-
 
 	public void beginVisit(ProcedureType databaseType) {
 	}
@@ -137,7 +135,6 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 	public void endVisit(ProcedureType databaseType) {
 	}
 
-
 	public void beginVisit(FunctionType databaseType) {
 	}
 	public void visit(FunctionType databaseType) {
@@ -145,7 +142,6 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 	}
 	public void endVisit(FunctionType databaseType) {
 	}
-
 
 	public void beginVisit(TableType databaseType) {
 	}
@@ -159,4 +155,5 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 	}
 	public void endVisit(TableType databaseType) {
 	}
+
 }

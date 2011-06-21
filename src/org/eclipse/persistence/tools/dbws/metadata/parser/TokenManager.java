@@ -10,7 +10,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     Mike Norman - June 10 2010, created DDL parser package
+ *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
 package org.eclipse.persistence.tools.dbws.metadata.parser;
 
