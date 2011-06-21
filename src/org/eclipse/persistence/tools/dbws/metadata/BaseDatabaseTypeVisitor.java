@@ -36,11 +36,17 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 	}
 	public void visit(FloatType databaseType) {
 	}
+	public void visit(IntervalDayToSecond databaseType) {
+	}
+	public void visit(IntervalYearToMonth databaseType) {
+	}
+	public void visit(NClobType databaseType) {
+	}
 	public void visit(NumericType databaseType) {
 	}
 	public void visit(RealType databaseType) {
 	}
-	public void visit(ScalarDatabaseType databaseType) {
+	public void visit(ScalarDatabaseTypeEnum databaseType) {
 	}
 	public void visit(UnresolvedType databaseType) {
 	}
@@ -144,10 +150,12 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 	public void beginVisit(TableType databaseType) {
 	}
 	public void visit(TableType databaseType) {
+		beginVisit(databaseType);
 		List<FieldType> columns = databaseType.getColumns();
 		for (FieldType column : columns) {
 			column.accept(this);
 		}
+		endVisit(databaseType);
 	}
 	public void endVisit(TableType databaseType) {
 	}

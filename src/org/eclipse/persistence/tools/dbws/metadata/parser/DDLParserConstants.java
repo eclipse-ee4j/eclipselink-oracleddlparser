@@ -342,21 +342,21 @@ public interface DDLParserConstants {
   /** RegularExpression Id. */
   int K_SECOND = 164;
   /** RegularExpression Id. */
-  int K_SECONDS = 165;
+  int K_SEQUENTIAL = 165;
   /** RegularExpression Id. */
-  int K_SEQUENTIAL = 166;
+  int K_SERIALLY_REUSABLE = 166;
   /** RegularExpression Id. */
-  int K_SERIALLY_REUSABLE = 167;
+  int K_SESSIONTIMEZONE = 167;
   /** RegularExpression Id. */
-  int K_SESSIONTIMEZONE = 168;
+  int K_SET = 168;
   /** RegularExpression Id. */
-  int K_SET = 169;
+  int K_SETS = 169;
   /** RegularExpression Id. */
-  int K_SETS = 170;
+  int K_SIBLINGS = 170;
   /** RegularExpression Id. */
-  int K_SIBLINGS = 171;
+  int K_SINGLE = 171;
   /** RegularExpression Id. */
-  int K_SINGLE = 172;
+  int K_SIMPLE_INTEGER = 172;
   /** RegularExpression Id. */
   int K_SMALLINT = 173;
   /** RegularExpression Id. */
@@ -670,7 +670,6 @@ public interface DDLParserConstants {
     "\"%ROWTYPE\"",
     "\"RULES\"",
     "\"SECOND\"",
-    "\"SECONDS\"",
     "\"SEQUENTIAL\"",
     "\"SERIALLY_REUSABLE\"",
     "\"SESSIONTIMEZONE\"",
@@ -678,6 +677,7 @@ public interface DDLParserConstants {
     "\"SETS\"",
     "\"SIBLINGS\"",
     "\"SINGLE\"",
+    "\"SIMPLE_INTEGER\"",
     "\"SMALLINT\"",
     "\"SOME\"",
     "\"STRING\"",

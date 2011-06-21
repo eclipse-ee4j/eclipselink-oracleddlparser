@@ -13,14 +13,16 @@
 package org.eclipse.persistence.tools.dbws.metadata;
 
 public class VarChar2Type extends VarCharType {
+
+	static final String TYPENAME = "VARCHAR2";
 	
     public VarChar2Type() {
         super(VarCharType.DEFAULT_SIZE);
-        this.typeName = "VARCHAR2";
+        this.typeName = TYPENAME;
     }
     public VarChar2Type(long size) {
         super(size);
-        this.typeName = "VARCHAR2";
+        this.typeName = TYPENAME;
     }
 	public VarChar2Type(String typeName, long size) {
         super(size);

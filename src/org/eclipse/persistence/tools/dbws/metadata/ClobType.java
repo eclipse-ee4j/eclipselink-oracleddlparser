@@ -14,7 +14,7 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public class ClobType extends SizedType implements DatabaseTypeVisitable {
 
-	static long DEFAULT_SIZE = 0l;
+	static final long DEFAULT_SIZE = 0l;
 	
     public ClobType() {
         super("CLOB", DEFAULT_SIZE);
@@ -22,7 +22,10 @@ public class ClobType extends SizedType implements DatabaseTypeVisitable {
     public ClobType(long size) {
         super("CLOB", size);
     }
-    
+	public ClobType(String typeName, long size) {
+        super(typeName, size);
+	}
+
 	@Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;

@@ -14,17 +14,19 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public class DecimalType extends PrecisionType implements DatabaseTypeVisitable {
 
-	static long DEFAULT_PRECISON = 5l;
+	static final String TYPENAME = "DECIMAL";
+	static final long DEFAULT_PRECISON = 5l;
+
     public DecimalType() {
-        super("DECIMAL", DEFAULT_PRECISON);
+        super(TYPENAME, DEFAULT_PRECISON);
     }
 
     public DecimalType(long precision) {
-        super("DECIMAL", precision);
+        super(TYPENAME, precision);
     }
 
     public DecimalType(long precision, long scale) {
-        super("DECIMAL", precision, scale);
+        super(TYPENAME, precision, scale);
     }
 
 	@Override

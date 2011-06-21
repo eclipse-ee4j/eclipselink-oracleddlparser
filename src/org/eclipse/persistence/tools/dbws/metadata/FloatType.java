@@ -14,17 +14,19 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public class FloatType extends PrecisionType implements DatabaseTypeVisitable {
 
-	static long DEFAULT_PRECISON = 38l;
+	static final String TYPENAME = "FLOAT";
+	static final long DEFAULT_PRECISON = 38l;
+	
     public FloatType() {
-        super("FLOAT", DEFAULT_PRECISON);
+        super(TYPENAME, DEFAULT_PRECISON);
     }
 
     public FloatType(long precision) {
-        super("FLOAT", precision);
+        super(TYPENAME, precision);
     }
 
     public FloatType(long precision, long scale) {
-        super("FLOAT", precision, 0);
+        super(TYPENAME, precision, 0);
     }
 
 	@Override

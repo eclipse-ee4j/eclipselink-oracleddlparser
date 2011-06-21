@@ -14,17 +14,19 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public class DoubleType extends PrecisionType implements DatabaseTypeVisitable {
 
-	static long DEFAULT_PRECISON = 38l;
+	static final String TYPENAME = "DOUBLE";
+	static final long DEFAULT_PRECISON = 38l;
+
     public DoubleType() {
-        super("DOUBLE", DEFAULT_PRECISON);
+        super(TYPENAME, DEFAULT_PRECISON);
     }
 
     public DoubleType(long precision) {
-        super("DOUBLE", precision);
+        super(TYPENAME, precision);
     }
 
     public DoubleType(long precision, long scale) {
-        super("DOUBLE", precision, 0);
+        super(TYPENAME, precision, 0);
     }
 
 	@Override

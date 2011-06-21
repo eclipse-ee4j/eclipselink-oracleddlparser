@@ -14,13 +14,14 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public class BinaryType extends SizedType implements DatabaseTypeVisitable {
 
-	static long DEFAULT_SIZE = 0l;
+	static final String TYPENAME = "BINARY";
+	static final long DEFAULT_SIZE = 0l;
 	
     public BinaryType() {
-        super("BINARY", DEFAULT_SIZE);
+        super(TYPENAME, DEFAULT_SIZE);
     }
     public BinaryType(long size) {
-        super("BINARY", size);
+        super(TYPENAME, size);
     }
     
 	@Override

@@ -567,7 +567,7 @@ public class DDLParserTest {
             worked = false;
         }
         assertTrue(TABLE_BONUS + " did not parse correctly:\n" + message, worked);
-        UnresolvedTypesListener l = new UnresolvedTypesListener();
+        UnresolvedTypesVisitor l = new UnresolvedTypesVisitor();
         l.visit(table);
         assertTrue(TABLE_BONUS + " table should not contain any unresolved column datatypes",
         	l.getUnresolvedTypes().isEmpty());
@@ -593,7 +593,7 @@ public class DDLParserTest {
             worked = false;
         }
         assertTrue(TEMP_TABLE + " did not parse correctly:\n" + message, worked);
-        UnresolvedTypesListener l = new UnresolvedTypesListener();
+        UnresolvedTypesVisitor l = new UnresolvedTypesVisitor();
         l.visit(table);
         assertTrue(TEMP_TABLE + " table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
@@ -619,7 +619,7 @@ public class DDLParserTest {
             worked = false;
         }
         assertTrue(TABLE_XR_VEE_ARRAY_EMP + " did not parse correctly:\n" + message, worked);
-        UnresolvedTypesListener l = new UnresolvedTypesListener();
+        UnresolvedTypesVisitor l = new UnresolvedTypesVisitor();
         l.visit(table);
         assertFalse(TABLE_XR_VEE_ARRAY_EMP + " table should contain unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());

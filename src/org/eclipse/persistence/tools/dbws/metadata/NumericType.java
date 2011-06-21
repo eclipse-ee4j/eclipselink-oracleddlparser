@@ -14,17 +14,19 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public class NumericType extends PrecisionType implements DatabaseTypeVisitable {
 
-	static long DEFAULT_PRECISON = 38l;
+	static final String TYPENAME = "NUMERIC";
+	static final long DEFAULT_PRECISON = 38l;
+
     public NumericType() {
-        super("NUMERIC", DEFAULT_PRECISON);
+        super(TYPENAME, DEFAULT_PRECISON);
     }
     
     public NumericType(long precision) {
-        super("NUMERIC", precision);
+        super(TYPENAME, precision);
     }
     
     public NumericType(long precision, long scale) {
-        super("NUMERIC", precision, scale);
+        super(TYPENAME, precision, scale);
     }
 
 	@Override
