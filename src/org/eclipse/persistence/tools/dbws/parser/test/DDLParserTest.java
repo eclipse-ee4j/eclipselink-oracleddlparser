@@ -25,6 +25,7 @@ import org.eclipse.persistence.tools.dbws.metadata.parser.ParseNode;
 import org.eclipse.persistence.tools.dbws.metadata.parser.DDLParser;
 import org.eclipse.persistence.tools.dbws.metadata.parser.ParseException;
 import org.eclipse.persistence.tools.dbws.metadata.util.DatabaseTypesRepository;
+import org.eclipse.persistence.tools.dbws.metadata.util.UnresolvedTypesVisitor;
 
 public class DDLParserTest {
 
