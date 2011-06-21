@@ -39,5 +39,7 @@ public class DatabaseTypesRepository {
 	public DatabaseType getDatabaseType(String namespaceKey) {
 		return repository.get(namespaceKey);
 	}
+	
+	//TODO - add package-level namespaces
     
 }
