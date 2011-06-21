@@ -14,6 +14,7 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVisitable {
 
+    BFILE_TYPE("BFILE"),
     BIGINT_TYPE("BIGINT"),
     BINARY_DOUBLE_TYPE("BINARY_DOUBLE"),
     BINARY_FLOAT_TYPE("BINARY_FLOAT"),
@@ -31,6 +32,7 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
     POSITIVE_TYPE("POSITIVE"),
     ROWID_TYPE("ROWID"),
     SIGN_TYPE("SIGNTYPE"),
+    SIMPLE_INTEGER_TYPE("SIMPLE INTEGER"),
     SMALLINT_TYPE("SMALLINT"),
     TIME_TYPE("TIME"),
     TIMESTAMP_TYPE("TIMESTAMP"),

@@ -14,17 +14,19 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public class RealType extends PrecisionType implements DatabaseTypeVisitable {
 
-	static long DEFAULT_PRECISON = 18;
+	static final String TYPENAME = "REAL";
+	static final long DEFAULT_PRECISON = 18;
+	
     public RealType() {
-        super("REAL", 18);
+        super(TYPENAME, 18);
     }
 
     public RealType(long precision) {
-        super("REAL", precision);
+        super(TYPENAME, precision);
     }
 
     public RealType(long precision, long scale) {
-        super("REAL", precision, 0);
+        super(TYPENAME, precision, 0);
     }
 
 	@Override

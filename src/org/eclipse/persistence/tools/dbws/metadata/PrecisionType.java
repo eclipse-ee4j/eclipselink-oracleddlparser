@@ -44,6 +44,7 @@ public abstract class PrecisionType extends ScalarDatabaseTypeBase implements Sc
         return false;
     }
 
+    @Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(super.toString());
 		if (precision != getDefaultPrecision()) {

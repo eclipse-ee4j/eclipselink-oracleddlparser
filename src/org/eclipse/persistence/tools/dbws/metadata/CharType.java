@@ -14,15 +14,19 @@ package org.eclipse.persistence.tools.dbws.metadata;
 
 public class CharType extends SizedType implements DatabaseTypeVisitable {
 
-	static long DEFAULT_SIZE = 1l;
+	static final String TYPENAME = "CHAR";
+	static final long DEFAULT_SIZE = 1l;
 	
     public CharType() {
-        super("CHAR", DEFAULT_SIZE);
+        super(TYPENAME, DEFAULT_SIZE);
     }
     public CharType(long size) {
-        super("CHAR", size);
+        super(TYPENAME, size);
     }
-    
+	public CharType(String typename, long size) {
+        super(typename, size);
+	}
+	
 	@Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;

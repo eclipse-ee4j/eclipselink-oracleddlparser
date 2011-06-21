@@ -45,16 +45,22 @@ import java.util.Stack;
 
 //metadata imports
 import org.eclipse.persistence.tools.dbws.metadata.BlobType;
+import org.eclipse.persistence.tools.dbws.metadata.CharType;
 import org.eclipse.persistence.tools.dbws.metadata.ClobType;
-import org.eclipse.persistence.tools.dbws.metadata.ComplexDatabaseType;
+import org.eclipse.persistence.tools.dbws.metadata.CompositeDatabaseType;
 import org.eclipse.persistence.tools.dbws.metadata.DatabaseType;
 import org.eclipse.persistence.tools.dbws.metadata.DecimalType;
 import org.eclipse.persistence.tools.dbws.metadata.DoubleType;
 import org.eclipse.persistence.tools.dbws.metadata.FieldType;
 import org.eclipse.persistence.tools.dbws.metadata.FloatType;
+import org.eclipse.persistence.tools.dbws.metadata.IntervalDayToSecond;
+import org.eclipse.persistence.tools.dbws.metadata.IntervalYearToMonth;
 import org.eclipse.persistence.tools.dbws.metadata.LongType;
 import org.eclipse.persistence.tools.dbws.metadata.LongRawType;
+import org.eclipse.persistence.tools.dbws.metadata.NCharType;
+import org.eclipse.persistence.tools.dbws.metadata.NClobType;
 import org.eclipse.persistence.tools.dbws.metadata.NumericType;
+import org.eclipse.persistence.tools.dbws.metadata.NVarChar2Type;
 import org.eclipse.persistence.tools.dbws.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.dbws.metadata.RawType;
 import org.eclipse.persistence.tools.dbws.metadata.RealType;
@@ -62,8 +68,10 @@ import org.eclipse.persistence.tools.dbws.metadata.TableType;
 import org.eclipse.persistence.tools.dbws.metadata.URowIdType;
 import org.eclipse.persistence.tools.dbws.metadata.UnresolvedSizedType;
 import org.eclipse.persistence.tools.dbws.metadata.UnresolvedType;
+import org.eclipse.persistence.tools.dbws.metadata.VarCharType;
 import org.eclipse.persistence.tools.dbws.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.dbws.metadata.util.DatabaseTypesRepository;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.BFILE_TYPE;
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.BINARY_INTEGER_TYPE;
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.BINARY_FLOAT_TYPE;
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.BINARY_DOUBLE_TYPE;
@@ -75,6 +83,7 @@ import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.PLS_INTEGER_TYPE;
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.POSITIVE_TYPE;
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.ROWID_TYPE;
+import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.SIMPLE_INTEGER_TYPE;
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.TIME_TYPE;
 import static org.eclipse.persistence.tools.dbws.metadata.ScalarDatabaseTypeEnum.TIMESTAMP_TYPE;
@@ -296,7 +305,6 @@ TOKEN: {
         | <K_ROWTYPE: "%ROWTYPE">
         | <K_RULES: "RULES">
         | <K_SECOND: "SECOND">
-        | <K_SECONDS: "SECONDS">
         | <K_SEQUENTIAL: "SEQUENTIAL">
         | <K_SERIALLY_REUSABLE: "SERIALLY_REUSABLE">
         | <K_SESSIONTIMEZONE: "SESSIONTIMEZONE">
@@ -304,6 +312,7 @@ TOKEN: {
         | <K_SETS: "SETS">
         | <K_SIBLINGS: "SIBLINGS">
         | <K_SINGLE: "SINGLE">
+        | <K_SIMPLE_INTEGER: "SIMPLE_INTEGER">
         | <K_SMALLINT: "SMALLINT">
         | <K_SOME: "SOME">
         | <K_STRING: "STRING">
@@ -795,8 +804,8 @@ ParseNode columnDeclaration():
         DatabaseType enclosingType = typeStack.peek();    }
     s=OracleObjectName()
         {
-            if (enclosingType.isComplex()) {                FieldType column = new FieldType(s);
-                ((ComplexDatabaseType)enclosingType).addEnclosedType(column);
+            if (enclosingType.isComposite()) {                FieldType column = new FieldType(s);
+                ((CompositeDatabaseType)enclosingType).addCompositeType(column);
                 typeStack.push(column);
             }        }
         columnTypeSpec() [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]/*@bgen(jjtree)*/
@@ -808,7 +817,7 @@ ParseNode columnDeclaration():
 /*@egen*/
     {
       
-      if (enclosingType.isComplex()) {
+      if (enclosingType.isComposite()) {
           DatabaseType columnType = typeStack.pop();
           FieldType column = (FieldType)typeStack.pop();
           column.setDataType(columnType);
@@ -1055,8 +1064,32 @@ void datatype()      :
 	    }
     | <K_BOOLEAN> { typeStack.push(BOOLEAN_TYPE);}
     | <K_DATE> { typeStack.push(DATE_TYPE);}
-    | LOOKAHEAD(2) <K_INTERVAL> <K_DAY> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_SECONDS> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_INTERVAL> <K_YEAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_MONTH>
+    | LOOKAHEAD(2) <K_INTERVAL> <K_DAY> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_SECOND> [ <O_OPENPAREN> scale=<S_NUMBER> <O_CLOSEPAREN> ]
+	    {
+	        if (precision == null) {
+                dt = new IntervalDayToSecond();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                if (scale == null) {
+                    dt = new IntervalDayToSecond(pl);
+                }
+                else {
+                    sl = Long.decode(scale.image);
+                    dt = new IntervalDayToSecond(pl, sl);
+                }
+            }
+            typeStack.push(dt);
+	        	    }
+    | <K_INTERVAL> <K_YEAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <K_TO> <K_MONTH>	    {
+            if (precision == null) {
+                dt = new IntervalYearToMonth();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                dt = new IntervalYearToMonth(pl);
+            }
+            typeStack.push(dt);	    }
     | ( <K_TIME> { typeStack.push(TIME_TYPE);}
         | <K_TIMESTAMP> { typeStack.push(TIMESTAMP_TYPE);}
       ) [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] [ <K_WITH> [ <K_LOCAL> ] <K_TIME> <K_ZONE> ]
@@ -1069,16 +1102,17 @@ void datatype()      :
               typeStack.push(new FloatType());
           }
           else {
-           pl = Long.decode(precision.image);
-           FloatType ft = new FloatType(pl);
-           typeStack.push(ft);          }
+              pl = Long.decode(precision.image);
+              FloatType ft = new FloatType(pl);
+              typeStack.push(ft);          }
         }
     | <K_REAL> { typeStack.push(new RealType());}
     | <K_MLSLABEL> { typeStack.push(MLSLABEL_TYPE);}
     | <K_PLS_INTEGER> { typeStack.push(PLS_INTEGER_TYPE);}
+    | <K_SIMPLE_INTEGER> { typeStack.push(SIMPLE_INTEGER_TYPE);}
     | <K_BLOB > { typeStack.push(new BlobType());}
-    | <K_NCLOB>
-    | <K_BFILE>
+    | <K_NCLOB> { typeStack.push(new NClobType());}
+    | <K_BFILE>  { typeStack.push(BFILE_TYPE);}
     | <K_ROWID> { typeStack.push(ROWID_TYPE);}
     | <K_UROWID> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
         {
@@ -1090,24 +1124,129 @@ void datatype()      :
               typeStack.push(new URowIdType(pl));
           }        }
     | <K_DOUBLE> <K_PRECISION> { typeStack.push(new DoubleType());}
-    | <K_CHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
+    | <K_CHAR> [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
+        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]        {
+          if (t == null) {
+              if (precision == null) {
+                  typeStack.push(new CharType());
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  typeStack.push(new CharType(pl));              }
+          }
+          else {
+              // ANSI syntax for VARCHAR2
+              if (precision == null) {
+                  typeStack.push(new VarChar2Type());
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  typeStack.push(new VarChar2Type(pl));
+              }          }        }
+    | <K_VARCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
         [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
-    | <K_VARCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
+        {
+          if (precision == null) {
+              typeStack.push(new VarCharType());
+          }
+          else {
+              pl = Long.decode(precision.image);
+              typeStack.push(new VarCharType(pl));
+          }
+        }
+    | <K_VARCHAR2> [ <K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
         [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
-    | <K_VARCHAR2> [ <K_VARYING> ] [ <O_OPENPAREN> t=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
-        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
-            {
-                if (t == null) {
-                    typeStack.push(new VarChar2Type());
-                }
-                else {
-                    pl = Long.decode(t.image);
-                    typeStack.push(new VarChar2Type(pl));                }            }
-    | <K_CHARACTER> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_NCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_NVARCHAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_NVARCHAR2> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
-    | <K_NATIONAL> ( <K_CHARACTER> | <K_CHAR> ) [ <K_VARYING> ] [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
+        {
+            if (precision == null) {
+                typeStack.push(new VarChar2Type());
+            }
+            else {
+                pl = Long.decode(precision.image);
+                typeStack.push(new VarChar2Type(pl));            }        }
+    | <K_CHARACTER> [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (t == null) {
+              if (precision == null) {
+                  typeStack.push(new CharType());
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  typeStack.push(new CharType(pl));
+              }
+          }
+          else {
+              // ANSI syntax for VARCHAR
+              if (precision == null) {
+                  typeStack.push(new VarCharType());
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  typeStack.push(new VarCharType(pl));
+              }
+          }
+        }
+    | <K_NCHAR> [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (t == null) {
+              if (precision == null) {
+                  typeStack.push(new NCharType());
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  typeStack.push(new NCharType(pl));
+              }
+          }
+          else {
+              // ANSI syntax for NVARCHAR2
+              if (precision == null) {
+                  typeStack.push(new NVarChar2Type());
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  typeStack.push(new NVarChar2Type(pl));
+              }
+          }
+        }
+    | <K_NVARCHAR> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]	    {
+            if (precision == null) {
+                typeStack.push(new NVarChar2Type());
+            }
+            else {
+                pl = Long.decode(precision.image);
+                typeStack.push(new NVarChar2Type(pl));
+            }	    }
+    | <K_NVARCHAR2> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+            if (precision == null) {
+                typeStack.push(new NVarChar2Type());
+            }
+            else {
+                pl = Long.decode(precision.image);
+                typeStack.push(new NVarChar2Type(pl));
+            }
+        }
+    | <K_NATIONAL> ( <K_CHARACTER> | <K_CHAR> ) [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (t == null) {
+              if (precision == null) {
+                  typeStack.push(new NCharType());
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  typeStack.push(new NCharType(pl));
+              }
+          }
+          else {
+              // ANSI syntax for NVARCHAR2
+              if (precision == null) {
+                  typeStack.push(new NVarChar2Type());
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  typeStack.push(new NVarChar2Type(pl));
+              }
+          }
+        }
     | <K_CLOB> [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] { typeStack.push(new ClobType());}
 }
 

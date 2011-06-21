@@ -9,7 +9,7 @@ import org.eclipse.persistence.tools.dbws.metadata.BaseDatabaseTypeVisitor;
 import org.eclipse.persistence.tools.dbws.metadata.UnresolvedSizedType;
 import org.eclipse.persistence.tools.dbws.metadata.UnresolvedType;
 
-public class UnresolvedTypesListener extends BaseDatabaseTypeVisitor {
+public class UnresolvedTypesVisitor extends BaseDatabaseTypeVisitor {
 
 	protected List<String> unresolvedTypes = new ArrayList<String>();
 	

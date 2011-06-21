@@ -24,9 +24,12 @@ public interface DatabaseTypeVisitor {
 	public void visit(DecimalType databaseType);
 	public void visit(DoubleType databaseType);
 	public void visit(FloatType databaseType);
+	public void visit(IntervalDayToSecond databaseType);
+	public void visit(IntervalYearToMonth databaseType);
+	public void visit(NClobType databaseType);
 	public void visit(NumericType databaseType);
 	public void visit(RealType databaseType);
-	public void visit(ScalarDatabaseType databaseType);
+	public void visit(ScalarDatabaseTypeEnum databaseType);
 	public void visit(UnresolvedType databaseType);
 	public void visit(UnresolvedSizedType databaseType);
 	public void visit(URowIdType databaseType);
