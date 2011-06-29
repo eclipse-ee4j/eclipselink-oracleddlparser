@@ -11,18 +11,7 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
-options {
-                  
-    //STATIC = true;
-    STATIC = false;
-    UNICODE_INPUT = true;
-    JAVA_UNICODE_ESCAPE = true;
-    IGNORE_CASE = true;
-                   
-    SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
-                        
-    //DEBUG_PARSER = true;
-}
+
 PARSER_BEGIN(DDLParser)
 /*******************************************************************************
  * Copyright (c) 2011 Oracle. All rights reserved.
@@ -90,7 +79,7 @@ import static org.eclipse.persistence.tools.database.metadata.ScalarDatabaseType
 import static org.eclipse.persistence.tools.database.metadata.ScalarDatabaseTypeEnum.TIMESTAMP_TYPE;
 
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
-  protected JJTDDLParserState jjtree = new JJTDDLParserState();
+  protected static JJTDDLParserState jjtree = new JJTDDLParserState();
 
 /*@egen*/
 
