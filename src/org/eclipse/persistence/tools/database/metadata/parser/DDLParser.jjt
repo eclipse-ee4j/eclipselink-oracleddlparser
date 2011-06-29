@@ -10,18 +10,7 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
-options {
-    MULTI = false;
-    //STATIC = true;
-    STATIC = false;
-    UNICODE_INPUT = true;
-    JAVA_UNICODE_ESCAPE = true;
-    IGNORE_CASE = true;
-    VISITOR = true;
-    SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
-    TRACK_TOKENS = true;
-    //DEBUG_PARSER = true;
-}
+
 PARSER_BEGIN(DDLParser)
 /*******************************************************************************
  * Copyright (c) 2011 Oracle. All rights reserved.
