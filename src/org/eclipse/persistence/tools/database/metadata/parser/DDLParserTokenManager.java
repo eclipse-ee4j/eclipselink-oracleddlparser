@@ -14,7 +14,6 @@
 package org.eclipse.persistence.tools.database.metadata.parser;
 //javase imports
 import java.io.InputStream;
-import java.util.Stack;
 //metadata imports
 import org.eclipse.persistence.tools.database.metadata.BlobType;
 import org.eclipse.persistence.tools.database.metadata.CharType;
@@ -32,9 +31,12 @@ import org.eclipse.persistence.tools.database.metadata.LongType;
 import org.eclipse.persistence.tools.database.metadata.LongRawType;
 import org.eclipse.persistence.tools.database.metadata.NCharType;
 import org.eclipse.persistence.tools.database.metadata.NClobType;
+import org.eclipse.persistence.tools.database.metadata.NestedTableType;
 import org.eclipse.persistence.tools.database.metadata.NumericType;
 import org.eclipse.persistence.tools.database.metadata.NVarChar2Type;
+import org.eclipse.persistence.tools.database.metadata.ObjectType;
 import org.eclipse.persistence.tools.database.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.database.metadata.PLSQLType;
 import org.eclipse.persistence.tools.database.metadata.ProcedureType;
 import org.eclipse.persistence.tools.database.metadata.RawType;
 import org.eclipse.persistence.tools.database.metadata.RealType;
@@ -44,6 +46,7 @@ import org.eclipse.persistence.tools.database.metadata.UnresolvedSizedType;
 import org.eclipse.persistence.tools.database.metadata.UnresolvedType;
 import org.eclipse.persistence.tools.database.metadata.VarCharType;
 import org.eclipse.persistence.tools.database.metadata.VarChar2Type;
+import org.eclipse.persistence.tools.database.metadata.VArrayType;
 import org.eclipse.persistence.tools.database.metadata.util.DatabaseTypesRepository;
 import static org.eclipse.persistence.tools.database.metadata.ScalarDatabaseTypeEnum.BFILE_TYPE;
 import static org.eclipse.persistence.tools.database.metadata.ScalarDatabaseTypeEnum.BINARY_INTEGER_TYPE;

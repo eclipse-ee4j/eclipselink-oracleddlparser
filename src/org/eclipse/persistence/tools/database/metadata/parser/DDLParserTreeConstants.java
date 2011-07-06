@@ -11,25 +11,14 @@ public interface DDLParserTreeConstants
   public int JJTALTERDECLARATION = 4;
   public int JJTPARSETYPE = 5;
   public int JJTVOID = 6;
-  public int JJTCOLUMNDECLARATION = 7;
-  public int JJTCOLUMNTYPESPEC = 8;
-  public int JJTVARIABLEDECLARATION = 9;
+  public int JJTCOLUMNTYPESPEC = 7;
+  public int JJTVARIABLEDECLARATION = 8;
+  public int JJTDATATYPE = 9;
   public int JJTTYPESPEC = 10;
-  public int JJTTYPEDECLARATION = 11;
-  public int JJTRECORDDECLARATION = 12;
-  public int JJTFIELDDECLARATION = 13;
-  public int JJTSUBTYPEDECLARATION = 14;
-  public int JJTPLSQLTABLEDECLARATION = 15;
-  public int JJTPLSQLTABLEINDEXBYDECLARATION = 16;
-  public int JJTVARRAYDECLARATION = 17;
-  public int JJTREFCURSORDECLARATION = 18;
-  public int JJTREFCURSORTYPESPEC = 19;
-  public int JJTCURSORDECLARATION = 20;
-  public int JJTPROCEDURESPEC = 21;
-  public int JJTFUNCTIONSPEC = 22;
-  public int JJTFUNCTIONRETURNSPEC = 23;
-  public int JJTARGUMENT = 24;
-  public int JJTARGUMENTDEFAULTASSIGNMENT = 25;
+  public int JJTFIELDDECLARATION = 11;
+  public int JJTFUNCTIONRETURNSPEC = 12;
+  public int JJTARGUMENT = 13;
+  public int JJTARGUMENTDEFAULTASSIGNMENT = 14;
 
 
   public String[] jjtNodeName = {
@@ -40,25 +29,14 @@ public interface DDLParserTreeConstants
     "alterDeclaration",
     "parseType",
     "void",
-    "columnDeclaration",
     "columnTypeSpec",
     "variableDeclaration",
+    "datatype",
     "typeSpec",
-    "typeDeclaration",
-    "recordDeclaration",
     "fieldDeclaration",
-    "subtypeDeclaration",
-    "plsqlTableDeclaration",
-    "plsqlTableIndexByDeclaration",
-    "varrayDeclaration",
-    "refCursorDeclaration",
-    "refCursorTypeSpec",
-    "cursorDeclaration",
-    "procedureSpec",
-    "functionSpec",
     "functionReturnSpec",
     "argument",
     "argumentDefaultAssignment",
   };
 }
-/* JavaCC - OriginalChecksum=2febe770dcb666f84834fb2a21ee5509 (do not edit this line) */
+/* JavaCC - OriginalChecksum=044fe26f3d64d43408612e4b7ae73ae5 (do not edit this line) */

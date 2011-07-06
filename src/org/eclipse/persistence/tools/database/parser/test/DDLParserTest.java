@@ -20,13 +20,13 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertFalse;
 
 //DDL parser imports
+import org.eclipse.persistence.tools.database.metadata.CompositeDatabaseType;
 import org.eclipse.persistence.tools.database.metadata.FunctionType;
 import org.eclipse.persistence.tools.database.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.database.metadata.ProcedureType;
 import org.eclipse.persistence.tools.database.metadata.TableType;
 import org.eclipse.persistence.tools.database.metadata.parser.DDLParser;
 import org.eclipse.persistence.tools.database.metadata.parser.ParseException;
-import org.eclipse.persistence.tools.database.metadata.parser.SimpleNode;
 import org.eclipse.persistence.tools.database.metadata.util.DatabaseTypesRepository;
 import org.eclipse.persistence.tools.database.metadata.util.UnresolvedTypesVisitor;
 
@@ -495,9 +495,9 @@ public class DDLParserTest {
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
-        SimpleNode parseNode = null;
+        @SuppressWarnings("unused") CompositeDatabaseType objectType = null;
         try {
-            parseNode = parser.parseType();
+            objectType = parser.parseType();
         }
         catch (ParseException pe) {
             //pe.printStackTrace();
@@ -505,7 +505,6 @@ public class DDLParserTest {
             worked = false;
         }
         assertTrue(TYPE_EMP_INFO + " did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
     }
 
     static final String TYPE_SOMEPACKAGE_TBL1 = "SOMEPACKAGE_TBL1";
@@ -517,9 +516,9 @@ public class DDLParserTest {
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
-        SimpleNode parseNode = null;
+        @SuppressWarnings("unused") CompositeDatabaseType objectType = null;
         try {
-            parseNode = parser.parseType();
+            objectType = parser.parseType();
         }
         catch (ParseException pe) {
             //pe.printStackTrace();
@@ -527,7 +526,6 @@ public class DDLParserTest {
             worked = false;
         }
         assertTrue(TYPE_SOMEPACKAGE_TBL1 + " did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
     }
     
     static final String TABLE_BONUS = "BONUS";
@@ -541,7 +539,7 @@ public class DDLParserTest {
         String message = "";
         TableType table = null;
         try {
-            table = (TableType)parser.parseTable();
+            table = parser.parseTable();
         }
         catch (ParseException pe) {
             //pe.printStackTrace();
@@ -567,7 +565,7 @@ public class DDLParserTest {
         String message = "";
         TableType table = null;
         try {
-            table = (TableType)parser.parseTable();
+            table = parser.parseTable();
         }
         catch (ParseException pe) {
             //pe.printStackTrace();
@@ -593,7 +591,7 @@ public class DDLParserTest {
         String message = "";
         TableType table = null;
         try {
-            table = (TableType)parser.parseTable();
+            table = parser.parseTable();
         }
         catch (ParseException pe) {
             //pe.printStackTrace();
@@ -639,9 +637,9 @@ public class DDLParserTest {
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
-        SimpleNode parseNode = null;
+        @SuppressWarnings("unused") CompositeDatabaseType tableType = null;
         try {
-            parseNode = parser.parseType();
+            tableType = parser.parseType();
         }
         catch (ParseException pe) {
             //pe.printStackTrace();
@@ -649,7 +647,6 @@ public class DDLParserTest {
             worked = false;
         }
         assertTrue(NESTED_TABLE_LTBL + " did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
     }
 
     static final String VARRAY_TYPE = "EMP_INFO_ARRAY";
@@ -661,9 +658,9 @@ public class DDLParserTest {
         parser.ReInit(new StringReader(ddl));
         boolean worked = true;
         String message = "";
-        SimpleNode parseNode = null;
+        @SuppressWarnings("unused") CompositeDatabaseType varrayType = null;
         try {
-            parseNode = parser.parseType();
+            varrayType = parser.parseType();
         }
         catch (ParseException pe) {
             //pe.printStackTrace();
@@ -671,6 +668,5 @@ public class DDLParserTest {
             worked = false;
         }
         assertTrue(VARRAY_TYPE + " did not parse correctly:\n" + message, worked);
-        parseNode.dump("");
     }
 }
