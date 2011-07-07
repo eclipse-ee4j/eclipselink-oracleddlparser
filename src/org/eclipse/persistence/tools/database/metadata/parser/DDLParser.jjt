@@ -371,6 +371,7 @@ TOKEN:
 
 // stripped-down version of PLSQL grammar: only parses package/top-level DDL specifications
 
+// PLSQLPackage at 'top-level'
 PLSQLPackageType parsePLSQLPackage():
 {String schema = null;
  String packageName = null;
@@ -412,6 +413,7 @@ ProcedureType parseTopLevelProcedure():
       if (schema != null) {
           procedureType.setSchema(schema);
       }
+      typesRepository.setDatabaseType(procedureName, procedureType);
       return procedureType;
     }
 }
@@ -420,41 +422,43 @@ ProcedureType parseTopLevelProcedure():
 FunctionType parseTopLevelFunction():
 {FunctionType functionType = null;
  String schema = null;
- String procedureName = null;}
+ String functionName = null;}
 {
   <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_FUNCTION>
-    [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] procedureName=OracleObjectName()
+    [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
     [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ] functionReturnSpec() [ <K_AS> | <K_IS> ]
         skipToEnd()
     {
-      functionType = new FunctionType(procedureName);
+      functionType = new FunctionType(functionName);
       if (schema != null) {
           functionType.setSchema(schema);
       }
       //TODO - figure out returnType
+      typesRepository.setDatabaseType(functionName, functionType);
       return functionType;
     }
 }
 
-// tables at 'top-level'
+// table at 'top-level'
 TableType parseTable():
-{TableType table = null;
+{TableType tableType = null;
  String schema = null;
  String tableName = null;}
 {
     <K_CREATE> [ <K_GLOBAL> <K_TEMPORARY> ] <K_TABLE> 
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] tableName=OracleObjectName()
         {
-            table = new TableType(tableName);
+            tableType = new TableType(tableName);
 		    if (schema != null) {
-		         table.setSchema(schema);
+		         tableType.setSchema(schema);
 		    }        }
-        <O_OPENPAREN> columnDeclarations(table) <O_CLOSEPAREN>
+        <O_OPENPAREN> columnDeclarations(tableType) <O_CLOSEPAREN>
          [ <K_ON> <K_COMMIT > [<K_DELETE> | <K_PRESERVE> ] <K_ROWS> ] <O_SEMICOLON>
-        ( alterDeclaration(table) <O_SEMICOLON> ) *
+        ( alterDeclaration(tableType) <O_SEMICOLON> ) *
      <EOF>
      {
-         return table;
+         typesRepository.setDatabaseType(tableName, tableType);
+         return tableType;
      }
 }
 
@@ -493,7 +497,7 @@ SimpleNode alterDeclaration(TableType table):
     }
 }
 
-// types at 'top-level'
+// type at 'top-level'
 CompositeDatabaseType parseType():
 {CompositeDatabaseType databaseType = null;
  String schema = null;
@@ -524,8 +528,8 @@ CompositeDatabaseType parseType():
         ] 
      [ <O_SEMICOLON> ]
      <EOF>
-    {
-      return databaseType;
+    {        typesRepository.setDatabaseType(typeName, databaseType);
+        return databaseType;
     }
 }
 

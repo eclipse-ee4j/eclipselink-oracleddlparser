@@ -375,6 +375,7 @@ TOKEN:
 
 // stripped-down version of PLSQL grammar: only parses package/top-level DDL specifications
 
+// PLSQLPackage at 'top-level'
 PLSQLPackageType parsePLSQLPackage():
 {/*@bgen(jjtree) parsePLSQLPackage */
  SimpleNode jjtn000 = new SimpleNode(JJTPARSEPLSQLPACKAGE);
@@ -463,6 +464,7 @@ ProcedureType parseTopLevelProcedure():
       if (schema != null) {
           procedureType.setSchema(schema);
       }
+      typesRepository.setDatabaseType(procedureName, procedureType);
       return procedureType;
     }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
@@ -497,12 +499,12 @@ FunctionType parseTopLevelFunction():
  jjtn000.jjtSetFirstToken(getToken(1));
 /*@egen*/FunctionType functionType = null;
  String schema = null;
- String procedureName = null;}
+ String functionName = null;}
 {/*@bgen(jjtree) parseTopLevelFunction */
   try {
 /*@egen*/
   <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_FUNCTION>
-    [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] procedureName=OracleObjectName()
+    [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
     [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ] functionReturnSpec() [ <K_AS> | <K_IS> ]
         skipToEnd()/*@bgen(jjtree)*/
     {
@@ -512,11 +514,12 @@ FunctionType parseTopLevelFunction():
     }
 /*@egen*/
     {
-      functionType = new FunctionType(procedureName);
+      functionType = new FunctionType(functionName);
       if (schema != null) {
           functionType.setSchema(schema);
       }
       //TODO - figure out returnType
+      typesRepository.setDatabaseType(functionName, functionType);
       return functionType;
     }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
@@ -542,14 +545,14 @@ FunctionType parseTopLevelFunction():
 /*@egen*/
 }
 
-// tables at 'top-level'
+// table at 'top-level'
 TableType parseTable():
 {/*@bgen(jjtree) parseTable */
  SimpleNode jjtn000 = new SimpleNode(JJTPARSETABLE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
-/*@egen*/TableType table = null;
+/*@egen*/TableType tableType = null;
  String schema = null;
  String tableName = null;}
 {/*@bgen(jjtree) parseTable */
@@ -558,13 +561,13 @@ TableType parseTable():
     <K_CREATE> [ <K_GLOBAL> <K_TEMPORARY> ] <K_TABLE> 
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] tableName=OracleObjectName()
         {
-            table = new TableType(tableName);
+            tableType = new TableType(tableName);
 		    if (schema != null) {
-		         table.setSchema(schema);
+		         tableType.setSchema(schema);
 		    }        }
-        <O_OPENPAREN> columnDeclarations(table) <O_CLOSEPAREN>
+        <O_OPENPAREN> columnDeclarations(tableType) <O_CLOSEPAREN>
          [ <K_ON> <K_COMMIT > [<K_DELETE> | <K_PRESERVE> ] <K_ROWS> ] <O_SEMICOLON>
-        ( alterDeclaration(table) <O_SEMICOLON> ) *
+        ( alterDeclaration(tableType) <O_SEMICOLON> ) *
      <EOF>/*@bgen(jjtree)*/
      {
        jjtree.closeNodeScope(jjtn000, true);
@@ -573,7 +576,8 @@ TableType parseTable():
      }
 /*@egen*/
      {
-         return table;
+         typesRepository.setDatabaseType(tableName, tableType);
+         return tableType;
      }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -667,7 +671,7 @@ SimpleNode alterDeclaration(TableType table):
 /*@egen*/
 }
 
-// types at 'top-level'
+// type at 'top-level'
 CompositeDatabaseType parseType():
 {/*@bgen(jjtree) parseType */
  SimpleNode jjtn000 = new SimpleNode(JJTPARSETYPE);
@@ -711,8 +715,8 @@ CompositeDatabaseType parseType():
       jjtn000.jjtSetLastToken(getToken(0));
     }
 /*@egen*/
-    {
-      return databaseType;
+    {        typesRepository.setDatabaseType(typeName, databaseType);
+        return databaseType;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {

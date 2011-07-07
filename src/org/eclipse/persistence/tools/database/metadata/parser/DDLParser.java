@@ -81,6 +81,8 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
 
 // stripped-down version of PLSQL grammar: only parses package/top-level DDL specifications
+
+// PLSQLPackage at 'top-level'
   final public PLSQLPackageType parsePLSQLPackage() throws ParseException {
  /*@bgen(jjtree) parsePLSQLPackage */
  SimpleNode jjtn000 = new SimpleNode(JJTPARSEPLSQLPACKAGE);
@@ -285,6 +287,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       if (schema != null) {
           procedureType.setSchema(schema);
       }
+      typesRepository.setDatabaseType(procedureName, procedureType);
       {if (true) return procedureType;}
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -317,7 +320,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));FunctionType functionType = null;
  String schema = null;
- String procedureName = null;
+ String functionName = null;
     try {
       jj_consume_token(K_CREATE);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -336,7 +339,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       } else {
         ;
       }
-      procedureName = OracleObjectName();
+      functionName = OracleObjectName();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case O_OPENPAREN:
         jj_consume_token(O_OPENPAREN);
@@ -372,11 +375,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetLastToken(getToken(0));
-      functionType = new FunctionType(procedureName);
+      functionType = new FunctionType(functionName);
       if (schema != null) {
           functionType.setSchema(schema);
       }
       //TODO - figure out returnType
+      typesRepository.setDatabaseType(functionName, functionType);
       {if (true) return functionType;}
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -401,13 +405,13 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-// tables at 'top-level'
+// table at 'top-level'
   final public TableType parseTable() throws ParseException {
  /*@bgen(jjtree) parseTable */
  SimpleNode jjtn000 = new SimpleNode(JJTPARSETABLE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));TableType table = null;
+ jjtn000.jjtSetFirstToken(getToken(1));TableType tableType = null;
  String schema = null;
  String tableName = null;
     try {
@@ -429,12 +433,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         ;
       }
       tableName = OracleObjectName();
-            table = new TableType(tableName);
+            tableType = new TableType(tableName);
                     if (schema != null) {
-                         table.setSchema(schema);
+                         tableType.setSchema(schema);
                     }
       jj_consume_token(O_OPENPAREN);
-      columnDeclarations(table);
+      columnDeclarations(tableType);
       jj_consume_token(O_CLOSEPAREN);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_ON:
@@ -477,14 +481,15 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
           jj_la1[20] = jj_gen;
           break label_2;
         }
-        alterDeclaration(table);
+        alterDeclaration(tableType);
         jj_consume_token(O_SEMICOLON);
       }
       jj_consume_token(0);
        jjtree.closeNodeScope(jjtn000, true);
        jjtc000 = false;
        jjtn000.jjtSetLastToken(getToken(0));
-         {if (true) return table;}
+         typesRepository.setDatabaseType(tableName, tableType);
+         {if (true) return tableType;}
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -601,7 +606,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     throw new Error("Missing return statement in function");
   }
 
-// types at 'top-level'
+// type at 'top-level'
   final public CompositeDatabaseType parseType() throws ParseException {
  /*@bgen(jjtree) parseType */
  SimpleNode jjtn000 = new SimpleNode(JJTPARSETYPE);
@@ -690,7 +695,8 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetLastToken(getToken(0));
-      {if (true) return databaseType;}
+        typesRepository.setDatabaseType(typeName, databaseType);
+        {if (true) return databaseType;}
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -3316,12 +3322,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_7()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3_15() {
     if (jj_scan_token(K_INTERVAL)) return true;
     if (jj_scan_token(K_DAY)) return true;
@@ -3338,6 +3338,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
+  private boolean jj_3_3() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
   private boolean jj_3_10() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
@@ -3349,18 +3355,18 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_5() {
-    if (jj_3R_7()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_8() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(35)) jj_scanpos = xsp;
     if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3374,12 +3380,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_7()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_15() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_7()) return true;
@@ -3388,6 +3388,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   private boolean jj_3_6() {
     if (jj_3R_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3474,12 +3480,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_7()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3_13() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
@@ -3510,6 +3510,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   private boolean jj_3R_40() {
     if (jj_scan_token(K_BLOB)) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
