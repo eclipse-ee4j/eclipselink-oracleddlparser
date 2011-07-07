@@ -73,4 +73,17 @@ public interface DatabaseTypeVisitor {
 	public void beginVisit(TableType databaseType);
 	public void visit(TableType databaseType);
 	public void endVisit(TableType databaseType);
+
+    public void beginVisit(ObjectType databaseType);
+    public void visit(ObjectType databaseType);
+    public void endVisit(ObjectType databaseType);
+
+    public void beginVisit(VArrayType databaseType);
+    public void visit(VArrayType databaseType);
+    public void endVisit(VArrayType databaseType);
+
+    public void beginVisit(NestedTableType databaseType);
+    public void visit(NestedTableType databaseType);
+    public void endVisit(NestedTableType databaseType);
+    
 }
