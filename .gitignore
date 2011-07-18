@@ -1,3 +1,4 @@
 .DS_Store
 *.class
 classes
+.settings/org.eclipse.jdt.core.prefs
