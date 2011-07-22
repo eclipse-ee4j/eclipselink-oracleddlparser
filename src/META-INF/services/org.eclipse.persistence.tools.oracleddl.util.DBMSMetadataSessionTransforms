@@ -1,0 +1,2 @@
+#NB: should only be 1 line- the first impl of the interface will be used, rest ignored
+org.eclipse.persistence.tools.oracleddl.util.DBMSMetadataSessionTransformsFactory
