@@ -20,6 +20,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ServiceLoader;
 
 //DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
@@ -31,24 +34,22 @@ import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 
 public class DatabaseTypeBuilder {
+    
+    static DBMSMetadataSessionTransforms TRANSFORMS_FACTORY = null;
+    static {
+        ServiceLoader<DBMSMetadataSessionTransforms> transformerFactories =
+            ServiceLoader.load(DBMSMetadataSessionTransforms.class);
+        for (DBMSMetadataSessionTransforms factory : transformerFactories) {
+            //We are only expecting one
+            TRANSFORMS_FACTORY = factory;
+            break;
+        }
+    }
 
-	static final String DBMS_METADATA_SESSION_TRANSFORM_STMT =
-	    "BEGIN " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'PRETTY',TRUE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR',TRUE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'CONSTRAINTS', TRUE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'CONSTRAINTS_AS_ALTER', TRUE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'REF_CONSTRAINTS',FALSE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SEGMENT_ATTRIBUTES',FALSE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'STORAGE',FALSE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'TABLESPACE',FALSE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SPECIFICATION',TRUE); " +
-	        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'BODY',FALSE); " +
-	    "END;";
 	static final String DBMS_METADATA_DDL_STMT_SUFFIX =
 	    "', SYS_CONTEXT('USERENV', 'CURRENT_USER')) AS RESULT FROM DUAL";
 
-	protected boolean metadataSessionTransformSet = false;
+	protected boolean metadataSessionTransformsSet = false;
 	
     public DatabaseTypeBuilder() {
 		super();
@@ -58,7 +59,7 @@ public class DatabaseTypeBuilder {
         "SELECT DBMS_METADATA.GET_DDL('TABLE', '";
 	public TableType buildTable(Connection conn, String tableName) throws ParseException {
 		TableType tableType = null;
-		if (setDbmsMetadataSession(conn)) {
+		if (setDbmsMetadataSessionTransforms(conn)) {
 	        String ddl = getDDL(conn, DBMS_METADATA_GET_TABLE_DDL_STMT_PREFIX + tableName +
 	            DBMS_METADATA_DDL_STMT_SUFFIX);
 	        if (ddl != null) {
@@ -85,7 +86,7 @@ public class DatabaseTypeBuilder {
         "SELECT DBMS_METADATA.GET_DDL('PACKAGE_SPEC', '";
 	public PLSQLPackageType buildPackage(Connection conn, String packageName) throws ParseException {
 		PLSQLPackageType packageType = null;
-		if (setDbmsMetadataSession(conn)) {
+		if (setDbmsMetadataSessionTransforms(conn)) {
 	        String ddl = getDDL(conn, DBMS_METADATA_GET_PACKAGE_DDL_STMT_PREFIX + packageName +
 	        	DBMS_METADATA_DDL_STMT_SUFFIX);
 	        if (ddl != null) {
@@ -108,7 +109,7 @@ public class DatabaseTypeBuilder {
         "SELECT DBMS_METADATA.GET_DDL('PROCEDURE', '";
 	public ProcedureType buildProcedure(Connection conn, String procedureName) throws ParseException {
 		ProcedureType procedureType = null;
-		if (setDbmsMetadataSession(conn)) {
+		if (setDbmsMetadataSessionTransforms(conn)) {
 	        String ddl = getDDL(conn, DBMS_METADATA_GET_PROCEDURE_DDL_STMT_PREFIX + procedureName +
 	        	DBMS_METADATA_DDL_STMT_SUFFIX);
 	        if (ddl != null) {
@@ -131,7 +132,7 @@ public class DatabaseTypeBuilder {
         "SELECT DBMS_METADATA.GET_DDL('FUNCTION', '";
 	public FunctionType buildFunction(Connection conn, String procedureName) throws ParseException {
 		FunctionType functionType = null;
-		if (setDbmsMetadataSession(conn)) {
+		if (setDbmsMetadataSessionTransforms(conn)) {
 	        String ddl = getDDL(conn, DBMS_METADATA_GET_FUNCTION_DDL_STMT_PREFIX + procedureName +
 	        	DBMS_METADATA_DDL_STMT_SUFFIX);
 	        if (ddl != null) {
@@ -154,7 +155,7 @@ public class DatabaseTypeBuilder {
         "SELECT DBMS_METADATA.GET_DDL('TYPE_SPEC', '";
 	public DatabaseType buildType(Connection conn, String typeName) throws ParseException {
 		DatabaseType databaseType = null;
-		if (setDbmsMetadataSession(conn)) {
+		if (setDbmsMetadataSessionTransforms(conn)) {
 	        String ddl = getDDL(conn, DBMS_METADATA_GET_TYPE_DDL_STMT_PREFIX + typeName +
 	        	DBMS_METADATA_DDL_STMT_SUFFIX);
 	        if (ddl != null) {
@@ -202,21 +203,38 @@ public class DatabaseTypeBuilder {
         return ddl;
     }
 
-	protected boolean setDbmsMetadataSession(Connection conn) {
-		if (metadataSessionTransformSet) {
+	protected boolean setDbmsMetadataSessionTransforms(Connection conn) {
+		if (metadataSessionTransformsSet) {
 			return true;
 		}
 	    boolean worked = true;
 	    try {
-			CallableStatement callableStatement = conn.prepareCall(
-				DBMS_METADATA_SESSION_TRANSFORM_STMT);
+	        if (TRANSFORMS_FACTORY == null) {
+	            throw new RuntimeException("no DBMSMetadataSessionTransforms service found");
+	        }
+	        Properties transformProperties = TRANSFORMS_FACTORY.getTransformProperties();
+	        if (transformProperties == null) {
+                throw new RuntimeException("no transform found");
+	        }
+	        
+	        StringBuilder sb = new StringBuilder("BEGIN");
+	        for (Map.Entry<Object, Object> me : transformProperties.entrySet()) {
+	            sb.append("\n");
+                sb.append("DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'");
+                sb.append(me.getKey());
+                sb.append("',");
+                sb.append(me.getValue());
+                sb.append(");");
+	        }
+            sb.append("\nEND;");
+			CallableStatement callableStatement = conn.prepareCall(sb.toString());
 	        callableStatement.execute();
 	    }
 	    catch (SQLException e) {
 	       worked = false;
 	    }
 	    if (worked) {
-	    	metadataSessionTransformSet = true;
+	    	metadataSessionTransformsSet = true;
 	    }
 	    return worked;
 	}
