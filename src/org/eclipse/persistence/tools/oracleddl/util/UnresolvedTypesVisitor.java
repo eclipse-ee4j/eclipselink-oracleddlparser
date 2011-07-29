@@ -23,18 +23,18 @@ import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
 
 public class UnresolvedTypesVisitor extends BaseDatabaseTypeVisitor {
 
-	protected List<String> unresolvedTypes = new ArrayList<String>();
-	
-	public List<String> getUnresolvedTypes() {
-		return unresolvedTypes;
-	}
+    protected List<String> unresolvedTypes = new ArrayList<String>();
 
-	public void visit(UnresolvedType unresolvedType) {
-		unresolvedTypes.add(unresolvedType.getTypeName());
-	}
+    public List<String> getUnresolvedTypes() {
+        return unresolvedTypes;
+    }
 
-	public void visit(UnresolvedSizedType unresolvedType) {
-		unresolvedTypes.add(unresolvedType.getTypeName());
-	}
-	
+    public void visit(UnresolvedType unresolvedType) {
+        unresolvedTypes.add(unresolvedType.getTypeName());
+    }
+
+    public void visit(UnresolvedSizedType unresolvedType) {
+        unresolvedTypes.add(unresolvedType.getTypeName());
+    }
+
 }
