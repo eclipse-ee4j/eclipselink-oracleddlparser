@@ -23,7 +23,7 @@ import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
  * A utility class to help {@link DDLParser} construct {@link DatabaseType}'s.
  * Types are created either in the 'global' namespace or within the scope of
  * a PL/SQL package.
- * 
+ *
  * @author mnorman
  */
 public class DatabaseTypesRepository {
@@ -31,15 +31,15 @@ public class DatabaseTypesRepository {
     // hold on to MetadataTypes that have already been built
     protected Map<String, DatabaseType> repository = new HashMap<String, DatabaseType>();
 
-	public Map<String, DatabaseType> setDatabaseType(String namespaceKey, DatabaseType databaseType) {
-		repository.put(namespaceKey, databaseType);
-		return repository;
-	}
+    public Map<String, DatabaseType> setDatabaseType(String namespaceKey, DatabaseType databaseType) {
+        repository.put(namespaceKey, databaseType);
+        return repository;
+    }
 
-	public DatabaseType getDatabaseType(String namespaceKey) {
-		return repository.get(namespaceKey);
-	}
-	
-	//TODO - add package-level namespaces
-    
+    public DatabaseType getDatabaseType(String namespaceKey) {
+        return repository.get(namespaceKey);
+    }
+
+    //TODO - add package-level namespaces
+
 }

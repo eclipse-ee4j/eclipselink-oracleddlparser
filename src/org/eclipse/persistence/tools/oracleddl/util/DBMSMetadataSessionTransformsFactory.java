@@ -20,10 +20,10 @@ import java.util.Properties;
 public class DBMSMetadataSessionTransformsFactory implements DBMSMetadataSessionTransforms {
 
     public static final String TRANSFORMS = "transforms.properties";
-    
+
     public Properties getTransformProperties() {
         Properties transformsProperties = null;
-        InputStream is = getClass().getResourceAsStream(TRANSFORMS);  
+        InputStream is = getClass().getResourceAsStream(TRANSFORMS);
         if (is != null) {
             transformsProperties = new Properties();
             try {
