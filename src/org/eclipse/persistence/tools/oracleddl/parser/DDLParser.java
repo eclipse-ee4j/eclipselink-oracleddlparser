@@ -1093,7 +1093,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
                     precision = null;
                 }
                 if (precision == null) {
-                    dt = new NumericType();
+                    if (scale != null && scale.image.equals("0")) {
+                        dt = INTEGER_TYPE;
+                    }
+                    else {
+                        dt = new NumericType();
+                    }
                 }
                     else {
                         pl = Long.decode(precision.image);
@@ -3024,39 +3029,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     finally { jj_save(19, xla); }
   }
 
-  private boolean jj_3R_50() {
-    if (jj_scan_token(K_NCHAR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_9() {
-    if (jj_3R_7()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_14()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_35() {
-    if (jj_scan_token(K_FLOAT)) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_56() {
-    if (jj_scan_token(K_TIMESTAMP)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_34() {
-    if (jj_scan_token(K_SMALLINT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_33() {
     if (jj_scan_token(K_INT)) return true;
     return false;
@@ -3088,14 +3060,47 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
+  private boolean jj_3R_30() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    return false;
+  }
+
   private boolean jj_3_4() {
     if (jj_3R_7()) return true;
     if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
-  private boolean jj_3R_30() {
-    if (jj_scan_token(K_INTERVAL)) return true;
+  private boolean jj_3_14() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_49() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_17() {
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(K_ROWTYPE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_16() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(K_TYPE2)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_16() {
+    if (jj_3R_18()) return true;
     return false;
   }
 
@@ -3115,9 +3120,8 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_14() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
+  private boolean jj_3_7() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
@@ -3126,24 +3130,24 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3R_17() {
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_49() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    return false;
-  }
-
   private boolean jj_3R_23() {
     if (jj_scan_token(K_NATURAL)) return true;
     return false;
   }
 
-  private boolean jj_3_17() {
-    if (jj_3R_10()) return true;
-    if (jj_scan_token(K_ROWTYPE)) return true;
+  private boolean jj_3R_13() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_16()) {
+    jj_scanpos = xsp;
+    if (jj_3_16()) {
+    jj_scanpos = xsp;
+    if (jj_3_17()) {
+    jj_scanpos = xsp;
+    if (jj_3R_17()) return true;
+    }
+    }
+    }
     return false;
   }
 
@@ -3152,9 +3156,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_16() {
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(K_TYPE2)) return true;
+  private boolean jj_3_12() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
@@ -3163,13 +3167,8 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3R_16() {
-    if (jj_3R_18()) return true;
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
+  private boolean jj_3R_54() {
+    if (jj_scan_token(K_CLOB)) return true;
     return false;
   }
 
@@ -3290,33 +3289,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3R_13() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_16()) {
-    jj_scanpos = xsp;
-    if (jj_3_16()) {
-    jj_scanpos = xsp;
-    if (jj_3_17()) {
-    jj_scanpos = xsp;
-    if (jj_3R_17()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3_12() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_54() {
-    if (jj_scan_token(K_CLOB)) return true;
-    return false;
-  }
-
   private boolean jj_3R_48() {
     if (jj_scan_token(K_VARCHAR2)) return true;
     return false;
@@ -3338,12 +3310,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_7()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3_10() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
@@ -3352,6 +3318,17 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   private boolean jj_3R_47() {
     if (jj_scan_token(K_VARCHAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_27() {
+    if (jj_scan_token(K_RAW)) return true;
     return false;
   }
 
@@ -3370,11 +3347,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3R_27() {
-    if (jj_scan_token(K_RAW)) return true;
-    return false;
-  }
-
   private boolean jj_3R_53() {
     if (jj_scan_token(K_NATIONAL)) return true;
     return false;
@@ -3383,17 +3355,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   private boolean jj_3R_15() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_7()) return true;
-    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3413,14 +3374,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_18() {
-    if (jj_3R_9()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(188)) jj_scanpos = xsp;
-    return false;
-  }
-
   private boolean jj_3R_7() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3433,6 +3386,25 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   private boolean jj_3R_11() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3_18() {
+    if (jj_3R_9()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(188)) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3513,12 +3485,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_7()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_39() {
     if (jj_scan_token(K_SIMPLE_INTEGER)) return true;
     return false;
@@ -3541,6 +3507,45 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
   private boolean jj_3_11() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_7()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_50() {
+    if (jj_scan_token(K_NCHAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_9() {
+    if (jj_3R_7()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_14()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_35() {
+    if (jj_scan_token(K_FLOAT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_56() {
+    if (jj_scan_token(K_TIMESTAMP)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_34() {
+    if (jj_scan_token(K_SMALLINT)) return true;
     return false;
   }
 

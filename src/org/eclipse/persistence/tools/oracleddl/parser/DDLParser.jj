@@ -946,7 +946,9 @@ DatabaseType datatype():
                 if (precision != null && precision.image.equals("*")) {
                     precision = null;                }
                 if (precision == null) {
-                    dt = new NumericType();
+                    if (scale != null && scale.image.equals("0")) {
+                        dt = INTEGER_TYPE;                    }                    else {
+                        dt = new NumericType();                    }
                 }
 	            else {
 	                pl = Long.decode(precision.image);
