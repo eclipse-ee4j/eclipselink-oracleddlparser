@@ -12,6 +12,11 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.test;
 
+//javase imports
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class TestHelper {
 
     static final String DATABASE_DRIVER = "oracle.jdbc.OracleDriver";
@@ -22,4 +27,11 @@ public class TestHelper {
     static final String DATABASE_URL_KEY = "db.url";
     static final String DEFAULT_DATABASE_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
     
+    public static Connection buildConnection() throws ClassNotFoundException, SQLException {
+        String username = System.getProperty(DATABASE_USERNAME_KEY, DEFAULT_DATABASE_USERNAME);
+        String password = System.getProperty(DATABASE_PASSWORD_KEY, DEFAULT_DATABASE_PASSWORD);
+        String url = System.getProperty(DATABASE_URL_KEY, DEFAULT_DATABASE_URL);
+        Class.forName(DATABASE_DRIVER);
+        return DriverManager.getConnection(url, username, password);
+    }
 }

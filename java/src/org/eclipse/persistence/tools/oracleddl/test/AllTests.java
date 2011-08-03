@@ -23,29 +23,22 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 //testing imports
-import org.eclipse.persistence.tools.oracleddl.test.AllTests;
-import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
-
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-  DatabaseTypeBuilderTransformsTestSuite.class,
-  DatabaseTypeBuilderTableDDLTestSuite.class,
+  DatabaseTypeBuilderTestSuite.class,
+  DDLParserTest.class,
   }
 )
-public class DatabaseTypeBuilderTestSuite {
+public class AllTests {
 
     //shared JUnit fixtures
-    static Connection conn = AllTests.conn;
-    static DatabaseTypeBuilder dtBuilder = null;
+    static Connection conn = null;
     
     @BeforeClass
     public static void setUp() throws ClassNotFoundException, SQLException {
-        if (conn == null) {
-            conn = buildConnection();
-        }
-        dtBuilder = new DatabaseTypeBuilder();
+        conn = buildConnection();
     }
 
 }
