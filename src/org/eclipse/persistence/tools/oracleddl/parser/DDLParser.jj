@@ -11,6 +11,16 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
+options {
+      STATIC = false;
+      SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
+      ERROR_REPORTING = false;
+      JAVA_UNICODE_ESCAPE = true;
+      UNICODE_INPUT = true;
+                              
+                          
+                     
+}
 
 PARSER_BEGIN(DDLParser)
 /*******************************************************************************
@@ -29,6 +39,7 @@ package org.eclipse.persistence.tools.oracleddl.parser;
 
 //javase imports
 import java.io.InputStream;
+import java.util.List;
 
 //metadata imports
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
@@ -82,7 +93,7 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIMESTAMP_TYPE;
 
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
-  protected static JJTDDLParserState jjtree = new JJTDDLParserState();
+  protected JJTDDLParserState jjtree = new JJTDDLParserState();
 
 /*@egen*/
 
@@ -220,8 +231,9 @@ TOKEN: {
         | <K_NCLOB: "NCLOB">
         | <K_NEW_NAMES: "NEW_NAMES">
         | <K_NO: "'NO'">
-        | <K_NOCYCLE: "NOCYCLE">
+        | <K_NOCOMPRESS: "NOCOMPRESS">
         | <K_NOCOPY: "NOCOPY">
+        | <K_NOCYCLE: "NOCYCLE">
         | <K_NOT: "NOT">
         | <K_NULL: "NULL">
         | <K_NULLS: "NULLS">
@@ -235,8 +247,10 @@ TOKEN: {
         | <K_ONLY: "ONLY">
         | <K_OPEN: "OPEN">
         | <K_OR: "OR">
+        | <K_ORGANIZATION: "ORGANIZATION">
         | <K_OUT: "OUT">
         | <K_OUTER: "OUTER">
+        | <K_OVERFLOW: "OVERFLOW">
         | <K_PACKAGE: "PACKAGE">
         | <K_PARALLEL_ENABLE: "PARALLEL_ENABLE">
         | <K_PARTITION: "PARTITION">
@@ -378,7 +392,7 @@ TOKEN:
 // PLSQLPackage at 'top-level'
 PLSQLPackageType parsePLSQLPackage():
 {/*@bgen(jjtree) parsePLSQLPackage */
- SimpleNode jjtn000 = new SimpleNode(JJTPARSEPLSQLPACKAGE);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTPARSEPLSQLPACKAGE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -439,7 +453,7 @@ PLSQLPackageType parsePLSQLPackage():
 // procedure at 'top-level'
 ProcedureType parseTopLevelProcedure():
 {/*@bgen(jjtree) parseTopLevelProcedure */
- SimpleNode jjtn000 = new SimpleNode(JJTPARSETOPLEVELPROCEDURE);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTPARSETOPLEVELPROCEDURE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -493,7 +507,7 @@ ProcedureType parseTopLevelProcedure():
 // function at 'top-level'
 FunctionType parseTopLevelFunction():
 {/*@bgen(jjtree) parseTopLevelFunction */
- SimpleNode jjtn000 = new SimpleNode(JJTPARSETOPLEVELFUNCTION);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTPARSETOPLEVELFUNCTION);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -548,13 +562,16 @@ FunctionType parseTopLevelFunction():
 // table at 'top-level'
 TableType parseTable():
 {/*@bgen(jjtree) parseTable */
- SimpleNode jjtn000 = new SimpleNode(JJTPARSETABLE);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));
-/*@egen*/TableType tableType = null;
- String schema = null;
- String tableName = null;}
+SimpleNode jjtn000 = new SimpleNode(this, JJTPARSETABLE);
+boolean jjtc000 = true;
+jjtree.openNodeScope(jjtn000);
+jjtn000.jjtSetFirstToken(getToken(1));
+/*@egen*/
+TableType tableType = null;
+String schema = null;
+String tableName = null;
+Token iot = null;
+}
 {/*@bgen(jjtree) parseTable */
     try {
 /*@egen*/
@@ -566,8 +583,9 @@ TableType parseTable():
 		         tableType.setSchema(schema);
 		    }        }
         <O_OPENPAREN> columnDeclarations(tableType) <O_CLOSEPAREN>
+         [ <K_ORGANIZATION> ] [ iot=<K_INDEX> ] [ <K_NOCOMPRESS> ] [ <K_OVERFLOW> ]
          [ <K_ON> <K_COMMIT > [<K_DELETE> | <K_PRESERVE> ] <K_ROWS> ] <O_SEMICOLON>
-        ( alterDeclaration(tableType) <O_SEMICOLON> ) *
+        
      <EOF>/*@bgen(jjtree)*/
      {
        jjtree.closeNodeScope(jjtn000, true);
@@ -576,6 +594,9 @@ TableType parseTable():
      }
 /*@egen*/
      {
+         if (iot != null) {
+             tableType.setIOT(true);
+         } 
          typesRepository.setDatabaseType(tableName, tableType);
          return tableType;
      }/*@bgen(jjtree)*/
@@ -602,79 +623,10 @@ TableType parseTable():
 /*@egen*/
 }
 
-SimpleNode alterDeclaration(TableType table):
-{/*@bgen(jjtree) alterDeclaration */
-  SimpleNode jjtn000 = new SimpleNode(JJTALTERDECLARATION);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-  jjtn000.jjtSetFirstToken(getToken(1));
-/*@egen*/}
-{/*@bgen(jjtree) alterDeclaration */
-    try {
-/*@egen*/
-    <K_ALTER> <K_TABLE> columnSpec() <K_ADD> [ <K_CONSTRAINT> OracleObjectName() ] <K_PRIMARY> <K_KEY>
-      <O_OPENPAREN> OracleObjectName() ( <O_COMMA> OracleObjectName() )* <O_CLOSEPAREN> <K_ENABLE>/*@bgen(jjtree)*/
-    {
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-    }
-/*@egen*/
-    {
-      Token first = jjtn000.jjtGetFirstToken();
-      Token last = jjtn000.jjtGetLastToken();
-      Token cur = first;
-      while (cur.kind != O_OPENPAREN) {
-          cur = cur.next;
-      }
-      cur = cur.next;
-      while (cur.kind != O_CLOSEPAREN) {
-        if (cur.kind == O_COMMA) {
-            cur = cur.next;
-            continue;        }
-        String str = cur.image;
-        if (str.startsWith("\"")) {
-          str = str.substring(1, str.length());
-        }
-        if (str.endsWith("\"")) {
-          str = str.substring(0, str.length() - 1);
-        }
-        for (FieldType col : table.getColumns()) {
-          if (col.getFieldName().equals(str)) {
-              col.setPk();
-              break;
-          }         }
-        cur = cur.next;
-      }
-      return jjtn000;
-    }/*@bgen(jjtree)*/
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        throw (RuntimeException)jjte000;
-      }
-      if (jjte000 instanceof ParseException) {
-        throw (ParseException)jjte000;
-      }
-      throw (Error)jjte000;
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
-    }
-/*@egen*/
-}
-
 // type at 'top-level'
 CompositeDatabaseType parseType():
 {/*@bgen(jjtree) parseType */
- SimpleNode jjtn000 = new SimpleNode(JJTPARSETYPE);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTPARSETYPE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -755,24 +707,30 @@ void columnDeclaration(CompositeDatabaseType enclosingType)      :
  FieldType column = null;
 }
 {
-    s=OracleObjectName()
-        {
-            column = new FieldType(s);
-            if (enclosingType != null) {
-                enclosingType.addCompositeType(column);
-            }        }
-        columnType=columnTypeSpec(enclosingType) [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
+    (  LOOKAHEAD(2)       s=OracleObjectName()
+         {
+           column = new FieldType(s);
+           if (enclosingType != null) {
+               enclosingType.addCompositeType(column);
+           }         }
+         columnType=columnTypeSpec(enclosingType) [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
+       | LOOKAHEAD(2)
+         [ <K_CONSTRAINT> ] [ OracleObjectName() ] <K_PRIMARY> <K_KEY>
+             <O_OPENPAREN>  pkList((TableType)enclosingType) <O_CLOSEPAREN> <K_ENABLE>
+    )
     {
-      column.setDataType(columnType);
-      if (notNull) {
-          column.setNotNull();
-      }
+      if (column != null) {
+	      column.setDataType(columnType);
+	      if (notNull) {
+	          column.setNotNull();
+	      }
+	  }
     }
 }
 
 DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
 {/*@bgen(jjtree) columnTypeSpec */
- SimpleNode jjtn000 = new SimpleNode(JJTCOLUMNTYPESPEC);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTCOLUMNTYPESPEC);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -827,6 +785,29 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
 /*@egen*/
 }
 
+void pkList(TableType tableType)      :
+{}
+{
+    pk(tableType) ( <O_COMMA> pk(tableType) )*
+}
+
+
+void pk(TableType tableType)      :
+{
+String s = null;
+}
+{
+    s=OracleObjectName()
+    {
+       List<FieldType> columns = tableType.getColumns();
+       for (FieldType column : columns) {
+            if (column.getFieldName().equals(s)) {
+                column.setPk();
+                break;
+            }
+       }    }
+}
+
 void packageDeclaration(PLSQLPackageType packageType)      :
 {}
 {
@@ -841,7 +822,7 @@ void packageDeclaration(PLSQLPackageType packageType)      :
 
 void variableDeclaration(PLSQLPackageType packageType):
 {/*@bgen(jjtree) variableDeclaration */
-  SimpleNode jjtn000 = new SimpleNode(JJTVARIABLEDECLARATION);
+  SimpleNode jjtn000 = new SimpleNode(this, JJTVARIABLEDECLARATION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
   jjtn000.jjtSetFirstToken(getToken(1));
@@ -882,7 +863,7 @@ void variableDefaultAssignment()      :
 
 DatabaseType datatype():
 {/*@bgen(jjtree) datatype */
- SimpleNode jjtn000 = new SimpleNode(JJTDATATYPE);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTDATATYPE);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -1393,7 +1374,7 @@ DatabaseType datatype():
 
 String typeSpec():
 {/*@bgen(jjtree) typeSpec */
- SimpleNode jjtn000 = new SimpleNode(JJTTYPESPEC);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTTYPESPEC);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -1514,7 +1495,7 @@ void fieldDeclarations()      :
 
 SimpleNode fieldDeclaration():
 {/*@bgen(jjtree) fieldDeclaration */
- SimpleNode jjtn000 = new SimpleNode(JJTFIELDDECLARATION);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTFIELDDECLARATION);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -1640,7 +1621,7 @@ void functionSpec(PLSQLPackageType packageType)      :
 
 SimpleNode functionReturnSpec():
 {/*@bgen(jjtree) functionReturnSpec */
-  SimpleNode jjtn000 = new SimpleNode(JJTFUNCTIONRETURNSPEC);
+  SimpleNode jjtn000 = new SimpleNode(this, JJTFUNCTIONRETURNSPEC);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
   jjtn000.jjtSetFirstToken(getToken(1));
@@ -1682,7 +1663,7 @@ SimpleNode functionReturnSpec():
 
 SimpleNode argument():
 {/*@bgen(jjtree) argument */
- SimpleNode jjtn000 = new SimpleNode(JJTARGUMENT);
+ SimpleNode jjtn000 = new SimpleNode(this, JJTARGUMENT);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
@@ -1743,7 +1724,7 @@ String direction()      :
 
 SimpleNode argumentDefaultAssignment():
 {/*@bgen(jjtree) argumentDefaultAssignment */
-  SimpleNode jjtn000 = new SimpleNode(JJTARGUMENTDEFAULTASSIGNMENT);
+  SimpleNode jjtn000 = new SimpleNode(this, JJTARGUMENTDEFAULTASSIGNMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
   jjtn000.jjtSetFirstToken(getToken(1));
