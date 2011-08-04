@@ -8,17 +8,16 @@ public interface DDLParserTreeConstants
   public int JJTPARSETOPLEVELPROCEDURE = 1;
   public int JJTPARSETOPLEVELFUNCTION = 2;
   public int JJTPARSETABLE = 3;
-  public int JJTALTERDECLARATION = 4;
-  public int JJTPARSETYPE = 5;
-  public int JJTVOID = 6;
-  public int JJTCOLUMNTYPESPEC = 7;
-  public int JJTVARIABLEDECLARATION = 8;
-  public int JJTDATATYPE = 9;
-  public int JJTTYPESPEC = 10;
-  public int JJTFIELDDECLARATION = 11;
-  public int JJTFUNCTIONRETURNSPEC = 12;
-  public int JJTARGUMENT = 13;
-  public int JJTARGUMENTDEFAULTASSIGNMENT = 14;
+  public int JJTPARSETYPE = 4;
+  public int JJTVOID = 5;
+  public int JJTCOLUMNTYPESPEC = 6;
+  public int JJTVARIABLEDECLARATION = 7;
+  public int JJTDATATYPE = 8;
+  public int JJTTYPESPEC = 9;
+  public int JJTFIELDDECLARATION = 10;
+  public int JJTFUNCTIONRETURNSPEC = 11;
+  public int JJTARGUMENT = 12;
+  public int JJTARGUMENTDEFAULTASSIGNMENT = 13;
 
 
   public String[] jjtNodeName = {
@@ -26,7 +25,6 @@ public interface DDLParserTreeConstants
     "parseTopLevelProcedure",
     "parseTopLevelFunction",
     "parseTable",
-    "alterDeclaration",
     "parseType",
     "void",
     "columnTypeSpec",
@@ -39,4 +37,4 @@ public interface DDLParserTreeConstants
     "argumentDefaultAssignment",
   };
 }
-/* JavaCC - OriginalChecksum=a579888223948142630ec7a07f38c9af (do not edit this line) */
+/* JavaCC - OriginalChecksum=4a0f489189e4c3ead4b8cf5fc0c660e0 (do not edit this line) */

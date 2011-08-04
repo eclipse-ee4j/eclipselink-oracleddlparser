@@ -21,6 +21,7 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     protected String tableName;
     protected String schema;
     protected List<FieldType> columns = new ArrayList<FieldType>();
+    protected boolean iot = false;
     
     public TableType(String tableName) {
 		super(null);
@@ -49,6 +50,14 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     
     public List<FieldType> getColumns() {
     	return columns;
+    }
+
+    public void setIOT(boolean iot) {
+        this.iot = iot;
+    }
+
+    public boolean iot() {
+       return iot;
     }
     
     public int numberOfPKColumns() {
@@ -92,6 +101,9 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
             sb.append(")\n");
         }
         sb.append(")");
+        if (iot) {
+            sb.append("ORGANIZATION INDEX");
+        }
         return sb.toString();
     }
 
