@@ -14,10 +14,10 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public class NClobType extends ClobType {
 
-	static long DEFAULT_SIZE = 0l;
-	
+    static final String TYPENAME = "NCLOB";
+
     public NClobType() {
-        super("NCLOB", DEFAULT_SIZE);
+        super(TYPENAME, DEFAULT_SIZE);
     }
 
 	@Override

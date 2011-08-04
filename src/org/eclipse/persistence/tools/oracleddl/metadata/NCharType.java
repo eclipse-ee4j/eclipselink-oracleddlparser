@@ -15,7 +15,6 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 public class NCharType extends CharType {
 
 	static final String TYPENAME = "NCHAR";
-	static final long DEFAULT_SIZE = 1l;
 	
     public NCharType() {
         super(TYPENAME, DEFAULT_SIZE);

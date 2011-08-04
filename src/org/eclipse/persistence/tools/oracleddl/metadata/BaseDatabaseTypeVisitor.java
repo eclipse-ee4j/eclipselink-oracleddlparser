@@ -17,144 +17,154 @@ import java.util.List;
 
 public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 
-	//scalar visit callbacks
-	public void visit(BinaryType databaseType) {
-	}
-	public void visit(BlobType databaseType) {
-	}
-	public void visit(LongRawType databaseType) {
-	}
-	public void visit(RawType databaseType) {
-	}
-	public void visit(CharType databaseType) {
-	}
-	public void visit(ClobType databaseType) {
-	}
-	public void visit(DecimalType databaseType) {
-	}
-	public void visit(DoubleType databaseType) {
-	}
-	public void visit(FloatType databaseType) {
-	}
-	public void visit(IntervalDayToSecond databaseType) {
-	}
-	public void visit(IntervalYearToMonth databaseType) {
-	}
-	public void visit(NClobType databaseType) {
-	}
-	public void visit(NumericType databaseType) {
-	}
-	public void visit(RealType databaseType) {
-	}
-	public void visit(ScalarDatabaseTypeEnum databaseType) {
-	}
-	public void visit(UnresolvedType databaseType) {
-	}
-	public void visit(UnresolvedSizedType databaseType) {
-	}
-	public void visit(URowIdType databaseType) {
-	}
-	public void visit(VarCharType databaseType) {
-	}
-	public void visit(VarChar2Type databaseType) {
-	}
-	public void visit(LongType databaseType) {
-	}
+    //scalar visit callbacks
+    public void visit(BinaryType databaseType) {
+    }
+    public void visit(BlobType databaseType) {
+    }
+    public void visit(LongRawType databaseType) {
+    }
+    public void visit(RawType databaseType) {
+    }
+    public void visit(CharType databaseType) {
+    }
+    public void visit(ClobType databaseType) {
+    }
+    public void visit(DecimalType databaseType) {
+    }
+    public void visit(DoubleType databaseType) {
+    }
+    public void visit(FloatType databaseType) {
+    }
+    public void visit(IntervalDayToSecond databaseType) {
+    }
+    public void visit(IntervalYearToMonth databaseType) {
+    }
+    public void visit(NClobType databaseType) {
+    }
+    public void visit(NumericType databaseType) {
+    }
+    public void visit(RealType databaseType) {
+    }
+    public void visit(ScalarDatabaseTypeEnum databaseType) {
+    }
+    public void visit(UnresolvedType databaseType) {
+    }
+    public void visit(UnresolvedSizedType databaseType) {
+    }
+    public void visit(URowIdType databaseType) {
+    }
+    public void visit(VarCharType databaseType) {
+    }
+    public void visit(VarChar2Type databaseType) {
+    }
+    public void visit(LongType databaseType) {
+    }
 
-	//composite visit callbacks
-	public void beginVisit(ArgumentType databaseType) {
-	}
-	public void visit(ArgumentType databaseType) {
-		beginVisit(databaseType);
-		DatabaseType dt = databaseType.getDataType();
-		if (dt != null) {
-			dt.accept(this);
-		}
-		endVisit(databaseType);
-	}
-	public void endVisit(ArgumentType databaseType) {
-	}
-	
-	public void beginVisit(FieldType databaseType) {
-	}
-	public void visit(FieldType databaseType) {
-		beginVisit(databaseType);
-		DatabaseType dt = databaseType.getDataType();
-		if (dt != null) {
-			dt.accept(this);
-		}
-		endVisit(databaseType);
-	}
-	public void endVisit(FieldType databaseType) {
-	}
+    //composite visit callbacks
+    public void beginVisit(ArgumentType databaseType) {
+    }
+    public void visit(ArgumentType databaseType) {
+        beginVisit(databaseType);
+        DatabaseType dt = databaseType.getDataType();
+        if (dt != null) {
+            dt.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(ArgumentType databaseType) {
+    }
+    
+    public void beginVisit(FieldType databaseType) {
+    }
+    public void visit(FieldType databaseType) {
+        beginVisit(databaseType);
+        DatabaseType dt = databaseType.getDataType();
+        if (dt != null) {
+            dt.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(FieldType databaseType) {
+    }
 
-	public void beginVisit(PLSQLCursorType databaseType) {
-	}
-	public void visit(PLSQLCursorType databaseType) {
-		beginVisit(databaseType);
-		DatabaseType dt = databaseType.getDataType();
-		if (dt != null) {
-			dt.accept(this);
-		}
-		endVisit(databaseType);
-	}
-	public void endVisit(PLSQLCursorType databaseType) {
-	}
+    public void beginVisit(PLSQLCursorType databaseType) {
+    }
+    public void visit(PLSQLCursorType databaseType) {
+        beginVisit(databaseType);
+        DatabaseType dt = databaseType.getDataType();
+        if (dt != null) {
+            dt.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(PLSQLCursorType databaseType) {
+    }
 
-	public void beginVisit(PLSQLPackageType databaseType) {
-	}
-	public void visit(PLSQLPackageType databaseType) {
-		beginVisit(databaseType);
-		//TODO
-		endVisit(databaseType);
-	}
-	public void endVisit(PLSQLPackageType databaseType) {
-	}
+    public void beginVisit(PLSQLPackageType databaseType) {
+    }
+    public void visit(PLSQLPackageType databaseType) {
+        beginVisit(databaseType);
+        //TODO
+        endVisit(databaseType);
+    }
+    public void endVisit(PLSQLPackageType databaseType) {
+    }
 
-	public void beginVisit(PLSQLRecordType databaseType) {
-	}
-	public void visit(PLSQLRecordType databaseType) {
-		//TODO
-	}
-	public void endVisit(PLSQLRecordType databaseType) {
-	}
+    public void beginVisit(PLSQLRecordType databaseType) {
+    }
+    public void visit(PLSQLRecordType databaseType) {
+        //TODO
+    }
+    public void endVisit(PLSQLRecordType databaseType) {
+    }
 
-	public void beginVisit(PLSQLCollectionType databaseType) {
-	}
-	public void visit(PLSQLCollectionType databaseType) {
-		//TODO
-	}
-	public void endVisit(PLSQLCollectionType databaseType) {
-	}
+    public void beginVisit(PLSQLCollectionType databaseType) {
+    }
+    public void visit(PLSQLCollectionType databaseType) {
+        //TODO
+    }
+    public void endVisit(PLSQLCollectionType databaseType) {
+    }
 
-	public void beginVisit(ProcedureType databaseType) {
-	}
-	public void visit(ProcedureType databaseType) {
-		//TODO
-	}
-	public void endVisit(ProcedureType databaseType) {
-	}
+    public void beginVisit(ProcedureType databaseType) {
+    }
+    public void visit(ProcedureType databaseType) {
+        beginVisit(databaseType);
+        List<ArgumentType> arguments = databaseType.getArguments();
+        for (ArgumentType argument : arguments) {
+            argument.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(ProcedureType databaseType) {
+    }
 
-	public void beginVisit(FunctionType databaseType) {
-	}
-	public void visit(FunctionType databaseType) {
-		//TODO
-	}
-	public void endVisit(FunctionType databaseType) {
-	}
+    public void beginVisit(FunctionType databaseType) {
+    }
+    public void visit(FunctionType databaseType) {
+        beginVisit(databaseType);
+        List<ArgumentType> arguments = databaseType.getArguments();
+        for (ArgumentType argument : arguments) {
+            argument.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(FunctionType databaseType) {
+    }
 
-	public void beginVisit(TableType databaseType) {
-	}
-	public void visit(TableType databaseType) {
-		beginVisit(databaseType);
-		List<FieldType> columns = databaseType.getColumns();
-		for (FieldType column : columns) {
-			column.accept(this);
-		}
-		endVisit(databaseType);
-	}
-	public void endVisit(TableType databaseType) {
-	}
+    public void beginVisit(TableType databaseType) {
+    }
+    public void visit(TableType databaseType) {
+        beginVisit(databaseType);
+        List<FieldType> columns = databaseType.getColumns();
+        for (FieldType column : columns) {
+            column.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(TableType databaseType) {
+    }
 
     public void beginVisit(ObjectType databaseType) {
     }

@@ -14,11 +14,16 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public class RawType extends BlobType {
 
+    static final String TYPENAME = "RAW";
+
     public RawType() {
-        super("RAW", BlobType.DEFAULT_SIZE);
+        super(TYPENAME, BlobType.DEFAULT_SIZE);
     }
     public RawType(long size) {
-        super("RAW", size);
+        super(TYPENAME, size);
+    }
+    public void accept(DatabaseTypeVisitor visitor) {
+        visitor.visit(this);
     }
 	
 }

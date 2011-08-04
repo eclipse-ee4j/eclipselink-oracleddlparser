@@ -14,11 +14,13 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public class LongType extends VarChar2Type {
 
+    static final String TYPENAME = "LONG";
+
     public LongType() {
-        super("LONG", VarCharType.DEFAULT_SIZE);
+        super(TYPENAME, VarCharType.DEFAULT_SIZE);
     }
     public LongType(long size) {
-        super("LONG", size);
+        super(TYPENAME, size);
     }
 	
 	@Override

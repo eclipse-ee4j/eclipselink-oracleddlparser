@@ -49,7 +49,7 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
 
 	@Override
 	public void addCompositeType(DatabaseType enclosedType) {
-		//TODO
+	    arguments.add((ArgumentType)enclosedType);
 	}
 
     @Override
@@ -60,8 +60,23 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
             sb.append(".");
         }
         sb.append(procedureName);
-        sb.append(" (\n");
-        
+        sb.append(" (");
+        for (int i=0; i<arguments.size();) {
+            ArgumentType arg = arguments.get(i);
+            sb.append(arg.argumentName);
+            if (arg.optional) {
+                sb.append("(opt) ");
+            } else {
+                sb.append(" ");
+            }
+            sb.append(arg.getDirection());
+            sb.append(" ");
+            sb.append(arg.getDataType());
+            if (++i < arguments.size()) {
+                sb.append(", ");
+            }
+        }
+        sb.append(")");
         return sb.toString();
     }
 

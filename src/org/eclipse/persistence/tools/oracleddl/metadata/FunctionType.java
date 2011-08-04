@@ -28,9 +28,37 @@ public class FunctionType extends ProcedureType {
 		this.returnArgument = returnArgument;
 	}
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("FUNCTION ");
+        if (schema != null) {
+            sb.append(schema);
+            sb.append(".");
+        }
+        sb.append(procedureName);
+        sb.append(" (");
+        for (int i=0; i<arguments.size();) {
+            ArgumentType arg = arguments.get(i);
+            sb.append(arg.argumentName);
+            if (arg.optional) {
+                sb.append("(opt) ");
+            } else {
+                sb.append(" ");
+            }
+            sb.append(arg.getDirection());
+            sb.append(" ");
+            sb.append(arg.getDataType());
+            if (++i < arguments.size()) {
+                sb.append(", ");
+            }
+        }
+        sb.append(") RETURN ");
+        sb.append(returnArgument.getTypeName());
+        return sb.toString();
+    }
+
 	@Override
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
-
 }
