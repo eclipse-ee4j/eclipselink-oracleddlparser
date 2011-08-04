@@ -14,13 +14,14 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public class BlobType extends SizedType implements DatabaseTypeVisitable {
 
+    static final String TYPENAME = "BLOB";
 	static long DEFAULT_SIZE = 0l;
 	
     public BlobType() {
-        super("BLOB", DEFAULT_SIZE);
+        super(TYPENAME, DEFAULT_SIZE);
     }
     public BlobType(long size) {
-        super("BLOB", size);
+        super(TYPENAME, size);
     }
 	public BlobType(String typeName, long size) {
         super(typeName, size);

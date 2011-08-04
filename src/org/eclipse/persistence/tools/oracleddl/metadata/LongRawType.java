@@ -13,12 +13,17 @@
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public class LongRawType extends BlobType {
+    
+    static final String TYPENAME = "LONG RAW";
 
     public LongRawType() {
-        super("LONG RAW", BlobType.DEFAULT_SIZE);
+        super(TYPENAME, BlobType.DEFAULT_SIZE);
     }
     public LongRawType(long size) {
-        super("LONG RAW", size);
+        super(TYPENAME, size);
+    }
+    public void accept(DatabaseTypeVisitor visitor) {
+        visitor.visit(this);
     }
 
 }

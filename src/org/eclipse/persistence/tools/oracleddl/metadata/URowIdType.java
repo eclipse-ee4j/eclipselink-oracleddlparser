@@ -14,13 +14,14 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public class URowIdType extends SizedType implements DatabaseTypeVisitable {
 	
+    static final String TYPENAME = "UROWID";
 	static long DEFAULT_SIZE = 4000l;
 
     public URowIdType() {
-        super("UROWID", DEFAULT_SIZE);
+        super(TYPENAME, DEFAULT_SIZE);
     }
     public URowIdType(long size) {
-        super("UROWID", size);
+        super(TYPENAME, size);
     }
     
 	@Override

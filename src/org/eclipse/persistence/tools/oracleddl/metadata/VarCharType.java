@@ -14,13 +14,14 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public class VarCharType extends SizedType implements DatabaseTypeVisitable {
 
+    static final String TYPENAME = "VARCHAR";
 	static long DEFAULT_SIZE = 1l;
 
     public VarCharType() {
-        super("VARCHAR", DEFAULT_SIZE);
+        super(TYPENAME, DEFAULT_SIZE);
     }
     public VarCharType(long size) {
-        super("VARCHAR", size);
+        super(TYPENAME, size);
     }
     
 	@Override
