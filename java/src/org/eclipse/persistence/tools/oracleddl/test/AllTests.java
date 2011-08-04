@@ -27,8 +27,8 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConne
 
 @RunWith(Suite.class)
 @SuiteClasses({
-  DatabaseTypeBuilderTestSuite.class,
   DDLParserTest.class,
+  DatabaseTypeBuilderTestSuite.class,
   }
 )
 public class AllTests {

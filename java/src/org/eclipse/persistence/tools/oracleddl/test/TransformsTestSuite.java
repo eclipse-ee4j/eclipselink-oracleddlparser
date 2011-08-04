@@ -30,7 +30,7 @@ import static org.junit.Assert.fail;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilderException;
 
-public class DatabaseTypeBuilderTransformsTestSuite {
+public class TransformsTestSuite {
     
     //fixtures
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;

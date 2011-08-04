@@ -41,7 +41,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
-public class DatabaseTypeBuilderTableDDLTestSuite {
+public class TableDDLTestSuite {
 
     static final String SIMPLETABLE = "DTB_SIMPLETABLE";
     static final String SIMPLETABLE_FIELD1 = 
@@ -55,7 +55,7 @@ public class DatabaseTypeBuilderTableDDLTestSuite {
             SIMPLETABLE_FIELD1 + " INTEGER NOT NULL,\n" +
             SIMPLETABLE_FIELD2 + " VARCHAR2(25),\n" +
             SIMPLETABLE_FIELD3 + " DATE,\n" +
-            "PRIMARY KEY (" + SIMPLETABLE_FIELD1 + ")\n" +
+            "PRIMARY KEY (" + SIMPLETABLE_FIELD1 + "," + SIMPLETABLE_FIELD2 + ")\n" +
         ")";
     static final String DROP_SIMPLETABLE =
         "DROP TABLE " + SIMPLETABLE;
@@ -89,6 +89,7 @@ public class DatabaseTypeBuilderTableDDLTestSuite {
             fail(msg);
         }
         expectedPKFieldNames.add(SIMPLETABLE_FIELD1);
+        expectedPKFieldNames.add(SIMPLETABLE_FIELD2);
         expectedFieldNames.add(SIMPLETABLE_FIELD1);
         expectedFieldNames.add(SIMPLETABLE_FIELD2);
         expectedFieldNames.add(SIMPLETABLE_FIELD3);
@@ -106,7 +107,7 @@ public class DatabaseTypeBuilderTableDDLTestSuite {
     }
     
     @Test
-    public void testPrimaryKey() {
+    public void testPrimaryKeys() {
         List<FieldType> columns = tableType.getColumns();
         List<String> pkFieldNames = new ArrayList<String>();
         for (FieldType field : columns) {

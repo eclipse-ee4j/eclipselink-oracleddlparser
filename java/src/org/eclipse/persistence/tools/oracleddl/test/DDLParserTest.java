@@ -125,7 +125,8 @@ public class DDLParserTest {
             "ENAME VARCHAR2(10),\n" +
             "JOB VARCHAR2(9),\n" +
             "SAL NUMBER,\n" +
-            "COMM NUMBER\n" +
+            "COMM NUMBER,\n" +
+            "CONSTRAINT \"PK_BONUS\" PRIMARY KEY (\"ENAME\", \"JOB\") ENABLE\n" +
         ");";
     @Test
     public void testNormalTable() {
@@ -146,6 +147,36 @@ public class DDLParserTest {
         assertTrue("normal table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
         //TODO - check each column's name, type
+    }
+    
+    static final String IOT_TABLE =
+        " FOO_IOT (\n" +
+            "ENAME VARCHAR2(10),\n" +
+            "JOB VARCHAR2(9),\n" +
+            "SAL NUMBER,\n" +
+            "COMM NUMBER,\n" +
+            "CONSTRAINT \"PK_BONUS\" PRIMARY KEY (\"ENAME\", \"JOB\") ENABLE\n" +
+        ") ORGANIZATION INDEX;";
+    @Test
+    public void testIOTTable() {
+        parser.ReInit(new StringReader(CREATE_TABLE_PREFIX + IOT_TABLE));
+        boolean worked = true;
+        String message = "";
+        TableType tableType = null;
+        try {
+            tableType = parser.parseTable();
+        }
+        catch (ParseException pe) {
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("iot table did not parse:\n" + message, worked);
+        UnresolvedTypesVisitor l = new UnresolvedTypesVisitor();
+        l.visit(tableType);
+        assertTrue("iot table should not contain any unresolved column datatypes",
+            l.getUnresolvedTypes().isEmpty());
+        //TODO - check each column's name, type
+        
     }
 
 }
