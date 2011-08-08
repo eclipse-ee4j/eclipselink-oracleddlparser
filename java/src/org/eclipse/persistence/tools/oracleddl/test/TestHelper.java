@@ -15,6 +15,7 @@ package org.eclipse.persistence.tools.oracleddl.test;
 //javase imports
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class TestHelper {
@@ -33,5 +34,20 @@ public class TestHelper {
         String url = System.getProperty(DATABASE_URL_KEY, DEFAULT_DATABASE_URL);
         Class.forName(DATABASE_DRIVER);
         return DriverManager.getConnection(url, username, password);
+    }
+    
+    protected static void createTable(Connection conn, String createTableDDL) throws SQLException {
+        PreparedStatement pStmt = conn.prepareStatement(createTableDDL);
+        pStmt.execute();
+    }
+    
+    protected static void dropTable(Connection conn, String dropTableDDL) {
+        try {
+            PreparedStatement pStmt = conn.prepareStatement(dropTableDDL);
+            pStmt.execute();
+        }
+        catch (Exception e) {
+            // ignore
+        }
     }
 }

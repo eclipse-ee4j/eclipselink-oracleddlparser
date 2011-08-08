@@ -14,7 +14,6 @@ package org.eclipse.persistence.tools.oracleddl.test;
 
 //javase imports
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +26,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-//testing imports
-import org.eclipse.persistence.tools.oracleddl.test.AllTests;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-
 //Oracleddl (domain) imports
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
@@ -41,6 +35,13 @@ import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
+
+//testing imports
+import org.eclipse.persistence.tools.oracleddl.test.AllTests;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createTable;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropTable;
+
 
 public class IOTTableDDLTestSuite {
 
@@ -76,7 +77,7 @@ public class IOTTableDDLTestSuite {
             dtBuilder = new DatabaseTypeBuilder();
         }
         //send DDL to database
-        createTable();
+        createTable(conn, CREATE_IOTTABLE);
         boolean worked = true;
         String msg = null;
         try {
@@ -158,22 +159,6 @@ public class IOTTableDDLTestSuite {
 
     @AfterClass
     public static void tearDown() {
-        dropTable();
-    }
-    
-    protected static void createTable() throws SQLException {
-        PreparedStatement pStmt = conn.prepareStatement(CREATE_IOTTABLE);
-        pStmt.execute();
-    }
-    
-    protected static void dropTable() {
-        try {
-            PreparedStatement pStmt = conn.prepareStatement(DROP_IOTTABLE);
-            pStmt.execute();
-        }
-        catch (Exception e) {
-            // ignore
-        }
-        
+        dropTable(conn, DROP_IOTTABLE);
     }
 }

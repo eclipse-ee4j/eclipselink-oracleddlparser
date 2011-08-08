@@ -4,6 +4,7 @@ package org.eclipse.persistence.tools.oracleddl.test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.List;
 
 //JUnit4 imports
 import org.junit.BeforeClass;
@@ -14,11 +15,16 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 //DDL parser imports
+import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
+import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypesRepository;
 import org.eclipse.persistence.tools.oracleddl.util.UnresolvedTypesVisitor;
+
+import static org.junit.Assert.assertEquals;
 
 public class DDLParserTest {
 
@@ -35,7 +41,8 @@ public class DDLParserTest {
         parser.setTypesRepository(new DatabaseTypesRepository());
 	}
 
-	static final String EMPTY_TABLE = "CREATE TABLE EMPTY_TABLE();";
+    static final String CREATE_TABLE_PREFIX = "CREATE TABLE ";
+	static final String EMPTY_TABLE = CREATE_TABLE_PREFIX + "EMPTY_TABLE();";
     @Test
     public void testEmptyTable() {
         parser.ReInit(new StringReader(EMPTY_TABLE));
@@ -50,8 +57,8 @@ public class DDLParserTest {
         assertFalse("empty table should not parse", worked);
     }
 
-    static final String CREATE_TABLE_PREFIX = "CREATE TABLE ";
-    static final String DUMMY_TABLE = "DUMMY_TABLE ( DUMMY VARCHAR2(1) );";
+    static final String DUMMY = "DUMMY";
+    static final String DUMMY_TABLE = DUMMY + "_TABLE ( " + DUMMY + " VARCHAR2(1) );";
     @Test
     public void testDummyTable() {
         parser.ReInit(new StringReader(CREATE_TABLE_PREFIX + DUMMY_TABLE));
@@ -70,6 +77,13 @@ public class DDLParserTest {
         l.visit(tableType);
         assertTrue("dummy table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
+        List<FieldType> columns = tableType.getColumns();
+        assertEquals("dummy table has wrong number of columns", 1, columns.size());
+        FieldType col1 = columns.get(0);
+        assertEquals("incorrect name for " + DUMMY + " column",
+            DUMMY, col1.getFieldName());
+        assertEquals("incorrect type for " + DUMMY + " column",
+            new VarChar2Type().getTypeName(), col1.getTypeName());
     }
 
     static final String DUMMY_TABLE_SCHEMA = "SCOTT.";
@@ -92,8 +106,9 @@ public class DDLParserTest {
         l.visit(tableType);
         assertTrue("dummy table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
-        assertEquals("", DUMMY_TABLE_SCHEMA.subSequence(0, DUMMY_TABLE_SCHEMA.length()-1),
-            tableType.getSchema());
+        assertEquals("dummy table wrong schema",
+            (String)DUMMY_TABLE_SCHEMA.subSequence(0, DUMMY_TABLE_SCHEMA.length()-1),
+            (String)tableType.getSchema());
     }
 
     static final String DUMMY_TABLE_QUOTED_SCHEMA = "\"SCOTT\".";
@@ -116,17 +131,23 @@ public class DDLParserTest {
         l.visit(tableType);
         assertTrue("dummy table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
-        assertEquals("", DUMMY_TABLE_SCHEMA.subSequence(0, DUMMY_TABLE_SCHEMA.length()-1),
-            tableType.getSchema());
+        assertEquals("dummy table wrong schema",
+            (String)DUMMY_TABLE_SCHEMA.subSequence(0, DUMMY_TABLE_SCHEMA.length()-1),
+            (String)tableType.getSchema());
     }
-    
+
+    static final String NORMAL = "NORMAL";
+    static final String ENAME = "ENAME";
+    static final String JOB = "JOB";
+    static final String SAL = "SAL";
+    static final String COMM = "COMM";
     static final String NORMAL_TABLE =
-        " BONUS (\n" +
-            "ENAME VARCHAR2(10),\n" +
-            "JOB VARCHAR2(9),\n" +
-            "SAL NUMBER,\n" +
-            "COMM NUMBER,\n" +
-            "CONSTRAINT \"PK_BONUS\" PRIMARY KEY (\"ENAME\", \"JOB\") ENABLE\n" +
+        NORMAL + " (\n" +
+            ENAME + " VARCHAR2(10),\n" +
+            JOB + " VARCHAR2(9),\n" +
+            SAL + " NUMBER,\n" +
+            COMM + " NUMBER,\n" +
+            "CONSTRAINT \"PK_BONUS\" PRIMARY KEY (\"" + ENAME + "\", \"" + JOB + "\") ENABLE\n" +
         ");";
     @Test
     public void testNormalTable() {
@@ -141,21 +162,42 @@ public class DDLParserTest {
             message = pe.getMessage();
             worked = false;
         }
-        assertTrue("normal table did not parse:\n" + message, worked);
+        assertTrue(NORMAL + " table did not parse:\n" + message, worked);
         UnresolvedTypesVisitor l = new UnresolvedTypesVisitor();
         l.visit(tableType);
-        assertTrue("normal table should not contain any unresolved column datatypes",
+        assertTrue(NORMAL + " table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
-        //TODO - check each column's name, type
+        List<FieldType> columns = tableType.getColumns();
+        assertEquals(NORMAL + " table has wrong number of columns", 4, columns.size());
+        FieldType col1 = columns.get(0);
+        assertEquals("incorrect name for " + ENAME + " column",
+            ENAME, col1.getFieldName());
+        assertEquals("incorrect type for " + ENAME + " column",
+            new VarChar2Type().getTypeName(), col1.getTypeName());
+        FieldType col2 = columns.get(1);
+        assertEquals("incorrect name for " + JOB + " column",
+            JOB, col2.getFieldName());
+        assertEquals("incorrect type for " + JOB + " column",
+            new VarChar2Type().getTypeName(), col2.getTypeName());
+        FieldType col3 = columns.get(2);
+        assertEquals("incorrect name for " + SAL + " column",
+            SAL, col3.getFieldName());
+        assertEquals("incorrect type for " + SAL + " column",
+            new NumericType().getTypeName(), col3.getTypeName());
+        FieldType col4 = columns.get(3);
+        assertEquals("incorrect name for " + COMM + " column",
+            COMM, col4.getFieldName());
+        assertEquals("incorrect type for " + COMM + " column",
+            new NumericType().getTypeName(), col4.getTypeName());
     }
     
     static final String IOT_TABLE =
         " FOO_IOT (\n" +
-            "ENAME VARCHAR2(10),\n" +
-            "JOB VARCHAR2(9),\n" +
-            "SAL NUMBER,\n" +
-            "COMM NUMBER,\n" +
-            "CONSTRAINT \"PK_BONUS\" PRIMARY KEY (\"ENAME\", \"JOB\") ENABLE\n" +
+            ENAME + " VARCHAR2(10),\n" +
+            JOB + " VARCHAR2(9),\n" +
+            SAL + " NUMBER,\n" +
+            COMM + " NUMBER,\n" +
+            "CONSTRAINT \"PK_BONUS\" PRIMARY KEY (\"" + ENAME + "\", \"" + JOB + "\") ENABLE\n" +
         ") ORGANIZATION INDEX;";
     @Test
     public void testIOTTable() {
@@ -175,8 +217,28 @@ public class DDLParserTest {
         l.visit(tableType);
         assertTrue("iot table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
-        //TODO - check each column's name, type
-        
+        List<FieldType> columns = tableType.getColumns();
+        assertEquals(NORMAL + " table has wrong number of columns", 4, columns.size());
+        FieldType col1 = columns.get(0);
+        assertEquals("incorrect name for " + ENAME + " column",
+            ENAME, col1.getFieldName());
+        assertEquals("incorrect type for " + ENAME + " column",
+            new VarChar2Type().getTypeName(), col1.getTypeName());
+        FieldType col2 = columns.get(1);
+        assertEquals("incorrect name for " + JOB + " column",
+            JOB, col2.getFieldName());
+        assertEquals("incorrect type for " + JOB + " column",
+            new VarChar2Type().getTypeName(), col2.getTypeName());
+        FieldType col3 = columns.get(2);
+        assertEquals("incorrect name for " + SAL + " column",
+            SAL, col3.getFieldName());
+        assertEquals("incorrect type for " + SAL + " column",
+            new NumericType().getTypeName(), col3.getTypeName());
+        FieldType col4 = columns.get(3);
+        assertEquals("incorrect name for " + COMM + " column",
+            COMM, col4.getFieldName());
+        assertEquals("incorrect type for " + COMM + " column",
+            new NumericType().getTypeName(), col4.getTypeName());
     }
 
 }

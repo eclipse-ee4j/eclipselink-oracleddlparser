@@ -14,7 +14,6 @@ package org.eclipse.persistence.tools.oracleddl.test;
 
 //javase imports
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +27,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-//testing imports
-import org.eclipse.persistence.tools.oracleddl.test.AllTests;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-
 //Oracleddl (domain) imports
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
@@ -40,6 +35,12 @@ import org.eclipse.persistence.tools.oracleddl.metadata.SizedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
+
+//testing imports
+import org.eclipse.persistence.tools.oracleddl.test.AllTests;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createTable;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropTable;
 
 public class TableDDLTestSuite {
 
@@ -75,7 +76,7 @@ public class TableDDLTestSuite {
             dtBuilder = new DatabaseTypeBuilder();
         }
         //send DDL to database
-        createTable();
+        createTable(conn, CREATE_SIMPLETABLE);
         boolean worked = true;
         String msg = null;
         try {
@@ -157,22 +158,7 @@ public class TableDDLTestSuite {
 
     @AfterClass
     public static void tearDown() {
-        dropTable();
+        dropTable(conn, DROP_SIMPLETABLE);
     }
-    
-    protected static void createTable() throws SQLException {
-        PreparedStatement pStmt = conn.prepareStatement(CREATE_SIMPLETABLE);
-        pStmt.execute();
-    }
-    
-    protected static void dropTable() {
-        try {
-            PreparedStatement pStmt = conn.prepareStatement(DROP_SIMPLETABLE);
-            pStmt.execute();
-        }
-        catch (Exception e) {
-            // ignore
-        }
-        
-    }
+
 }
