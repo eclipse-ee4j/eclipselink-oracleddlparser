@@ -32,7 +32,7 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConne
 @SuiteClasses({
   TransformsTestSuite.class,
   TableDDLTestSuite.class,
-  IOTTableDDLTestSuite.class,
+  IOTTableDDLTestSuite.class
   }
 )
 public class DatabaseTypeBuilderTestSuite {

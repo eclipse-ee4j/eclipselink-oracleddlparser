@@ -10,17 +10,24 @@
  * Contributors:
  *     David McCann - July 22, 2011 - 2.4 - Initial implementation
  ******************************************************************************/
-package org.eclipse.persistence.tools.oracleddl.test.metadata.visit;
+package org.eclipse.persistence.tools.oracleddl.test;
 
+//javase imports
+import java.util.ArrayList;
+import java.util.List;
+
+//JUnit4 imports
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
+//DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
 import org.eclipse.persistence.tools.oracleddl.metadata.FloatType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
-import org.junit.Test;
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.BaseDatabaseTypeVisitor;
 
 /**
  * Test ProcedureType visit method chain.  Ensures that all required 
@@ -34,6 +41,11 @@ import org.junit.Test;
  *
  */
 public class ProcedureTypeTest {
+    
+    protected static String PROCEDURE = 
+        "PROCEDURE TLUSER.UPDATE_EMP_SALARY (EMP_ID IN VARCHAR, AMOUNT INOUT FLOAT, " +
+            "NOTES(opt) IN VARCHAR2)";
+
 	@Test
 	public void testProcedureType() {
         // setup ProcedureType
@@ -61,5 +73,48 @@ public class ProcedureTypeTest {
 		//System.out.print(procedure.toString());
 	}
 	
-	protected static String PROCEDURE = "PROCEDURE TLUSER.UPDATE_EMP_SALARY (EMP_ID IN VARCHAR, AMOUNT INOUT FLOAT, NOTES(opt) IN VARCHAR2)";
+
+    /**
+     * Visitor for use with ProcedureType.  The visit methods
+     * simply gather all relevant information such that it
+     * can be returned as a String when visiting is complete. 
+     */
+	static class ProcedureTypeVisitor extends BaseDatabaseTypeVisitor {
+	    public String procName;
+	    public String schema;
+	    public List<String> argData = new ArrayList<String>();
+	    
+	    public void beginVisit(ProcedureType procType) {
+	        procName = procType.getProcedureName();
+	        schema = procType.getSchema();
+	    }
+	    
+	    public void beginVisit(ArgumentType argType) {
+	        if (argType.optional()) {
+	            argData.add(argType.getArgumentName() + "(opt) " + argType.getDirection() + " " + argType.getDataType());
+	        } else {
+	            argData.add(argType.getArgumentName() + " " + argType.getDirection() + " " + argType.getDataType());
+	        }
+	    }
+	   
+	    public String toString() {
+	        StringBuilder sb = new StringBuilder("PROCEDURE ");
+	        if (schema != null) {
+	            sb.append(schema);
+	            sb.append(".");
+	        }
+	        sb.append(procName);
+	        sb.append(" (");
+	        for (int i=0; i<argData.size();) {
+	            String arg = argData.get(i);
+	            sb.append(arg);
+	            if (++i < argData.size()) {
+	                sb.append(", ");
+	            }
+	        }
+	        sb.append(")");
+	        return sb.toString();
+	    }
+	}
+
 }

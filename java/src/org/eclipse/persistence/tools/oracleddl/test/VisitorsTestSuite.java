@@ -12,34 +12,20 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.test;
 
-//javase imports
-import java.sql.Connection;
-import java.sql.SQLException;
-
 //JUnit4 imports
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-//testing imports
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-
 @RunWith(Suite.class)
 @SuiteClasses({
-  DDLParserTest.class,
-  VisitorsTestSuite.class,
-  DatabaseTypeBuilderTestSuite.class
+    FunctionTypeTest.class,
+    IntervalTypeTest.class,
+    PrecisionTypeTest.class,
+    ProcedureTypeTest.class,
+    SizedTypeTest.class
   }
 )
-public class AllTests {
-
-    //shared JUnit fixtures
-    static Connection conn = null;
-    
-    @BeforeClass
-    public static void setUp() throws ClassNotFoundException, SQLException {
-        conn = buildConnection();
-    }
+public class VisitorsTestSuite {
 
 }
