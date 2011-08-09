@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 
 //DDL parser imports
+import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
@@ -50,8 +52,16 @@ public class DatabaseTypeBuilder {
         }
     }
 
+    static final String DBMS_METADATA_GET_DDL_STMT_PREFIX =
+        "SELECT DBMS_METADATA.GET_DDL('";
+    static final String DBMS_METADATA_GET_DDL_STMT1 =
+    	"', AO.OBJECT_NAME) AS RESULT FROM ALL_OBJECTS AO WHERE " +
+    		"NOT REGEXP_LIKE(OWNER,'*SYS*|XDB|*ORD*|DBSNMP|ANONYMOUS|OUTLN') " +
+    		"AND OBJECT_TYPE = '";
+    static final String DBMS_METADATA_GET_DDL_STMT2 =
+    	"' AND OBJECT_NAME LIKE '";
     static final String DBMS_METADATA_DDL_STMT_SUFFIX =
-        "', SYS_CONTEXT('USERENV', 'CURRENT_USER')) AS RESULT FROM DUAL";
+        "'";
 
     protected boolean transformsSet = false;
 
@@ -59,120 +69,135 @@ public class DatabaseTypeBuilder {
         super();
     }
 
-    static final String DBMS_METADATA_GET_TABLE_DDL_STMT_PREFIX =
-        "SELECT DBMS_METADATA.GET_DDL('TABLE', '";
-    public TableType buildTable(Connection conn, String tableName) throws ParseException {
-        TableType tableType = null;
+    public List<TableType> buildTables(Connection conn, String tablePattern) throws ParseException {
+    	List<TableType> tableTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            String ddl = getDDL(conn, DBMS_METADATA_GET_TABLE_DDL_STMT_PREFIX + tableName +
-                DBMS_METADATA_DDL_STMT_SUFFIX);
-            if (ddl != null) {
-                DDLParser parser = newDDLParser(ddl);
-                tableType = parser.parseTable();
-                if (tableType != null) {
-                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                    unresolvedTypesVisitor.visit(tableType);
-                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), tableType);
-                    }
-                }
+        	List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "TABLE" +
+        		DBMS_METADATA_GET_DDL_STMT1 + "TABLE" + DBMS_METADATA_GET_DDL_STMT2 +
+        		tablePattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+            if (ddls != null) {
+            	tableTypes = new ArrayList<TableType>();
+            	for (String ddl : ddls) {
+	                DDLParser parser = newDDLParser(ddl);
+	                TableType tableType = parser.parseTable();
+	                if (tableType != null) {
+	                	tableTypes.add(tableType);
+	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+	                    unresolvedTypesVisitor.visit(tableType);
+	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), tableType);
+	                    }
+	                }
+            	}
             }
         }
-        return tableType;
+        return tableTypes;
     }
 
     protected void resolvedTypes(DDLParser parser, List<String> unresolvedTypes, DatabaseType databaseType) {
         // TODO - go thru list of unresolved types and fix up the databaseType's object-graph
     }
 
-    static final String DBMS_METADATA_GET_PACKAGE_DDL_STMT_PREFIX =
-        "SELECT DBMS_METADATA.GET_DDL('PACKAGE_SPEC', '";
-    public PLSQLPackageType buildPackage(Connection conn, String packageName) throws ParseException {
-        PLSQLPackageType packageType = null;
+    public List<PLSQLPackageType> buildPackages(Connection conn, String packagePattern) throws ParseException {
+    	List<PLSQLPackageType> packageTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            String ddl = getDDL(conn, DBMS_METADATA_GET_PACKAGE_DDL_STMT_PREFIX + packageName +
-                DBMS_METADATA_DDL_STMT_SUFFIX);
-            if (ddl != null) {
-                DDLParser parser = newDDLParser(ddl);
-                packageType = parser.parsePLSQLPackage();
-                if (packageType != null) {
-                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                    unresolvedTypesVisitor.visit(packageType);
-                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), packageType);
-                    }
-                }
+        	List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "PACKAGE" +
+            	DBMS_METADATA_GET_DDL_STMT1 + "PACKAGE" + DBMS_METADATA_GET_DDL_STMT2 +
+            	packagePattern + DBMS_METADATA_DDL_STMT_SUFFIX); 
+            if (ddls != null) {
+            	packageTypes = new ArrayList<PLSQLPackageType>();
+            	for (String ddl : ddls) {
+	                DDLParser parser = newDDLParser(ddl);
+	                PLSQLPackageType packageType = parser.parsePLSQLPackage();
+	                if (packageType != null) {
+	                	packageTypes.add(packageType);
+	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+	                    unresolvedTypesVisitor.visit(packageType);
+	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), packageType);
+	                    }
+	                }
+            	}
             }
 
         }
-        return packageType;
+        return packageTypes;
     }
 
-    static final String DBMS_METADATA_GET_PROCEDURE_DDL_STMT_PREFIX =
-        "SELECT DBMS_METADATA.GET_DDL('PROCEDURE', '";
-    public ProcedureType buildProcedure(Connection conn, String procedureName) throws ParseException {
-        ProcedureType procedureType = null;
+    public List<ProcedureType> buildProcedures(Connection conn, String procedurePattern) throws ParseException {
+    	List<ProcedureType> procedureTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            String ddl = getDDL(conn, DBMS_METADATA_GET_PROCEDURE_DDL_STMT_PREFIX + procedureName +
-                DBMS_METADATA_DDL_STMT_SUFFIX);
-            if (ddl != null) {
-                DDLParser parser = newDDLParser(ddl);
-                procedureType = parser.parseTopLevelProcedure();
-                if (procedureType != null) {
-                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                    unresolvedTypesVisitor.visit(procedureType);
-                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), procedureType);
-                    }
-                }
+        	List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "PROCEDURE" +
+                DBMS_METADATA_GET_DDL_STMT1 + "PROCEDURE" + DBMS_METADATA_GET_DDL_STMT2 +
+                procedurePattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+            if (ddls != null) {
+            	procedureTypes = new ArrayList<ProcedureType>();
+            	for (String ddl : ddls) {
+	                DDLParser parser = newDDLParser(ddl);
+	                ProcedureType procedureType = parser.parseTopLevelProcedure();
+	                if (procedureType != null) {
+	                	procedureTypes.add(procedureType);
+	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+	                    unresolvedTypesVisitor.visit(procedureType);
+	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), procedureType);
+	                    }
+	                }
+            	}
             }
 
         }
-        return procedureType;
+        return procedureTypes;
     }
 
-    static final String DBMS_METADATA_GET_FUNCTION_DDL_STMT_PREFIX =
-        "SELECT DBMS_METADATA.GET_DDL('FUNCTION', '";
-    public FunctionType buildFunction(Connection conn, String procedureName) throws ParseException {
-        FunctionType functionType = null;
+    public List<FunctionType> buildFunctions(Connection conn, String functionPattern) throws ParseException {
+    	List<FunctionType> functionTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            String ddl = getDDL(conn, DBMS_METADATA_GET_FUNCTION_DDL_STMT_PREFIX + procedureName +
-                DBMS_METADATA_DDL_STMT_SUFFIX);
-            if (ddl != null) {
-                DDLParser parser = newDDLParser(ddl);
-                functionType = parser.parseTopLevelFunction();
-                if (functionType != null) {
-                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                    unresolvedTypesVisitor.visit(functionType);
-                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), functionType);
-                    }
-                }
+        	List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "FUNCTION" +
+        		DBMS_METADATA_GET_DDL_STMT1 + "FUNCTION" + DBMS_METADATA_GET_DDL_STMT2 +
+                functionPattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+            if (ddls != null) {
+            	functionTypes = new ArrayList<FunctionType>();
+            	for (String ddl : ddls) {
+	                DDLParser parser = newDDLParser(ddl);
+	                FunctionType functionType = parser.parseTopLevelFunction();
+	                if (functionType != null) {
+	                	functionTypes.add(functionType);
+	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+	                    unresolvedTypesVisitor.visit(functionType);
+	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), functionType);
+	                    }
+	                }
+            	}
             }
 
         }
-        return functionType;
+        return functionTypes;
     }
 
-    static final String DBMS_METADATA_GET_TYPE_DDL_STMT_PREFIX =
-        "SELECT DBMS_METADATA.GET_DDL('TYPE_SPEC', '";
-    public DatabaseType buildType(Connection conn, String typeName) throws ParseException {
-        DatabaseType databaseType = null;
+    public List<CompositeDatabaseType> buildType(Connection conn, String typePattern) throws ParseException {
+    	List<CompositeDatabaseType> databaseTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            String ddl = getDDL(conn, DBMS_METADATA_GET_TYPE_DDL_STMT_PREFIX + typeName +
-                DBMS_METADATA_DDL_STMT_SUFFIX);
-            if (ddl != null) {
-                DDLParser parser = newDDLParser(ddl);
-                databaseType = parser.parseType();
-                if (databaseType != null) {
-                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), databaseType);
-                    }
-                }
+        	List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "TYPE" +
+            	DBMS_METADATA_GET_DDL_STMT1 + "TYPE" + DBMS_METADATA_GET_DDL_STMT2 +
+                typePattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+            if (ddls != null) {
+            	databaseTypes = new ArrayList<CompositeDatabaseType>();
+            	for (String ddl : ddls) {
+	                DDLParser parser = newDDLParser(ddl);
+	            	CompositeDatabaseType databaseType = parser.parseType();
+	                if (databaseType != null) {
+	                	databaseTypes.add(databaseType);
+	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), databaseType);
+	                    }
+	                }
+            	}
             }
         }
-        return databaseType;
+        return databaseTypes;
     }
 
     protected DDLParser newDDLParser(String ddl) {
@@ -181,13 +206,22 @@ public class DatabaseTypeBuilder {
         return parser;
     }
 
-    protected String getDDL(Connection conn, String metadataSpec) {
-        String ddl = null;
+    protected List<String> getDDLs(Connection conn, String metadataSpec) {
+    	List<String> ddls = null;
         try {
             PreparedStatement ps = conn.prepareStatement(metadataSpec);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            ddl = rs.getString("RESULT").trim();
+            if (rs.next()) {  
+            	ddls = new ArrayList<String>();
+                do {
+                	String ddl = rs.getString("RESULT").trim();
+                    if (ddl.endsWith("/")) {
+                        ddl = (String)ddl.subSequence(0, ddl.length()-1);
+                    }
+                	ddls.add(ddl);
+                
+                } while (rs.next());  
+            }
             try {
                 rs.close();
                 ps.close();
@@ -199,10 +233,7 @@ public class DatabaseTypeBuilder {
         catch (SQLException e) {
             e.printStackTrace();
         }
-        if (ddl.endsWith("/")) {
-            ddl = (String)ddl.subSequence(0, ddl.length()-1);
-        }
-        return ddl;
+        return ddls;
     }
 
     public Properties getTransformProperties() throws DatabaseTypeBuilderException  {

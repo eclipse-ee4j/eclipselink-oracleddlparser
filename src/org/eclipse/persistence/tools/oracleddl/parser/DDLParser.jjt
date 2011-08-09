@@ -10,6 +10,16 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
+options {
+      STATIC = false;
+      SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
+      ERROR_REPORTING = false;
+      JAVA_UNICODE_ESCAPE = true;
+      UNICODE_INPUT = true;
+      NODE_USES_PARSER = true;
+      TRACK_TOKENS = true;
+      VISITOR = true;
+}
 
 PARSER_BEGIN(DDLParser)
 /*******************************************************************************
@@ -28,6 +38,7 @@ package org.eclipse.persistence.tools.oracleddl.parser;
 
 //javase imports
 import java.io.InputStream;
+import java.util.List;
 
 //metadata imports
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
@@ -216,8 +227,9 @@ TOKEN: {
         | <K_NCLOB: "NCLOB">
         | <K_NEW_NAMES: "NEW_NAMES">
         | <K_NO: "'NO'">
-        | <K_NOCYCLE: "NOCYCLE">
+        | <K_NOCOMPRESS: "NOCOMPRESS">
         | <K_NOCOPY: "NOCOPY">
+        | <K_NOCYCLE: "NOCYCLE">
         | <K_NOT: "NOT">
         | <K_NULL: "NULL">
         | <K_NULLS: "NULLS">
@@ -231,8 +243,10 @@ TOKEN: {
         | <K_ONLY: "ONLY">
         | <K_OPEN: "OPEN">
         | <K_OR: "OR">
+        | <K_ORGANIZATION: "ORGANIZATION">
         | <K_OUT: "OUT">
         | <K_OUTER: "OUTER">
+        | <K_OVERFLOW: "OVERFLOW">
         | <K_PACKAGE: "PACKAGE">
         | <K_PARALLEL_ENABLE: "PARALLEL_ENABLE">
         | <K_PARTITION: "PARTITION">
@@ -441,9 +455,12 @@ FunctionType parseTopLevelFunction():
 
 // table at 'top-level'
 TableType parseTable():
-{TableType tableType = null;
- String schema = null;
- String tableName = null;}
+{
+TableType tableType = null;
+String schema = null;
+String tableName = null;
+Token iot = null;
+}
 {
     <K_CREATE> [ <K_GLOBAL> <K_TEMPORARY> ] <K_TABLE> 
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] tableName=OracleObjectName()
@@ -453,48 +470,17 @@ TableType parseTable():
 		         tableType.setSchema(schema);
 		    }        }
         <O_OPENPAREN> columnDeclarations(tableType) <O_CLOSEPAREN>
+         [ <K_ORGANIZATION> ] [ iot=<K_INDEX> ] [ <K_NOCOMPRESS> ] [ <K_OVERFLOW> ]
          [ <K_ON> <K_COMMIT > [<K_DELETE> | <K_PRESERVE> ] <K_ROWS> ] <O_SEMICOLON>
-        ( alterDeclaration(tableType) <O_SEMICOLON> ) *
+        
      <EOF>
      {
+         if (iot != null) {
+             tableType.setIOT(true);
+         } 
          typesRepository.setDatabaseType(tableName, tableType);
          return tableType;
      }
-}
-
-SimpleNode alterDeclaration(TableType table):
-{}
-{
-    <K_ALTER> <K_TABLE> columnSpec() <K_ADD> [ <K_CONSTRAINT> OracleObjectName() ] <K_PRIMARY> <K_KEY>
-      <O_OPENPAREN> OracleObjectName() ( <O_COMMA> OracleObjectName() )* <O_CLOSEPAREN> <K_ENABLE>
-    {
-      Token first = jjtThis.jjtGetFirstToken();
-      Token last = jjtThis.jjtGetLastToken();
-      Token cur = first;
-      while (cur.kind != O_OPENPAREN) {
-          cur = cur.next;
-      }
-      cur = cur.next;
-      while (cur.kind != O_CLOSEPAREN) {
-        if (cur.kind == O_COMMA) {
-            cur = cur.next;
-            continue;        }
-        String str = cur.image;
-        if (str.startsWith("\"")) {
-          str = str.substring(1, str.length());
-        }
-        if (str.endsWith("\"")) {
-          str = str.substring(0, str.length() - 1);
-        }
-        for (FieldType col : table.getColumns()) {
-          if (col.getFieldName().equals(str)) {
-              col.setPk();
-              break;
-          }         }
-        cur = cur.next;
-      }
-      return jjtThis;
-    }
 }
 
 // type at 'top-level'
@@ -547,18 +533,24 @@ void columnDeclaration(CompositeDatabaseType enclosingType) #void:
  FieldType column = null;
 }
 {
-    s=OracleObjectName()
-        {
-            column = new FieldType(s);
-            if (enclosingType != null) {
-                enclosingType.addCompositeType(column);
-            }        }
-        columnType=columnTypeSpec(enclosingType) [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
+    (  LOOKAHEAD(2)       s=OracleObjectName()
+         {
+           column = new FieldType(s);
+           if (enclosingType != null) {
+               enclosingType.addCompositeType(column);
+           }         }
+         columnType=columnTypeSpec(enclosingType) [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
+       | LOOKAHEAD(2)
+         [ <K_CONSTRAINT> ] [ OracleObjectName() ] <K_PRIMARY> <K_KEY>
+             <O_OPENPAREN>  pkList((TableType)enclosingType) <O_CLOSEPAREN> <K_ENABLE>
+    )
     {
-      column.setDataType(columnType);
-      if (notNull) {
-          column.setNotNull();
-      }
+      if (column != null) {
+	      column.setDataType(columnType);
+	      if (notNull) {
+	          column.setNotNull();
+	      }
+	  }
     }
 }
 
@@ -583,6 +575,29 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
       } 
       return dt;
     }
+}
+
+void pkList(TableType tableType) #void:
+{}
+{
+    pk(tableType) ( <O_COMMA> pk(tableType) )*
+}
+
+
+void pk(TableType tableType) #void:
+{
+String s = null;
+}
+{
+    s=OracleObjectName()
+    {
+       List<FieldType> columns = tableType.getColumns();
+       for (FieldType column : columns) {
+            if (column.getFieldName().equals(s)) {
+                column.setPk();
+                break;
+            }
+       }    }
 }
 
 void packageDeclaration(PLSQLPackageType packageType) #void:
