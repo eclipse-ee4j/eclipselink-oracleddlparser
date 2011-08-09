@@ -10,14 +10,13 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
-package org.eclipse.persistence.tools.oracleddl.util;
+package org.eclipse.persistence.tools.oracleddl.metadata.visit;
 
 //javase imports
 import java.util.ArrayList;
 import java.util.List;
 
 //DDL parser imports
-import org.eclipse.persistence.tools.oracleddl.metadata.BaseDatabaseTypeVisitor;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
 

@@ -10,7 +10,7 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
-package org.eclipse.persistence.tools.oracleddl.metadata;
+package org.eclipse.persistence.tools.oracleddl.metadata.visit;
 
 public interface DatabaseTypeVisitable {
 	

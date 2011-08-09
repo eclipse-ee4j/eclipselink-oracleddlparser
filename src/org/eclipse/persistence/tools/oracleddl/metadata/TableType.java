@@ -16,6 +16,9 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+
 public class TableType extends CompositeDatabaseTypeBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String tableName;

@@ -10,10 +10,45 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
-package org.eclipse.persistence.tools.oracleddl.metadata;
+package org.eclipse.persistence.tools.oracleddl.metadata.visit;
 
 //javase imports
 import java.util.List;
+
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
+import org.eclipse.persistence.tools.oracleddl.metadata.BinaryType;
+import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
+import org.eclipse.persistence.tools.oracleddl.metadata.CharType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ClobType;
+import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
+import org.eclipse.persistence.tools.oracleddl.metadata.DecimalType;
+import org.eclipse.persistence.tools.oracleddl.metadata.DoubleType;
+import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
+import org.eclipse.persistence.tools.oracleddl.metadata.FloatType;
+import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
+import org.eclipse.persistence.tools.oracleddl.metadata.IntervalDayToSecond;
+import org.eclipse.persistence.tools.oracleddl.metadata.IntervalYearToMonth;
+import org.eclipse.persistence.tools.oracleddl.metadata.LongRawType;
+import org.eclipse.persistence.tools.oracleddl.metadata.LongType;
+import org.eclipse.persistence.tools.oracleddl.metadata.NClobType;
+import org.eclipse.persistence.tools.oracleddl.metadata.NestedTableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
+import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
+import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum;
+import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
+import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
+import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
+import org.eclipse.persistence.tools.oracleddl.metadata.VArrayType;
+import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
+import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
 
 public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 

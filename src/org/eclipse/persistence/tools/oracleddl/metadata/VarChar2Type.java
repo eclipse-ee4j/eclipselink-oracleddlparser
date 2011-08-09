@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+
 public class VarChar2Type extends VarCharType {
 
 	static final String TYPENAME = "VARCHAR2";

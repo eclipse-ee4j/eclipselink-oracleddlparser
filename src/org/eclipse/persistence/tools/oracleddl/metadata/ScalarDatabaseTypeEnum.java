@@ -12,6 +12,9 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+
 public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVisitable {
 
     BFILE_TYPE("BFILE"),

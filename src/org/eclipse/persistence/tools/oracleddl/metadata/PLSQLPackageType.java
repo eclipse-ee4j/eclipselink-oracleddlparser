@@ -15,6 +15,9 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 //javase imports
 import java.util.List;
 
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+
 public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
 	protected String packageName;

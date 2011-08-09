@@ -1,5 +1,7 @@
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+
 
 public class NestedTableType extends CompositeDatabaseTypeBase implements CompositeDatabaseType {
 

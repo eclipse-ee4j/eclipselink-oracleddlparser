@@ -12,6 +12,9 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+
 public class UnresolvedType extends DatabaseTypeBase implements DatabaseType, DatabaseTypeVisitable {
     
 	public UnresolvedType(String unresolvedTypeName) {

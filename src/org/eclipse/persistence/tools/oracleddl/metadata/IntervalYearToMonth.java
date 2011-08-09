@@ -12,6 +12,9 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+
 public class IntervalYearToMonth extends ScalarDatabaseTypeBase implements ScalarDatabaseType, DatabaseTypeVisitable {
 
 	static final String TYPENAME_YEARPART = "INTERVAL YEAR";
