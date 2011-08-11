@@ -8,7 +8,8 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     David McCann - July 22, 2011 - 2.4 - Initial implementation
+ *     Mike Norman - June 10 2011, created DDL parser package
+ *     David McCann - July 2011, visit tests
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.test.visit;
 
@@ -17,7 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-//DDL parser imports
+//DDL imports
 import org.eclipse.persistence.tools.oracleddl.metadata.BinaryType;
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
 import org.eclipse.persistence.tools.oracleddl.metadata.CharType;
@@ -32,7 +33,6 @@ import org.eclipse.persistence.tools.oracleddl.metadata.SizedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
-import org.eclipse.persistence.tools.oracleddl.metadata.visit.BaseDatabaseTypeVisitor;
 
 /**
  * Test SizedType visit method chain.  Ensures that all required 
@@ -247,72 +247,5 @@ public class SizedTypeTest {
         nVarchar2Type = new NVarChar2Type(L10);
         nVarchar2Type.accept(visitor);
         assertEquals("NVarChar2Type(L10) test failed:\n", visitor.toString(), NVARCHAR2_10);
-    }
-
-    /**
-     * Visitor for use with SizedType.  The visit methods simply
-     * gather all relevant information such that it can be 
-     * returned as a String when visiting is complete. 
-     */
-    static class SizedTypeVisitor extends BaseDatabaseTypeVisitor {
-        protected long size;
-        protected long defaultSize;
-        protected String typeName;
-        
-        public void visit(SizedType databaseType) {
-            size = databaseType.getSize();
-            typeName = databaseType.getTypeName();
-            defaultSize = databaseType.getDefaultSize();
-        }
-        public void visit(BinaryType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(BlobType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(LongRawType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(RawType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(CharType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(NCharType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(ClobType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(NClobType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(URowIdType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(VarCharType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(VarChar2Type databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(LongType databaseType) {
-            visit((SizedType)databaseType);
-        }
-        public void visit(NVarChar2Type databaseType) {
-            visit((SizedType)databaseType);
-        }
-        
-        public String toString() {
-            StringBuilder sb = new StringBuilder(typeName);
-            if (size != defaultSize) {
-                sb.append('(');
-                sb.append(size);
-                sb.append(')');
-            }
-            return sb.toString();
-
-        }
     }
 }

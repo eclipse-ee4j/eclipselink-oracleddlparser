@@ -8,7 +8,8 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     David McCann - July 22, 2011 - 2.4 - Initial implementation
+ *     Mike Norman - June 10 2011, created DDL parser package
+ *     David McCann - July 2011, visit tests
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.test.visit;
 
@@ -17,10 +18,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-//DDL parser imports
+//DDL imports
 import org.eclipse.persistence.tools.oracleddl.metadata.IntervalDayToSecond;
 import org.eclipse.persistence.tools.oracleddl.metadata.IntervalYearToMonth;
-import org.eclipse.persistence.tools.oracleddl.metadata.visit.BaseDatabaseTypeVisitor;
 
 /**
  * Test Interval visit method chain.  Ensures that all required 
@@ -66,32 +66,5 @@ public class IntervalTypeTest {
         yearToMonth = new IntervalYearToMonth(1L);
         yearToMonth.accept(visitor);
         assertEquals("IntervalYearToMonth(1L) test failed:\n", visitor.toString(), IYTM_1);
-    }
-    
-    /**
-     * Visitor for use with IntervalDayToSecond and IntervalYearToMonth.
-     * The visit methods simply gather all relevant information such 
-     * that it can be returned as a String when visiting is complete. 
-     */
-    static class IntervalVisitor extends BaseDatabaseTypeVisitor {
-        //protected long dayPrecision;
-        //protected long secondPrecision;
-        //protected long yearPrecision;
-        protected String typeName;
-        
-        public void visit(IntervalDayToSecond databaseType) {
-            //dayPrecision = databaseType.getDayPrecision();
-            //secondPrecision = databaseType.getSecondPrecision();
-            typeName = databaseType.getTypeName();
-        }
-        
-        public void visit(IntervalYearToMonth databaseType) {
-            //yearPrecision = databaseType.getYearPrecision();
-            typeName = databaseType.getTypeName();
-        }
-        
-        public String toString() {
-            return typeName;
-        }
     }
 }

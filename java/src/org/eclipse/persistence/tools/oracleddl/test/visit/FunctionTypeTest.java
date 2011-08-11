@@ -8,13 +8,10 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     David McCann - July 22, 2011 - 2.4 - Initial implementation
+ *     Mike Norman - June 10 2011, created DDL parser package
+ *     David McCann - July 2011, visit tests
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.test.visit;
-
-//javase imports
-import java.util.ArrayList;
-import java.util.List;
 
 //JUnit4 imports
 import org.junit.Test;
@@ -26,7 +23,6 @@ import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
 import org.eclipse.persistence.tools.oracleddl.metadata.FloatType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
-import org.eclipse.persistence.tools.oracleddl.metadata.visit.BaseDatabaseTypeVisitor;
 
 /**
  * Test FunctionType visit method chain.  Ensures that all required 
@@ -65,46 +61,5 @@ public class FunctionTypeTest {
 		function.accept(visitor);
 		assertEquals("FunctionType test failed:\n" + visitor.toString(), visitor.toString(), FUNCTION);
 	}
-    
-    static class FunctionTypeVisitor extends BaseDatabaseTypeVisitor {
-        public String funcName;
-        public String schema;
-        public List<String> argData = new ArrayList<String>();
-        public String returnArg; 
-        
-        public void beginVisit(FunctionType funcType) {
-            funcName = funcType.getProcedureName();
-            schema = funcType.getSchema();
-            returnArg = funcType.getReturnArgument().getTypeName();
-        }
-        
-        public void beginVisit(ArgumentType argType) {
-            if (argType.optional()) {
-                argData.add(argType.getArgumentName() + "(opt) " + argType.getDirection() + " " + argType.getDataType());
-            } else {
-                argData.add(argType.getArgumentName() + " " + argType.getDirection() + " " + argType.getDataType());
-            }
-        }
-       
-        public String toString() {
-            StringBuilder sb = new StringBuilder("FUNCTION ");
-            if (schema != null) {
-                sb.append(schema);
-                sb.append(".");
-            }
-            sb.append(funcName);
-            sb.append(" (");
-            for(int i=0; i<argData.size();) {
-                String arg = argData.get(i);
-                sb.append(arg);
-                if (++i < argData.size()) {
-                    sb.append(", ");
-                }
-            }
-            sb.append(") RETURN ");
-            sb.append(returnArg);
-            return sb.toString();
-        }
-    }
 
 }

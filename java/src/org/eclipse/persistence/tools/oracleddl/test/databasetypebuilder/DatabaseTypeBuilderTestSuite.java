@@ -9,6 +9,7 @@
  *
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
+ *     David McCann - July 2011, visit tests
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder;
 
@@ -25,7 +26,6 @@ import org.junit.runners.Suite.SuiteClasses;
 //testing imports
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
-
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
 
 @RunWith(Suite.class)

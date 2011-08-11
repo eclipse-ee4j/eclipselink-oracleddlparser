@@ -9,6 +9,7 @@
  *
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
+ *     David McCann - July 2011, visit tests
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder;
 
@@ -24,9 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-//testing imports
-
-//Oracleddl (domain) imports
+//DDL imports
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilderException;
 
