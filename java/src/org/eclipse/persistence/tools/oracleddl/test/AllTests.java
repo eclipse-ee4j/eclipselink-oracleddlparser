@@ -23,6 +23,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 //testing imports
+import org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder.DatabaseTypeBuilderTestSuite;
+import org.eclipse.persistence.tools.oracleddl.test.ddlparser.DDLParserTest;
+import org.eclipse.persistence.tools.oracleddl.test.visit.VisitorsTestSuite;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
 
 @RunWith(Suite.class)
@@ -35,7 +38,7 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConne
 public class AllTests {
 
     //shared JUnit fixtures
-    static Connection conn = null;
+    public static Connection conn = null;
     
     @BeforeClass
     public static void setUp() throws ClassNotFoundException, SQLException {

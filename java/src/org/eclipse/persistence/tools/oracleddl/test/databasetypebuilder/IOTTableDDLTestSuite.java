@@ -10,7 +10,7 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
-package org.eclipse.persistence.tools.oracleddl.test;
+package org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder;
 
 //javase imports
 import java.sql.Connection;
@@ -26,40 +26,42 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 //Oracleddl (domain) imports
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
-import org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum;
+import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
 import org.eclipse.persistence.tools.oracleddl.metadata.SizedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
 //testing imports
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
+
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createTable;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropTable;
 
-public class TableDDLTestSuite {
 
-    static final String SIMPLETABLE = "DTB_SIMPLETABLE";
-    static final String SIMPLETABLE_FIELD1 = 
+public class IOTTableDDLTestSuite {
+
+    static final String IOTTABLE = "DTB_IOTTABLE";
+    static final String IOTTABLE_FIELD1 = 
         "ID";
-    static final String SIMPLETABLE_FIELD2 = 
+    static final String IOTTABLE_FIELD2 = 
         "NAME";
-    static final String SIMPLETABLE_FIELD3 = 
-        "SINCE";
-    static final String CREATE_SIMPLETABLE = 
-        "CREATE TABLE " + SIMPLETABLE + " (\n" +
-            SIMPLETABLE_FIELD1 + " INTEGER NOT NULL,\n" +
-            SIMPLETABLE_FIELD2 + " VARCHAR2(25),\n" +
-            SIMPLETABLE_FIELD3 + " DATE,\n" +
-            "PRIMARY KEY (" + SIMPLETABLE_FIELD1 + "," + SIMPLETABLE_FIELD2 + ")\n" +
-        ")";
-    static final String DROP_SIMPLETABLE =
-        "DROP TABLE " + SIMPLETABLE;
+    static final String IOTTABLE_FIELD3 = 
+        "RID";
+    static final String CREATE_IOTTABLE = 
+        "CREATE TABLE " + IOTTABLE + " (\n" +
+            IOTTABLE_FIELD1 + " NUMBER(4,0) NOT NULL ENABLE,\n" +
+            IOTTABLE_FIELD2 + " VARCHAR2(25),\n" +
+            IOTTABLE_FIELD3 + " UROWID(4000),\n" +
+            "PRIMARY KEY (" + IOTTABLE_FIELD1 + "," + IOTTABLE_FIELD2 + ")\n" +
+        ") ORGANIZATION INDEX NOCOMPRESS OVERFLOW";
+    static final String DROP_IOTTABLE =
+        "DROP TABLE " + IOTTABLE;
     
     //fixtures
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
@@ -76,11 +78,11 @@ public class TableDDLTestSuite {
             dtBuilder = new DatabaseTypeBuilder();
         }
         //send DDL to database
-        createTable(conn, CREATE_SIMPLETABLE);
+        createTable(conn, CREATE_IOTTABLE);
         boolean worked = true;
         String msg = null;
         try {
-            tableType = dtBuilder.buildTables(conn, SIMPLETABLE).get(0);
+            tableType = dtBuilder.buildTables(conn, IOTTABLE).get(0);
         }
         catch (Exception e) {
             worked = false;
@@ -89,16 +91,16 @@ public class TableDDLTestSuite {
         if (!worked) {
             fail(msg);
         }
-        expectedPKFieldNames.add(SIMPLETABLE_FIELD1);
-        expectedPKFieldNames.add(SIMPLETABLE_FIELD2);
-        expectedFieldNames.add(SIMPLETABLE_FIELD1);
-        expectedFieldNames.add(SIMPLETABLE_FIELD2);
-        expectedFieldNames.add(SIMPLETABLE_FIELD3);
+        expectedPKFieldNames.add(IOTTABLE_FIELD1);
+        expectedPKFieldNames.add(IOTTABLE_FIELD2);
+        expectedFieldNames.add(IOTTABLE_FIELD1);
+        expectedFieldNames.add(IOTTABLE_FIELD2);
+        expectedFieldNames.add(IOTTABLE_FIELD3);
     }
     
     @Test
     public void testTableName() {
-        assertEquals("incorrect table name", SIMPLETABLE , tableType.getTableName());
+        assertEquals("incorrect table name", IOTTABLE , tableType.getTableName());
     }
     
     @Test
@@ -134,31 +136,30 @@ public class TableDDLTestSuite {
         List<FieldType> columns = tableType.getColumns();
         FieldType field1 = columns.get(0);
         DatabaseType col1Type = field1.getDataType();
-        assertEquals("incorrect type for column [" + SIMPLETABLE_FIELD1 + "]",
-            ScalarDatabaseTypeEnum.INTEGER_TYPE.getTypeName(), col1Type.getTypeName());
-        assertTrue("incorrect NULL constraint for column [" + SIMPLETABLE_FIELD1 + "]",
+        assertEquals("incorrect type for column [" + IOTTABLE_FIELD1 + "]",
+            new NumericType().getTypeName(), col1Type.getTypeName());
+        assertTrue("incorrect NULL constraint for column [" + IOTTABLE_FIELD1 + "]",
             field1.notNull());
 
         FieldType field2 = columns.get(1);
         DatabaseType col2Type = field2.getDataType();
-        assertEquals("incorrect type for column [" + SIMPLETABLE_FIELD2 + "]",
+        assertEquals("incorrect type for column [" + IOTTABLE_FIELD2 + "]",
             new VarChar2Type().getTypeName(), col2Type.getTypeName());
-        assertFalse("incorrect NULL constraint for column [" + SIMPLETABLE_FIELD2 + "]",
+        assertFalse("incorrect NULL constraint for column [" + IOTTABLE_FIELD2 + "]",
             field2.notNull());
-        assertTrue("incorrect size for column [" + SIMPLETABLE_FIELD2 + "]",
+        assertTrue("incorrect size for column [" + IOTTABLE_FIELD2 + "]",
             ((SizedType)col2Type).getSize() == 25);
 
         FieldType field3 = columns.get(2);
         DatabaseType col3Type = field3.getDataType();
-        assertEquals("incorrect type for column [" + SIMPLETABLE_FIELD3 + "]",
-            ScalarDatabaseTypeEnum.DATE_TYPE.getTypeName(), col3Type.getTypeName());
-        assertFalse("incorrect NULL constraint for column [" + SIMPLETABLE_FIELD3 + "]",
+        assertEquals("incorrect type for column [" + IOTTABLE_FIELD3 + "]",
+            new URowIdType().getTypeName(), col3Type.getTypeName());
+        assertFalse("incorrect NULL constraint for column [" + IOTTABLE_FIELD3 + "]",
             field3.notNull());
     }
 
     @AfterClass
     public static void tearDown() {
-        dropTable(conn, DROP_SIMPLETABLE);
+        dropTable(conn, DROP_IOTTABLE);
     }
-
 }

@@ -1,4 +1,4 @@
-package org.eclipse.persistence.tools.oracleddl.test;
+package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
 import java.io.IOException;

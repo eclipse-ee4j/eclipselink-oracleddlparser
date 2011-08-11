@@ -10,7 +10,7 @@
  * Contributors:
  *     David McCann - July 22, 2011 - 2.4 - Initial implementation
  ******************************************************************************/
-package org.eclipse.persistence.tools.oracleddl.test;
+package org.eclipse.persistence.tools.oracleddl.test.visit;
 
 //javase imports
 import java.util.ArrayList;

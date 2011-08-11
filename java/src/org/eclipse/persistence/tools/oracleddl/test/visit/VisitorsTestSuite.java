@@ -10,7 +10,7 @@
  * Contributors:
  *     Mike Norman - June 10 2011, created DDL parser package
  ******************************************************************************/
-package org.eclipse.persistence.tools.oracleddl.test;
+package org.eclipse.persistence.tools.oracleddl.test.visit;
 
 //JUnit4 imports
 import org.junit.runner.RunWith;

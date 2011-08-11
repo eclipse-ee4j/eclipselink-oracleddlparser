@@ -36,12 +36,12 @@ public class TestHelper {
         return DriverManager.getConnection(url, username, password);
     }
     
-    protected static void createTable(Connection conn, String createTableDDL) throws SQLException {
+    public static void createTable(Connection conn, String createTableDDL) throws SQLException {
         PreparedStatement pStmt = conn.prepareStatement(createTableDDL);
         pStmt.execute();
     }
     
-    protected static void dropTable(Connection conn, String dropTableDDL) {
+    public static void dropTable(Connection conn, String dropTableDDL) {
         try {
             PreparedStatement pStmt = conn.prepareStatement(dropTableDDL);
             pStmt.execute();
