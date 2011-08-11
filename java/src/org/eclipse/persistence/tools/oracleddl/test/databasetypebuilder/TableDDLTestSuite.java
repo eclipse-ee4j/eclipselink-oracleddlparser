@@ -70,12 +70,8 @@ public class TableDDLTestSuite {
     static List<String> expectedPKFieldNames = new ArrayList<String>();
     @BeforeClass
     public static void setUp() throws SQLException, ClassNotFoundException {
-        if (conn == null) {
-            conn = buildConnection();
-        }
-        if (dtBuilder == null) {
-            dtBuilder = new DatabaseTypeBuilder();
-        }
+        conn = buildConnection();
+        dtBuilder = new DatabaseTypeBuilder();
         //send DDL to database
         createTable(conn, CREATE_SIMPLETABLE);
         boolean worked = true;

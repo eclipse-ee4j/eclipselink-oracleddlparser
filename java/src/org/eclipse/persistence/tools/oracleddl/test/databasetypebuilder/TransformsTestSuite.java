@@ -37,9 +37,7 @@ public class TransformsTestSuite {
     static TreeSet<Object> expectedTransformsKeys = null;
     @BeforeClass
     public static void setUp() {
-        if (dtBuilder == null) {
-            dtBuilder = new DatabaseTypeBuilder();
-        }
+        dtBuilder = new DatabaseTypeBuilder();
         expectedTransformsKeys = new TreeSet<Object>();
         expectedTransformsKeys.add("BODY");
         expectedTransformsKeys.add("CONSTRAINTS");

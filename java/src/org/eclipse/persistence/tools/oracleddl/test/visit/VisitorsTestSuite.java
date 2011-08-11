@@ -24,7 +24,8 @@ import org.junit.runners.Suite.SuiteClasses;
     IntervalTypeTest.class,
     PrecisionTypeTest.class,
     ProcedureTypeTest.class,
-    SizedTypeTest.class
+    SizedTypeTest.class,
+    TableTypeTest.class
   }
 )
 public class VisitorsTestSuite {
