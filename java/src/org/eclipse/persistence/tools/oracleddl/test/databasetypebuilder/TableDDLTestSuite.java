@@ -77,7 +77,7 @@ public class TableDDLTestSuite {
         boolean worked = true;
         String msg = null;
         try {
-            tableType = dtBuilder.buildTables(conn, SIMPLETABLE).get(0);
+            tableType = dtBuilder.buildTables(conn, "SCOTT", SIMPLETABLE).get(0);
         }
         catch (Exception e) {
             worked = false;
