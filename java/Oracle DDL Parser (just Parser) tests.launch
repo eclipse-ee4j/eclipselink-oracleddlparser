@@ -18,5 +18,4 @@
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.persistence.tools.oracleddl.test.ddlparser.DDLParserTest"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="oracleddlparser.test"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Ddb.user=scott -Ddb.pwd=tiger -Ddb.url=jdbc:oracle:thin:@localhost:1521:ORCL"/>
 </launchConfiguration>
