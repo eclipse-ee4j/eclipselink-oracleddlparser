@@ -16,19 +16,24 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class FunctionType extends ProcedureType {
 
-	protected DatabaseType returnArgument;
-	
-	public FunctionType(String procedureName) {
-		super(procedureName);
-	}
+    protected DatabaseType returnArgument;
+    
+    public FunctionType(String procedureName) {
+        super(procedureName);
+    }
 
-	public DatabaseType getReturnArgument() {
-		return returnArgument;
-	}
+    @Override
+    public boolean isFunction() {
+        return true;
+    }
 
-	public void setReturnArgument(DatabaseType returnArgument) {
-		this.returnArgument = returnArgument;
-	}
+    public DatabaseType getReturnArgument() {
+        return returnArgument;
+    }
+
+    public void setReturnArgument(DatabaseType returnArgument) {
+        this.returnArgument = returnArgument;
+    }
 
     @Override
     public String toString() {
@@ -59,8 +64,8 @@ public class FunctionType extends ProcedureType {
         return sb.toString();
     }
 
-	@Override
-	public void accept(DatabaseTypeVisitor visitor) {
-		visitor.visit(this);
-	}
+    @Override
+    public void accept(DatabaseTypeVisitor visitor) {
+        visitor.visit(this);
+    }
 }

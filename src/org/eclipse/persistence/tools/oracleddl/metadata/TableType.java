@@ -25,11 +25,15 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     protected String schema;
     protected List<FieldType> columns = new ArrayList<FieldType>();
     protected boolean iot = false;
+
+    public TableType() {
+        super(null);
+    }
     
     public TableType(String tableName) {
-		super(null);
-		setTableName(tableName);
-	}
+        super(null);
+        setTableName(tableName);
+    }
 
     public String getTableName() {
         return tableName;
@@ -41,9 +45,9 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     }
 
     public String getSchema() {
-		return schema;
-	}
-	public void setSchema(String schema) {
+        return schema;
+    }
+    public void setSchema(String schema) {
        this.schema = schema;
     }
 
@@ -52,7 +56,7 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     }
     
     public List<FieldType> getColumns() {
-    	return columns;
+        return columns;
     }
 
     public void setIOT(boolean iot) {
@@ -64,11 +68,11 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     }
     
     public int numberOfPKColumns() {
-    	int pkColumns = 0;
+        int pkColumns = 0;
         for (FieldType col : columns) {
-        	if (col.pk()) {
-        		pkColumns++;
-        	}
+            if (col.pk()) {
+                pkColumns++;
+            }
         }
         return pkColumns;
     }
@@ -92,14 +96,14 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
             sb.append("\t");
             sb.append("PRIMARY KEY (");
             for (int i = 0, pkColCount = 0, len = columns.size(); i < len; i++) {
-            	FieldType col = columns.get(i);
-            	if (col.pk) {
+                FieldType col = columns.get(i);
+                if (col.pk) {
                     sb.append(col.fieldName);
                     pkColCount++;
                     if (pkColCount < numPkCols) {
                         sb.append(',');
                     }
-            	}
+                }
             }
             sb.append(")\n");
         }
@@ -110,7 +114,7 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
         return sb.toString();
     }
 
-	public void accept(DatabaseTypeVisitor visitor) {
-		visitor.visit(this);
-	}
+    public void accept(DatabaseTypeVisitor visitor) {
+        visitor.visit(this);
+    }
 }

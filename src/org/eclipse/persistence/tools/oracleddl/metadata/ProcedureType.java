@@ -21,14 +21,16 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class ProcedureType extends CompositeDatabaseTypeBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
+    protected String catalogName; // for Oracle catalogName == packageName
     protected String procedureName;
     protected String schema;
+    protected int overload; // Oracle support overloading - which number is this procedure
     protected List<ArgumentType> arguments = new ArrayList<ArgumentType>();
 
     public ProcedureType(String procedureName) {
-		super(null);
-		setProcedureName(procedureName);
-	}
+        super(null);
+        setProcedureName(procedureName);
+    }
 
     public String getProcedureName() {
         return procedureName;
@@ -40,20 +42,38 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
     }
 
     public String getSchema() {
-		return schema;
-	}
-	public void setSchema(String schema) {
+        return schema;
+    }
+    public void setSchema(String schema) {
        this.schema = schema;
     }
 
-	public List<ArgumentType> getArguments() {
-		return arguments;
-	}
+    public String getCatalogName() {
+        return catalogName;
+    }
+    public void setCatalogName(String catalogName) {
+        this.catalogName = catalogName;
+    }
 
-	@Override
-	public void addCompositeType(DatabaseType enclosedType) {
-	    arguments.add((ArgumentType)enclosedType);
-	}
+    public int getOverload() {
+        return overload;
+    }
+    public void setOverload(int overload) {
+        this.overload = overload;
+    }
+
+    public List<ArgumentType> getArguments() {
+        return arguments;
+    }
+
+    public boolean isFunction() {
+        return false;
+    }
+
+    @Override
+    public void addCompositeType(DatabaseType enclosedType) {
+        arguments.add((ArgumentType)enclosedType);
+    }
 
     @Override
     public String toString() {
@@ -83,7 +103,7 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
         return sb.toString();
     }
 
-	public void accept(DatabaseTypeVisitor visitor) {
-		visitor.visit(this);
-	}
+    public void accept(DatabaseTypeVisitor visitor) {
+        visitor.visit(this);
+    }
 }
