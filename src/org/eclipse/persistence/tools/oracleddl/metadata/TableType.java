@@ -21,6 +21,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class TableType extends CompositeDatabaseTypeBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
+    public static final String TYPENAME = "TABLE";
     protected String tableName;
     protected String schema;
     protected List<FieldType> columns = new ArrayList<FieldType>();
@@ -41,7 +42,7 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
-        super.typeName = "TABLE " + tableName;
+        super.typeName = TYPENAME + " " + tableName;
     }
 
     public String getSchema() {
@@ -79,7 +80,8 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("TABLE ");
+        StringBuilder sb = new StringBuilder(TYPENAME);
+        sb.append(" ");
         if (schema != null) {
             sb.append(schema);
             sb.append(".");
