@@ -89,6 +89,7 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.ROWID_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_INTEGER_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SYS_REFCURSOR_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIME_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIMESTAMP_TYPE;
 
@@ -301,6 +302,7 @@ TOKEN: {
         | <K_STRING: "STRING">
         | <K_SUBMUlookISET: "SUBMUlookISET">
         | <K_SUBTYPE: "SUBTYPE">
+        | <K_SYS_REFCURSOR: "SYS_REFCURSOR">
         | <K_TABLE: "TABLE">
         | <K_TEMPORARY: "TEMPORARY">
         | <K_THE: "THE">
@@ -1121,6 +1123,13 @@ DatabaseType datatype():
                            jjtn000.jjtSetLastToken(getToken(0));
                          }
 /*@egen*/ { return SIMPLE_INTEGER_TYPE;}
+    | <K_SYS_REFCURSOR>/*@bgen(jjtree)*/
+                         {
+                           jjtree.closeNodeScope(jjtn000, true);
+                           jjtc000 = false;
+                           jjtn000.jjtSetLastToken(getToken(0));
+                         }
+/*@egen*/  { return SYS_REFCURSOR_TYPE;}
     | <K_BLOB >/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);

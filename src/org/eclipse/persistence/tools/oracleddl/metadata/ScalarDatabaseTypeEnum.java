@@ -36,6 +36,7 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
     ROWID_TYPE("ROWID"),
     SIGN_TYPE("SIGNTYPE"),
     SIMPLE_INTEGER_TYPE("SIMPLE INTEGER"),
+    SYS_REFCURSOR_TYPE("SYS_REFCURSOR"),
     SMALLINT_TYPE("SMALLINT"),
     TIME_TYPE("TIME"),
     TIMESTAMP_TYPE("TIMESTAMP"),

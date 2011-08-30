@@ -88,6 +88,7 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.ROWID_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_INTEGER_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SYS_REFCURSOR_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIME_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIMESTAMP_TYPE;
 
@@ -297,6 +298,7 @@ TOKEN: {
         | <K_STRING: "STRING">
         | <K_SUBMUlookISET: "SUBMUlookISET">
         | <K_SUBTYPE: "SUBTYPE">
+        | <K_SYS_REFCURSOR: "SYS_REFCURSOR">
         | <K_TABLE: "TABLE">
         | <K_TEMPORARY: "TEMPORARY">
         | <K_THE: "THE">
@@ -758,6 +760,7 @@ DatabaseType datatype():
     | <K_MLSLABEL> { return MLSLABEL_TYPE;}
     | <K_PLS_INTEGER> { return PLS_INTEGER_TYPE;}
     | <K_SIMPLE_INTEGER> { return SIMPLE_INTEGER_TYPE;}
+    | <K_SYS_REFCURSOR>  { return SYS_REFCURSOR_TYPE;}
     | <K_BLOB > { return new BlobType();}
     | <K_NCLOB> { return new NClobType();}
     | <K_BFILE>  { return BFILE_TYPE;}
