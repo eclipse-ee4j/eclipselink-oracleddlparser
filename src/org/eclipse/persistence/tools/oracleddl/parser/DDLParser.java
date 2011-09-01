@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.util.List;
 
 //metadata imports
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
 import org.eclipse.persistence.tools.oracleddl.metadata.CharType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ClobType;
@@ -242,10 +244,14 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         ;
       }
       procedureName = OracleObjectName();
+           procedureType = new ProcedureType(procedureName);
+              if (schema != null) {
+                  procedureType.setSchema(schema);
+              }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case O_OPENPAREN:
         jj_consume_token(O_OPENPAREN);
-        argumentList();
+        argumentList(procedureType);
         jj_consume_token(O_CLOSEPAREN);
         break;
       default:
@@ -273,10 +279,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetLastToken(getToken(0));
-      procedureType = new ProcedureType(procedureName);
-      if (schema != null) {
-          procedureType.setSchema(schema);
-      }
       typesRepository.setDatabaseType(procedureName, procedureType);
       {if (true) return procedureType;}
     } catch (Throwable jjte000) {
@@ -332,7 +334,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case O_OPENPAREN:
         jj_consume_token(O_OPENPAREN);
-        argumentList();
+        argumentList(functionType);
         jj_consume_token(O_CLOSEPAREN);
         break;
       default:
@@ -1879,12 +1881,13 @@ String s = null;
     throw new Error("Missing return statement in function");
   }
 
-  final public String typeSpec() throws ParseException {
+  final public DatabaseType typeSpec() throws ParseException {
  /*@bgen(jjtree) typeSpec */
  SimpleNode jjtn000 = new SimpleNode(this, JJTTYPESPEC);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));String s = null;
+ jjtn000.jjtSetFirstToken(getToken(1));DatabaseType dataType = null;
+ String s = null;
     try {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_BFILE:
@@ -1927,7 +1930,7 @@ String s = null;
       case K_UROWID:
       case K_VARCHAR2:
       case K_VARCHAR:
-        datatype();
+        dataType = datatype();
         break;
       default:
         if (jj_2_18(3)) {
@@ -1940,7 +1943,7 @@ String s = null;
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case S_IDENTIFIER:
           case S_QUOTED_IDENTIFIER:
-            typeName();
+            s = typeName();
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
             case O_OPENPAREN:
               jj_consume_token(O_OPENPAREN);
@@ -1960,17 +1963,7 @@ String s = null;
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtn000.jjtSetLastToken(getToken(0));
-      Token first = jjtn000.jjtGetFirstToken();
-      Token last = jjtn000.jjtGetLastToken();
-      Token cur = first;
-      StringBuilder sb = new StringBuilder();
-      sb.append(first.image);
-      while (cur != last) {
-          cur = cur.next;
-          sb.append(cur.image);
-      }
-      jjtn000.jjtSetValue(sb.toString());
-      {if (true) return sb.toString();}
+      {if (true) return dataType;}
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -2339,12 +2332,14 @@ String s = null;
 // Procedure Specification
   final public void procedureSpec(PLSQLPackageType packageType) throws ParseException {
  Token t = null;
+ ProcedureType procedureType = null;
     jj_consume_token(K_PROCEDURE);
     t = jj_consume_token(S_IDENTIFIER);
+            procedureType = new ProcedureType(t.image);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_OPENPAREN:
       jj_consume_token(O_OPENPAREN);
-      argumentList();
+      argumentList(procedureType);
       jj_consume_token(O_CLOSEPAREN);
       break;
     default:
@@ -2353,8 +2348,8 @@ String s = null;
     jj_consume_token(O_SEMICOLON);
   }
 
-  final public void argumentList() throws ParseException {
-    argument();
+  final public void argumentList(ProcedureType procedureType) throws ParseException {
+    argument(procedureType);
     label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -2365,19 +2360,21 @@ String s = null;
         break label_4;
       }
       jj_consume_token(O_COMMA);
-      argument();
+      argument(procedureType);
     }
   }
 
 // Function Specification
   final public void functionSpec(PLSQLPackageType packageType) throws ParseException {
  Token t = null;
+ FunctionType functionType = null;
     jj_consume_token(K_FUNCTION);
     t = jj_consume_token(S_IDENTIFIER);
+            functionType = new FunctionType(t.image);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_OPENPAREN:
       jj_consume_token(O_OPENPAREN);
-      argumentList();
+      argumentList(functionType);
       jj_consume_token(O_CLOSEPAREN);
       break;
     default:
@@ -2450,71 +2447,53 @@ String s = null;
     throw new Error("Missing return statement in function");
   }
 
-  final public SimpleNode argument() throws ParseException {
- /*@bgen(jjtree) argument */
- SimpleNode jjtn000 = new SimpleNode(this, JJTARGUMENT);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));Token t = null;
+  final public void argument(ProcedureType procedureType) throws ParseException {
+ Token t = null;
+ ArgumentType argumentType = null;
+ DatabaseType argumentDataType = null;
+ ArgumentTypeDirection argDirection = ArgumentTypeDirection.IN; // by default, arguments are IN
  String direction = null;
-    try {
-      t = jj_consume_token(S_IDENTIFIER);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_IN:
-      case K_OUT:
-        direction = direction();
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_NOCOPY:
-        jj_consume_token(K_NOCOPY);
-        break;
-      default:
-        ;
-      }
-      typeSpec();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_DEFAULT:
-      case O_ASSIGN:
-        argumentDefaultAssignment();
-        break;
-      default:
-        ;
-      }
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-      if (direction != null) {
-          jjtn000.jjtSetValue(direction + " " + t.image);
-      }
-      else {
-          // by default, arguments are IN
-          jjtn000.jjtSetValue("IN " + t.image);
-      }
-      {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
+ SimpleNode defaultAssignment = null;
+    t = jj_consume_token(S_IDENTIFIER);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_IN:
+    case K_OUT:
+      direction = direction();
+      break;
+    default:
+      ;
     }
-    throw new Error("Missing return statement in function");
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_NOCOPY:
+      jj_consume_token(K_NOCOPY);
+      break;
+    default:
+      ;
+    }
+    argumentDataType = typeSpec();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_DEFAULT:
+    case O_ASSIGN:
+      defaultAssignment = argumentDefaultAssignment();
+      break;
+    default:
+      ;
+    }
+      argumentType = new ArgumentType(t.image);
+      argumentType.setDataType(argumentDataType);
+      if (direction != null) {
+          if ("OUT".equals(direction)) {
+              argDirection = ArgumentTypeDirection.OUT;
+          }
+          else if ("IN OUT".equals(direction)) {
+              argDirection = ArgumentTypeDirection.INOUT;
+          }
+          argumentType.setDirection(argDirection);
+      }
+      if (defaultAssignment != null) {
+          argumentType.setOptional();
+      }
+      procedureType.addCompositeType(argumentType);
   }
 
   final public String direction() throws ParseException {
@@ -2891,22 +2870,6 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3R_32() {
-    if (jj_scan_token(K_INTERVAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3_16() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_21() {
-    if (jj_3R_58()) return true;
-    return false;
-  }
-
   private boolean jj_3_19() {
     if (jj_3R_11()) return true;
     if (jj_scan_token(K_ROWTYPE)) return true;
@@ -2993,14 +2956,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_20() {
-    if (jj_3R_10()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(192)) jj_scanpos = xsp;
-    return false;
-  }
-
   private boolean jj_3R_28() {
     if (jj_scan_token(K_LONG)) return true;
     return false;
@@ -3011,17 +2966,25 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_21() {
-    if (jj_3R_11()) return true;
+  private boolean jj_3_20() {
+    if (jj_3R_10()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(165)) jj_scanpos = xsp;
+    if (jj_scan_token(192)) jj_scanpos = xsp;
     return false;
   }
 
   private boolean jj_3_5() {
     if (jj_3R_6()) return true;
     if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_21() {
+    if (jj_3R_11()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(165)) jj_scanpos = xsp;
     return false;
   }
 
@@ -3051,6 +3014,11 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_9() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3R_27() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3064,11 +3032,6 @@ String s = null;
     }
     }
     }
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
@@ -3249,31 +3212,8 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_18() {
-    if (jj_scan_token(O_DOT)) return true;
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  private boolean jj_3_10() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
   private boolean jj_3R_13() {
     if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3292,24 +3232,36 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_10() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3_8() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
   private boolean jj_3R_49() {
     if (jj_scan_token(K_CHAR)) return true;
     return false;
   }
 
-  private boolean jj_3R_48() {
-    if (jj_scan_token(K_DOUBLE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_58() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_17() {
+  private boolean jj_3R_18() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_48() {
+    if (jj_scan_token(K_DOUBLE)) return true;
     return false;
   }
 
@@ -3323,14 +3275,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_11() {
-    if (jj_3R_6()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) jj_scanpos = xsp;
-    return false;
-  }
-
   private boolean jj_3_15() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
@@ -3341,6 +3285,11 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3R_58() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
   private boolean jj_3R_44() {
     if (jj_scan_token(K_NCLOB)) return true;
     return false;
@@ -3348,6 +3297,12 @@ String s = null;
 
   private boolean jj_3R_43() {
     if (jj_scan_token(K_BLOB)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -3371,22 +3326,28 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3R_38() {
+    if (jj_scan_token(K_REAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3_1() {
     if (jj_3R_6()) return true;
     if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
-  private boolean jj_3R_38() {
-    if (jj_scan_token(K_REAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10() {
-    if (jj_3R_6()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_17()) jj_scanpos = xsp;
+  private boolean jj_3_22() {
+    if (jj_scan_token(K_IN)) return true;
+    if (jj_scan_token(K_OUT)) return true;
     return false;
   }
 
@@ -3425,12 +3386,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_22() {
-    if (jj_scan_token(K_IN)) return true;
-    if (jj_scan_token(K_OUT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_15() {
     if (jj_3R_10()) return true;
     return false;
@@ -3451,6 +3406,14 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3R_10() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_17()) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3R_7() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3458,6 +3421,22 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_15()) return true;
     }
+    return false;
+  }
+
+  private boolean jj_3R_32() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3_16() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21() {
+    if (jj_3R_58()) return true;
     return false;
   }
 

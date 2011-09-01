@@ -42,6 +42,8 @@ import java.io.InputStream;
 import java.util.List;
 
 //metadata imports
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
 import org.eclipse.persistence.tools.oracleddl.metadata.CharType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ClobType;
@@ -467,7 +469,12 @@ ProcedureType parseTopLevelProcedure():
 /*@egen*/
   <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_PROCEDURE>
     [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] procedureName=OracleObjectName()
-    [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ] [ <K_AS> | <K_IS> ]
+       {
+           procedureType = new ProcedureType(procedureName);
+	      if (schema != null) {
+	          procedureType.setSchema(schema);
+	      }       }
+    [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ] [ <K_AS> | <K_IS> ]
         skipToEnd()/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
@@ -476,10 +483,6 @@ ProcedureType parseTopLevelProcedure():
     }
 /*@egen*/
     {
-      procedureType = new ProcedureType(procedureName);
-      if (schema != null) {
-          procedureType.setSchema(schema);
-      }
       typesRepository.setDatabaseType(procedureName, procedureType);
       return procedureType;
     }/*@bgen(jjtree)*/
@@ -521,7 +524,7 @@ FunctionType parseTopLevelFunction():
 /*@egen*/
   <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_FUNCTION>
     [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
-    [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ] functionReturnSpec() [ <K_AS> | <K_IS> ]
+    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] functionReturnSpec() [ <K_AS> | <K_IS> ]
         skipToEnd()/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
@@ -1381,20 +1384,21 @@ DatabaseType datatype():
 /*@egen*/
 }
 
-String typeSpec():
+DatabaseType typeSpec():
 {/*@bgen(jjtree) typeSpec */
  SimpleNode jjtn000 = new SimpleNode(this, JJTTYPESPEC);
  boolean jjtc000 = true;
  jjtree.openNodeScope(jjtn000);
  jjtn000.jjtSetFirstToken(getToken(1));
-/*@egen*/String s = null;}
+/*@egen*/DatabaseType dataType = null;
+ String s = null;}
 {/*@bgen(jjtree) typeSpec */
     try {
 /*@egen*/
-    (      datatype()
+    (      dataType=datatype()
     | LOOKAHEAD(3) columnSpec() <K_TYPE2>
     | LOOKAHEAD(3) tableSpec() <K_ROWTYPE>
-    | typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
+    | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     )/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
@@ -1403,16 +1407,7 @@ String typeSpec():
     }
 /*@egen*/
     {
-      Token first = jjtn000.jjtGetFirstToken();
-      Token last = jjtn000.jjtGetLastToken();
-      Token cur = first;
-      StringBuilder sb = new StringBuilder();
-      sb.append(first.image);
-      while (cur != last) {
-          cur = cur.next;
-          sb.append(cur.image);      }
-      jjtn000.jjtSetValue(sb.toString());
-      return sb.toString();    }/*@bgen(jjtree)*/
+      return dataType;    }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -1604,25 +1599,33 @@ void cursorDeclaration(PLSQLPackageType packageType)      :
 
 // Procedure Specification
 void procedureSpec(PLSQLPackageType packageType)      :
-{Token t = null;}
+{Token t = null;
+ ProcedureType procedureType = null;
+}
 {
-    <K_PROCEDURE> t=<S_IDENTIFIER>
-        [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ]
+    <K_PROCEDURE> t=<S_IDENTIFIER>        {
+            procedureType = new ProcedureType(t.image);        }
+        [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ]
     <O_SEMICOLON>
 }
 
-void argumentList()      :
+void argumentList(ProcedureType procedureType)      :
 {}
 {
-   argument() ( <O_COMMA> argument() )*
+   argument(procedureType) ( <O_COMMA> argument(procedureType) )*
 }
 
 // Function Specification
 void functionSpec(PLSQLPackageType packageType)      :
-{Token t = null;}
+{Token t = null;
+ FunctionType functionType = null;
+}
 {
     <K_FUNCTION> t=<S_IDENTIFIER>
-        [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ]
+        {
+            functionType = new FunctionType(t.image);
+        }
+        [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ]
         functionReturnSpec()
         [ <K_DETERMINISTIC> | <K_PIPELINED> | <K_PARALLEL_ENABLE> | <K_RESULT_CACHE> ]
     <O_SEMICOLON>
@@ -1670,57 +1673,30 @@ SimpleNode functionReturnSpec():
 /*@egen*/
 }
 
-SimpleNode argument():
-{/*@bgen(jjtree) argument */
- SimpleNode jjtn000 = new SimpleNode(this, JJTARGUMENT);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));
-/*@egen*/Token t = null;
+void argument(ProcedureType procedureType)      :
+{Token t = null;
+ ArgumentType argumentType = null;
+ DatabaseType argumentDataType = null;
+ ArgumentTypeDirection argDirection = ArgumentTypeDirection.IN; // by default, arguments are IN
  String direction = null;
+ SimpleNode defaultAssignment = null;
 }
-{/*@bgen(jjtree) argument */
-    try {
-/*@egen*/
+{
     t=<S_IDENTIFIER> [(direction=direction())]
-        [ <K_NOCOPY> ] typeSpec() [ argumentDefaultAssignment() ]/*@bgen(jjtree)*/
+        [ <K_NOCOPY> ] argumentDataType=typeSpec() [ defaultAssignment=argumentDefaultAssignment() ]
     {
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-    }
-/*@egen*/
-    {
+      argumentType = new ArgumentType(t.image);
+      argumentType.setDataType(argumentDataType);
       if (direction != null) {
-          jjtn000.jjtSetValue(direction + " " + t.image);
-      }
-      else {
-          // by default, arguments are IN
-          jjtn000.jjtSetValue("IN " + t.image);
-      }
-      return jjtn000;
-    }/*@bgen(jjtree)*/
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        throw (RuntimeException)jjte000;
-      }
-      if (jjte000 instanceof ParseException) {
-        throw (ParseException)jjte000;
-      }
-      throw (Error)jjte000;
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
+          if ("OUT".equals(direction)) {
+              argDirection = ArgumentTypeDirection.OUT;
+          }
+          else if ("IN OUT".equals(direction)) {
+              argDirection = ArgumentTypeDirection.INOUT;          }
+          argumentType.setDirection(argDirection);      }      if (defaultAssignment != null) {
+          argumentType.setOptional();      }
+      procedureType.addCompositeType(argumentType);
     }
-/*@egen*/
 }
 
 String direction()      :

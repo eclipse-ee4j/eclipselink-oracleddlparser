@@ -16,6 +16,8 @@ package org.eclipse.persistence.tools.oracleddl.parser;
 import java.io.InputStream;
 import java.util.List;
 //metadata imports
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
 import org.eclipse.persistence.tools.oracleddl.metadata.CharType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ClobType;

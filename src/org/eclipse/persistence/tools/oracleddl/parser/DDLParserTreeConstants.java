@@ -16,8 +16,7 @@ public interface DDLParserTreeConstants
   public int JJTTYPESPEC = 9;
   public int JJTFIELDDECLARATION = 10;
   public int JJTFUNCTIONRETURNSPEC = 11;
-  public int JJTARGUMENT = 12;
-  public int JJTARGUMENTDEFAULTASSIGNMENT = 13;
+  public int JJTARGUMENTDEFAULTASSIGNMENT = 12;
 
 
   public String[] jjtNodeName = {
@@ -33,8 +32,7 @@ public interface DDLParserTreeConstants
     "typeSpec",
     "fieldDeclaration",
     "functionReturnSpec",
-    "argument",
     "argumentDefaultAssignment",
   };
 }
-/* JavaCC - OriginalChecksum=4a0f489189e4c3ead4b8cf5fc0c660e0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=c9cbd7f9ac6cc926d5fef64e781e578a (do not edit this line) */
