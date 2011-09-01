@@ -39,9 +39,11 @@ import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
 //testing imports
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_USERNAME_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_USERNAME;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createTable;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropTable;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createDbArtifact;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropDbArtifact;
 
 public class TableDDLTestSuite {
 
@@ -73,11 +75,12 @@ public class TableDDLTestSuite {
         conn = buildConnection();
         dtBuilder = new DatabaseTypeBuilder();
         //send DDL to database
-        createTable(conn, CREATE_SIMPLETABLE);
+        createDbArtifact(conn, CREATE_SIMPLETABLE);
         boolean worked = true;
         String msg = null;
         try {
-            tableType = dtBuilder.buildTables(conn, "SCOTT", SIMPLETABLE).get(0);
+            String schema = System.getProperty(DATABASE_USERNAME_KEY, DEFAULT_DATABASE_USERNAME);
+            tableType = dtBuilder.buildTables(conn, schema, SIMPLETABLE).get(0);
         }
         catch (Exception e) {
             worked = false;
@@ -155,7 +158,7 @@ public class TableDDLTestSuite {
 
     @AfterClass
     public static void tearDown() {
-        dropTable(conn, DROP_SIMPLETABLE);
+        dropDbArtifact(conn, DROP_SIMPLETABLE);
     }
 
 }

@@ -21,13 +21,13 @@ import java.sql.SQLException;
 
 public class TestHelper {
 
-    static final String DATABASE_DRIVER = "oracle.jdbc.OracleDriver";
-    static final String DATABASE_USERNAME_KEY = "db.user";
-    static final String DEFAULT_DATABASE_USERNAME = "scott";
-    static final String DATABASE_PASSWORD_KEY = "db.pwd";
-    static final String DEFAULT_DATABASE_PASSWORD = "tiger";
-    static final String DATABASE_URL_KEY = "db.url";
-    static final String DEFAULT_DATABASE_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
+    public static final String DATABASE_DRIVER = "oracle.jdbc.OracleDriver";
+    public static final String DATABASE_USERNAME_KEY = "db.user";
+    public static final String DEFAULT_DATABASE_USERNAME = "scott";
+    public static final String DATABASE_PASSWORD_KEY = "db.pwd";
+    public static final String DEFAULT_DATABASE_PASSWORD = "tiger";
+    public static final String DATABASE_URL_KEY = "db.url";
+    public static final String DEFAULT_DATABASE_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
     
     public static Connection buildConnection() throws ClassNotFoundException, SQLException {
         String username = System.getProperty(DATABASE_USERNAME_KEY, DEFAULT_DATABASE_USERNAME);
@@ -37,12 +37,12 @@ public class TestHelper {
         return DriverManager.getConnection(url, username, password);
     }
     
-    public static void createTable(Connection conn, String createTableDDL) throws SQLException {
+    public static void createDbArtifact(Connection conn, String createTableDDL) throws SQLException {
         PreparedStatement pStmt = conn.prepareStatement(createTableDDL);
         pStmt.execute();
     }
     
-    public static void dropTable(Connection conn, String dropTableDDL) {
+    public static void dropDbArtifact(Connection conn, String dropTableDDL) {
         try {
             PreparedStatement pStmt = conn.prepareStatement(dropTableDDL);
             pStmt.execute();

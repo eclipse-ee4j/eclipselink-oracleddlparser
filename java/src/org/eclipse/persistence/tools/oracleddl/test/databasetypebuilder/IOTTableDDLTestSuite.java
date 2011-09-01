@@ -41,8 +41,8 @@ import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 //testing imports
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createTable;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropTable;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createDbArtifact;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropDbArtifact;
 
 
 public class IOTTableDDLTestSuite {
@@ -75,7 +75,7 @@ public class IOTTableDDLTestSuite {
         conn = buildConnection();
         dtBuilder = new DatabaseTypeBuilder();
         //send DDL to database
-        createTable(conn, CREATE_IOTTABLE);
+        createDbArtifact(conn, CREATE_IOTTABLE);
         boolean worked = true;
         String msg = null;
         try {
@@ -157,6 +157,6 @@ public class IOTTableDDLTestSuite {
 
     @AfterClass
     public static void tearDown() {
-        dropTable(conn, DROP_IOTTABLE);
+        dropDbArtifact(conn, DROP_IOTTABLE);
     }
 }
