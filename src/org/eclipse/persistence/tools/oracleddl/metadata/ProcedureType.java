@@ -16,6 +16,7 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
+//DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 

@@ -27,6 +27,11 @@ public class FunctionType extends ProcedureType {
         return true;
     }
 
+    public void setProcedureName(String procedureName) {
+        this.procedureName = procedureName;
+        super.typeName = "FUNCTION " + procedureName;
+    }
+
     public DatabaseType getReturnArgument() {
         return returnArgument;
     }
