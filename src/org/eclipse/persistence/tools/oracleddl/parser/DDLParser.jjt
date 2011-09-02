@@ -41,6 +41,8 @@ import java.io.InputStream;
 import java.util.List;
 
 //metadata imports
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
 import org.eclipse.persistence.tools.oracleddl.metadata.CharType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ClobType;
@@ -422,13 +424,14 @@ ProcedureType parseTopLevelProcedure():
 {
   <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_PROCEDURE>
     [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] procedureName=OracleObjectName()
-    [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ] [ <K_AS> | <K_IS> ]
+       {
+           procedureType = new ProcedureType(procedureName);
+	      if (schema != null) {
+	          procedureType.setSchema(schema);
+	      }       }
+    [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ] [ <K_AS> | <K_IS> ]
         skipToEnd()
     {
-      procedureType = new ProcedureType(procedureName);
-      if (schema != null) {
-          procedureType.setSchema(schema);
-      }
       typesRepository.setDatabaseType(procedureName, procedureType);
       return procedureType;
     }
@@ -442,7 +445,7 @@ FunctionType parseTopLevelFunction():
 {
   <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_FUNCTION>
     [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
-    [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ] functionReturnSpec() [ <K_AS> | <K_IS> ]
+    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] functionReturnSpec() [ <K_AS> | <K_IS> ]
         skipToEnd()
     {
       functionType = new FunctionType(functionName);
@@ -901,25 +904,17 @@ DatabaseType datatype():
     | <K_CLOB> [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] { return new ClobType();}
 }
 
-String typeSpec():
-{String s = null;}
+DatabaseType typeSpec():
+{DatabaseType dataType = null;
+ String s = null;}
 {
-    (      datatype()
+    (      dataType=datatype()
     | LOOKAHEAD(3) columnSpec() <K_TYPE2>
     | LOOKAHEAD(3) tableSpec() <K_ROWTYPE>
-    | typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
+    | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     )
     {
-      Token first = jjtThis.jjtGetFirstToken();
-      Token last = jjtThis.jjtGetLastToken();
-      Token cur = first;
-      StringBuilder sb = new StringBuilder();
-      sb.append(first.image);
-      while (cur != last) {
-          cur = cur.next;
-          sb.append(cur.image);      }
-      jjtThis.jjtSetValue(sb.toString());
-      return sb.toString();    }
+      return dataType;    }
 }
 
 String columnSpec() #void:
@@ -1056,25 +1051,33 @@ void cursorDeclaration(PLSQLPackageType packageType) #void:
 
 // Procedure Specification
 void procedureSpec(PLSQLPackageType packageType) #void:
-{Token t = null;}
+{Token t = null;
+ ProcedureType procedureType = null;
+}
 {
-    <K_PROCEDURE> t=<S_IDENTIFIER>
-        [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ]
+    <K_PROCEDURE> t=<S_IDENTIFIER>        {
+            procedureType = new ProcedureType(t.image);        }
+        [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ]
     <O_SEMICOLON>
 }
 
-void argumentList() #void:
+void argumentList(ProcedureType procedureType) #void:
 {}
 {
-   argument() ( <O_COMMA> argument() )*
+   argument(procedureType) ( <O_COMMA> argument(procedureType) )*
 }
 
 // Function Specification
 void functionSpec(PLSQLPackageType packageType) #void:
-{Token t = null;}
+{Token t = null;
+ FunctionType functionType = null;
+}
 {
     <K_FUNCTION> t=<S_IDENTIFIER>
-        [ <O_OPENPAREN> argumentList() <O_CLOSEPAREN> ]
+        {
+            functionType = new FunctionType(t.image);
+        }
+        [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ]
         functionReturnSpec()
         [ <K_DETERMINISTIC> | <K_PIPELINED> | <K_PARALLEL_ENABLE> | <K_RESULT_CACHE> ]
     <O_SEMICOLON>
@@ -1088,22 +1091,29 @@ SimpleNode functionReturnSpec():
     }
 }
 
-SimpleNode argument():
+void argument(ProcedureType procedureType) #void:
 {Token t = null;
+ ArgumentType argumentType = null;
+ DatabaseType argumentDataType = null;
+ ArgumentTypeDirection argDirection = ArgumentTypeDirection.IN; // by default, arguments are IN
  String direction = null;
+ SimpleNode defaultAssignment = null;
 }
 {
     t=<S_IDENTIFIER> [(direction=direction())]
-        [ <K_NOCOPY> ] typeSpec() [ argumentDefaultAssignment() ]
+        [ <K_NOCOPY> ] argumentDataType=typeSpec() [ defaultAssignment=argumentDefaultAssignment() ]
     {
+      argumentType = new ArgumentType(t.image);
+      argumentType.setDataType(argumentDataType);
       if (direction != null) {
-          jjtThis.jjtSetValue(direction + " " + t.image);
-      }
-      else {
-          // by default, arguments are IN
-          jjtThis.jjtSetValue("IN " + t.image);
-      }
-      return jjtThis;
+          if ("OUT".equals(direction)) {
+              argDirection = ArgumentTypeDirection.OUT;
+          }
+          else if ("IN OUT".equals(direction)) {
+              argDirection = ArgumentTypeDirection.INOUT;          }
+          argumentType.setDirection(argDirection);      }      if (defaultAssignment != null) {
+          argumentType.setOptional();      }
+      procedureType.addCompositeType(argumentType);
     }
 }
 

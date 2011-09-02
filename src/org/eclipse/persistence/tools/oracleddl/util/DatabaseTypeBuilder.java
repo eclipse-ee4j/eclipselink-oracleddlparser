@@ -38,6 +38,9 @@ import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 
 public class DatabaseTypeBuilder {
+    
+    //special catalog
+    public static final String TOPLEVEL = "TOPLEVEL";
 
     static DBMSMetadataSessionTransforms TRANSFORMS_FACTORY;
     static {
@@ -79,16 +82,18 @@ public class DatabaseTypeBuilder {
 
     public List<TableType> buildTables(Connection conn, String schemaPattern, String tablePattern)
         throws ParseException {
+        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
+        String tablePatternU = tablePattern == null ? null : tablePattern.toUpperCase();
     	List<TableType> tableTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
         	List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "TABLE" +
         		DBMS_METADATA_GET_DDL_STMT1 + 
-        	    ((schemaPattern == null || schemaPattern.length() == 0 || "%".equals(schemaPattern))
+        	    (schemaPatternExcludesAdminSchemas(schemaPatternU)
         	        ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-        	        : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPattern + 
+        	        : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
         	          DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
         		DBMS_METADATA_GET_DDL_STMT2 + "TABLE" + DBMS_METADATA_GET_DDL_STMT3 +
-        		tablePattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+        		tablePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
             if (ddls != null) {
             	tableTypes = new ArrayList<TableType>();
             	for (String ddl : ddls) {
@@ -114,16 +119,18 @@ public class DatabaseTypeBuilder {
 
     public List<PLSQLPackageType> buildPackages(Connection conn, String schemaPattern,
         String packagePattern) throws ParseException {
+        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
+        String packagePatternU = packagePattern == null ? null : packagePattern.toUpperCase();
     	List<PLSQLPackageType> packageTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
             List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "PACKAGE" +
                 DBMS_METADATA_GET_DDL_STMT1 + 
-                ((schemaPattern == null || schemaPattern.length() == 0 || "%".equals(schemaPattern))
+                (schemaPatternExcludesAdminSchemas(schemaPatternU)
                     ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPattern + 
+                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
                       DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
                 DBMS_METADATA_GET_DDL_STMT2 + "PACKAGE" + DBMS_METADATA_GET_DDL_STMT3 +
-                packagePattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+                packagePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
             if (ddls != null) {
             	packageTypes = new ArrayList<PLSQLPackageType>();
             	for (String ddl : ddls) {
@@ -146,16 +153,18 @@ public class DatabaseTypeBuilder {
 
     public List<ProcedureType> buildProcedures(Connection conn, String schemaPattern,
         String procedurePattern) throws ParseException {
+        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
+        String procedurePatternU = procedurePattern == null ? null : procedurePattern.toUpperCase();
     	List<ProcedureType> procedureTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
             List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "PROCEDURE" +
                 DBMS_METADATA_GET_DDL_STMT1 + 
-                ((schemaPattern == null || schemaPattern.length() == 0 || "%".equals(schemaPattern))
+                (schemaPatternExcludesAdminSchemas(schemaPatternU)
                     ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPattern + 
+                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
                       DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
                 DBMS_METADATA_GET_DDL_STMT2 + "PROCEDURE" + DBMS_METADATA_GET_DDL_STMT3 +
-                procedurePattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+                procedurePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
             if (ddls != null) {
             	procedureTypes = new ArrayList<ProcedureType>();
             	for (String ddl : ddls) {
@@ -178,16 +187,18 @@ public class DatabaseTypeBuilder {
 
     public List<FunctionType> buildFunctions(Connection conn, String schemaPattern,
         String functionPattern) throws ParseException {
+        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
+        String functionPatternU = functionPattern == null ? null : functionPattern.toUpperCase();
     	List<FunctionType> functionTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
             List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "FUNCTION" +
                 DBMS_METADATA_GET_DDL_STMT1 + 
-                ((schemaPattern == null || schemaPattern.length() == 0 || "%".equals(schemaPattern))
+                (schemaPatternExcludesAdminSchemas(schemaPatternU)
                     ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPattern + 
+                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
                       DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
                 DBMS_METADATA_GET_DDL_STMT2 + "FUNCTION" + DBMS_METADATA_GET_DDL_STMT3 +
-                functionPattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+                functionPatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
             if (ddls != null) {
             	functionTypes = new ArrayList<FunctionType>();
             	for (String ddl : ddls) {
@@ -210,16 +221,18 @@ public class DatabaseTypeBuilder {
 
     public List<CompositeDatabaseType> buildType(Connection conn, String schemaPattern,
         String typePattern) throws ParseException {
+        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
+        String typePatternU = typePattern == null ? null : typePattern.toUpperCase();
     	List<CompositeDatabaseType> databaseTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
             List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "TYPE" +
                 DBMS_METADATA_GET_DDL_STMT1 + 
-                ((schemaPattern == null || schemaPattern.length() == 0 || "%".equals(schemaPattern))
+                (schemaPatternExcludesAdminSchemas(schemaPatternU)
                     ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPattern + 
+                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
                       DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
                 DBMS_METADATA_GET_DDL_STMT2 + "TYPE" + DBMS_METADATA_GET_DDL_STMT3 +
-                typePattern + DBMS_METADATA_DDL_STMT_SUFFIX);
+                typePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
             if (ddls != null) {
             	databaseTypes = new ArrayList<CompositeDatabaseType>();
             	for (String ddl : ddls) {
@@ -321,5 +334,10 @@ public class DatabaseTypeBuilder {
             transformsSet = true;
         }
         return worked;
+    }
+    
+    static boolean schemaPatternExcludesAdminSchemas(String schemaPattern) {
+        return (schemaPattern == null || schemaPattern.length() == 0 ||
+            TOPLEVEL.equals(schemaPattern) || "%".equals(schemaPattern));
     }
 }
