@@ -10,17 +10,11 @@ class SimpleNode implements Node {
   protected Node[] children;
   protected int id;
   protected Object value;
-  protected DDLParser parser;
   protected Token firstToken;
   protected Token lastToken;
 
   public SimpleNode(int i) {
     id = i;
-  }
-
-  public SimpleNode(DDLParser p, int i) {
-    this(i);
-    parser = p;
   }
 
   public void jjtOpen() {

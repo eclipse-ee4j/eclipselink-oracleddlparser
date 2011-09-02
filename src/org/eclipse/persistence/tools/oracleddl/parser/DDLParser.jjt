@@ -16,8 +16,8 @@ options {
       ERROR_REPORTING = false;
       JAVA_UNICODE_ESCAPE = true;
       UNICODE_INPUT = true;
-      NODE_USES_PARSER = true;
-      TRACK_TOKENS = true;
+      NODE_USES_PARSER = false;
+      NODE_DEFAULT_VOID = true;
       VISITOR = true;
 }
 
@@ -441,18 +441,20 @@ ProcedureType parseTopLevelProcedure():
 FunctionType parseTopLevelFunction():
 {FunctionType functionType = null;
  String schema = null;
- String functionName = null;}
+ String functionName = null;
+ DatabaseType returnType = null;}
 {
   <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_FUNCTION>
     [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
-    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] functionReturnSpec() [ <K_AS> | <K_IS> ]
+	  {
+	      functionType = new FunctionType(functionName);
+          if (schema != null) {
+              functionType.setSchema(schema);
+          }	  }
+    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] returnType=functionReturnSpec() [ <K_AS> | <K_IS> ]
         skipToEnd()
     {
-      functionType = new FunctionType(functionName);
-      if (schema != null) {
-          functionType.setSchema(schema);
-      }
-      //TODO - figure out returnType
+      functionType.setReturnArgument(returnType);
       typesRepository.setDatabaseType(functionName, functionType);
       return functionType;
     }
@@ -983,15 +985,11 @@ void fieldDeclarations() #void:
     fieldDeclaration() [ <O_COMMA> fieldDeclarations() ]
 }
 
-SimpleNode fieldDeclaration():
+void fieldDeclaration():
 {String s = null;
 }
 {
     s=typeName() typeSpec() [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
-    {
-      jjtThis.jjtSetValue(s);
-      return jjtThis;
-    }
 }
 
 void subtypeDeclaration(PLSQLPackageType packageType) #void:
@@ -1083,11 +1081,10 @@ void functionSpec(PLSQLPackageType packageType) #void:
     <O_SEMICOLON>
 }
 
-SimpleNode functionReturnSpec():
-{}{    (<K_RETURN> typeSpec())
+DatabaseType functionReturnSpec():
+{DatabaseType dataType = null;}{    (<K_RETURN> dataType=typeSpec())
     {
-      jjtThis.jjtSetValue("RETURN");
-      return jjtThis;
+      return dataType;
     }
 }
 
@@ -1097,7 +1094,7 @@ void argument(ProcedureType procedureType) #void:
  DatabaseType argumentDataType = null;
  ArgumentTypeDirection argDirection = ArgumentTypeDirection.IN; // by default, arguments are IN
  String direction = null;
- SimpleNode defaultAssignment = null;
+ boolean defaultAssignment = false;
 }
 {
     t=<S_IDENTIFIER> [(direction=direction())]
@@ -1111,7 +1108,7 @@ void argument(ProcedureType procedureType) #void:
           }
           else if ("IN OUT".equals(direction)) {
               argDirection = ArgumentTypeDirection.INOUT;          }
-          argumentType.setDirection(argDirection);      }      if (defaultAssignment != null) {
+          argumentType.setDirection(argDirection);      }      if (defaultAssignment) {
           argumentType.setOptional();      }
       procedureType.addCompositeType(argumentType);
     }
@@ -1125,13 +1122,12 @@ String direction() #void:
     | <K_OUT>  { return "OUT"; }
 }
 
-SimpleNode argumentDefaultAssignment():
+boolean argumentDefaultAssignment():
 {}
 {
     ( <O_ASSIGN> | <K_DEFAULT> ) skipToNextArg()
     {
-      jjtThis.jjtSetValue(" (optional)");
-      return jjtThis;
+      return true;
     }
 }
 

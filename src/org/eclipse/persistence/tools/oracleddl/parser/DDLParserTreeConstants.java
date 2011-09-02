@@ -4,35 +4,11 @@ package org.eclipse.persistence.tools.oracleddl.parser;
 @SuppressWarnings("all")
 public interface DDLParserTreeConstants
 {
-  public int JJTPARSEPLSQLPACKAGE = 0;
-  public int JJTPARSETOPLEVELPROCEDURE = 1;
-  public int JJTPARSETOPLEVELFUNCTION = 2;
-  public int JJTPARSETABLE = 3;
-  public int JJTPARSETYPE = 4;
-  public int JJTVOID = 5;
-  public int JJTCOLUMNTYPESPEC = 6;
-  public int JJTVARIABLEDECLARATION = 7;
-  public int JJTDATATYPE = 8;
-  public int JJTTYPESPEC = 9;
-  public int JJTFIELDDECLARATION = 10;
-  public int JJTFUNCTIONRETURNSPEC = 11;
-  public int JJTARGUMENTDEFAULTASSIGNMENT = 12;
+  public int JJTVOID = 0;
 
 
   public String[] jjtNodeName = {
-    "parsePLSQLPackage",
-    "parseTopLevelProcedure",
-    "parseTopLevelFunction",
-    "parseTable",
-    "parseType",
     "void",
-    "columnTypeSpec",
-    "variableDeclaration",
-    "datatype",
-    "typeSpec",
-    "fieldDeclaration",
-    "functionReturnSpec",
-    "argumentDefaultAssignment",
   };
 }
-/* JavaCC - OriginalChecksum=c9cbd7f9ac6cc926d5fef64e781e578a (do not edit this line) */
+/* JavaCC - OriginalChecksum=ff721d13e20dfc97bde0c0e42bb97d94 (do not edit this line) */

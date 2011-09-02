@@ -88,71 +88,44 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
 
 // PLSQLPackage at 'top-level'
   final public PLSQLPackageType parsePLSQLPackage() throws ParseException {
- /*@bgen(jjtree) parsePLSQLPackage */
- SimpleNode jjtn000 = new SimpleNode(this, JJTPARSEPLSQLPACKAGE);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));String schema = null;
+ String schema = null;
  String packageName = null;
  PLSQLPackageType packageType = new PLSQLPackageType();
-    try {
-      jj_consume_token(K_CREATE);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_OR:
-        jj_consume_token(K_OR);
-        jj_consume_token(K_REPLACE);
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(K_PACKAGE);
-      if (jj_2_1(2)) {
-        schema = OracleObjectName();
-        jj_consume_token(O_DOT);
-      } else {
-        ;
-      }
-      packageName = OracleObjectName();
+    jj_consume_token(K_CREATE);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_OR:
+      jj_consume_token(K_OR);
+      jj_consume_token(K_REPLACE);
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(K_PACKAGE);
+    if (jj_2_1(2)) {
+      schema = OracleObjectName();
+      jj_consume_token(O_DOT);
+    } else {
+      ;
+    }
+    packageName = OracleObjectName();
           if (schema != null) {
             packageType.setPackageName(schema + "." + packageName);
           }
           else {
             packageType.setPackageName(packageName);
           }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_AUTHID:
+      jj_consume_token(K_AUTHID);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_AUTHID:
-        jj_consume_token(K_AUTHID);
+      case K_CURRENT_USER:
+      case K_DEFINER:
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_CURRENT_USER:
+          jj_consume_token(K_CURRENT_USER);
+          break;
         case K_DEFINER:
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case K_CURRENT_USER:
-            jj_consume_token(K_CURRENT_USER);
-            break;
-          case K_DEFINER:
-            jj_consume_token(K_DEFINER);
-            break;
-          default:
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
-          break;
-        default:
-          ;
-        }
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_AS:
-      case K_IS:
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_AS:
-          jj_consume_token(K_AS);
-          break;
-        case K_IS:
-          jj_consume_token(K_IS);
+          jj_consume_token(K_DEFINER);
           break;
         default:
           jj_consume_token(-1);
@@ -162,425 +135,252 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       default:
         ;
       }
-      label_1:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_CURSOR:
-        case K_FUNCTION:
-        case K_PRAGMA:
-        case K_PROCEDURE:
-        case K_TYPE:
-        case S_IDENTIFIER:
-          ;
-          break;
-        default:
-          break label_1;
-        }
-        packageDeclaration(packageType);
-      }
-      jj_consume_token(K_END);
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_AS:
+    case K_IS:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case S_IDENTIFIER:
-      case S_QUOTED_IDENTIFIER:
-        OracleObjectName();
+      case K_AS:
+        jj_consume_token(K_AS);
+        break;
+      case K_IS:
+        jj_consume_token(K_IS);
         break;
       default:
-        ;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-      jj_consume_token(O_SEMICOLON);
-      jj_consume_token(0);
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
+      break;
+    default:
+      ;
+    }
+    label_1:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_CURSOR:
+      case K_FUNCTION:
+      case K_PRAGMA:
+      case K_PROCEDURE:
+      case K_TYPE:
+      case S_IDENTIFIER:
+        ;
+        break;
+      default:
+        break label_1;
+      }
+      packageDeclaration(packageType);
+    }
+    jj_consume_token(K_END);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case S_IDENTIFIER:
+    case S_QUOTED_IDENTIFIER:
+      OracleObjectName();
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(O_SEMICOLON);
+    jj_consume_token(0);
       typesRepository.setDatabaseType(packageName, packageType);
       {if (true) return packageType;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
-    }
     throw new Error("Missing return statement in function");
   }
 
 // procedure at 'top-level'
   final public ProcedureType parseTopLevelProcedure() throws ParseException {
- /*@bgen(jjtree) parseTopLevelProcedure */
- SimpleNode jjtn000 = new SimpleNode(this, JJTPARSETOPLEVELPROCEDURE);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));ProcedureType procedureType = null;
+ ProcedureType procedureType = null;
  String schema = null;
  String procedureName = null;
-    try {
-      jj_consume_token(K_CREATE);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_OR:
-        jj_consume_token(K_OR);
-        jj_consume_token(K_REPLACE);
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(K_PROCEDURE);
-      if (jj_2_2(2)) {
-        schema = OracleObjectName();
-        jj_consume_token(O_DOT);
-      } else {
-        ;
-      }
-      procedureName = OracleObjectName();
+    jj_consume_token(K_CREATE);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_OR:
+      jj_consume_token(K_OR);
+      jj_consume_token(K_REPLACE);
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(K_PROCEDURE);
+    if (jj_2_2(2)) {
+      schema = OracleObjectName();
+      jj_consume_token(O_DOT);
+    } else {
+      ;
+    }
+    procedureName = OracleObjectName();
            procedureType = new ProcedureType(procedureName);
               if (schema != null) {
                   procedureType.setSchema(schema);
               }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case O_OPENPAREN:
-        jj_consume_token(O_OPENPAREN);
-        argumentList(procedureType);
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      default:
-        ;
-      }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case O_OPENPAREN:
+      jj_consume_token(O_OPENPAREN);
+      argumentList(procedureType);
+      jj_consume_token(O_CLOSEPAREN);
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_AS:
+    case K_IS:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_AS:
+        jj_consume_token(K_AS);
+        break;
       case K_IS:
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_AS:
-          jj_consume_token(K_AS);
-          break;
-        case K_IS:
-          jj_consume_token(K_IS);
-          break;
-        default:
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
+        jj_consume_token(K_IS);
         break;
       default:
-        ;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-      skipToEnd();
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
+      break;
+    default:
+      ;
+    }
+    skipToEnd();
       typesRepository.setDatabaseType(procedureName, procedureType);
       {if (true) return procedureType;}
-    } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      {if (true) throw (RuntimeException)jjte000;}
-    }
-    if (jjte000 instanceof ParseException) {
-      {if (true) throw (ParseException)jjte000;}
-    }
-    {if (true) throw (Error)jjte000;}
-    } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtn000.jjtSetLastToken(getToken(0));
-    }
-    }
     throw new Error("Missing return statement in function");
   }
 
 // function at 'top-level'
   final public FunctionType parseTopLevelFunction() throws ParseException {
- /*@bgen(jjtree) parseTopLevelFunction */
- SimpleNode jjtn000 = new SimpleNode(this, JJTPARSETOPLEVELFUNCTION);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));FunctionType functionType = null;
+ FunctionType functionType = null;
  String schema = null;
  String functionName = null;
-    try {
-      jj_consume_token(K_CREATE);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_OR:
-        jj_consume_token(K_OR);
-        jj_consume_token(K_REPLACE);
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(K_FUNCTION);
-      if (jj_2_3(2)) {
-        schema = OracleObjectName();
-        jj_consume_token(O_DOT);
-      } else {
-        ;
-      }
-      functionName = OracleObjectName();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case O_OPENPAREN:
-        jj_consume_token(O_OPENPAREN);
-        argumentList(functionType);
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      default:
-        ;
-      }
-      functionReturnSpec();
+ DatabaseType returnType = null;
+    jj_consume_token(K_CREATE);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_OR:
+      jj_consume_token(K_OR);
+      jj_consume_token(K_REPLACE);
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(K_FUNCTION);
+    if (jj_2_3(2)) {
+      schema = OracleObjectName();
+      jj_consume_token(O_DOT);
+    } else {
+      ;
+    }
+    functionName = OracleObjectName();
+              functionType = new FunctionType(functionName);
+          if (schema != null) {
+              functionType.setSchema(schema);
+          }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case O_OPENPAREN:
+      jj_consume_token(O_OPENPAREN);
+      argumentList(functionType);
+      jj_consume_token(O_CLOSEPAREN);
+      break;
+    default:
+      ;
+    }
+    returnType = functionReturnSpec();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_AS:
+    case K_IS:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_AS:
+        jj_consume_token(K_AS);
+        break;
       case K_IS:
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_AS:
-          jj_consume_token(K_AS);
-          break;
-        case K_IS:
-          jj_consume_token(K_IS);
-          break;
-        default:
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
+        jj_consume_token(K_IS);
         break;
       default:
-        ;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-      skipToEnd();
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-      functionType = new FunctionType(functionName);
-      if (schema != null) {
-          functionType.setSchema(schema);
-      }
-      //TODO - figure out returnType
+      break;
+    default:
+      ;
+    }
+    skipToEnd();
+      functionType.setReturnArgument(returnType);
       typesRepository.setDatabaseType(functionName, functionType);
       {if (true) return functionType;}
-    } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      {if (true) throw (RuntimeException)jjte000;}
-    }
-    if (jjte000 instanceof ParseException) {
-      {if (true) throw (ParseException)jjte000;}
-    }
-    {if (true) throw (Error)jjte000;}
-    } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtn000.jjtSetLastToken(getToken(0));
-    }
-    }
     throw new Error("Missing return statement in function");
   }
 
 // table at 'top-level'
   final public TableType parseTable() throws ParseException {
- /*@bgen(jjtree) parseTable */
-SimpleNode jjtn000 = new SimpleNode(this, JJTPARSETABLE);
-boolean jjtc000 = true;
-jjtree.openNodeScope(jjtn000);
-jjtn000.jjtSetFirstToken(getToken(1));TableType tableType = null;
+TableType tableType = null;
 String schema = null;
 String tableName = null;
 Token iot = null;
-    try {
-      jj_consume_token(K_CREATE);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_GLOBAL:
-        jj_consume_token(K_GLOBAL);
-        jj_consume_token(K_TEMPORARY);
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(K_TABLE);
-      if (jj_2_4(2)) {
-        schema = OracleObjectName();
-        jj_consume_token(O_DOT);
-      } else {
-        ;
-      }
-      tableName = OracleObjectName();
+    jj_consume_token(K_CREATE);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_GLOBAL:
+      jj_consume_token(K_GLOBAL);
+      jj_consume_token(K_TEMPORARY);
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(K_TABLE);
+    if (jj_2_4(2)) {
+      schema = OracleObjectName();
+      jj_consume_token(O_DOT);
+    } else {
+      ;
+    }
+    tableName = OracleObjectName();
             tableType = new TableType(tableName);
                     if (schema != null) {
                          tableType.setSchema(schema);
                     }
-      jj_consume_token(O_OPENPAREN);
-      columnDeclarations(tableType);
-      jj_consume_token(O_CLOSEPAREN);
+    jj_consume_token(O_OPENPAREN);
+    columnDeclarations(tableType);
+    jj_consume_token(O_CLOSEPAREN);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_ORGANIZATION:
+      jj_consume_token(K_ORGANIZATION);
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_INDEX:
+      iot = jj_consume_token(K_INDEX);
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_NOCOMPRESS:
+      jj_consume_token(K_NOCOMPRESS);
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_OVERFLOW:
+      jj_consume_token(K_OVERFLOW);
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_ON:
+      jj_consume_token(K_ON);
+      jj_consume_token(K_COMMIT);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_ORGANIZATION:
-        jj_consume_token(K_ORGANIZATION);
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_INDEX:
-        iot = jj_consume_token(K_INDEX);
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_NOCOMPRESS:
-        jj_consume_token(K_NOCOMPRESS);
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_OVERFLOW:
-        jj_consume_token(K_OVERFLOW);
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_ON:
-        jj_consume_token(K_ON);
-        jj_consume_token(K_COMMIT);
+      case K_DELETE:
+      case K_PRESERVE:
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_DELETE:
+          jj_consume_token(K_DELETE);
+          break;
         case K_PRESERVE:
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case K_DELETE:
-            jj_consume_token(K_DELETE);
-            break;
-          case K_PRESERVE:
-            jj_consume_token(K_PRESERVE);
-            break;
-          default:
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
-          break;
-        default:
-          ;
-        }
-        jj_consume_token(K_ROWS);
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(O_SEMICOLON);
-      jj_consume_token(0);
-       jjtree.closeNodeScope(jjtn000, true);
-       jjtc000 = false;
-       jjtn000.jjtSetLastToken(getToken(0));
-         if (iot != null) {
-             tableType.setIOT(true);
-         }
-         typesRepository.setDatabaseType(tableName, tableType);
-         {if (true) return tableType;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
-    }
-    throw new Error("Missing return statement in function");
-  }
-
-// type at 'top-level'
-  final public CompositeDatabaseType parseType() throws ParseException {
- /*@bgen(jjtree) parseType */
- SimpleNode jjtn000 = new SimpleNode(this, JJTPARSETYPE);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));CompositeDatabaseType databaseType = null;
- String schema = null;
- String typeName = null;
- boolean varray = false;
- boolean nestedTable = false;
-    try {
-      jj_consume_token(K_CREATE);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_OR:
-        jj_consume_token(K_OR);
-        jj_consume_token(K_REPLACE);
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(K_TYPE);
-      if (jj_2_5(2)) {
-        schema = OracleObjectName();
-        jj_consume_token(O_DOT);
-      } else {
-        ;
-      }
-      typeName = OracleObjectName();
-      jj_consume_token(K_AS);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_OBJECT:
-      case K_TABLE:
-      case K_VARRAY:
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_OBJECT:
-          jj_consume_token(K_OBJECT);
-          jj_consume_token(O_OPENPAREN);
-                databaseType = new ObjectType(typeName);
-                if (schema != null) {
-                    ((ObjectType)databaseType).setSchema(schema);
-                }
-          columnDeclarations(databaseType);
-          jj_consume_token(O_CLOSEPAREN);
-          break;
-        case K_VARRAY:
-          jj_consume_token(K_VARRAY);
-          jj_consume_token(O_OPENPAREN);
-          jj_consume_token(S_NUMBER);
-          jj_consume_token(O_CLOSEPAREN);
-          jj_consume_token(K_OF);
-                databaseType = new VArrayType(typeName);
-                if (schema != null) {
-                    ((VArrayType)databaseType).setSchema(schema);
-                }
-          columnTypeSpec(databaseType);
-          break;
-        case K_TABLE:
-          jj_consume_token(K_TABLE);
-          jj_consume_token(K_OF);
-                databaseType = new NestedTableType(typeName);
-                if (schema != null) {
-                    ((NestedTableType)databaseType).setSchema(schema);
-                }
-          columnTypeSpec(databaseType);
+          jj_consume_token(K_PRESERVE);
           break;
         default:
           jj_consume_token(-1);
@@ -590,39 +390,100 @@ Token iot = null;
       default:
         ;
       }
+      jj_consume_token(K_ROWS);
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(O_SEMICOLON);
+    jj_consume_token(0);
+         if (iot != null) {
+             tableType.setIOT(true);
+         }
+         typesRepository.setDatabaseType(tableName, tableType);
+         {if (true) return tableType;}
+    throw new Error("Missing return statement in function");
+  }
+
+// type at 'top-level'
+  final public CompositeDatabaseType parseType() throws ParseException {
+ CompositeDatabaseType databaseType = null;
+ String schema = null;
+ String typeName = null;
+ boolean varray = false;
+ boolean nestedTable = false;
+    jj_consume_token(K_CREATE);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_OR:
+      jj_consume_token(K_OR);
+      jj_consume_token(K_REPLACE);
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(K_TYPE);
+    if (jj_2_5(2)) {
+      schema = OracleObjectName();
+      jj_consume_token(O_DOT);
+    } else {
+      ;
+    }
+    typeName = OracleObjectName();
+    jj_consume_token(K_AS);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_OBJECT:
+    case K_TABLE:
+    case K_VARRAY:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case O_SEMICOLON:
-        jj_consume_token(O_SEMICOLON);
+      case K_OBJECT:
+        jj_consume_token(K_OBJECT);
+        jj_consume_token(O_OPENPAREN);
+                databaseType = new ObjectType(typeName);
+                if (schema != null) {
+                    ((ObjectType)databaseType).setSchema(schema);
+                }
+        columnDeclarations(databaseType);
+        jj_consume_token(O_CLOSEPAREN);
+        break;
+      case K_VARRAY:
+        jj_consume_token(K_VARRAY);
+        jj_consume_token(O_OPENPAREN);
+        jj_consume_token(S_NUMBER);
+        jj_consume_token(O_CLOSEPAREN);
+        jj_consume_token(K_OF);
+                databaseType = new VArrayType(typeName);
+                if (schema != null) {
+                    ((VArrayType)databaseType).setSchema(schema);
+                }
+        columnTypeSpec(databaseType);
+        break;
+      case K_TABLE:
+        jj_consume_token(K_TABLE);
+        jj_consume_token(K_OF);
+                databaseType = new NestedTableType(typeName);
+                if (schema != null) {
+                    ((NestedTableType)databaseType).setSchema(schema);
+                }
+        columnTypeSpec(databaseType);
         break;
       default:
-        ;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-      jj_consume_token(0);
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case O_SEMICOLON:
+      jj_consume_token(O_SEMICOLON);
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(0);
         typesRepository.setDatabaseType(typeName, databaseType);
         {if (true) return databaseType;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
-    }
     throw new Error("Missing return statement in function");
   }
 
@@ -696,77 +557,69 @@ Token iot = null;
   }
 
   final public DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType) throws ParseException {
- /*@bgen(jjtree) columnTypeSpec */
- SimpleNode jjtn000 = new SimpleNode(this, JJTCOLUMNTYPESPEC);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));String s = null;
+ String s = null;
  Token t = null;
  DatabaseType dt = null;
-    try {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_BFILE:
+    case K_BINARY_DOUBLE:
+    case K_BINARY_FLOAT:
+    case K_BINARY_INTEGER:
+    case K_BLOB:
+    case K_BOOLEAN:
+    case K_CHAR:
+    case K_CHARACTER:
+    case K_CLOB:
+    case K_DATE:
+    case K_DEC:
+    case K_DECIMAL:
+    case K_DOUBLE:
+    case K_FLOAT:
+    case K_INT:
+    case K_INTEGER:
+    case K_INTERVAL:
+    case K_LONG:
+    case K_MLSLABEL:
+    case K_NATIONAL:
+    case K_NATURAL:
+    case K_NCHAR:
+    case K_NCLOB:
+    case K_NUMBER:
+    case K_NUMERIC:
+    case K_NVARCHAR2:
+    case K_NVARCHAR:
+    case K_PLS_INTEGER:
+    case K_POSITIVE:
+    case K_RAW:
+    case K_REAL:
+    case K_ROWID:
+    case K_SIMPLE_INTEGER:
+    case K_SMALLINT:
+    case K_SYS_REFCURSOR:
+    case K_TIME:
+    case K_TIMESTAMP:
+    case K_UROWID:
+    case K_VARCHAR2:
+    case K_VARCHAR:
+      dt = datatype();
+      break;
+    case S_IDENTIFIER:
+    case S_QUOTED_IDENTIFIER:
+      s = columnSpec();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_BFILE:
-      case K_BINARY_DOUBLE:
-      case K_BINARY_FLOAT:
-      case K_BINARY_INTEGER:
-      case K_BLOB:
-      case K_BOOLEAN:
-      case K_CHAR:
-      case K_CHARACTER:
-      case K_CLOB:
-      case K_DATE:
-      case K_DEC:
-      case K_DECIMAL:
-      case K_DOUBLE:
-      case K_FLOAT:
-      case K_INT:
-      case K_INTEGER:
-      case K_INTERVAL:
-      case K_LONG:
-      case K_MLSLABEL:
-      case K_NATIONAL:
-      case K_NATURAL:
-      case K_NCHAR:
-      case K_NCLOB:
-      case K_NUMBER:
-      case K_NUMERIC:
-      case K_NVARCHAR2:
-      case K_NVARCHAR:
-      case K_PLS_INTEGER:
-      case K_POSITIVE:
-      case K_RAW:
-      case K_REAL:
-      case K_ROWID:
-      case K_SIMPLE_INTEGER:
-      case K_SMALLINT:
-      case K_SYS_REFCURSOR:
-      case K_TIME:
-      case K_TIMESTAMP:
-      case K_UROWID:
-      case K_VARCHAR2:
-      case K_VARCHAR:
-        dt = datatype();
-        break;
-      case S_IDENTIFIER:
-      case S_QUOTED_IDENTIFIER:
-        s = columnSpec();
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case O_OPENPAREN:
-          jj_consume_token(O_OPENPAREN);
-          t = jj_consume_token(S_NUMBER);
-          jj_consume_token(O_CLOSEPAREN);
-          break;
-        default:
-          ;
-        }
+      case O_OPENPAREN:
+        jj_consume_token(O_OPENPAREN);
+        t = jj_consume_token(S_NUMBER);
+        jj_consume_token(O_CLOSEPAREN);
         break;
       default:
-        jj_consume_token(-1);
-        throw new ParseException();
+        ;
       }
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
+      break;
+    default:
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
       if (s != null) {
           if (t != null) {
               Long size = Long.decode(t.image);
@@ -777,26 +630,6 @@ Token iot = null;
           }
       }
       {if (true) return dt;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
-    }
     throw new Error("Missing return statement in function");
   }
 
@@ -859,58 +692,32 @@ String s = null;
   }
 
   final public void variableDeclaration(PLSQLPackageType packageType) throws ParseException {
- /*@bgen(jjtree) variableDeclaration */
-  SimpleNode jjtn000 = new SimpleNode(this, JJTVARIABLEDECLARATION);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-  jjtn000.jjtSetFirstToken(getToken(1));
-    try {
-      jj_consume_token(S_IDENTIFIER);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_CONSTANT:
-        jj_consume_token(K_CONSTANT);
-        break;
-      default:
-        ;
-      }
-      typeSpec();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_NOT:
-        jj_consume_token(K_NOT);
-        jj_consume_token(K_NULL);
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_DEFAULT:
-      case O_ASSIGN:
-        variableDefaultAssignment();
-        break;
-      default:
-        ;
-      }
-      jj_consume_token(O_SEMICOLON);
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
+    jj_consume_token(S_IDENTIFIER);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_CONSTANT:
+      jj_consume_token(K_CONSTANT);
+      break;
+    default:
+      ;
     }
+    typeSpec();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_NOT:
+      jj_consume_token(K_NOT);
+      jj_consume_token(K_NULL);
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_DEFAULT:
+    case O_ASSIGN:
+      variableDefaultAssignment();
+      break;
+    default:
+      ;
+    }
+    jj_consume_token(O_SEMICOLON);
   }
 
   final public void variableDefaultAssignment() throws ParseException {
@@ -929,115 +736,92 @@ String s = null;
   }
 
   final public DatabaseType datatype() throws ParseException {
- /*@bgen(jjtree) datatype */
- SimpleNode jjtn000 = new SimpleNode(this, JJTDATATYPE);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));Token t = null;
+ Token t = null;
  DatabaseType dt = null;
  Token precision = null;
  Long sl;
  Long pl;
  Token scale = null;
-    try {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_BINARY_INTEGER:
-        jj_consume_token(K_BINARY_INTEGER);
-                          jjtree.closeNodeScope(jjtn000, true);
-                          jjtc000 = false;
-                          jjtn000.jjtSetLastToken(getToken(0));
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_BINARY_INTEGER:
+      jj_consume_token(K_BINARY_INTEGER);
                           {if (true) return BINARY_INTEGER_TYPE;}
-        break;
-      case K_BINARY_FLOAT:
-        jj_consume_token(K_BINARY_FLOAT);
-                          jjtree.closeNodeScope(jjtn000, true);
-                          jjtc000 = false;
-                          jjtn000.jjtSetLastToken(getToken(0));
+      break;
+    case K_BINARY_FLOAT:
+      jj_consume_token(K_BINARY_FLOAT);
                           {if (true) return BINARY_FLOAT_TYPE;}
-        break;
-      case K_BINARY_DOUBLE:
-        jj_consume_token(K_BINARY_DOUBLE);
-                          jjtree.closeNodeScope(jjtn000, true);
-                          jjtc000 = false;
-                          jjtn000.jjtSetLastToken(getToken(0));
+      break;
+    case K_BINARY_DOUBLE:
+      jj_consume_token(K_BINARY_DOUBLE);
                           {if (true) return BINARY_DOUBLE_TYPE;}
-        break;
-      case K_NATURAL:
-        jj_consume_token(K_NATURAL);
-                          jjtree.closeNodeScope(jjtn000, true);
-                          jjtc000 = false;
-                          jjtn000.jjtSetLastToken(getToken(0));
+      break;
+    case K_NATURAL:
+      jj_consume_token(K_NATURAL);
                           {if (true) return NATURAL_TYPE;}
-        break;
-      case K_POSITIVE:
-        jj_consume_token(K_POSITIVE);
-                          jjtree.closeNodeScope(jjtn000, true);
-                          jjtc000 = false;
-                          jjtn000.jjtSetLastToken(getToken(0));
+      break;
+    case K_POSITIVE:
+      jj_consume_token(K_POSITIVE);
                           {if (true) return POSITIVE_TYPE;}
+      break;
+    case K_DEC:
+    case K_DECIMAL:
+    case K_NUMBER:
+    case K_NUMERIC:
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_NUMBER:
+        t = jj_consume_token(K_NUMBER);
+        break;
+      case K_NUMERIC:
+        t = jj_consume_token(K_NUMERIC);
+        break;
+      case K_DECIMAL:
+        t = jj_consume_token(K_DECIMAL);
         break;
       case K_DEC:
-      case K_DECIMAL:
-      case K_NUMBER:
-      case K_NUMERIC:
+        t = jj_consume_token(K_DEC);
+        break;
+      default:
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case O_OPENPAREN:
+        jj_consume_token(O_OPENPAREN);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_NUMBER:
-          t = jj_consume_token(K_NUMBER);
-          break;
-        case K_NUMERIC:
-          t = jj_consume_token(K_NUMERIC);
-          break;
-        case K_DECIMAL:
-          t = jj_consume_token(K_DECIMAL);
-          break;
-        case K_DEC:
-          t = jj_consume_token(K_DEC);
-          break;
-        default:
-          jj_consume_token(-1);
-          throw new ParseException();
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case O_OPENPAREN:
-          jj_consume_token(O_OPENPAREN);
+        case O_ASTERISK:
+        case S_NUMBER:
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case O_ASTERISK:
+            precision = jj_consume_token(O_ASTERISK);
+            break;
           case S_NUMBER:
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_ASTERISK:
-              precision = jj_consume_token(O_ASTERISK);
-              break;
-            case S_NUMBER:
-              precision = jj_consume_token(S_NUMBER);
-              break;
-            default:
-              jj_consume_token(-1);
-              throw new ParseException();
-            }
+            precision = jj_consume_token(S_NUMBER);
             break;
           default:
-            ;
+            jj_consume_token(-1);
+            throw new ParseException();
           }
-          label_3:
-          while (true) {
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_COMMA:
-              ;
-              break;
-            default:
-              break label_3;
-            }
-            jj_consume_token(O_COMMA);
-            scale = jj_consume_token(S_NUMBER);
-          }
-          jj_consume_token(O_CLOSEPAREN);
           break;
         default:
           ;
         }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+        label_3:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_COMMA:
+            ;
+            break;
+          default:
+            break label_3;
+          }
+          jj_consume_token(O_COMMA);
+          scale = jj_consume_token(S_NUMBER);
+        }
+        jj_consume_token(O_CLOSEPAREN);
+        break;
+      default:
+        ;
+      }
             if (t.kind == K_NUMBER || t.kind == K_NUMERIC) {
                 if (precision != null && precision.image.equals("*")) {
                     precision = null;
@@ -1080,28 +864,25 @@ String s = null;
                 }
             }
             {if (true) return dt;}
+      break;
+    case K_LONG:
+      jj_consume_token(K_LONG);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_RAW:
+        t = jj_consume_token(K_RAW);
         break;
-      case K_LONG:
-        jj_consume_token(K_LONG);
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_RAW:
-          t = jj_consume_token(K_RAW);
-          break;
-        default:
-          ;
-        }
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case O_OPENPAREN:
-          jj_consume_token(O_OPENPAREN);
-          precision = jj_consume_token(S_NUMBER);
-          jj_consume_token(O_CLOSEPAREN);
-          break;
-        default:
-          ;
-        }
-              jjtree.closeNodeScope(jjtn000, true);
-              jjtc000 = false;
-              jjtn000.jjtSetLastToken(getToken(0));
+      default:
+        ;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case O_OPENPAREN:
+        jj_consume_token(O_OPENPAREN);
+        precision = jj_consume_token(S_NUMBER);
+        jj_consume_token(O_CLOSEPAREN);
+        break;
+      default:
+        ;
+      }
               if (t == null) {
               if (precision == null) {
                   dt = new LongType();
@@ -1121,9 +902,39 @@ String s = null;
               }
             }
             {if (true) return dt;}
+      break;
+    case K_RAW:
+      jj_consume_token(K_RAW);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case O_OPENPAREN:
+        jj_consume_token(O_OPENPAREN);
+        precision = jj_consume_token(S_NUMBER);
+        jj_consume_token(O_CLOSEPAREN);
         break;
-      case K_RAW:
-        jj_consume_token(K_RAW);
+      default:
+        ;
+      }
+            if (precision == null) {
+                dt = new RawType();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                dt = new RawType(pl);
+            }
+            {if (true) return dt;}
+      break;
+    case K_BOOLEAN:
+      jj_consume_token(K_BOOLEAN);
+                    {if (true) return BOOLEAN_TYPE;}
+      break;
+    case K_DATE:
+      jj_consume_token(K_DATE);
+                 {if (true) return DATE_TYPE;}
+      break;
+    default:
+      if (jj_2_17(2)) {
+        jj_consume_token(K_INTERVAL);
+        jj_consume_token(K_DAY);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case O_OPENPAREN:
           jj_consume_token(O_OPENPAREN);
@@ -1133,59 +944,17 @@ String s = null;
         default:
           ;
         }
-              jjtree.closeNodeScope(jjtn000, true);
-              jjtc000 = false;
-              jjtn000.jjtSetLastToken(getToken(0));
-            if (precision == null) {
-                dt = new RawType();
-            }
-            else {
-                pl = Long.decode(precision.image);
-                dt = new RawType(pl);
-            }
-            {if (true) return dt;}
-        break;
-      case K_BOOLEAN:
-        jj_consume_token(K_BOOLEAN);
-                    jjtree.closeNodeScope(jjtn000, true);
-                    jjtc000 = false;
-                    jjtn000.jjtSetLastToken(getToken(0));
-                    {if (true) return BOOLEAN_TYPE;}
-        break;
-      case K_DATE:
-        jj_consume_token(K_DATE);
-                 jjtree.closeNodeScope(jjtn000, true);
-                 jjtc000 = false;
-                 jjtn000.jjtSetLastToken(getToken(0));
-                 {if (true) return DATE_TYPE;}
-        break;
-      default:
-        if (jj_2_17(2)) {
-          jj_consume_token(K_INTERVAL);
-          jj_consume_token(K_DAY);
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case O_OPENPAREN:
-            jj_consume_token(O_OPENPAREN);
-            precision = jj_consume_token(S_NUMBER);
-            jj_consume_token(O_CLOSEPAREN);
-            break;
-          default:
-            ;
-          }
-          jj_consume_token(K_TO);
-          jj_consume_token(K_SECOND);
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case O_OPENPAREN:
-            jj_consume_token(O_OPENPAREN);
-            scale = jj_consume_token(S_NUMBER);
-            jj_consume_token(O_CLOSEPAREN);
-            break;
-          default:
-            ;
-          }
-              jjtree.closeNodeScope(jjtn000, true);
-              jjtc000 = false;
-              jjtn000.jjtSetLastToken(getToken(0));
+        jj_consume_token(K_TO);
+        jj_consume_token(K_SECOND);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case O_OPENPAREN:
+          jj_consume_token(O_OPENPAREN);
+          scale = jj_consume_token(S_NUMBER);
+          jj_consume_token(O_CLOSEPAREN);
+          break;
+        default:
+          ;
+        }
                 if (precision == null) {
                 dt = new IntervalDayToSecond();
             }
@@ -1200,25 +969,22 @@ String s = null;
                 }
             }
             {if (true) return dt;}
-        } else {
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_INTERVAL:
+          jj_consume_token(K_INTERVAL);
+          jj_consume_token(K_YEAR);
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case K_INTERVAL:
-            jj_consume_token(K_INTERVAL);
-            jj_consume_token(K_YEAR);
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
-            jj_consume_token(K_TO);
-            jj_consume_token(K_MONTH);
-              jjtree.closeNodeScope(jjtn000, true);
-              jjtc000 = false;
-              jjtn000.jjtSetLastToken(getToken(0));
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            ;
+          }
+          jj_consume_token(K_TO);
+          jj_consume_token(K_MONTH);
             if (precision == null) {
                 dt = new IntervalYearToMonth();
             }
@@ -1227,83 +993,71 @@ String s = null;
                 dt = new IntervalYearToMonth(pl);
             }
             {if (true) return dt;}
-            break;
+          break;
+        case K_TIME:
+        case K_TIMESTAMP:
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case K_TIME:
-          case K_TIMESTAMP:
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_TIME:
-              jj_consume_token(K_TIME);
+            jj_consume_token(K_TIME);
                    {if (true) return TIME_TYPE;}
-              break;
-            case K_TIMESTAMP:
-              jj_consume_token(K_TIMESTAMP);
+            break;
+          case K_TIMESTAMP:
+            jj_consume_token(K_TIMESTAMP);
                           {if (true) return TIMESTAMP_TYPE;}
-              break;
-            default:
-              jj_consume_token(-1);
-              throw new ParseException();
-            }
+            break;
+          default:
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_WITH:
+            jj_consume_token(K_WITH);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
+            case K_LOCAL:
+              jj_consume_token(K_LOCAL);
               break;
             default:
               ;
             }
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_WITH:
-              jj_consume_token(K_WITH);
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case K_LOCAL:
-                jj_consume_token(K_LOCAL);
-                break;
-              default:
-                ;
-              }
-              jj_consume_token(K_TIME);
-              jj_consume_token(K_ZONE);
-              break;
-            default:
-              ;
-            }
+            jj_consume_token(K_TIME);
+            jj_consume_token(K_ZONE);
             break;
-          case K_INTEGER:
-            jj_consume_token(K_INTEGER);
-                     jjtree.closeNodeScope(jjtn000, true);
-                     jjtc000 = false;
-                     jjtn000.jjtSetLastToken(getToken(0));
+          default:
+            ;
+          }
+          break;
+        case K_INTEGER:
+          jj_consume_token(K_INTEGER);
                      {if (true) return INTEGER_TYPE;}
-            break;
-          case K_INT:
-            jj_consume_token(K_INT);
-                     jjtree.closeNodeScope(jjtn000, true);
-                     jjtc000 = false;
-                     jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_INT:
+          jj_consume_token(K_INT);
                      {if (true) return INTEGER_TYPE;}
-            break;
-          case K_SMALLINT:
-            jj_consume_token(K_SMALLINT);
-                     jjtree.closeNodeScope(jjtn000, true);
-                     jjtc000 = false;
-                     jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_SMALLINT:
+          jj_consume_token(K_SMALLINT);
                      {if (true) return SMALLINT_TYPE;}
+          break;
+        case K_FLOAT:
+          jj_consume_token(K_FLOAT);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
             break;
-          case K_FLOAT:
-            jj_consume_token(K_FLOAT);
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+          default:
+            ;
+          }
           if (precision == null) {
               {if (true) return new FloatType();}
           }
@@ -1312,84 +1066,54 @@ String s = null;
               FloatType ft = new FloatType(pl);
               {if (true) return ft;}
           }
-            break;
-          case K_REAL:
-            jj_consume_token(K_REAL);
-                 jjtree.closeNodeScope(jjtn000, true);
-                 jjtc000 = false;
-                 jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_REAL:
+          jj_consume_token(K_REAL);
                  {if (true) return new RealType();}
-            break;
-          case K_MLSLABEL:
-            jj_consume_token(K_MLSLABEL);
-                     jjtree.closeNodeScope(jjtn000, true);
-                     jjtc000 = false;
-                     jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_MLSLABEL:
+          jj_consume_token(K_MLSLABEL);
                      {if (true) return MLSLABEL_TYPE;}
-            break;
-          case K_PLS_INTEGER:
-            jj_consume_token(K_PLS_INTEGER);
-                        jjtree.closeNodeScope(jjtn000, true);
-                        jjtc000 = false;
-                        jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_PLS_INTEGER:
+          jj_consume_token(K_PLS_INTEGER);
                         {if (true) return PLS_INTEGER_TYPE;}
-            break;
-          case K_SIMPLE_INTEGER:
-            jj_consume_token(K_SIMPLE_INTEGER);
-                           jjtree.closeNodeScope(jjtn000, true);
-                           jjtc000 = false;
-                           jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_SIMPLE_INTEGER:
+          jj_consume_token(K_SIMPLE_INTEGER);
                            {if (true) return SIMPLE_INTEGER_TYPE;}
-            break;
-          case K_SYS_REFCURSOR:
-            jj_consume_token(K_SYS_REFCURSOR);
-                           jjtree.closeNodeScope(jjtn000, true);
-                           jjtc000 = false;
-                           jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_SYS_REFCURSOR:
+          jj_consume_token(K_SYS_REFCURSOR);
                            {if (true) return SYS_REFCURSOR_TYPE;}
-            break;
-          case K_BLOB:
-            jj_consume_token(K_BLOB);
-                  jjtree.closeNodeScope(jjtn000, true);
-                  jjtc000 = false;
-                  jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_BLOB:
+          jj_consume_token(K_BLOB);
                   {if (true) return new BlobType();}
-            break;
-          case K_NCLOB:
-            jj_consume_token(K_NCLOB);
-                  jjtree.closeNodeScope(jjtn000, true);
-                  jjtc000 = false;
-                  jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_NCLOB:
+          jj_consume_token(K_NCLOB);
                   {if (true) return new NClobType();}
-            break;
-          case K_BFILE:
-            jj_consume_token(K_BFILE);
-                   jjtree.closeNodeScope(jjtn000, true);
-                   jjtc000 = false;
-                   jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_BFILE:
+          jj_consume_token(K_BFILE);
                    {if (true) return BFILE_TYPE;}
-            break;
-          case K_ROWID:
-            jj_consume_token(K_ROWID);
-                  jjtree.closeNodeScope(jjtn000, true);
-                  jjtc000 = false;
-                  jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_ROWID:
+          jj_consume_token(K_ROWID);
                   {if (true) return ROWID_TYPE;}
+          break;
+        case K_UROWID:
+          jj_consume_token(K_UROWID);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
             break;
-          case K_UROWID:
-            jj_consume_token(K_UROWID);
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+          default:
+            ;
+          }
           if (precision == null) {
               {if (true) return new URowIdType();}
           }
@@ -1397,81 +1121,75 @@ String s = null;
               pl = Long.decode(precision.image);
               {if (true) return new URowIdType(pl);}
           }
-            break;
-          case K_DOUBLE:
-            jj_consume_token(K_DOUBLE);
-            jj_consume_token(K_PRECISION);
-                                 jjtree.closeNodeScope(jjtn000, true);
-                                 jjtc000 = false;
-                                 jjtn000.jjtSetLastToken(getToken(0));
+          break;
+        case K_DOUBLE:
+          jj_consume_token(K_DOUBLE);
+          jj_consume_token(K_PRECISION);
                                  {if (true) return new DoubleType();}
+          break;
+        case K_CHAR:
+          jj_consume_token(K_CHAR);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_VARYING:
+            t = jj_consume_token(K_VARYING);
             break;
-          case K_CHAR:
-            jj_consume_token(K_CHAR);
+          default:
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_VARYING:
-              t = jj_consume_token(K_VARYING);
+            case K_BYTE:
+            case K_CHAR:
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_BYTE:
+                jj_consume_token(K_BYTE);
+                break;
+              case K_CHAR:
+                jj_consume_token(K_CHAR);
+                break;
+              default:
+                jj_consume_token(-1);
+                throw new ParseException();
+              }
               break;
             default:
               ;
             }
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            ;
+          }
+          if (jj_2_10(2)) {
+            jj_consume_token(K_CHARACTER);
+            jj_consume_token(K_SET);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case K_BYTE:
-              case K_CHAR:
+            case S_IDENTIFIER:
+            case S_QUOTED_IDENTIFIER:
+              if (jj_2_9(2)) {
+                jj_consume_token(S_IDENTIFIER);
+              } else {
                 switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-                case K_BYTE:
-                  jj_consume_token(K_BYTE);
-                  break;
-                case K_CHAR:
-                  jj_consume_token(K_CHAR);
+                case S_IDENTIFIER:
+                case S_QUOTED_IDENTIFIER:
+                  columnSpec();
+                  jj_consume_token(K_CHARSET);
                   break;
                 default:
                   jj_consume_token(-1);
                   throw new ParseException();
                 }
-                break;
-              default:
-                ;
               }
-              jj_consume_token(O_CLOSEPAREN);
               break;
             default:
               ;
             }
-            if (jj_2_10(2)) {
-              jj_consume_token(K_CHARACTER);
-              jj_consume_token(K_SET);
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case S_IDENTIFIER:
-              case S_QUOTED_IDENTIFIER:
-                if (jj_2_9(2)) {
-                  jj_consume_token(S_IDENTIFIER);
-                } else {
-                  switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-                  case S_IDENTIFIER:
-                  case S_QUOTED_IDENTIFIER:
-                    columnSpec();
-                    jj_consume_token(K_CHARSET);
-                    break;
-                  default:
-                    jj_consume_token(-1);
-                    throw new ParseException();
-                  }
-                }
-                break;
-              default:
-                ;
-              }
-            } else {
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+          } else {
+            ;
+          }
           if (t == null) {
               if (precision == null) {
                   {if (true) return new CharType();}
@@ -1491,73 +1209,70 @@ String s = null;
                   {if (true) return new VarChar2Type(pl);}
               }
           }
+          break;
+        case K_VARCHAR:
+          jj_consume_token(K_VARCHAR);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_VARYING:
+            jj_consume_token(K_VARYING);
             break;
-          case K_VARCHAR:
-            jj_consume_token(K_VARCHAR);
+          default:
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_VARYING:
-              jj_consume_token(K_VARYING);
+            case K_BYTE:
+            case K_CHAR:
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_BYTE:
+                jj_consume_token(K_BYTE);
+                break;
+              case K_CHAR:
+                jj_consume_token(K_CHAR);
+                break;
+              default:
+                jj_consume_token(-1);
+                throw new ParseException();
+              }
               break;
             default:
               ;
             }
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            ;
+          }
+          if (jj_2_12(2)) {
+            jj_consume_token(K_CHARACTER);
+            jj_consume_token(K_SET);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case K_BYTE:
-              case K_CHAR:
+            case S_IDENTIFIER:
+            case S_QUOTED_IDENTIFIER:
+              if (jj_2_11(2)) {
+                jj_consume_token(S_IDENTIFIER);
+              } else {
                 switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-                case K_BYTE:
-                  jj_consume_token(K_BYTE);
-                  break;
-                case K_CHAR:
-                  jj_consume_token(K_CHAR);
+                case S_IDENTIFIER:
+                case S_QUOTED_IDENTIFIER:
+                  columnSpec();
+                  jj_consume_token(K_CHARSET);
                   break;
                 default:
                   jj_consume_token(-1);
                   throw new ParseException();
                 }
-                break;
-              default:
-                ;
               }
-              jj_consume_token(O_CLOSEPAREN);
               break;
             default:
               ;
             }
-            if (jj_2_12(2)) {
-              jj_consume_token(K_CHARACTER);
-              jj_consume_token(K_SET);
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case S_IDENTIFIER:
-              case S_QUOTED_IDENTIFIER:
-                if (jj_2_11(2)) {
-                  jj_consume_token(S_IDENTIFIER);
-                } else {
-                  switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-                  case S_IDENTIFIER:
-                  case S_QUOTED_IDENTIFIER:
-                    columnSpec();
-                    jj_consume_token(K_CHARSET);
-                    break;
-                  default:
-                    jj_consume_token(-1);
-                    throw new ParseException();
-                  }
-                }
-                break;
-              default:
-                ;
-              }
-            } else {
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+          } else {
+            ;
+          }
           if (precision == null) {
               {if (true) return new VarCharType();}
           }
@@ -1565,73 +1280,70 @@ String s = null;
               pl = Long.decode(precision.image);
               {if (true) return new VarCharType(pl);}
           }
+          break;
+        case K_VARCHAR2:
+          jj_consume_token(K_VARCHAR2);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_VARYING:
+            jj_consume_token(K_VARYING);
             break;
-          case K_VARCHAR2:
-            jj_consume_token(K_VARCHAR2);
+          default:
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_VARYING:
-              jj_consume_token(K_VARYING);
+            case K_BYTE:
+            case K_CHAR:
+              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case K_BYTE:
+                jj_consume_token(K_BYTE);
+                break;
+              case K_CHAR:
+                jj_consume_token(K_CHAR);
+                break;
+              default:
+                jj_consume_token(-1);
+                throw new ParseException();
+              }
               break;
             default:
               ;
             }
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            ;
+          }
+          if (jj_2_14(2)) {
+            jj_consume_token(K_CHARACTER);
+            jj_consume_token(K_SET);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case K_BYTE:
-              case K_CHAR:
+            case S_IDENTIFIER:
+            case S_QUOTED_IDENTIFIER:
+              if (jj_2_13(2)) {
+                jj_consume_token(S_IDENTIFIER);
+              } else {
                 switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-                case K_BYTE:
-                  jj_consume_token(K_BYTE);
-                  break;
-                case K_CHAR:
-                  jj_consume_token(K_CHAR);
+                case S_IDENTIFIER:
+                case S_QUOTED_IDENTIFIER:
+                  columnSpec();
+                  jj_consume_token(K_CHARSET);
                   break;
                 default:
                   jj_consume_token(-1);
                   throw new ParseException();
                 }
-                break;
-              default:
-                ;
               }
-              jj_consume_token(O_CLOSEPAREN);
               break;
             default:
               ;
             }
-            if (jj_2_14(2)) {
-              jj_consume_token(K_CHARACTER);
-              jj_consume_token(K_SET);
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case S_IDENTIFIER:
-              case S_QUOTED_IDENTIFIER:
-                if (jj_2_13(2)) {
-                  jj_consume_token(S_IDENTIFIER);
-                } else {
-                  switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-                  case S_IDENTIFIER:
-                  case S_QUOTED_IDENTIFIER:
-                    columnSpec();
-                    jj_consume_token(K_CHARSET);
-                    break;
-                  default:
-                    jj_consume_token(-1);
-                    throw new ParseException();
-                  }
-                }
-                break;
-              default:
-                ;
-              }
-            } else {
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+          } else {
+            ;
+          }
             if (precision == null) {
                 {if (true) return new VarChar2Type();}
             }
@@ -1639,28 +1351,25 @@ String s = null;
                 pl = Long.decode(precision.image);
                 {if (true) return new VarChar2Type(pl);}
             }
+          break;
+        case K_CHARACTER:
+          jj_consume_token(K_CHARACTER);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_VARYING:
+            t = jj_consume_token(K_VARYING);
             break;
-          case K_CHARACTER:
-            jj_consume_token(K_CHARACTER);
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_VARYING:
-              t = jj_consume_token(K_VARYING);
-              break;
-            default:
-              ;
-            }
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+          default:
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            ;
+          }
           if (t == null) {
               if (precision == null) {
                   {if (true) return new CharType();}
@@ -1680,28 +1389,25 @@ String s = null;
                   {if (true) return new VarCharType(pl);}
               }
           }
+          break;
+        case K_NCHAR:
+          jj_consume_token(K_NCHAR);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_VARYING:
+            t = jj_consume_token(K_VARYING);
             break;
-          case K_NCHAR:
-            jj_consume_token(K_NCHAR);
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_VARYING:
-              t = jj_consume_token(K_VARYING);
-              break;
-            default:
-              ;
-            }
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+          default:
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            ;
+          }
           if (t == null) {
               if (precision == null) {
                   {if (true) return new NCharType();}
@@ -1721,21 +1427,18 @@ String s = null;
                   {if (true) return new NVarChar2Type(pl);}
               }
           }
+          break;
+        case K_NVARCHAR:
+          jj_consume_token(K_NVARCHAR);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
             break;
-          case K_NVARCHAR:
-            jj_consume_token(K_NVARCHAR);
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
-              jjtree.closeNodeScope(jjtn000, true);
-              jjtc000 = false;
-              jjtn000.jjtSetLastToken(getToken(0));
+          default:
+            ;
+          }
             if (precision == null) {
                 {if (true) return new NVarChar2Type();}
             }
@@ -1743,21 +1446,18 @@ String s = null;
                 pl = Long.decode(precision.image);
                 {if (true) return new NVarChar2Type(pl);}
             }
+          break;
+        case K_NVARCHAR2:
+          jj_consume_token(K_NVARCHAR2);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
             break;
-          case K_NVARCHAR2:
-            jj_consume_token(K_NVARCHAR2);
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
+          default:
+            ;
+          }
             if (precision == null) {
                 {if (true) return new NVarChar2Type();}
             }
@@ -1765,225 +1465,171 @@ String s = null;
                 pl = Long.decode(precision.image);
                 {if (true) return new NVarChar2Type(pl);}
             }
+          break;
+        case K_NATIONAL:
+          jj_consume_token(K_NATIONAL);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_CHARACTER:
+            jj_consume_token(K_CHARACTER);
             break;
-          case K_NATIONAL:
-            jj_consume_token(K_NATIONAL);
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_CHARACTER:
-              jj_consume_token(K_CHARACTER);
-              break;
-            case K_CHAR:
-              jj_consume_token(K_CHAR);
-              break;
-            default:
-              jj_consume_token(-1);
-              throw new ParseException();
-            }
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_VARYING:
-              t = jj_consume_token(K_VARYING);
-              break;
-            default:
-              ;
-            }
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              precision = jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
-          jjtree.closeNodeScope(jjtn000, true);
-          jjtc000 = false;
-          jjtn000.jjtSetLastToken(getToken(0));
-          if (t == null) {
-              if (precision == null) {
-                  {if (true) return new NCharType();}
-              }
-              else {
-                  pl = Long.decode(precision.image);
-                  {if (true) return new NCharType(pl);}
-              }
-          }
-          else {
-              // ANSI syntax for NVARCHAR2
-              if (precision == null) {
-                  {if (true) return new NVarChar2Type();}
-              }
-              else {
-                  pl = Long.decode(precision.image);
-                  {if (true) return new NVarChar2Type(pl);}
-              }
-          }
-            break;
-          case K_CLOB:
-            jj_consume_token(K_CLOB);
-            if (jj_2_16(2)) {
-              jj_consume_token(K_CHARACTER);
-              jj_consume_token(K_SET);
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case S_IDENTIFIER:
-              case S_QUOTED_IDENTIFIER:
-                if (jj_2_15(2)) {
-                  jj_consume_token(S_IDENTIFIER);
-                } else {
-                  switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-                  case S_IDENTIFIER:
-                  case S_QUOTED_IDENTIFIER:
-                    columnSpec();
-                    jj_consume_token(K_CHARSET);
-                    break;
-                  default:
-                    jj_consume_token(-1);
-                    throw new ParseException();
-                  }
-                }
-                break;
-              default:
-                ;
-              }
-            } else {
-              ;
-            }
-                                                                                                                   jjtree.closeNodeScope(jjtn000, true);
-                                                                                                                   jjtc000 = false;
-                                                                                                                   jjtn000.jjtSetLastToken(getToken(0));
-                                                                                                                   {if (true) return new ClobType();}
+          case K_CHAR:
+            jj_consume_token(K_CHAR);
             break;
           default:
             jj_consume_token(-1);
             throw new ParseException();
           }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case K_VARYING:
+            t = jj_consume_token(K_VARYING);
+            break;
+          default:
+            ;
+          }
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            precision = jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          default:
+            ;
+          }
+          if (t == null) {
+              if (precision == null) {
+                  {if (true) return new NCharType();}
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  {if (true) return new NCharType(pl);}
+              }
+          }
+          else {
+              // ANSI syntax for NVARCHAR2
+              if (precision == null) {
+                  {if (true) return new NVarChar2Type();}
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  {if (true) return new NVarChar2Type(pl);}
+              }
+          }
+          break;
+        case K_CLOB:
+          jj_consume_token(K_CLOB);
+          if (jj_2_16(2)) {
+            jj_consume_token(K_CHARACTER);
+            jj_consume_token(K_SET);
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case S_IDENTIFIER:
+            case S_QUOTED_IDENTIFIER:
+              if (jj_2_15(2)) {
+                jj_consume_token(S_IDENTIFIER);
+              } else {
+                switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+                case S_IDENTIFIER:
+                case S_QUOTED_IDENTIFIER:
+                  columnSpec();
+                  jj_consume_token(K_CHARSET);
+                  break;
+                default:
+                  jj_consume_token(-1);
+                  throw new ParseException();
+                }
+              }
+              break;
+            default:
+              ;
+            }
+          } else {
+            ;
+          }
+                                                                                                                   {if (true) return new ClobType();}
+          break;
+        default:
+          jj_consume_token(-1);
+          throw new ParseException();
         }
-      }
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
       }
     }
     throw new Error("Missing return statement in function");
   }
 
   final public DatabaseType typeSpec() throws ParseException {
- /*@bgen(jjtree) typeSpec */
- SimpleNode jjtn000 = new SimpleNode(this, JJTTYPESPEC);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));DatabaseType dataType = null;
+ DatabaseType dataType = null;
  String s = null;
-    try {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_BFILE:
-      case K_BINARY_DOUBLE:
-      case K_BINARY_FLOAT:
-      case K_BINARY_INTEGER:
-      case K_BLOB:
-      case K_BOOLEAN:
-      case K_CHAR:
-      case K_CHARACTER:
-      case K_CLOB:
-      case K_DATE:
-      case K_DEC:
-      case K_DECIMAL:
-      case K_DOUBLE:
-      case K_FLOAT:
-      case K_INT:
-      case K_INTEGER:
-      case K_INTERVAL:
-      case K_LONG:
-      case K_MLSLABEL:
-      case K_NATIONAL:
-      case K_NATURAL:
-      case K_NCHAR:
-      case K_NCLOB:
-      case K_NUMBER:
-      case K_NUMERIC:
-      case K_NVARCHAR2:
-      case K_NVARCHAR:
-      case K_PLS_INTEGER:
-      case K_POSITIVE:
-      case K_RAW:
-      case K_REAL:
-      case K_ROWID:
-      case K_SIMPLE_INTEGER:
-      case K_SMALLINT:
-      case K_SYS_REFCURSOR:
-      case K_TIME:
-      case K_TIMESTAMP:
-      case K_UROWID:
-      case K_VARCHAR2:
-      case K_VARCHAR:
-        dataType = datatype();
-        break;
-      default:
-        if (jj_2_18(3)) {
-          columnSpec();
-          jj_consume_token(K_TYPE2);
-        } else if (jj_2_19(3)) {
-          tableSpec();
-          jj_consume_token(K_ROWTYPE);
-        } else {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_BFILE:
+    case K_BINARY_DOUBLE:
+    case K_BINARY_FLOAT:
+    case K_BINARY_INTEGER:
+    case K_BLOB:
+    case K_BOOLEAN:
+    case K_CHAR:
+    case K_CHARACTER:
+    case K_CLOB:
+    case K_DATE:
+    case K_DEC:
+    case K_DECIMAL:
+    case K_DOUBLE:
+    case K_FLOAT:
+    case K_INT:
+    case K_INTEGER:
+    case K_INTERVAL:
+    case K_LONG:
+    case K_MLSLABEL:
+    case K_NATIONAL:
+    case K_NATURAL:
+    case K_NCHAR:
+    case K_NCLOB:
+    case K_NUMBER:
+    case K_NUMERIC:
+    case K_NVARCHAR2:
+    case K_NVARCHAR:
+    case K_PLS_INTEGER:
+    case K_POSITIVE:
+    case K_RAW:
+    case K_REAL:
+    case K_ROWID:
+    case K_SIMPLE_INTEGER:
+    case K_SMALLINT:
+    case K_SYS_REFCURSOR:
+    case K_TIME:
+    case K_TIMESTAMP:
+    case K_UROWID:
+    case K_VARCHAR2:
+    case K_VARCHAR:
+      dataType = datatype();
+      break;
+    default:
+      if (jj_2_18(3)) {
+        columnSpec();
+        jj_consume_token(K_TYPE2);
+      } else if (jj_2_19(3)) {
+        tableSpec();
+        jj_consume_token(K_ROWTYPE);
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case S_IDENTIFIER:
+        case S_QUOTED_IDENTIFIER:
+          s = typeName();
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case S_IDENTIFIER:
-          case S_QUOTED_IDENTIFIER:
-            s = typeName();
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case O_OPENPAREN:
-              jj_consume_token(O_OPENPAREN);
-              jj_consume_token(S_NUMBER);
-              jj_consume_token(O_CLOSEPAREN);
-              break;
-            default:
-              ;
-            }
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
             break;
           default:
-            jj_consume_token(-1);
-            throw new ParseException();
+            ;
           }
+          break;
+        default:
+          jj_consume_token(-1);
+          throw new ParseException();
         }
       }
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-      {if (true) return dataType;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
     }
+      {if (true) return dataType;}
     throw new Error("Missing return statement in function");
   }
 
@@ -2109,57 +1755,26 @@ String s = null;
     }
   }
 
-  final public SimpleNode fieldDeclaration() throws ParseException {
- /*@bgen(jjtree) fieldDeclaration */
- SimpleNode jjtn000 = new SimpleNode(this, JJTFIELDDECLARATION);
- boolean jjtc000 = true;
- jjtree.openNodeScope(jjtn000);
- jjtn000.jjtSetFirstToken(getToken(1));String s = null;
-    try {
-      s = typeName();
-      typeSpec();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_NOT:
-        jj_consume_token(K_NOT);
-        jj_consume_token(K_NULL);
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_DEFAULT:
-      case O_ASSIGN:
-        variableDefaultAssignment();
-        break;
-      default:
-        ;
-      }
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-      jjtn000.jjtSetValue(s);
-      {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
+  final public void fieldDeclaration() throws ParseException {
+ String s = null;
+    s = typeName();
+    typeSpec();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_NOT:
+      jj_consume_token(K_NOT);
+      jj_consume_token(K_NULL);
+      break;
+    default:
+      ;
     }
-    throw new Error("Missing return statement in function");
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_DEFAULT:
+    case O_ASSIGN:
+      variableDefaultAssignment();
+      break;
+    default:
+      ;
+    }
   }
 
   final public void subtypeDeclaration(PLSQLPackageType packageType) throws ParseException {
@@ -2410,40 +2025,11 @@ String s = null;
     jj_consume_token(O_SEMICOLON);
   }
 
-  final public SimpleNode functionReturnSpec() throws ParseException {
- /*@bgen(jjtree) functionReturnSpec */
-  SimpleNode jjtn000 = new SimpleNode(this, JJTFUNCTIONRETURNSPEC);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-  jjtn000.jjtSetFirstToken(getToken(1));
-    try {
-      jj_consume_token(K_RETURN);
-      typeSpec();
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-      jjtn000.jjtSetValue("RETURN");
-      {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
-    }
+  final public DatabaseType functionReturnSpec() throws ParseException {
+ DatabaseType dataType = null;
+    jj_consume_token(K_RETURN);
+    dataType = typeSpec();
+      {if (true) return dataType;}
     throw new Error("Missing return statement in function");
   }
 
@@ -2453,7 +2039,7 @@ String s = null;
  DatabaseType argumentDataType = null;
  ArgumentTypeDirection argDirection = ArgumentTypeDirection.IN; // by default, arguments are IN
  String direction = null;
- SimpleNode defaultAssignment = null;
+ boolean defaultAssignment = false;
     t = jj_consume_token(S_IDENTIFIER);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_IN:
@@ -2490,7 +2076,7 @@ String s = null;
           }
           argumentType.setDirection(argDirection);
       }
-      if (defaultAssignment != null) {
+      if (defaultAssignment) {
           argumentType.setOptional();
       }
       procedureType.addCompositeType(argumentType);
@@ -2519,50 +2105,20 @@ String s = null;
     throw new Error("Missing return statement in function");
   }
 
-  final public SimpleNode argumentDefaultAssignment() throws ParseException {
- /*@bgen(jjtree) argumentDefaultAssignment */
-  SimpleNode jjtn000 = new SimpleNode(this, JJTARGUMENTDEFAULTASSIGNMENT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-  jjtn000.jjtSetFirstToken(getToken(1));
-    try {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case O_ASSIGN:
-        jj_consume_token(O_ASSIGN);
-        break;
-      case K_DEFAULT:
-        jj_consume_token(K_DEFAULT);
-        break;
-      default:
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-      skipToNextArg();
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-      jjtn000.jjtSetLastToken(getToken(0));
-      jjtn000.jjtSetValue(" (optional)");
-      {if (true) return jjtn000;}
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtn000.jjtSetLastToken(getToken(0));
-      }
+  final public boolean argumentDefaultAssignment() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case O_ASSIGN:
+      jj_consume_token(O_ASSIGN);
+      break;
+    case K_DEFAULT:
+      jj_consume_token(K_DEFAULT);
+      break;
+    default:
+      jj_consume_token(-1);
+      throw new ParseException();
     }
+    skipToNextArg();
+      {if (true) return true;}
     throw new Error("Missing return statement in function");
   }
 
@@ -2870,23 +2426,6 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3_19() {
-    if (jj_3R_11()) return true;
-    if (jj_scan_token(K_ROWTYPE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_18() {
-    if (jj_3R_10()) return true;
-    if (jj_scan_token(K_TYPE2)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20() {
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
   private boolean jj_3_7() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2980,16 +2519,16 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_13() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3_21() {
     if (jj_3R_11()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(165)) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_13() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
@@ -3014,11 +2553,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_9() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
   private boolean jj_3R_27() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3035,6 +2569,11 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_9() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3R_26() {
     if (jj_scan_token(K_POSITIVE)) return true;
     return false;
@@ -3045,14 +2584,14 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_24() {
-    if (jj_scan_token(K_BINARY_DOUBLE)) return true;
-    return false;
-  }
-
   private boolean jj_3_14() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_scan_token(K_BINARY_DOUBLE)) return true;
     return false;
   }
 
@@ -3192,14 +2731,14 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
+  private boolean jj_3R_50() {
+    if (jj_scan_token(K_VARCHAR)) return true;
     return false;
   }
 
-  private boolean jj_3R_50() {
-    if (jj_scan_token(K_VARCHAR)) return true;
+  private boolean jj_3_3() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3243,12 +2782,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_49() {
     if (jj_scan_token(K_CHAR)) return true;
     return false;
@@ -3262,6 +2795,12 @@ String s = null;
 
   private boolean jj_3R_48() {
     if (jj_scan_token(K_DOUBLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3437,6 +2976,23 @@ String s = null;
 
   private boolean jj_3R_21() {
     if (jj_3R_58()) return true;
+    return false;
+  }
+
+  private boolean jj_3_19() {
+    if (jj_3R_11()) return true;
+    if (jj_scan_token(K_ROWTYPE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_18() {
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(K_TYPE2)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_3R_19()) return true;
     return false;
   }
 
