@@ -403,11 +403,9 @@ PLSQLPackageType parsePLSQLPackage():
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] packageName=OracleObjectName()
         {
           if (schema != null) {
-            packageType.setPackageName(schema + "." + packageName);
+            packageType.setSchema(schema);
           }
-          else {
-            packageType.setPackageName(packageName);
-          }
+          packageType.setPackageName(packageName);
         }
         [ <K_AUTHID> [ <K_CURRENT_USER> | <K_DEFINER> ] ]
         [ <K_AS> | <K_IS> ]
@@ -1058,9 +1056,13 @@ void procedureSpec(PLSQLPackageType packageType)      :
 }
 {
     <K_PROCEDURE> t=<S_IDENTIFIER>        {
-            procedureType = new ProcedureType(t.image);        }
+            procedureType = new ProcedureType(t.image);
+            procedureType.setCatalogName(packageType.getPackageName());
+            procedureType.setSchema(packageType.getSchema());        }
         [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ]
     <O_SEMICOLON>
+    {      packageType.addProcedure(procedureType);
+    }
 }
 
 void argumentList(ProcedureType procedureType)      :
@@ -1073,16 +1075,23 @@ void argumentList(ProcedureType procedureType)      :
 void functionSpec(PLSQLPackageType packageType)      :
 {Token t = null;
  FunctionType functionType = null;
+ DatabaseType returnDataType = null;
 }
 {
     <K_FUNCTION> t=<S_IDENTIFIER>
         {
             functionType = new FunctionType(t.image);
+            functionType.setCatalogName(packageType.getPackageName());
+            functionType.setSchema(packageType.getSchema());
         }
         [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ]
-        functionReturnSpec()
+        returnDataType = functionReturnSpec()
         [ <K_DETERMINISTIC> | <K_PIPELINED> | <K_PARALLEL_ENABLE> | <K_RESULT_CACHE> ]
     <O_SEMICOLON>
+    {
+      functionType.setReturnArgument(returnDataType);
+      packageType.addProcedure(functionType);
+    }
 }
 
 DatabaseType functionReturnSpec():

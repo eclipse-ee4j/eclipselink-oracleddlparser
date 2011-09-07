@@ -13,6 +13,7 @@
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
 //javase imports
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
@@ -21,6 +22,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
 	protected String packageName;
+    protected String schema;
 	protected List<PLSQLType> types;
 	protected List<PLSQLCursorType> cursors;
 	protected List<ProcedureType> procedures;
@@ -40,6 +42,20 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
         this.packageName = packageName;
     }
 
+    /**
+     * Return the schema name for this package.
+     */
+    public String getSchema() {
+        return schema;
+    }
+
+    /**
+     * Set the schema name for this package.
+     */
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
     public List<PLSQLType> getTypes() {
 		return types;
 	}
@@ -51,6 +67,13 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
 	public List<ProcedureType> getProcedures() {
 		return procedures;
 	}
+
+	public void addProcedure(ProcedureType procedureType) {
+        if (getProcedures() == null) {
+            procedures = new ArrayList<ProcedureType>();
+        }
+        procedures.add(procedureType);
+    }
 
 	public void addCompositeType(DatabaseType enclosedType) {
     	// TODO
