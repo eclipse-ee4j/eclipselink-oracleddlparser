@@ -12,11 +12,15 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
 public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable {
-
+    List<FieldType> fields = new ArrayList<FieldType>();
+    
 	//TODO - fix up later
 	public PLSQLRecordType(String recordName) {
 		super(recordName);
@@ -24,11 +28,17 @@ public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable 
 	
 	@Override
 	public void addCompositeType(DatabaseType enclosedType) {
+	    fields.add((FieldType) enclosedType);
 	}
 
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
-
+	/**
+	 * Returns the list of FieldType instances.
+	 */
+    public List<FieldType> getFields() {
+        return fields;
+    }
 }

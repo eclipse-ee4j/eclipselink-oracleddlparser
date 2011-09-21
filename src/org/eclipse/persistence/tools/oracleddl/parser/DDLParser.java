@@ -40,7 +40,9 @@ import org.eclipse.persistence.tools.oracleddl.metadata.NestedTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NVarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
@@ -1627,6 +1629,10 @@ String s = null;
         }
       }
     }
+      if (dataType == null && typesRepository.getDatabaseType(s) != null)
+      {
+        dataType = typesRepository.getDatabaseType(s);
+      }
       {if (true) return dataType;}
     throw new Error("Missing return statement in function");
   }
@@ -1706,20 +1712,20 @@ String s = null;
     jj_consume_token(K_TYPE);
     s = typeName();
     jj_consume_token(K_IS);
-    aTypeDeclaration(packageType);
+    aTypeDeclaration(packageType, s);
     jj_consume_token(O_SEMICOLON);
   }
 
-  final public void aTypeDeclaration(PLSQLPackageType packageType) throws ParseException {
+  final public void aTypeDeclaration(PLSQLPackageType packageType, String typeName) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_RECORD:
-      recordDeclaration(packageType);
+      recordDeclaration(packageType, typeName);
       break;
     case K_SUBTYPE:
       subtypeDeclaration(packageType);
       break;
     case K_TABLE:
-      plsqlTableDeclaration(packageType);
+      plsqlTableDeclaration(packageType, typeName);
       break;
     case K_VARRAY:
     case K_VARYING:
@@ -1734,29 +1740,34 @@ String s = null;
     }
   }
 
-  final public void recordDeclaration(PLSQLPackageType packageType) throws ParseException {
+  final public void recordDeclaration(PLSQLPackageType packageType, String typeName) throws ParseException {
+  PLSQLRecordType plsqlRecordType = new PLSQLRecordType(typeName);
     jj_consume_token(K_RECORD);
     jj_consume_token(O_OPENPAREN);
-    fieldDeclarations();
+    fieldDeclarations(plsqlRecordType);
     jj_consume_token(O_CLOSEPAREN);
+      packageType.addType(plsqlRecordType);
+      typesRepository.setDatabaseType(typeName, plsqlRecordType);
   }
 
-  final public void fieldDeclarations() throws ParseException {
-    fieldDeclaration();
+  final public void fieldDeclarations(PLSQLRecordType plsqlRecordType) throws ParseException {
+    fieldDeclaration(plsqlRecordType);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_COMMA:
       jj_consume_token(O_COMMA);
-      fieldDeclarations();
+      fieldDeclarations(plsqlRecordType);
       break;
     default:
       ;
     }
   }
 
-  final public void fieldDeclaration() throws ParseException {
- String s = null;
+  final public void fieldDeclaration(PLSQLRecordType plsqlRecordType) throws ParseException {
+  String s = null;
+  DatabaseType dataType = null;
+  FieldType fieldType = null;
     s = typeName();
-    typeSpec();
+    dataType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_NOT:
       jj_consume_token(K_NOT);
@@ -1773,6 +1784,9 @@ String s = null;
     default:
       ;
     }
+      fieldType = new FieldType(s);
+      fieldType.setDataType(dataType);
+      plsqlRecordType.addCompositeType(fieldType);
   }
 
   final public void subtypeDeclaration(PLSQLPackageType packageType) throws ParseException {
@@ -1817,7 +1831,8 @@ String s = null;
     }
   }
 
-  final public void plsqlTableDeclaration(PLSQLPackageType packageType) throws ParseException {
+  final public void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) throws ParseException {
+  PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
     jj_consume_token(K_TABLE);
     jj_consume_token(K_OF);
     typeSpec();
@@ -1832,6 +1847,8 @@ String s = null;
     jj_consume_token(K_INDEX);
     jj_consume_token(K_BY);
     plsqlTableIndexByDeclaration(packageType);
+      packageType.addType(plsqlTable);
+      typesRepository.setDatabaseType(typeName, plsqlTable);
   }
 
   final public void plsqlTableIndexByDeclaration(PLSQLPackageType packageType) throws ParseException {
@@ -2432,14 +2449,14 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3_18() {
-    if (jj_3R_10()) return true;
-    if (jj_scan_token(K_TYPE2)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20() {
-    if (jj_3R_19()) return true;
+  private boolean jj_3_7() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(36)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_8()) jj_scanpos = xsp;
+    if (jj_scan_token(K_PRIMARY)) return true;
+    if (jj_scan_token(K_KEY)) return true;
     return false;
   }
 
@@ -2456,17 +2473,6 @@ String s = null;
     }
     }
     }
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(36)) jj_scanpos = xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_8()) jj_scanpos = xsp;
-    if (jj_scan_token(K_PRIMARY)) return true;
-    if (jj_scan_token(K_KEY)) return true;
     return false;
   }
 
@@ -2502,8 +2508,24 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_20() {
+    if (jj_3R_10()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(192)) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3R_56() {
     if (jj_scan_token(K_NATIONAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3_21() {
+    if (jj_3R_11()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(165)) jj_scanpos = xsp;
     return false;
   }
 
@@ -2522,14 +2544,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_20() {
-    if (jj_3R_10()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(192)) jj_scanpos = xsp;
-    return false;
-  }
-
   private boolean jj_3_5() {
     if (jj_3R_6()) return true;
     if (jj_scan_token(O_DOT)) return true;
@@ -2538,14 +2552,6 @@ String s = null;
 
   private boolean jj_3_13() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3_21() {
-    if (jj_3R_11()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(165)) jj_scanpos = xsp;
     return false;
   }
 
@@ -2565,8 +2571,28 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3R_13() {
+    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3R_52() {
     if (jj_scan_token(K_CHARACTER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_12()) {
+    jj_scanpos = xsp;
+    if (jj_3R_13()) return true;
+    }
     return false;
   }
 
@@ -2601,14 +2627,14 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_24() {
-    if (jj_scan_token(K_BINARY_DOUBLE)) return true;
-    return false;
-  }
-
   private boolean jj_3_14() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_scan_token(K_BINARY_DOUBLE)) return true;
     return false;
   }
 
@@ -2753,29 +2779,9 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
-    return false;
-  }
-
   private boolean jj_3_3() {
     if (jj_3R_6()) return true;
     if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_12()) {
-    jj_scanpos = xsp;
-    if (jj_3R_13()) return true;
-    }
     return false;
   }
 
@@ -2785,6 +2791,12 @@ String s = null;
     xsp = jj_scanpos;
     if (jj_scan_token(35)) jj_scanpos = xsp;
     if (jj_3R_16()) return true;
+    return false;
+  }
+
+  private boolean jj_3_22() {
+    if (jj_scan_token(K_IN)) return true;
+    if (jj_scan_token(K_OUT)) return true;
     return false;
   }
 
@@ -2799,14 +2811,14 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_49() {
-    if (jj_scan_token(K_CHAR)) return true;
-    return false;
-  }
-
   private boolean jj_3R_18() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_49() {
+    if (jj_scan_token(K_CHAR)) return true;
     return false;
   }
 
@@ -2821,8 +2833,19 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3R_58() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
   private boolean jj_3R_47() {
     if (jj_scan_token(K_UROWID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -2841,11 +2864,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_58() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
   private boolean jj_3R_44() {
     if (jj_scan_token(K_NCLOB)) return true;
     return false;
@@ -2853,12 +2871,6 @@ String s = null;
 
   private boolean jj_3R_43() {
     if (jj_scan_token(K_BLOB)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_17() {
-    if (jj_scan_token(O_DOT)) return true;
-    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -2872,9 +2884,11 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_22() {
-    if (jj_scan_token(K_IN)) return true;
-    if (jj_scan_token(K_OUT)) return true;
+  private boolean jj_3R_11() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2890,14 +2904,6 @@ String s = null;
 
   private boolean jj_3R_38() {
     if (jj_scan_token(K_REAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_11() {
-    if (jj_3R_6()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2942,6 +2948,14 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3R_10() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_17()) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3R_15() {
     if (jj_3R_10()) return true;
     return false;
@@ -2959,14 +2973,6 @@ String s = null;
 
   private boolean jj_3R_14() {
     if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10() {
-    if (jj_3R_6()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_17()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2999,6 +3005,17 @@ String s = null;
   private boolean jj_3_19() {
     if (jj_3R_11()) return true;
     if (jj_scan_token(K_ROWTYPE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_18() {
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(K_TYPE2)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_3R_19()) return true;
     return false;
   }
 

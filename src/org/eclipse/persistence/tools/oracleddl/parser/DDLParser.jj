@@ -64,7 +64,9 @@ import org.eclipse.persistence.tools.oracleddl.metadata.NestedTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NVarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
@@ -918,6 +920,9 @@ DatabaseType typeSpec():
     | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     )
     {
+      if (dataType == null && typesRepository.getDatabaseType(s) != null)      {
+        dataType = typesRepository.getDatabaseType(s);
+      }
       return dataType;    }
 }
 
@@ -959,39 +964,51 @@ void typeDeclaration(PLSQLPackageType packageType)      :
 {String s = null;}
 {
     <K_TYPE> s=typeName() <K_IS>
-        aTypeDeclaration(packageType)
+        aTypeDeclaration(packageType, s)
     <O_SEMICOLON>
 }
 
-void aTypeDeclaration(PLSQLPackageType packageType)      :
+void aTypeDeclaration(PLSQLPackageType packageType, String typeName)      :
 {}
 {
-    recordDeclaration(packageType)
+    recordDeclaration(packageType, typeName)
     | subtypeDeclaration(packageType)
-    | plsqlTableDeclaration(packageType)
+    | plsqlTableDeclaration(packageType, typeName)
     | varrayDeclaration(packageType)
     | refCursorDeclaration(packageType)
 }
 
-void recordDeclaration(PLSQLPackageType packageType)      :
-{}
+void recordDeclaration(PLSQLPackageType packageType, String typeName)      :
+{
+  PLSQLRecordType plsqlRecordType = new PLSQLRecordType(typeName);
+}
 {
     <K_RECORD> <O_OPENPAREN>
-        fieldDeclarations()
+        fieldDeclarations(plsqlRecordType)
     <O_CLOSEPAREN>
+    {      packageType.addType(plsqlRecordType);
+      typesRepository.setDatabaseType(typeName, plsqlRecordType);
+    }
 }
 
-void fieldDeclarations()      :
+void fieldDeclarations(PLSQLRecordType plsqlRecordType)      :
 {}
 {
-    fieldDeclaration() [ <O_COMMA> fieldDeclarations() ]
+    fieldDeclaration(plsqlRecordType) [ <O_COMMA> fieldDeclarations(plsqlRecordType) ]
 }
 
-void fieldDeclaration():
-{String s = null;
+void fieldDeclaration(PLSQLRecordType plsqlRecordType):
+{
+  String s = null;
+  DatabaseType dataType = null;
+  FieldType fieldType = null;
 }
 {
-    s=typeName() typeSpec() [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
+    s=typeName() dataType=typeSpec() [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
+    {
+      fieldType = new FieldType(s);
+      fieldType.setDataType(dataType);
+      plsqlRecordType.addCompositeType(fieldType);    }
 }
 
 void subtypeDeclaration(PLSQLPackageType packageType)      :
@@ -1005,11 +1022,18 @@ void subtypeDeclaration(PLSQLPackageType packageType)      :
 
 }
 
-void plsqlTableDeclaration(PLSQLPackageType packageType)      :
-{}
+void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName)      :
+{
+  PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
+}
 {
     <K_TABLE> <K_OF> typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
         plsqlTableIndexByDeclaration(packageType)
+    {
+      packageType.addType(plsqlTable);
+      typesRepository.setDatabaseType(typeName, plsqlTable);
+    }
+        
 }
 
 void plsqlTableIndexByDeclaration(PLSQLPackageType packageType)      :
