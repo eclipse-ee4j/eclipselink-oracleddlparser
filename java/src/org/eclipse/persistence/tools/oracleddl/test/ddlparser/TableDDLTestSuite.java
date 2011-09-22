@@ -37,7 +37,7 @@ import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypesRepository;
 
-public class DDLParserTest {
+public class TableDDLTestSuite {
 
     //JUnit fixture(s)
     static DDLParser parser = null;

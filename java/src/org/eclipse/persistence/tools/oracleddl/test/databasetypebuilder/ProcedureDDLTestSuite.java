@@ -16,7 +16,6 @@ package org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder;
 //javase imports
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 //JUnit4 imports
@@ -56,8 +55,6 @@ public class ProcedureDDLTestSuite {
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
     static ProcedureType procedureType = null;
-    static List<String> expectedFieldNames = new ArrayList<String>();
-    static List<String> expectedPKFieldNames = new ArrayList<String>();
     @BeforeClass
     public static void setUp() throws SQLException, ClassNotFoundException {
         conn = buildConnection();

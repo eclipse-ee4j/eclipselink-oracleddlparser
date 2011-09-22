@@ -11,39 +11,22 @@
  *     Mike Norman - June 10 2011, created DDL parser package
  *     David McCann - July 2011, visit tests
  ******************************************************************************/
-package org.eclipse.persistence.tools.oracleddl.test;
+package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
-import java.sql.Connection;
-import java.sql.SQLException;
 
 //JUnit4 imports
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-//testing imports
-import org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder.DatabaseTypeBuilderTestSuite;
-import org.eclipse.persistence.tools.oracleddl.test.ddlparser.DDLParserTestSuite;
-import org.eclipse.persistence.tools.oracleddl.test.visit.VisitorsTestSuite;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-
 @RunWith(Suite.class)
 @SuiteClasses({
-    DDLParserTestSuite.class,
-    VisitorsTestSuite.class,
-    DatabaseTypeBuilderTestSuite.class
+    TableDDLTestSuite.class,
+    FunctionDDLTestSuite.class,
+    ProcedureDDLTestSuite.class
   }
 )
-public class AllTests {
-
-    //shared JUnit fixtures
-    public static Connection conn = null;
-    
-    @BeforeClass
-    public static void setUp() throws ClassNotFoundException, SQLException {
-        conn = buildConnection();
-    }
+public class DDLParserTestSuite {
 
 }
