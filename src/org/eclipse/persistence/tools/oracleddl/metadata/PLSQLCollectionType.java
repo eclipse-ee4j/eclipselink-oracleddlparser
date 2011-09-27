@@ -16,7 +16,8 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisita
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
 public class PLSQLCollectionType extends PLSQLType implements DatabaseTypeVisitable {
-
+    DatabaseType nestedType;
+    
 	//TODO - fix up later
 	public PLSQLCollectionType(String collectionName) {
 		super(collectionName);
@@ -24,11 +25,14 @@ public class PLSQLCollectionType extends PLSQLType implements DatabaseTypeVisita
 
 	@Override
 	public void addCompositeType(DatabaseType enclosedType) {
+	    nestedType = enclosedType;
 	}
 	
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
-
+    public DatabaseType getNestedType() {
+        return nestedType;
+    }
 }

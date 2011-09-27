@@ -1833,9 +1833,10 @@ String s = null;
 
   final public void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) throws ParseException {
   PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
+  DatabaseType nestedType;
     jj_consume_token(K_TABLE);
     jj_consume_token(K_OF);
-    typeSpec();
+    nestedType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_NOT:
       jj_consume_token(K_NOT);
@@ -1847,6 +1848,7 @@ String s = null;
     jj_consume_token(K_INDEX);
     jj_consume_token(K_BY);
     plsqlTableIndexByDeclaration(packageType);
+      plsqlTable.addCompositeType(nestedType);
       packageType.addType(plsqlTable);
       typesRepository.setDatabaseType(typeName, plsqlTable);
   }
@@ -2576,11 +2578,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_52() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    return false;
-  }
-
   private boolean jj_3R_12() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
@@ -2593,6 +2590,11 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_13()) return true;
     }
+    return false;
+  }
+
+  private boolean jj_3R_52() {
+    if (jj_scan_token(K_CHARACTER)) return true;
     return false;
   }
 

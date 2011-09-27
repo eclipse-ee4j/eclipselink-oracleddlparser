@@ -1025,11 +1025,13 @@ void subtypeDeclaration(PLSQLPackageType packageType)      :
 void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName)      :
 {
   PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
+  DatabaseType nestedType;
 }
 {
-    <K_TABLE> <K_OF> typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
+    <K_TABLE> <K_OF> nestedType = typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
         plsqlTableIndexByDeclaration(packageType)
     {
+      plsqlTable.addCompositeType(nestedType);
       packageType.addType(plsqlTable);
       typesRepository.setDatabaseType(typeName, plsqlTable);
     }
