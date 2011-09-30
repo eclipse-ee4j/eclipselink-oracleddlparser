@@ -38,6 +38,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
@@ -140,7 +141,11 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void visit(PLSQLPackageType databaseType) {
         beginVisit(databaseType);
-        //TODO
+        if (databaseType.getTypes() != null) {
+            for (PLSQLType plsqlType : databaseType.getTypes()) {
+                plsqlType.accept(this);
+            }
+        }
         endVisit(databaseType);
     }
     public void endVisit(PLSQLPackageType databaseType) {
@@ -157,7 +162,12 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     public void beginVisit(PLSQLCollectionType databaseType) {
     }
     public void visit(PLSQLCollectionType databaseType) {
-        //TODO
+        beginVisit(databaseType);
+        DatabaseType nestedType = databaseType.getNestedType();
+        if (nestedType != null) {
+            nestedType.accept(this);
+        }
+        endVisit(databaseType);
     }
     public void endVisit(PLSQLCollectionType databaseType) {
     }

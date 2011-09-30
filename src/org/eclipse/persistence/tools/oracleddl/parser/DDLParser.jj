@@ -111,6 +111,10 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*
     public void setTypesRepository(DatabaseTypesRepository typesRepository) {
         this.typesRepository = typesRepository;
     }
+
+    public DatabaseType getTypeFromRepository(String typeName) {
+        return typesRepository.getDatabaseType(typeName);
+    }      
 }
 
 PARSER_END(DDLParser)
@@ -920,8 +924,12 @@ DatabaseType typeSpec():
     | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     )
     {
-      if (dataType == null && typesRepository.getDatabaseType(s) != null)      {
-        dataType = typesRepository.getDatabaseType(s);
+      if (dataType == null)
+      {
+        if (typesRepository.getDatabaseType(s) != null)
+        {          dataType = typesRepository.getDatabaseType(s);
+        } else        {          dataType = new UnresolvedType(s);
+        }
       }
       return dataType;    }
 }
@@ -1031,6 +1039,9 @@ void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName)      :
     <K_TABLE> <K_OF> nestedType = typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
         plsqlTableIndexByDeclaration(packageType)
     {
+      if (!nestedType.isResolved())
+      {
+        ((UnresolvedType)nestedType).setOwningType(plsqlTable);      }
       plsqlTable.addCompositeType(nestedType);
       packageType.addType(plsqlTable);
       typesRepository.setDatabaseType(typeName, plsqlTable);

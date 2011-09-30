@@ -33,6 +33,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.UnresolvedTypesVisitor;
 import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
@@ -113,8 +114,13 @@ public class DatabaseTypeBuilder {
         return tableTypes;
     }
 
-    protected void resolvedTypes(DDLParser parser, List<String> unresolvedTypes, DatabaseType databaseType) {
+    protected void resolvedTypes(DDLParser parser, List<UnresolvedType> unresolvedTypes, DatabaseType databaseType) {
         // TODO - go thru list of unresolved types and fix up the databaseType's object-graph
+        for (UnresolvedType uType : unresolvedTypes) {
+            // TODO - what if 'type' is null here?
+            DatabaseType type = parser.getTypeFromRepository(uType.getTypeName());
+            uType.getOwningType().addCompositeType(type);
+        }
     }
 
     public List<PLSQLPackageType> buildPackages(Connection conn, String schemaPattern,
