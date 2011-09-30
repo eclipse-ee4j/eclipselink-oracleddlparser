@@ -14,8 +14,17 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public abstract class PLSQLType extends CompositeDatabaseTypeBase implements CompositeDatabaseType {
 
+    protected PLSQLPackageType parentType;
+    
     public PLSQLType(String typeName) {
         super(typeName);
+    }
+
+    public PLSQLPackageType getParentType() {
+        return parentType;
+    }
+    public void setParentType(PLSQLPackageType parentType) {
+        this.parentType = parentType;
     }
 
 }

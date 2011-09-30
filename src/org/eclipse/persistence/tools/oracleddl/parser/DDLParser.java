@@ -700,7 +700,7 @@ String s = null;
     default:
       ;
     }
-    typeSpec();
+    typeSpec(packageType.getTypes());
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_NOT:
       jj_consume_token(K_NOT);
@@ -1555,7 +1555,7 @@ String s = null;
     throw new Error("Missing return statement in function");
   }
 
-  final public DatabaseType typeSpec() throws ParseException {
+  final public DatabaseType typeSpec(List<PLSQLType> types) throws ParseException {
  DatabaseType dataType = null;
  String s = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1629,9 +1629,14 @@ String s = null;
         }
       }
     }
-      if (dataType == null && typesRepository.getDatabaseType(s) != null)
+      if (dataType == null && types != null)
       {
-        dataType = typesRepository.getDatabaseType(s);
+        for (PLSQLType plsqlType : types) {
+            if (plsqlType.getTypeName().equals(s)) {
+                dataType = plsqlType;
+                break;
+            }
+        }
       }
       {if (true) return dataType;}
     throw new Error("Missing return statement in function");
@@ -1742,6 +1747,7 @@ String s = null;
 
   final public void recordDeclaration(PLSQLPackageType packageType, String typeName) throws ParseException {
   PLSQLRecordType plsqlRecordType = new PLSQLRecordType(typeName);
+  plsqlRecordType.setParentType(packageType);
     jj_consume_token(K_RECORD);
     jj_consume_token(O_OPENPAREN);
     fieldDeclarations(plsqlRecordType);
@@ -1767,7 +1773,7 @@ String s = null;
   DatabaseType dataType = null;
   FieldType fieldType = null;
     s = typeName();
-    dataType = typeSpec();
+    dataType = typeSpec(plsqlRecordType.getParentType().getTypes());
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_NOT:
       jj_consume_token(K_NOT);
@@ -1833,10 +1839,11 @@ String s = null;
 
   final public void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) throws ParseException {
   PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
+  plsqlTable.setParentType(packageType);
   DatabaseType nestedType;
     jj_consume_token(K_TABLE);
     jj_consume_token(K_OF);
-    nestedType = typeSpec();
+    nestedType = typeSpec(packageType.getTypes());
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_NOT:
       jj_consume_token(K_NOT);
@@ -2053,7 +2060,7 @@ String s = null;
   final public DatabaseType functionReturnSpec() throws ParseException {
  DatabaseType dataType = null;
     jj_consume_token(K_RETURN);
-    dataType = typeSpec();
+    dataType = typeSpec(null);
       {if (true) return dataType;}
     throw new Error("Missing return statement in function");
   }
@@ -2081,7 +2088,7 @@ String s = null;
     default:
       ;
     }
-    argumentDataType = typeSpec();
+    argumentDataType = typeSpec(null);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_DEFAULT:
     case O_ASSIGN:
@@ -2505,11 +2512,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_29() {
-    if (jj_scan_token(K_RAW)) return true;
-    return false;
-  }
-
   private boolean jj_3_20() {
     if (jj_3R_10()) return true;
     Token xsp;
@@ -2518,8 +2520,8 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_56() {
-    if (jj_scan_token(K_NATIONAL)) return true;
+  private boolean jj_3R_29() {
+    if (jj_scan_token(K_RAW)) return true;
     return false;
   }
 
@@ -2528,6 +2530,11 @@ String s = null;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(165)) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_56() {
+    if (jj_scan_token(K_NATIONAL)) return true;
     return false;
   }
 
@@ -2567,12 +2574,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_13() {
     if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
     return false;
@@ -2590,6 +2591,12 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_13()) return true;
     }
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -2787,6 +2794,12 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_22() {
+    if (jj_scan_token(K_IN)) return true;
+    if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
   private boolean jj_3R_9() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     Token xsp;
@@ -2796,9 +2809,9 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_22() {
-    if (jj_scan_token(K_IN)) return true;
-    if (jj_scan_token(K_OUT)) return true;
+  private boolean jj_3R_18() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -2810,12 +2823,6 @@ String s = null;
 
   private boolean jj_3_8() {
     if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_18() {
-    if (jj_scan_token(O_DOT)) return true;
-    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -2840,19 +2847,27 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_47() {
-    if (jj_scan_token(K_UROWID)) return true;
-    return false;
-  }
-
   private boolean jj_3R_17() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_6()) return true;
     return false;
   }
 
+  private boolean jj_3R_47() {
+    if (jj_scan_token(K_UROWID)) return true;
+    return false;
+  }
+
   private boolean jj_3R_46() {
     if (jj_scan_token(K_ROWID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2886,14 +2901,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_11() {
-    if (jj_3R_6()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) jj_scanpos = xsp;
-    return false;
-  }
-
   private boolean jj_3R_40() {
     if (jj_scan_token(K_PLS_INTEGER)) return true;
     return false;
@@ -2912,6 +2919,14 @@ String s = null;
   private boolean jj_3_1() {
     if (jj_3R_6()) return true;
     if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_10() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_17()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2947,14 +2962,6 @@ String s = null;
 
   private boolean jj_3R_59() {
     if (jj_scan_token(K_TIME)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10() {
-    if (jj_3R_6()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_17()) jj_scanpos = xsp;
     return false;
   }
 
