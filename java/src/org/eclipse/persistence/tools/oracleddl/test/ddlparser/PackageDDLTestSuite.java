@@ -17,16 +17,21 @@ package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.List;
 
 //JUnit4 imports
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 //DDL imports
+import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
 import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypesRepository;
@@ -69,13 +74,22 @@ public class PackageDDLTestSuite {
     }
 
     static final String SIMPLE_PACKAGE = "SIMPLE_PACKAGE";
+    static final String SIMPLE_TYPE = "EREC";
+    static final String FIELD1_NAME = "FLAG";
+    static final String FIELD1_TYPE = "PLS_INTEGER";
+    static final String FIELD2_NAME = "EMPNO";
+    static final String FIELD2_TYPE = "NUMERIC";
+    static final String FIELD3_NAME = "ENAME";
+    static final String FIELD3_TYPE = "VARCHAR2";
+    static final String FIELD4_NAME = "JOB";
+    static final String FIELD4_TYPE = "VARCHAR2";
     static final String CREATE_SIMPLE_PACKAGE =
         CREATE_PACKAGE_PREFIX + SIMPLE_PACKAGE + " AS " +
-            "\nTYPE EREC IS RECORD (" +
-                "\nFLAG PLS_INTEGER," +
-                "\nEMPNO NUMBER(4)," +
-                "\nENAME VARCHAR2(10)," +
-                "\nJOB VARCHAR2(9)" +
+            "\nTYPE " + SIMPLE_TYPE + " IS RECORD (" +
+                "\n" + FIELD1_NAME + " " + FIELD1_TYPE + "," +
+                "\n" + FIELD2_NAME + " " + FIELD2_TYPE + "," +
+                "\n" + FIELD3_NAME + " " + FIELD3_TYPE + "," +
+                "\n" + FIELD4_NAME + " " + FIELD4_TYPE + 
             "\n);" +
         "\nEND " + SIMPLE_PACKAGE + ";";
     @Test
@@ -90,5 +104,77 @@ public class PackageDDLTestSuite {
             worked = false;
         }
         assertTrue("simple package should parse", worked);
+        assertEquals("simple package has wrong name", packageType.getPackageName(), SIMPLE_PACKAGE);
+        assertNull("simple package should have no procedures", packageType.getProcedures());
+        assertNotNull("simple package should have types", packageType.getTypes());
+        assertEquals("simple package should have exactly 1 type", 1, packageType.getTypes().size());
+        PLSQLType type = packageType.getTypes().get(0);
+        assertEquals("type has wrong name", SIMPLE_TYPE, type.getTypeName());
+        List<FieldType> fields = ((PLSQLRecordType)type).getFields();
+        assertEquals("type field1 has wrong name", FIELD1_NAME, fields.get(0).getFieldName());
+        assertEquals("type field1 has wrong type", FIELD1_TYPE, fields.get(0).getTypeName());
+        assertEquals("type field2 has wrong name", FIELD2_NAME, fields.get(1).getFieldName());
+        assertEquals("type field1 has wrong type", FIELD2_TYPE, fields.get(1).getTypeName());
+        assertEquals("type field3 has wrong name", FIELD3_NAME, fields.get(2).getFieldName());
+        assertEquals("type field1 has wrong type", FIELD3_TYPE, fields.get(2).getTypeName());
+        assertEquals("type field4 has wrong name", FIELD4_NAME, fields.get(3).getFieldName());
+        assertEquals("type field1 has wrong type", FIELD4_TYPE, fields.get(3).getTypeName());
+    }
+
+
+/*
+TYPE ADDRESS IS RECORD(
+    HOUSE_NUMBER VARCHAR2(6),
+    STREET       VARCHAR2(50),
+    PHONE        VARCHAR2(15),
+    REGION       VARCHAR2(10),
+    POSTAL_CODE  VARCHAR2(10),
+    COUNTRY      VARCHAR2(25)
+  );
+  TYPE CONTACT IS RECORD(
+    HOME     ADDRESS,
+    BUSINESS ADDRESS
+  );
+*/
+    static final String NPACKAGE = "PACKAGE_WITH_NESTED_RECORDS";
+    static final String NTYPE1 = "ADDRESS";
+    static final String NT1_FIELD_TYPE = "VARCHAR2";
+    static final String NT1_FIELD1_NAME = "HOUSE_NUMBER";
+    static final String NT1_FIELD2_NAME = "STREET";
+    static final String NT1_FIELD3_NAME = "PHONE";
+    static final String NT1_FIELD4_NAME = "REGION";
+    static final String NT1_FIELD5_NAME = "POSTAL_CODE";
+    static final String NT1_FIELD6_NAME = "COUNTRY";
+    static final String NTYPE2 = "CONTACT";
+    static final String NT2_FIELD_TYPE = NTYPE1;
+    static final String NT2_FIELD1_NAME = "HOME";
+    static final String NT2_FIELD2_NAME = "BUSINESS";
+    static final String CREATE_NPACKAGE =
+        CREATE_PACKAGE_PREFIX + NPACKAGE + " AS " +
+            "\nTYPE " + NTYPE1 + " IS RECORD (" +
+                "\n" + NT1_FIELD1_NAME + " " + NT1_FIELD_TYPE + "," +
+                "\n" + NT1_FIELD2_NAME + " " + NT1_FIELD_TYPE + "," +
+                "\n" + NT1_FIELD3_NAME + " " + NT1_FIELD_TYPE + "," +
+                "\n" + NT1_FIELD4_NAME + " " + NT1_FIELD_TYPE + "," +
+                "\n" + NT1_FIELD5_NAME + " " + NT1_FIELD_TYPE + "," +
+                "\n" + NT1_FIELD6_NAME + " " + NT1_FIELD_TYPE + 
+            "\n);" +
+            "\nTYPE " + NTYPE2 + " IS RECORD (" +
+                "\n" + NT2_FIELD1_NAME + " " + NT2_FIELD_TYPE + "," +
+                "\n" + NT2_FIELD2_NAME + " " + NT2_FIELD_TYPE + 
+            "\n);" +
+        "\nEND " + NPACKAGE + ";";
+    @Test
+    public void testNPackage() {
+        parser.ReInit(new StringReader(CREATE_NPACKAGE));
+        boolean worked = true;
+        @SuppressWarnings("unused") PLSQLPackageType packageType = null;
+        try {
+            packageType = parser.parsePLSQLPackage();
+        }
+        catch (ParseException pe) {
+            worked = false;
+        }
+        assertTrue("npackage should parse", worked);
     }
 }
