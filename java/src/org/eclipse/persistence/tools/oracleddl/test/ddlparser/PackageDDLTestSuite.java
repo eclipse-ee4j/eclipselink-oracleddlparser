@@ -118,24 +118,23 @@ public class PackageDDLTestSuite {
         assertEquals("type field3 has wrong name", FIELD3_NAME, fields.get(2).getFieldName());
         assertEquals("type field1 has wrong type", FIELD3_TYPE, fields.get(2).getTypeName());
         assertEquals("type field4 has wrong name", FIELD4_NAME, fields.get(3).getFieldName());
-        assertEquals("type field1 has wrong type", FIELD4_TYPE, fields.get(3).getTypeName());
+        assertEquals("type field4 has wrong type", FIELD4_TYPE, fields.get(3).getTypeName());
     }
 
-
-/*
-TYPE ADDRESS IS RECORD(
-    HOUSE_NUMBER VARCHAR2(6),
-    STREET       VARCHAR2(50),
-    PHONE        VARCHAR2(15),
-    REGION       VARCHAR2(10),
-    POSTAL_CODE  VARCHAR2(10),
-    COUNTRY      VARCHAR2(25)
-  );
-  TYPE CONTACT IS RECORD(
-    HOME     ADDRESS,
-    BUSINESS ADDRESS
-  );
-*/
+    /*
+    TYPE ADDRESS IS RECORD(
+        HOUSE_NUMBER VARCHAR2(6),
+        STREET       VARCHAR2(50),
+        PHONE        VARCHAR2(15),
+        REGION       VARCHAR2(10),
+        POSTAL_CODE  VARCHAR2(10),
+        COUNTRY      VARCHAR2(25)
+      );
+      TYPE CONTACT IS RECORD(
+        HOME     ADDRESS,
+        BUSINESS ADDRESS
+      );
+    */
     static final String NPACKAGE = "PACKAGE_WITH_NESTED_RECORDS";
     static final String NTYPE1 = "ADDRESS";
     static final String NT1_FIELD_TYPE = "VARCHAR2";
@@ -176,5 +175,27 @@ TYPE ADDRESS IS RECORD(
             worked = false;
         }
         assertTrue("npackage should parse", worked);
+        assertEquals("npackage has wrong name", packageType.getPackageName(), NPACKAGE);
+        assertNull("npackage should have no procedures", packageType.getProcedures());
+        assertNotNull("npackage should have types", packageType.getTypes());
+        assertEquals("npackage should have exactly 2 types", 2, packageType.getTypes().size());
+        PLSQLType ntype1 = packageType.getTypes().get(0);
+        assertEquals("ntype1 has wrong name", NTYPE1, ntype1.getTypeName());
+        List<FieldType> fields = ((PLSQLRecordType)ntype1).getFields();
+        assertEquals("ntype1 field1 has wrong name", NT1_FIELD1_NAME, fields.get(0).getFieldName());
+        assertEquals("ntype1 field1 has wrong type", NT1_FIELD_TYPE, fields.get(0).getTypeName());
+        assertEquals("ntype1 field2 has wrong name", NT1_FIELD2_NAME, fields.get(1).getFieldName());
+        assertEquals("ntype1 field1 has wrong type", NT1_FIELD_TYPE, fields.get(1).getTypeName());
+        assertEquals("ntype1 field3 has wrong name", NT1_FIELD3_NAME, fields.get(2).getFieldName());
+        assertEquals("ntype1 field1 has wrong type", NT1_FIELD_TYPE, fields.get(2).getTypeName());
+        assertEquals("ntype1 field4 has wrong name", NT1_FIELD4_NAME, fields.get(3).getFieldName());
+        assertEquals("ntype1 field4 has wrong type", NT1_FIELD_TYPE, fields.get(3).getTypeName());
+        PLSQLType ntype2 = packageType.getTypes().get(1);
+        assertEquals("ntype2 has wrong name", NTYPE2, ntype2.getTypeName());
+        fields = ((PLSQLRecordType)ntype2).getFields();
+        assertEquals("ntype2 field1 has wrong name", NT2_FIELD1_NAME, fields.get(0).getFieldName());
+        assertEquals("ntype2 field1 has wrong type", NT2_FIELD_TYPE, fields.get(0).getTypeName());
+        assertEquals("ntype2 field2 has wrong name", NT2_FIELD2_NAME, fields.get(1).getFieldName());
+        assertEquals("ntype2 field1 has wrong type", NT2_FIELD_TYPE, fields.get(1).getTypeName());
     }
 }
