@@ -6,4 +6,4 @@ public interface DDLParserVisitor
 {
   public Object visit(SimpleNode node, Object data);
 }
-/* JavaCC - OriginalChecksum=1ef80f9e87a51db5c74f170fc3e9781d (do not edit this line) */
+/* JavaCC - OriginalChecksum=0a5f7f17a0ed392fca069d04f2c11cb5 (do not edit this line) */
