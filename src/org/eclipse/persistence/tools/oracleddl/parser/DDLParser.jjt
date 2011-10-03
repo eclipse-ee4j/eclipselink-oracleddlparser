@@ -420,8 +420,7 @@ PLSQLPackageType parsePLSQLPackage():
      <K_END> [ OracleObjectName() ] <O_SEMICOLON>
      <EOF>
     {
-      // TODO - TBD
-      typesRepository.setDatabaseType(packageName, packageType);
+      // TODO - TBD typesRepository.setDatabaseType(packageName, packageType);
       return packageType;
     }
 }
@@ -442,8 +441,7 @@ ProcedureType parseTopLevelProcedure():
     [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ] [ <K_AS> | <K_IS> ]
         skipToEnd()
     {
-      // TODO - TBD
-      typesRepository.setDatabaseType(procedureName, procedureType);
+      // TODO - TBD typesRepository.setDatabaseType(procedureName, procedureType);
       return procedureType;
     }
 }
@@ -466,8 +464,7 @@ FunctionType parseTopLevelFunction():
         skipToEnd()
     {
       functionType.setReturnArgument(returnType);
-      // TODO - TBD
-      typesRepository.setDatabaseType(functionName, functionType);
+      // TODO - TBD typesRepository.setDatabaseType(functionName, functionType);
       return functionType;
     }
 }
@@ -497,8 +494,7 @@ Token iot = null;
          if (iot != null) {
              tableType.setIOT(true);
          }
-         // TODO - TBD
-         typesRepository.setDatabaseType(tableName, tableType);
+         // TODO - TBD typesRepository.setDatabaseType(tableName, tableType);
          return tableType;
      }
 }
@@ -535,7 +531,7 @@ CompositeDatabaseType parseType():
      [ <O_SEMICOLON> ]
      <EOF>
     {
-        // TODO - TBD        typesRepository.setDatabaseType(typeName, databaseType);
+        // TODO - TBD typesRepository.setDatabaseType(typeName, databaseType);
         return databaseType;
     }
 }
@@ -1008,8 +1004,7 @@ void recordDeclaration(PLSQLPackageType packageType, String typeName) #void:
         fieldDeclarations(plsqlRecordType)
     <O_CLOSEPAREN>
     {      packageType.addType(plsqlRecordType);
-      // TODO - TBD
-      typesRepository.setDatabaseType(typeName, plsqlRecordType);
+      // TODO - TBD typesRepository.setDatabaseType(typeName, plsqlRecordType);
       localTypes.put(typeName, plsqlRecordType);
     }
 }
@@ -1052,29 +1047,48 @@ void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) #void:
   DatabaseType nestedType;
 }
 {
-    <K_TABLE> <K_OF> nestedType = typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
-        plsqlTableIndexByDeclaration(packageType)
+    <K_TABLE> <K_OF> nestedType = typeSpec() [ <K_NOT> <K_NULL> ]
+        [ <K_INDEX> <K_BY> plsqlTableIndexByDeclaration(plsqlTable) ]
     {
       if (!nestedType.isResolved())
       {
         ((UnresolvedType)nestedType).setOwningType(plsqlTable);      }
       plsqlTable.addCompositeType(nestedType);
       packageType.addType(plsqlTable);
-      // TODO - TBD
-      typesRepository.setDatabaseType(typeName, plsqlTable);
+      // TODO - TBD typesRepository.setDatabaseType(typeName, plsqlTable);
       localTypes.put(typeName, plsqlTable);
     }
-        
 }
 
-void plsqlTableIndexByDeclaration(PLSQLPackageType packageType) #void:
-{}
+void plsqlTableIndexByDeclaration(PLSQLCollectionType plsqlTable) #void:
 {
-    ( <K_PLS_INTEGER >
-    | <K_BINARY_INTEGER>
-    | <K_VARCHAR2> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
-    | <K_STRING> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
+  DatabaseType indexType = null;
+  Token precision = null;
+  Token otherIndexByType = null; 
+}
+{
+    ( <K_PLS_INTEGER> {indexType = PLS_INTEGER_TYPE; }
+    | <K_BINARY_INTEGER>  {indexType = BINARY_INTEGER_TYPE; }
+    | <K_VARCHAR2> <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN>
+      {
+        if (precision == null) {
+            indexType = new VarChar2Type();
+        }
+        else {
+            Long pl = Long.decode(precision.image);
+            indexType = new VarChar2Type(pl);
+        }
+      }
+    | otherIndexByType=<K_STRING> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
+      {
+        //what else can INDEX BY be? Unresolved for now ...
+        indexType = new UnresolvedType(otherIndexByType.image);
+        ((UnresolvedType)indexType).setOwningType(plsqlTable);
+      }
     )
+    {      plsqlTable.setIndexed(true);
+      plsqlTable.setIndexType(indexType);
+    }
 }
 
 void varrayDeclaration(PLSQLPackageType packageType) #void:
