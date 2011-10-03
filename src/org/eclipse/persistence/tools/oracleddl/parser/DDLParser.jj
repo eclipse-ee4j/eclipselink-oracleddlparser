@@ -630,7 +630,7 @@ void packageDeclaration(PLSQLPackageType packageType)      :
 void variableDeclaration(PLSQLPackageType packageType):
 {}
 {
-    <S_IDENTIFIER> [ <K_CONSTANT> ] typeSpec() [ <K_NOT> <K_NULL> ]
+    <S_IDENTIFIER> [ <K_CONSTANT> ] typeSpec(packageType.getTypes()) [ <K_NOT> <K_NULL> ]
         [ variableDefaultAssignment() ]
     <O_SEMICOLON>}
 
@@ -914,7 +914,7 @@ DatabaseType datatype():
     | <K_CLOB> [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] { return new ClobType();}
 }
 
-DatabaseType typeSpec():
+DatabaseType typeSpec(List<PLSQLType> types):
 {DatabaseType dataType = null;
  String s = null;}
 {
@@ -924,12 +924,19 @@ DatabaseType typeSpec():
     | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     )
     {
+      if (dataType == null && types != null)
+      {
+        for (PLSQLType plsqlType : types) {
+            if (plsqlType.getTypeName().equals(s)) {
+                dataType = plsqlType;
+                break;
+            }
+        }
+      }
+      
       if (dataType == null)
       {
-        if (typesRepository.getDatabaseType(s) != null)
-        {          dataType = typesRepository.getDatabaseType(s);
-        } else        {          dataType = new UnresolvedType(s);
-        }
+          dataType = new UnresolvedType(s);
       }
       return dataType;    }
 }
@@ -989,6 +996,7 @@ void aTypeDeclaration(PLSQLPackageType packageType, String typeName)      :
 void recordDeclaration(PLSQLPackageType packageType, String typeName)      :
 {
   PLSQLRecordType plsqlRecordType = new PLSQLRecordType(typeName);
+  plsqlRecordType.setParentType(packageType);
 }
 {
     <K_RECORD> <O_OPENPAREN>
@@ -1012,7 +1020,7 @@ void fieldDeclaration(PLSQLRecordType plsqlRecordType):
   FieldType fieldType = null;
 }
 {
-    s=typeName() dataType=typeSpec() [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
+    s=typeName() dataType=typeSpec(plsqlRecordType.getParentType().getTypes()) [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
     {
       fieldType = new FieldType(s);
       fieldType.setDataType(dataType);
@@ -1033,10 +1041,11 @@ void subtypeDeclaration(PLSQLPackageType packageType)      :
 void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName)      :
 {
   PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
+  plsqlTable.setParentType(packageType);
   DatabaseType nestedType;
 }
 {
-    <K_TABLE> <K_OF> nestedType = typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
+    <K_TABLE> <K_OF> nestedType = typeSpec(packageType.getTypes()) [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
         plsqlTableIndexByDeclaration(packageType)
     {
       if (!nestedType.isResolved())
@@ -1132,7 +1141,7 @@ void functionSpec(PLSQLPackageType packageType)      :
 }
 
 DatabaseType functionReturnSpec():
-{DatabaseType dataType = null;}{    (<K_RETURN> dataType=typeSpec())
+{DatabaseType dataType = null;}{    (<K_RETURN> dataType=typeSpec(null))
     {
       return dataType;
     }
@@ -1148,7 +1157,7 @@ void argument(ProcedureType procedureType)      :
 }
 {
     t=<S_IDENTIFIER> [(direction=direction())]
-        [ <K_NOCOPY> ] argumentDataType=typeSpec() [ defaultAssignment=argumentDefaultAssignment() ]
+        [ <K_NOCOPY> ] argumentDataType=typeSpec(null) [ defaultAssignment=argumentDefaultAssignment() ]
     {
       argumentType = new ArgumentType(t.image);
       argumentType.setDataType(argumentDataType);
