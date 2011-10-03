@@ -16,6 +16,8 @@ package org.eclipse.persistence.tools.oracleddl.parser;
 //javase imports
 import java.io.InputStream;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 //metadata imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
@@ -76,6 +78,8 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 @SuppressWarnings("all")
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLParserConstants {/*@bgen(jjtree)*/
   protected JJTDDLParserState jjtree = new JJTDDLParserState();
+    protected Map<String, DatabaseType> localTypes = new HashMap<String, DatabaseType>();
+
     protected DatabaseTypesRepository typesRepository = new DatabaseTypesRepository();
 
     public DDLParser() {
@@ -188,6 +192,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
     jj_consume_token(O_SEMICOLON);
     jj_consume_token(0);
+      // TODO - TBD
       typesRepository.setDatabaseType(packageName, packageType);
       {if (true) return packageType;}
     throw new Error("Missing return statement in function");
@@ -247,6 +252,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       ;
     }
     skipToEnd();
+      // TODO - TBD
       typesRepository.setDatabaseType(procedureName, procedureType);
       {if (true) return procedureType;}
     throw new Error("Missing return statement in function");
@@ -309,6 +315,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
     skipToEnd();
       functionType.setReturnArgument(returnType);
+      // TODO - TBD
       typesRepository.setDatabaseType(functionName, functionType);
       {if (true) return functionType;}
     throw new Error("Missing return statement in function");
@@ -404,6 +411,7 @@ Token iot = null;
          if (iot != null) {
              tableType.setIOT(true);
          }
+         // TODO - TBD
          typesRepository.setDatabaseType(tableName, tableType);
          {if (true) return tableType;}
     throw new Error("Missing return statement in function");
@@ -486,6 +494,7 @@ Token iot = null;
       ;
     }
     jj_consume_token(0);
+        // TODO - TBD
         typesRepository.setDatabaseType(typeName, databaseType);
         {if (true) return databaseType;}
     throw new Error("Missing return statement in function");
@@ -704,7 +713,7 @@ String s = null;
     default:
       ;
     }
-    typeSpec(packageType.getTypes());
+    typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_NOT:
       jj_consume_token(K_NOT);
@@ -1559,7 +1568,7 @@ String s = null;
     throw new Error("Missing return statement in function");
   }
 
-  final public DatabaseType typeSpec(List<PLSQLType> types) throws ParseException {
+  final public DatabaseType typeSpec() throws ParseException {
  DatabaseType dataType = null;
  String s = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1633,16 +1642,15 @@ String s = null;
         }
       }
     }
-      if (dataType == null && types != null)
+      if (dataType == null && localTypes != null)
       {
-        for (PLSQLType plsqlType : types) {
-            if (plsqlType.getTypeName().equals(s)) {
-                dataType = plsqlType;
+        for (String typeName : localTypes.keySet()) {
+            if (typeName.equals(s)) {
+                dataType = localTypes.get(s);
                 break;
             }
         }
       }
-
       if (dataType == null)
       {
           dataType = new UnresolvedType(s);
@@ -1762,7 +1770,9 @@ String s = null;
     fieldDeclarations(plsqlRecordType);
     jj_consume_token(O_CLOSEPAREN);
       packageType.addType(plsqlRecordType);
+      // TODO - TBD
       typesRepository.setDatabaseType(typeName, plsqlRecordType);
+      localTypes.put(typeName, plsqlRecordType);
   }
 
   final public void fieldDeclarations(PLSQLRecordType plsqlRecordType) throws ParseException {
@@ -1782,7 +1792,7 @@ String s = null;
   DatabaseType dataType = null;
   FieldType fieldType = null;
     s = typeName();
-    dataType = typeSpec(plsqlRecordType.getParentType().getTypes());
+    dataType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_NOT:
       jj_consume_token(K_NOT);
@@ -1852,7 +1862,7 @@ String s = null;
   DatabaseType nestedType;
     jj_consume_token(K_TABLE);
     jj_consume_token(K_OF);
-    nestedType = typeSpec(packageType.getTypes());
+    nestedType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_NOT:
       jj_consume_token(K_NOT);
@@ -1870,7 +1880,9 @@ String s = null;
       }
       plsqlTable.addCompositeType(nestedType);
       packageType.addType(plsqlTable);
+      // TODO - TBD
       typesRepository.setDatabaseType(typeName, plsqlTable);
+      localTypes.put(typeName, plsqlTable);
   }
 
   final public void plsqlTableIndexByDeclaration(PLSQLPackageType packageType) throws ParseException {
@@ -2073,7 +2085,7 @@ String s = null;
   final public DatabaseType functionReturnSpec() throws ParseException {
  DatabaseType dataType = null;
     jj_consume_token(K_RETURN);
-    dataType = typeSpec(null);
+    dataType = typeSpec();
       {if (true) return dataType;}
     throw new Error("Missing return statement in function");
   }
@@ -2101,7 +2113,7 @@ String s = null;
     default:
       ;
     }
-    argumentDataType = typeSpec(null);
+    argumentDataType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_DEFAULT:
     case O_ASSIGN:
@@ -2471,36 +2483,6 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3R_57() {
-    if (jj_scan_token(K_CLOB)) return true;
-    return false;
-  }
-
-  private boolean jj_3_20() {
-    if (jj_3R_10()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(192)) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_17() {
-    if (jj_scan_token(K_INTERVAL)) return true;
-    if (jj_scan_token(K_DAY)) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_3R_6()) return true;
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_31() {
-    if (jj_scan_token(K_DATE)) return true;
-    return false;
-  }
-
   private boolean jj_3R_30() {
     if (jj_scan_token(K_BOOLEAN)) return true;
     return false;
@@ -2550,18 +2532,13 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_53() {
-    if (jj_scan_token(K_NCHAR)) return true;
-    return false;
-  }
-
-  private boolean jj_3_11() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
   private boolean jj_3R_13() {
     if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_53() {
+    if (jj_scan_token(K_NCHAR)) return true;
     return false;
   }
 
@@ -2577,6 +2554,11 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_13()) return true;
     }
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
@@ -2763,15 +2745,15 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_12() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
   private boolean jj_3_22() {
     if (jj_scan_token(K_IN)) return true;
     if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
@@ -2812,13 +2794,13 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_58() {
-    if (jj_3R_6()) return true;
+  private boolean jj_3R_49() {
+    if (jj_scan_token(K_CHAR)) return true;
     return false;
   }
 
-  private boolean jj_3R_49() {
-    if (jj_scan_token(K_CHAR)) return true;
+  private boolean jj_3R_58() {
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -2902,17 +2884,17 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_10() {
     if (jj_3R_6()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_17()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3038,6 +3020,36 @@ String s = null;
     }
     }
     }
+    return false;
+  }
+
+  private boolean jj_3R_57() {
+    if (jj_scan_token(K_CLOB)) return true;
+    return false;
+  }
+
+  private boolean jj_3_20() {
+    if (jj_3R_10()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(192)) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_17() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    if (jj_scan_token(K_DAY)) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_3R_6()) return true;
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_scan_token(K_DATE)) return true;
     return false;
   }
 

@@ -39,6 +39,8 @@ package org.eclipse.persistence.tools.oracleddl.parser;
 //javase imports
 import java.io.InputStream;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 //metadata imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
@@ -97,6 +99,8 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIMESTAMP_TYPE;
 
 public class DDLParser {
+  
+    protected Map<String, DatabaseType> localTypes = new HashMap<String, DatabaseType>();
 
     protected DatabaseTypesRepository typesRepository = new DatabaseTypesRepository();
 
@@ -399,7 +403,8 @@ TOKEN:
 PLSQLPackageType parsePLSQLPackage():
 {String schema = null;
  String packageName = null;
- PLSQLPackageType packageType = new PLSQLPackageType();}
+ PLSQLPackageType packageType = new PLSQLPackageType();
+ }
 {
     <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_PACKAGE>
         [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] packageName=OracleObjectName()
@@ -415,6 +420,7 @@ PLSQLPackageType parsePLSQLPackage():
      <K_END> [ OracleObjectName() ] <O_SEMICOLON>
      <EOF>
     {
+      // TODO - TBD
       typesRepository.setDatabaseType(packageName, packageType);
       return packageType;
     }
@@ -436,6 +442,7 @@ ProcedureType parseTopLevelProcedure():
     [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ] [ <K_AS> | <K_IS> ]
         skipToEnd()
     {
+      // TODO - TBD
       typesRepository.setDatabaseType(procedureName, procedureType);
       return procedureType;
     }
@@ -459,6 +466,7 @@ FunctionType parseTopLevelFunction():
         skipToEnd()
     {
       functionType.setReturnArgument(returnType);
+      // TODO - TBD
       typesRepository.setDatabaseType(functionName, functionType);
       return functionType;
     }
@@ -488,7 +496,8 @@ Token iot = null;
      {
          if (iot != null) {
              tableType.setIOT(true);
-         } 
+         }
+         // TODO - TBD
          typesRepository.setDatabaseType(tableName, tableType);
          return tableType;
      }
@@ -525,7 +534,8 @@ CompositeDatabaseType parseType():
         ] 
      [ <O_SEMICOLON> ]
      <EOF>
-    {        typesRepository.setDatabaseType(typeName, databaseType);
+    {
+        // TODO - TBD        typesRepository.setDatabaseType(typeName, databaseType);
         return databaseType;
     }
 }
@@ -626,7 +636,7 @@ void packageDeclaration(PLSQLPackageType packageType) #void:
 void variableDeclaration(PLSQLPackageType packageType):
 {}
 {
-    <S_IDENTIFIER> [ <K_CONSTANT> ] typeSpec(packageType.getTypes()) [ <K_NOT> <K_NULL> ]
+    <S_IDENTIFIER> [ <K_CONSTANT> ] typeSpec() [ <K_NOT> <K_NULL> ]
         [ variableDefaultAssignment() ]
     <O_SEMICOLON>}
 
@@ -910,7 +920,7 @@ DatabaseType datatype():
     | <K_CLOB> [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] { return new ClobType();}
 }
 
-DatabaseType typeSpec(List<PLSQLType> types):
+DatabaseType typeSpec():
 {DatabaseType dataType = null;
  String s = null;}
 {
@@ -920,16 +930,15 @@ DatabaseType typeSpec(List<PLSQLType> types):
     | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     )
     {
-      if (dataType == null && types != null)
+      if (dataType == null && localTypes != null)
       {
-        for (PLSQLType plsqlType : types) {
-            if (plsqlType.getTypeName().equals(s)) {
-                dataType = plsqlType;
+        for (String typeName : localTypes.keySet()) {
+            if (typeName.equals(s)) {
+                dataType = localTypes.get(s);
                 break;
             }
         }
       }
-      
       if (dataType == null)
       {
           dataType = new UnresolvedType(s);
@@ -999,7 +1008,9 @@ void recordDeclaration(PLSQLPackageType packageType, String typeName) #void:
         fieldDeclarations(plsqlRecordType)
     <O_CLOSEPAREN>
     {      packageType.addType(plsqlRecordType);
+      // TODO - TBD
       typesRepository.setDatabaseType(typeName, plsqlRecordType);
+      localTypes.put(typeName, plsqlRecordType);
     }
 }
 
@@ -1016,7 +1027,7 @@ void fieldDeclaration(PLSQLRecordType plsqlRecordType):
   FieldType fieldType = null;
 }
 {
-    s=typeName() dataType=typeSpec(plsqlRecordType.getParentType().getTypes()) [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
+    s=typeName() dataType=typeSpec() [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
     {
       fieldType = new FieldType(s);
       fieldType.setDataType(dataType);
@@ -1041,7 +1052,7 @@ void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) #void:
   DatabaseType nestedType;
 }
 {
-    <K_TABLE> <K_OF> nestedType = typeSpec(packageType.getTypes()) [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
+    <K_TABLE> <K_OF> nestedType = typeSpec() [ <K_NOT> <K_NULL> ] <K_INDEX> <K_BY>
         plsqlTableIndexByDeclaration(packageType)
     {
       if (!nestedType.isResolved())
@@ -1049,7 +1060,9 @@ void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) #void:
         ((UnresolvedType)nestedType).setOwningType(plsqlTable);      }
       plsqlTable.addCompositeType(nestedType);
       packageType.addType(plsqlTable);
+      // TODO - TBD
       typesRepository.setDatabaseType(typeName, plsqlTable);
+      localTypes.put(typeName, plsqlTable);
     }
         
 }
@@ -1137,7 +1150,7 @@ void functionSpec(PLSQLPackageType packageType) #void:
 }
 
 DatabaseType functionReturnSpec():
-{DatabaseType dataType = null;}{    (<K_RETURN> dataType=typeSpec(null))
+{DatabaseType dataType = null;}{    (<K_RETURN> dataType=typeSpec())
     {
       return dataType;
     }
@@ -1153,7 +1166,7 @@ void argument(ProcedureType procedureType) #void:
 }
 {
     t=<S_IDENTIFIER> [(direction=direction())]
-        [ <K_NOCOPY> ] argumentDataType=typeSpec(null) [ defaultAssignment=argumentDefaultAssignment() ]
+        [ <K_NOCOPY> ] argumentDataType=typeSpec() [ defaultAssignment=argumentDefaultAssignment() ]
     {
       argumentType = new ArgumentType(t.image);
       argumentType.setDataType(argumentDataType);

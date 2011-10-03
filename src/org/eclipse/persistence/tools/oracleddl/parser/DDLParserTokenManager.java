@@ -15,6 +15,8 @@ package org.eclipse.persistence.tools.oracleddl.parser;
 //javase imports
 import java.io.InputStream;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 //metadata imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
