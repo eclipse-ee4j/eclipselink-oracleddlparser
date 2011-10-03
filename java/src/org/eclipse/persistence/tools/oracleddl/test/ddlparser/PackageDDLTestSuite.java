@@ -73,6 +73,14 @@ public class PackageDDLTestSuite {
         assertNull("empty package should have no types", packageType.getTypes());
     }
 
+    /*
+    TYPE EREC IS RECORD(
+        FLAG    PLS_INTEGER,
+        EMPNO   NUMERIC,
+        ENAME   VARCHAR2,
+        JOB     VARCHAR2)
+      );
+    */
     static final String SIMPLE_PACKAGE = "SIMPLE_PACKAGE";
     static final String SIMPLE_TYPE = "EREC";
     static final String FIELD1_NAME = "FLAG";
@@ -89,7 +97,7 @@ public class PackageDDLTestSuite {
                 "\n" + FIELD1_NAME + " " + FIELD1_TYPE + "," +
                 "\n" + FIELD2_NAME + " " + FIELD2_TYPE + "," +
                 "\n" + FIELD3_NAME + " " + FIELD3_TYPE + "," +
-                "\n" + FIELD4_NAME + " " + FIELD4_TYPE + 
+                "\n" + FIELD4_NAME + " " + FIELD4_TYPE +
             "\n);" +
         "\nEND " + SIMPLE_PACKAGE + ";";
     @Test
@@ -156,15 +164,15 @@ public class PackageDDLTestSuite {
                 "\n" + NT1_FIELD3_NAME + " " + NT1_FIELD_TYPE + "," +
                 "\n" + NT1_FIELD4_NAME + " " + NT1_FIELD_TYPE + "," +
                 "\n" + NT1_FIELD5_NAME + " " + NT1_FIELD_TYPE + "," +
-                "\n" + NT1_FIELD6_NAME + " " + NT1_FIELD_TYPE + 
+                "\n" + NT1_FIELD6_NAME + " " + NT1_FIELD_TYPE +
             "\n);" +
             "\nTYPE " + NTYPE2 + " IS RECORD (" +
                 "\n" + NT2_FIELD1_NAME + " " + NT2_FIELD_TYPE + "," +
-                "\n" + NT2_FIELD2_NAME + " " + NT2_FIELD_TYPE + 
+                "\n" + NT2_FIELD2_NAME + " " + NT2_FIELD_TYPE +
             "\n);" +
         "\nEND " + NPACKAGE + ";";
     @Test
-    public void testNPackage() {
+    public void testPackageWithNestedRecords() {
         parser.ReInit(new StringReader(CREATE_NPACKAGE));
         boolean worked = true;
         @SuppressWarnings("unused") PLSQLPackageType packageType = null;
@@ -197,5 +205,87 @@ public class PackageDDLTestSuite {
         assertEquals("ntype2 field1 has wrong type", NT2_FIELD_TYPE, fields.get(0).getTypeName());
         assertEquals("ntype2 field2 has wrong name", NT2_FIELD2_NAME, fields.get(1).getFieldName());
         assertEquals("ntype2 field1 has wrong type", NT2_FIELD_TYPE, fields.get(1).getTypeName());
+    }
+
+    //TYPE VCHAR_ARRAY IS TABLE OF VARCHAR2(20) INDEX BY BINARY_INTEGER;
+    static final String PACKAGE_WCOLLECTION = "PACKAGE_WCOLLECTION";
+    static final String PACKAGE_WCOLLECTION_NAME = "VCHAR_ARRAY";
+    static final String PACKAGE_WCOLLECTION_TYPE = "VARCHAR2(20)";
+    static final String PACKAGE_WCOLLECTION_INDEXBY = "BINARY_INTEGER";
+    static final String CREATE_PACKAGE_WCOLLECTION =
+        CREATE_PACKAGE_PREFIX + PACKAGE_WCOLLECTION + " AS " +
+            "\nTYPE " + PACKAGE_WCOLLECTION_NAME + " IS TABLE OF " +
+                PACKAGE_WCOLLECTION_TYPE + " INDEX BY " + PACKAGE_WCOLLECTION_INDEXBY + ";" +
+        "\nEND " + PACKAGE_WCOLLECTION + ";";
+    @Test
+    public void testPackageWithCollection() {
+        parser.ReInit(new StringReader(CREATE_PACKAGE_WCOLLECTION));
+        boolean worked = true;
+        @SuppressWarnings("unused") PLSQLPackageType packageType = null;
+        try {
+            packageType = parser.parsePLSQLPackage();
+        }
+        catch (ParseException pe) {
+            worked = false;
+        }
+        assertTrue("package with collection should parse", worked);
+        assertEquals("package with collection has wrong name", packageType.getPackageName(),
+            PACKAGE_WCOLLECTION);
+        assertNull("package with collection should have no procedures", packageType.getProcedures());
+        assertNotNull("package with collection should have types", packageType.getTypes());
+        assertEquals("package with collection should have exactly 1 type", 1,
+            packageType.getTypes().size());
+        PLSQLType t1 = packageType.getTypes().get(0);
+        assertEquals("collection type1 has wrong name", PACKAGE_WCOLLECTION_NAME, t1.getTypeName());
+    }
+
+    /*
+    TYPE BOOK_TYPE IS RECORD (
+        ISBN          VARCHAR2(20)
+        ,TITLE        VARCHAR2(2000)
+        ,AUTHOR       VARCHAR2(2000)
+        ,PUBLISHER    VARCHAR2(120)
+        ,PUBLISHED_ON DATE
+    );
+    TYPE BOOKS_TAB IS TABLE OF BOOK_TYPE;
+     */
+    static final String PACKAGE_WCOLLECTION_WRECORD = "PACKAGE_WCOLLECTION_WRECORD";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1 = "BOOK_TYPE";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD1_NAME = "ISBN";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD1_TYPE = "VARCHAR2(20)";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD2_NAME = "TITLE";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD2_TYPE = "VARCHAR2(2000)";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD3_NAME = "AUTHOR";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD3_TYPE = "VARCHAR2(2000)";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD4_NAME = "PUBLISHER";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD4_TYPE = "VARCHAR2";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD5_NAME = "PUBLISHED_ON";
+    static final String PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD5_TYPE = "DATE";
+    static final String PACKAGE_WCOLLECTION_WRECORD_NAME = "BOOKS_TAB";
+    static final String CREATE_PACKAGE_WCOLLECTION_WRECORD =
+        CREATE_PACKAGE_PREFIX + PACKAGE_WCOLLECTION_WRECORD + " AS " +
+            "\nTYPE " + PACKAGE_WCOLLECTION_WRECORD_TYPE1 + " IS RECORD (" +
+                "\n" + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD1_NAME + " " + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD1_TYPE + "," +
+                "\n" + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD2_NAME + " " + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD2_TYPE + "," +
+                "\n" + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD3_NAME + " " + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD3_TYPE + "," +
+                "\n" + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD4_NAME + " " + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD4_TYPE + "," +
+                "\n" + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD5_NAME + " " + PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD5_TYPE +
+            "\n);" +
+            "\nTYPE " + PACKAGE_WCOLLECTION_WRECORD_NAME + " IS TABLE OF " +
+                PACKAGE_WCOLLECTION_WRECORD_TYPE1 + ";" +
+        "\nEND " + PACKAGE_WCOLLECTION_WRECORD + ";";
+    @Test
+    public void testPackageWithCollectionWithNestedRecord() {
+        parser.ReInit(new StringReader(CREATE_PACKAGE_WCOLLECTION_WRECORD));
+        boolean worked = true;
+        @SuppressWarnings("unused") PLSQLPackageType packageType = null;
+        try {
+            packageType = parser.parsePLSQLPackage();
+        }
+        catch (ParseException pe) {
+            worked = false;
+        }
+        assertTrue("package with collection with record should parse", worked);
+
     }
 }
