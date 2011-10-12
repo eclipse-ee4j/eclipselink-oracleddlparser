@@ -199,9 +199,11 @@ TOKEN: {
         | <K_EXCEPTION_INIT: "EXCEPTION_INIT">
         | <K_EXIT: "EXIT">
         | <K_FALSE: "FALSE">
+        | <K_FINAL: "FINAL">
         | <K_FIPSFLAG: "FIPSFLAG">
         | <K_FIRST: "FIRST">
         | <K_FLOAT: "FLOAT">
+        | <K_FORCE: "FORCE">
         | <K_FULL: "FULL">
         | <K_FUNCTION: "FUNCTION">
         | <K_GLOBAL: "GLOBAL">
@@ -213,6 +215,7 @@ TOKEN: {
         | <K_INFINITE: "INFINITE">
         | <K_INLINE: "INLINE">
         | <K_INNER: "INNER">
+        | <K_INSTANTIABLE: "INSTANTIABLE">
         | <K_INT: "INT">
         | <K_INTEGER: "INTEGER">
         | <K_INTERFACE: "INTERFACE">
@@ -256,6 +259,7 @@ TOKEN: {
         | <K_NVARCHAR: "NVARCHAR">
         | <K_OBJECT: "OBJECT">
         | <K_OF: "OF">
+        | <K_OID: "OID">
         | <K_ON: "ON">
         | <K_ONLY: "ONLY">
         | <K_OPEN: "OPEN">
@@ -513,7 +517,9 @@ CompositeDatabaseType parseType():
 }
 {
     <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_TYPE>
-      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] typeName=OracleObjectName() <K_AS>
+      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] typeName=OracleObjectName()
+        [ <K_FORCE> ] [ <K_OID> <S_CHAR_LITERAL> ] [ <K_AUTHID> [ <K_CURRENT_USER> | <K_DEFINER> ] ]
+        ( <K_AS> | <K_IS> )
         [ <K_OBJECT> <O_OPENPAREN>
             {
                 databaseType = new ObjectType(typeName);
@@ -531,8 +537,8 @@ CompositeDatabaseType parseType():
                 if (schema != null) {
                     ((NestedTableType)databaseType).setSchema(schema);
                 }	        } columnTypeSpec(databaseType)
-        ] 
-     [ <O_SEMICOLON> ]
+        ]
+     [ [ <K_NOT> ] ( <K_FINAL> | <K_INSTANTIABLE> ) ] [ <O_SEMICOLON> ]
      <EOF>
     {
         // TODO - TBD typesRepository.setDatabaseType(typeName, databaseType);
@@ -586,12 +592,22 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
     )
     {
       if (s != null) {
-          if (t != null) {
-              Long size = Long.decode(t.image);
-              dt = new UnresolvedSizedType(s, size);
+          for (String typeName : localTypes.keySet()) {
+              if (typeName.equals(s)) {
+                  dt = localTypes.get(s);
+                  break;
+              }
           }
-          else {
-              dt = new UnresolvedType(s);
+          if (dt == null) {
+              if (t != null) {
+                  Long size = Long.decode(t.image);
+                  dt = new UnresolvedSizedType(s, size);
+              }
+              else {
+                  dt = new UnresolvedType(s);
+              }
+              ((UnresolvedType)dt).setOwningType(enclosingType);
+              localTypes.put(s, dt);
           }
       } 
       return dt;
@@ -930,18 +946,17 @@ DatabaseType typeSpec():
     | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     )
     {
-      if (dataType == null && localTypes != null)
-      {
-        for (String typeName : localTypes.keySet()) {
-            if (typeName.equals(s)) {
-                dataType = localTypes.get(s);
-                break;
-            }
-        }
+      if (dataType == null && localTypes != null) {
+          for (String typeName : localTypes.keySet()) {
+              if (typeName.equals(s)) {
+                  dataType = localTypes.get(s);
+                  break;
+              }
+          }
       }
-      if (dataType == null)
-      {
+      if (dataType == null) {
           dataType = new UnresolvedType(s);
+          localTypes.put(s, dataType);
       }
       return dataType;    }
 }
@@ -1085,9 +1100,19 @@ void plsqlTableIndexByDeclaration(PLSQLCollectionType plsqlTable)      :
       }
     | otherIndexByType=<K_STRING> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
       {
+        String indexTypename = otherIndexByType.image;
+        for (String typeName : localTypes.keySet()) {
+            if (typeName.equals(indexTypename)) {
+                indexType = localTypes.get(indexTypename);
+                break;
+            }
+        }
         //what else can INDEX BY be? Unresolved for now ...
-        indexType = new UnresolvedType(otherIndexByType.image);
-        ((UnresolvedType)indexType).setOwningType(plsqlTable);
+        if (indexType == null) {
+            indexType = new UnresolvedType(indexTypename);
+            ((UnresolvedType)indexType).setOwningType(plsqlTable);
+            localTypes.put(indexTypename, indexType);
+        }
       }
     )
     {      plsqlTable.setIndexed(true);

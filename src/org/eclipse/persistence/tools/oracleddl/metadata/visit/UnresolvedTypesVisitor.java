@@ -29,11 +29,15 @@ public class UnresolvedTypesVisitor extends BaseDatabaseTypeVisitor {
     }
 
     public void visit(UnresolvedType unresolvedType) {
-        unresolvedTypes.add(unresolvedType);
+        if (!unresolvedTypes.contains(unresolvedType)) {
+            unresolvedTypes.add(unresolvedType);
+        }
     }
 
     public void visit(UnresolvedSizedType unresolvedType) {
-        unresolvedTypes.add(unresolvedType);
+        if (!unresolvedTypes.contains(unresolvedType)) {
+            unresolvedTypes.add(unresolvedType);
+        }
     }
 
 }

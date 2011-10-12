@@ -110,7 +110,7 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void endVisit(ArgumentType databaseType) {
     }
-    
+
     public void beginVisit(FieldType databaseType) {
     }
     public void visit(FieldType databaseType) {
@@ -215,13 +215,9 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void visit(ObjectType databaseType) {
         beginVisit(databaseType);
-        //TODO - process fields
-        /*
-        List<FieldType> columns = databaseType.getColumns();
-        for (FieldType column : columns) {
-            column.accept(this);
+        for (FieldType field : databaseType.getFields()) {
+            field.accept(this);
         }
-        */
         endVisit(databaseType);
     }
     public void endVisit(ObjectType databaseType) {

@@ -16,15 +16,16 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisita
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
 public class UnresolvedType extends DatabaseTypeBase implements DatabaseType, DatabaseTypeVisitable {
-    CompositeDatabaseType owningType;
-    
+
+    protected CompositeDatabaseType owningType;
+
     public CompositeDatabaseType getOwningType() {
         return owningType;
     }
     public void setOwningType(CompositeDatabaseType owningType) {
         this.owningType = owningType;
     }
-    
+
     public UnresolvedType(String unresolvedTypeName) {
         super(unresolvedTypeName);
     }
