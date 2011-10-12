@@ -25,9 +25,9 @@ import org.junit.runners.Suite.SuiteClasses;
     TableDDLTestSuite.class,
     FunctionDDLTestSuite.class,
     ProcedureDDLTestSuite.class,
-    PackageDDLTestSuite.class
-}
-    )
+    PackageDDLTestSuite.class,
+    TypeDDLTestSuite.class
+})
 public class DDLParserTestSuite {
 
 }
