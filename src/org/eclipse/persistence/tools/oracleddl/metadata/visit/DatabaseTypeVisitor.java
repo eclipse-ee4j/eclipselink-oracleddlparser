@@ -27,7 +27,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.IntervalYearToMonth;
 import org.eclipse.persistence.tools.oracleddl.metadata.LongRawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.LongType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NClobType;
-import org.eclipse.persistence.tools.oracleddl.metadata.NestedTableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
@@ -116,8 +116,8 @@ public interface DatabaseTypeVisitor {
     public void visit(VArrayType databaseType);
     public void endVisit(VArrayType databaseType);
 
-    public void beginVisit(NestedTableType databaseType);
-    public void visit(NestedTableType databaseType);
-    public void endVisit(NestedTableType databaseType);
+    public void beginVisit(ObjectTableType databaseType);
+    public void visit(ObjectTableType databaseType);
+    public void endVisit(ObjectTableType databaseType);
     
 }

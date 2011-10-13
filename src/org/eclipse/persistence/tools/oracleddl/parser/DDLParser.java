@@ -38,10 +38,10 @@ import org.eclipse.persistence.tools.oracleddl.metadata.LongType;
 import org.eclipse.persistence.tools.oracleddl.metadata.LongRawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NCharType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NClobType;
-import org.eclipse.persistence.tools.oracleddl.metadata.NestedTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NVarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
@@ -416,6 +416,7 @@ Token iot = null;
 // type at 'top-level'
   final public CompositeDatabaseType parseType() throws ParseException {
  CompositeDatabaseType databaseType = null;
+DatabaseType enclosedType = null;
  String schema = null;
  String typeName = null;
  boolean varray = false;
@@ -513,16 +514,16 @@ Token iot = null;
                 if (schema != null) {
                     ((VArrayType)databaseType).setSchema(schema);
                 }
-        columnTypeSpec(databaseType);
+        enclosedType = columnTypeSpec(databaseType);
         break;
       case K_TABLE:
         jj_consume_token(K_TABLE);
         jj_consume_token(K_OF);
-                databaseType = new NestedTableType(typeName);
+                databaseType = new ObjectTableType(typeName);
                 if (schema != null) {
-                    ((NestedTableType)databaseType).setSchema(schema);
+                    ((ObjectTableType)databaseType).setSchema(schema);
                 }
-        columnTypeSpec(databaseType);
+        enclosedType = columnTypeSpec(databaseType);
         break;
       default:
         jj_consume_token(-1);
@@ -566,6 +567,9 @@ Token iot = null;
       ;
     }
     jj_consume_token(0);
+        if (enclosedType != null) {
+            ((CompositeDatabaseType)databaseType).addCompositeType(enclosedType);
+        }
         // TODO - TBD typesRepository.setDatabaseType(typeName, databaseType);
         {if (true) return databaseType;}
     throw new Error("Missing return statement in function");
@@ -2595,11 +2599,6 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3R_56() {
-    if (jj_scan_token(K_NATIONAL)) return true;
-    return false;
-  }
-
   private boolean jj_3R_55() {
     if (jj_scan_token(K_NVARCHAR2)) return true;
     return false;
@@ -2645,14 +2644,14 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_5() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
+  private boolean jj_3_11() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3_11() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
+  private boolean jj_3_5() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -2711,12 +2710,6 @@ String s = null;
 
   private boolean jj_3R_23() {
     if (jj_scan_token(K_BINARY_FLOAT)) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -2845,6 +2838,12 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_4() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
   private boolean jj_3_12() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
@@ -2871,12 +2870,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3_10() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
@@ -2885,6 +2878,12 @@ String s = null;
 
   private boolean jj_3_8() {
     if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -2947,12 +2946,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_42() {
     if (jj_scan_token(K_SYS_REFCURSOR)) return true;
     return false;
@@ -2970,6 +2963,12 @@ String s = null;
 
   private boolean jj_3R_39() {
     if (jj_scan_token(K_MLSLABEL)) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3024,12 +3023,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_33() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3037,6 +3030,12 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_60()) return true;
     }
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3162,6 +3161,11 @@ String s = null;
 
   private boolean jj_3R_29() {
     if (jj_scan_token(K_RAW)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_56() {
+    if (jj_scan_token(K_NATIONAL)) return true;
     return false;
   }
 

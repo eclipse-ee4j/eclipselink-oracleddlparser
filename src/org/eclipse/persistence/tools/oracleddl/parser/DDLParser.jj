@@ -62,10 +62,10 @@ import org.eclipse.persistence.tools.oracleddl.metadata.LongType;
 import org.eclipse.persistence.tools.oracleddl.metadata.LongRawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NCharType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NClobType;
-import org.eclipse.persistence.tools.oracleddl.metadata.NestedTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
 import org.eclipse.persistence.tools.oracleddl.metadata.NVarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
@@ -510,6 +510,7 @@ Token iot = null;
 // type at 'top-level'
 CompositeDatabaseType parseType():
 {CompositeDatabaseType databaseType = null;
+DatabaseType enclosedType = null;
  String schema = null;
  String typeName = null;
  boolean varray = false;
@@ -531,16 +532,18 @@ CompositeDatabaseType parseType():
                 if (schema != null) {
                     ((VArrayType)databaseType).setSchema(schema);
                 }
-            } columnTypeSpec(databaseType)
+            } enclosedType=columnTypeSpec(databaseType)
           | <K_TABLE> <K_OF>	        {
-                databaseType = new NestedTableType(typeName);
+                databaseType = new ObjectTableType(typeName);
                 if (schema != null) {
-                    ((NestedTableType)databaseType).setSchema(schema);
-                }	        } columnTypeSpec(databaseType)
+                    ((ObjectTableType)databaseType).setSchema(schema);
+                }	        } enclosedType=columnTypeSpec(databaseType)
         ]
      [ [ <K_NOT> ] ( <K_FINAL> | <K_INSTANTIABLE> ) ] [ <O_SEMICOLON> ]
      <EOF>
     {
+        if (enclosedType != null) {
+            ((CompositeDatabaseType)databaseType).addCompositeType(enclosedType);        }
         // TODO - TBD typesRepository.setDatabaseType(typeName, databaseType);
         return databaseType;
     }

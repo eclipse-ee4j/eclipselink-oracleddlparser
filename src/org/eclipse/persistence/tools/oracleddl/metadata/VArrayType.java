@@ -2,15 +2,15 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-
 public class VArrayType extends CompositeDatabaseTypeBase implements CompositeDatabaseType {
 
     protected String schema;
+    protected DatabaseType enclosedType;
 
     public VArrayType(String typeName) {
         super(typeName);
     }
-    
+
     public String getSchema() {
         return schema;
     }
@@ -18,10 +18,14 @@ public class VArrayType extends CompositeDatabaseTypeBase implements CompositeDa
        this.schema = schema;
     }
 
-    public void accept(DatabaseTypeVisitor visitor) {
+    public DatabaseType getEnclosedType() {
+        return enclosedType;
+    }
+    public void addCompositeType(DatabaseType enclosedType) {
+        this.enclosedType = enclosedType;
     }
 
-    public void addCompositeType(DatabaseType enclosedType) {
+    public void accept(DatabaseTypeVisitor visitor) {
     }
 
 }
