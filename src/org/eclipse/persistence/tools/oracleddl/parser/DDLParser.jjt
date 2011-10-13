@@ -606,10 +606,6 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
                   dt = new UnresolvedType(s);
               }
               ((UnresolvedType)dt).setOwningType(enclosingType);
-<<<<<<< HEAD
-=======
-              localTypes.put(s, dt);
->>>>>>> 9180d3d5acc073435b4da4ebdf131f05121fb6c8
           }
       } 
       return dt;
@@ -1113,10 +1109,6 @@ void plsqlTableIndexByDeclaration(PLSQLCollectionType plsqlTable) #void:
         if (indexType == null) {
             indexType = new UnresolvedType(indexTypename);
             ((UnresolvedType)indexType).setOwningType(plsqlTable);
-<<<<<<< HEAD
-=======
-            localTypes.put(indexTypename, indexType);
->>>>>>> 9180d3d5acc073435b4da4ebdf131f05121fb6c8
         }
       }
     )
