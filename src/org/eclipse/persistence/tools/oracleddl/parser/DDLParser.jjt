@@ -605,7 +605,18 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
               else {
                   dt = new UnresolvedType(s);
               }
+<<<<<<< HEAD
               ((UnresolvedType)dt).setOwningType(enclosingType);
+=======
+              ((UnresolvedType)dt).setOwningType(enclosingType);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+              localTypes.put(s, dt);
+>>>>>>> 9180d3d5acc073435b4da4ebdf131f05121fb6c8
+>>>>>>> 931095ad82da71b9bfcd9ae4ea40352485a41878
+>>>>>>> d379370c5963e8be16513ca778a219814f6200e8
           }
       } 
       return dt;
@@ -1108,7 +1119,18 @@ void plsqlTableIndexByDeclaration(PLSQLCollectionType plsqlTable) #void:
         //what else can INDEX BY be? Unresolved for now ...
         if (indexType == null) {
             indexType = new UnresolvedType(indexTypename);
+<<<<<<< HEAD
             ((UnresolvedType)indexType).setOwningType(plsqlTable);
+=======
+            ((UnresolvedType)indexType).setOwningType(plsqlTable);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+            localTypes.put(indexTypename, indexType);
+>>>>>>> 9180d3d5acc073435b4da4ebdf131f05121fb6c8
+>>>>>>> 931095ad82da71b9bfcd9ae4ea40352485a41878
+>>>>>>> d379370c5963e8be16513ca778a219814f6200e8
         }
       }
     )
