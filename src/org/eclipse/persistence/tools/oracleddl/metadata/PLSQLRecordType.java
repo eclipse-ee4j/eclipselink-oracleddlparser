@@ -12,33 +12,52 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
+//javase imports
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+//DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
 public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable {
-    List<FieldType> fields = new ArrayList<FieldType>();
-    
-	//TODO - fix up later
+
+    protected List<FieldType> fields = new ArrayList<FieldType>();
+
 	public PLSQLRecordType(String recordName) {
 		super(recordName);
 	}
-	
+
 	@Override
 	public void addCompositeType(DatabaseType enclosedType) {
-	    fields.add((FieldType) enclosedType);
+	    fields.add((FieldType)enclosedType);
 	}
+
+    /**
+     * Returns the list of FieldType instances.
+     */
+    public List<FieldType> getFields() {
+        return fields;
+    }
 
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
-	/**
-	 * Returns the list of FieldType instances.
-	 */
-    public List<FieldType> getFields() {
-        return fields;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.append(" (");
+        for (Iterator<FieldType> iterator = fields.iterator(); iterator.hasNext(); ) {
+            FieldType f = iterator.next();
+            sb.append("\n\t");
+            sb.append(f.toString());
+            if (iterator.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        sb.append("\n)");
+        return sb.toString();
     }
 }
