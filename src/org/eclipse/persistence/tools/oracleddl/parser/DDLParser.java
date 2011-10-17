@@ -419,6 +419,7 @@ Token iot = null;
 DatabaseType enclosedType = null;
  String schema = null;
  String typeName = null;
+ Token vsize = null;
  boolean varray = false;
  boolean nestedTable = false;
     jj_consume_token(K_CREATE);
@@ -507,12 +508,16 @@ DatabaseType enclosedType = null;
       case K_VARRAY:
         jj_consume_token(K_VARRAY);
         jj_consume_token(O_OPENPAREN);
-        jj_consume_token(S_NUMBER);
+        vsize = jj_consume_token(S_NUMBER);
         jj_consume_token(O_CLOSEPAREN);
         jj_consume_token(K_OF);
                 databaseType = new VArrayType(typeName);
                 if (schema != null) {
                     ((VArrayType)databaseType).setSchema(schema);
+                }
+                if (vsize != null) {
+                    Long size = Long.decode(vsize.image);
+                    ((VArrayType)databaseType).setSize(size);
                 }
         enclosedType = columnTypeSpec(databaseType);
         break;
@@ -2838,15 +2843,15 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3_12() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -2881,12 +2886,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_49() {
     if (jj_scan_token(K_CHAR)) return true;
     return false;
@@ -2899,6 +2898,12 @@ String s = null;
 
   private boolean jj_3R_58() {
     if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -2966,14 +2971,14 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
+  private boolean jj_3R_38() {
+    if (jj_scan_token(K_REAL)) return true;
     return false;
   }
 
-  private boolean jj_3R_38() {
-    if (jj_scan_token(K_REAL)) return true;
+  private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3033,12 +3038,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3_21() {
     if (jj_3R_11()) return true;
     Token xsp;
@@ -3054,6 +3053,12 @@ String s = null;
 
   private boolean jj_3R_15() {
     if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 

@@ -509,6 +509,7 @@ CompositeDatabaseType parseType():
 DatabaseType enclosedType = null;
  String schema = null;
  String typeName = null;
+ Token vsize = null;
  boolean varray = false;
  boolean nestedTable = false;
 }
@@ -523,11 +524,15 @@ DatabaseType enclosedType = null;
                 if (schema != null) {
                     ((ObjectType)databaseType).setSchema(schema);                }
             } columnDeclarations(databaseType) <O_CLOSEPAREN>
-          | <K_VARRAY> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> <K_OF>
+          | <K_VARRAY> <O_OPENPAREN> vsize=<S_NUMBER> <O_CLOSEPAREN> <K_OF>
             {                databaseType = new VArrayType(typeName);
                 if (schema != null) {
                     ((VArrayType)databaseType).setSchema(schema);
                 }
+                if (vsize != null) {
+                    Long size = Long.decode(vsize.image);
+                    ((VArrayType)databaseType).setSize(size);
+                }                  
             } enclosedType=columnTypeSpec(databaseType)
           | <K_TABLE> <K_OF>	        {
                 databaseType = new ObjectTableType(typeName);

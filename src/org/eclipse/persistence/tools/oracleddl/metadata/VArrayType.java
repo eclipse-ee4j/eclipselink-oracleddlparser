@@ -5,6 +5,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 public class VArrayType extends CompositeDatabaseTypeBase implements CompositeDatabaseType {
 
     protected String schema;
+    protected long size;
     protected DatabaseType enclosedType;
 
     public VArrayType(String typeName) {
@@ -16,6 +17,13 @@ public class VArrayType extends CompositeDatabaseTypeBase implements CompositeDa
     }
     public void setSchema(String schema) {
        this.schema = schema;
+    }
+
+    public long getSize() {
+        return size;
+    }
+    public void setSize(long size) {
+        this.size = size;
     }
 
     public DatabaseType getEnclosedType() {
