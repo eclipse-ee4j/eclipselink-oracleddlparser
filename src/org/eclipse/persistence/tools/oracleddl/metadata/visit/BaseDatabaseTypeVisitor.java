@@ -146,6 +146,11 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
                 plsqlType.accept(this);
             }
         }
+        if (databaseType.getProcedures() != null) {
+            for (ProcedureType procType : databaseType.getProcedures()) {
+                procType.accept(this);
+            }
+        }
         endVisit(databaseType);
     }
     public void endVisit(PLSQLPackageType databaseType) {
@@ -193,6 +198,7 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
         for (ArgumentType argument : arguments) {
             argument.accept(this);
         }
+        databaseType.getReturnArgument().accept(this);
         endVisit(databaseType);
     }
     public void endVisit(FunctionType databaseType) {

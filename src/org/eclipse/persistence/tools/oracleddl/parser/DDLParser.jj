@@ -951,8 +951,14 @@ DatabaseType typeSpec():
  String s = null;}
 {
     (      dataType=datatype()
-    | LOOKAHEAD(3) columnSpec() <K_TYPE2>
-    | LOOKAHEAD(3) tableSpec() <K_ROWTYPE>
+    | LOOKAHEAD(3) s=columnSpec() <K_TYPE2>
+      {
+        s += tokenImage[K_TYPE2].substring(1, tokenImage[K_TYPE2].length() - 1);
+      }
+    | LOOKAHEAD(3) s=tableSpec() <K_ROWTYPE>
+      {
+        s += tokenImage[K_ROWTYPE].substring(1, tokenImage[K_ROWTYPE].length() - 1);
+      }
     | s=typeName() [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ]
     )
     {

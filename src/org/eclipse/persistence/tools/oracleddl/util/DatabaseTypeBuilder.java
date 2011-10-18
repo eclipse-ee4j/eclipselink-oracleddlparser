@@ -39,9 +39,11 @@ import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 
 public class DatabaseTypeBuilder {
-    
+
     //special catalog
     public static final String TOPLEVEL = "TOPLEVEL";
+    public static final String ROWTYPE_MACRO = "%ROWTYPE";
+    public static final String TYPE_MACRO = "%TYPE";
 
     static DBMSMetadataSessionTransforms TRANSFORMS_FACTORY;
     static {
@@ -65,7 +67,7 @@ public class DatabaseTypeBuilder {
         "NOT REGEXP_LIKE(OWNER," +
             "'*SYS*|XDB|*ORD*|DBSNMP|ANONYMOUS|OUTLN|MGMT_VIEW|SI_INFORMTN_SCHEMA|WK_TEST|WKPROXY') ";
     static final String DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 =
-        "REGEXP_LIKE(OWNER,'"; 
+        "REGEXP_LIKE(OWNER,'";
     static final String DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2 =
         "') ";
     static final String DBMS_METADATA_GET_DDL_STMT2 =
@@ -88,10 +90,10 @@ public class DatabaseTypeBuilder {
     	List<TableType> tableTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
         	List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "TABLE" +
-        		DBMS_METADATA_GET_DDL_STMT1 + 
+        		DBMS_METADATA_GET_DDL_STMT1 +
         	    (schemaPatternExcludesAdminSchemas(schemaPatternU)
         	        ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-        	        : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
+        	        : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
         	          DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
         		DBMS_METADATA_GET_DDL_STMT2 + "TABLE" + DBMS_METADATA_GET_DDL_STMT3 +
         		tablePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
@@ -117,9 +119,11 @@ public class DatabaseTypeBuilder {
     protected void resolvedTypes(DDLParser parser, List<UnresolvedType> unresolvedTypes, DatabaseType databaseType) {
         // TODO - go thru list of unresolved types and fix up the databaseType's object-graph
         for (UnresolvedType uType : unresolvedTypes) {
-            // TODO - what if 'type' is null here?
-            DatabaseType type = parser.getTypeFromRepository(uType.getTypeName());
-            uType.getOwningType().addCompositeType(type);
+            String typeName = uType.getTypeName();
+            int rowTypeIdx = typeName.lastIndexOf(ROWTYPE_MACRO) ;
+            if (rowTypeIdx != -1) {
+                String tableName = typeName.substring(0, rowTypeIdx);
+            }
         }
     }
 
@@ -130,10 +134,10 @@ public class DatabaseTypeBuilder {
     	List<PLSQLPackageType> packageTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
             List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "PACKAGE" +
-                DBMS_METADATA_GET_DDL_STMT1 + 
+                DBMS_METADATA_GET_DDL_STMT1 +
                 (schemaPatternExcludesAdminSchemas(schemaPatternU)
                     ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
+                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
                       DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
                 DBMS_METADATA_GET_DDL_STMT2 + "PACKAGE" + DBMS_METADATA_GET_DDL_STMT3 +
                 packagePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
@@ -164,10 +168,10 @@ public class DatabaseTypeBuilder {
     	List<ProcedureType> procedureTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
             List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "PROCEDURE" +
-                DBMS_METADATA_GET_DDL_STMT1 + 
+                DBMS_METADATA_GET_DDL_STMT1 +
                 (schemaPatternExcludesAdminSchemas(schemaPatternU)
                     ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
+                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
                       DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
                 DBMS_METADATA_GET_DDL_STMT2 + "PROCEDURE" + DBMS_METADATA_GET_DDL_STMT3 +
                 procedurePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
@@ -198,10 +202,10 @@ public class DatabaseTypeBuilder {
     	List<FunctionType> functionTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
             List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "FUNCTION" +
-                DBMS_METADATA_GET_DDL_STMT1 + 
+                DBMS_METADATA_GET_DDL_STMT1 +
                 (schemaPatternExcludesAdminSchemas(schemaPatternU)
                     ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
+                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
                       DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
                 DBMS_METADATA_GET_DDL_STMT2 + "FUNCTION" + DBMS_METADATA_GET_DDL_STMT3 +
                 functionPatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
@@ -232,10 +236,10 @@ public class DatabaseTypeBuilder {
     	List<CompositeDatabaseType> databaseTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
             List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "TYPE" +
-                DBMS_METADATA_GET_DDL_STMT1 + 
+                DBMS_METADATA_GET_DDL_STMT1 +
                 (schemaPatternExcludesAdminSchemas(schemaPatternU)
                     ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU + 
+                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
                       DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
                 DBMS_METADATA_GET_DDL_STMT2 + "TYPE" + DBMS_METADATA_GET_DDL_STMT3 +
                 typePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
@@ -268,7 +272,7 @@ public class DatabaseTypeBuilder {
         try {
             PreparedStatement ps = conn.prepareStatement(metadataSpec);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {  
+            if (rs.next()) {
             	ddls = new ArrayList<String>();
                 do {
                 	String ddl = rs.getString("RESULT").trim();
@@ -276,8 +280,8 @@ public class DatabaseTypeBuilder {
                         ddl = (String)ddl.subSequence(0, ddl.length()-1);
                     }
                 	ddls.add(ddl);
-                
-                } while (rs.next());  
+
+                } while (rs.next());
             }
             try {
                 rs.close();
@@ -341,7 +345,7 @@ public class DatabaseTypeBuilder {
         }
         return worked;
     }
-    
+
     static boolean schemaPatternExcludesAdminSchemas(String schemaPattern) {
         return (schemaPattern == null || schemaPattern.length() == 0 ||
             TOPLEVEL.equals(schemaPattern) || "%".equals(schemaPattern));
