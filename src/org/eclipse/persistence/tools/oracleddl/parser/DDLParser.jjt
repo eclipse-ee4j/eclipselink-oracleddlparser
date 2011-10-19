@@ -455,7 +455,7 @@ FunctionType parseTopLevelFunction():
 {FunctionType functionType = null;
  String schema = null;
  String functionName = null;
- DatabaseType returnType = null;}
+ ArgumentType returnType = null;}
 {
   <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_FUNCTION>
     [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
@@ -1184,7 +1184,7 @@ void argumentList(ProcedureType procedureType) #void:
 void functionSpec(PLSQLPackageType packageType) #void:
 {Token t = null;
  FunctionType functionType = null;
- DatabaseType returnDataType = null;
+ ArgumentType returnDataType = null;
 }
 {
     <K_FUNCTION> t=<S_IDENTIFIER>
@@ -1203,10 +1203,13 @@ void functionSpec(PLSQLPackageType packageType) #void:
     }
 }
 
-DatabaseType functionReturnSpec():
+ArgumentType functionReturnSpec():
 {DatabaseType dataType = null;}{    (<K_RETURN> dataType=typeSpec())
     {
-      return dataType;
+      ArgumentType returnType = new ArgumentType(null);
+      returnType.setDirection(ArgumentTypeDirection.RETURN);
+      returnType.setDataType(dataType);
+      return returnType;
     }
 }
 

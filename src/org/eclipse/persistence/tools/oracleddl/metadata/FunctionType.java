@@ -16,8 +16,8 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class FunctionType extends ProcedureType {
 
-    protected DatabaseType returnArgument;
-    
+    protected ArgumentType returnArgument;
+
     public FunctionType(String procedureName) {
         super(procedureName);
     }
@@ -32,11 +32,11 @@ public class FunctionType extends ProcedureType {
         super.typeName = "FUNCTION " + procedureName;
     }
 
-    public DatabaseType getReturnArgument() {
+    public ArgumentType getReturnArgument() {
         return returnArgument;
     }
 
-    public void setReturnArgument(DatabaseType returnArgument) {
+    public void setReturnArgument(ArgumentType returnArgument) {
         this.returnArgument = returnArgument;
     }
 
@@ -65,7 +65,7 @@ public class FunctionType extends ProcedureType {
             }
         }
         sb.append(") RETURN ");
-        sb.append(returnArgument.getTypeName());
+        sb.append(returnArgument.getDataType());
         return sb.toString();
     }
 

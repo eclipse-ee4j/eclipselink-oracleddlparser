@@ -261,7 +261,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  FunctionType functionType = null;
  String schema = null;
  String functionName = null;
- DatabaseType returnType = null;
+ ArgumentType returnType = null;
     jj_consume_token(K_CREATE);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_OR:
@@ -2158,7 +2158,7 @@ String s = null;
   final public void functionSpec(PLSQLPackageType packageType) throws ParseException {
  Token t = null;
  FunctionType functionType = null;
- DatabaseType returnDataType = null;
+ ArgumentType returnDataType = null;
     jj_consume_token(K_FUNCTION);
     t = jj_consume_token(S_IDENTIFIER);
             functionType = new FunctionType(t.image);
@@ -2205,11 +2205,14 @@ String s = null;
       packageType.addProcedure(functionType);
   }
 
-  final public DatabaseType functionReturnSpec() throws ParseException {
+  final public ArgumentType functionReturnSpec() throws ParseException {
  DatabaseType dataType = null;
     jj_consume_token(K_RETURN);
     dataType = typeSpec();
-      {if (true) return dataType;}
+      ArgumentType returnType = new ArgumentType(null);
+      returnType.setDirection(ArgumentTypeDirection.RETURN);
+      returnType.setDataType(dataType);
+      {if (true) return returnType;}
     throw new Error("Missing return statement in function");
   }
 
@@ -2606,28 +2609,8 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
-    return false;
-  }
-
   private boolean jj_3R_55() {
     if (jj_scan_token(K_NVARCHAR2)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_12()) {
-    jj_scanpos = xsp;
-    if (jj_3R_13()) return true;
-    }
     return false;
   }
 
@@ -3173,6 +3156,26 @@ String s = null;
 
   private boolean jj_3R_56() {
     if (jj_scan_token(K_NATIONAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_12()) {
+    jj_scanpos = xsp;
+    if (jj_3R_13()) return true;
+    }
     return false;
   }
 
