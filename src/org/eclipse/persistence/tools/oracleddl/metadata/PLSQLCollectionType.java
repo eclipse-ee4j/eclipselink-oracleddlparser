@@ -48,6 +48,15 @@ public class PLSQLCollectionType extends PLSQLType implements DatabaseTypeVisita
         this.indexType = indexType;
     }
 
+    @Override
+    public boolean isResolved() {
+        // if the nestedType is unresolved, then this PLSQLCollection is unresolved
+        if (nestedType == null) {
+            return false;
+        }
+        return nestedType.isResolved();
+    }
+
     public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}

@@ -37,6 +37,7 @@ public class ObjectType extends CompositeDatabaseTypeBase implements CompositeDa
     }
 
     public void accept(DatabaseTypeVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override

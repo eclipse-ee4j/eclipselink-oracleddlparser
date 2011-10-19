@@ -38,6 +38,7 @@ public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
     }
 
 	public boolean isResolved() {
+        // if dataType is unresolved, then this field is unresolved
 		if (dataType == null) {
 			return false;
 		}
@@ -58,7 +59,7 @@ public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
 		}
 		return dataType.getTypeName();
     }
-    
+
     public boolean notNull() {
     	return notNull;
     }
@@ -68,7 +69,7 @@ public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
     public void unSetNotNull() {
     	this.notNull = false;
     }
-    
+
     public boolean pk() {
     	return pk;
     }

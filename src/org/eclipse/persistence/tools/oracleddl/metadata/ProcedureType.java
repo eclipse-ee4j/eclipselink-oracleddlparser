@@ -72,6 +72,17 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
     }
 
     @Override
+    public boolean isResolved() {
+        // if any of the arguments are unresolved, then this ProcedureType is unresolved
+        for (ArgumentType argType : arguments) {
+            if (!argType.isResolved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public void addCompositeType(DatabaseType enclosedType) {
         arguments.add((ArgumentType)enclosedType);
     }

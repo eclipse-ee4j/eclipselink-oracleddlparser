@@ -30,7 +30,7 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     public TableType() {
         super(null);
     }
-    
+
     public TableType(String tableName) {
         super(null);
         setTableName(tableName);
@@ -55,7 +55,7 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     public void addCompositeType(DatabaseType enclosedType) {
         columns.add((FieldType)enclosedType);
     }
-    
+
     public List<FieldType> getColumns() {
         return columns;
     }
@@ -67,7 +67,7 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     public boolean iot() {
        return iot;
     }
-    
+
     public int numberOfPKColumns() {
         int pkColumns = 0;
         for (FieldType col : columns) {
@@ -76,6 +76,17 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
             }
         }
         return pkColumns;
+    }
+
+    @Override
+    public boolean isResolved() {
+        // if any of the columns types are unresolved, then this table is unresolved
+        for (FieldType fType : columns) {
+            if (!fType.isResolved()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

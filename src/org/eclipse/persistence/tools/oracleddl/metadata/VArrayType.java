@@ -33,6 +33,15 @@ public class VArrayType extends CompositeDatabaseTypeBase implements CompositeDa
         this.enclosedType = enclosedType;
     }
 
+    @Override
+    public boolean isResolved() {
+        // if enclosedType is unresolved, then this VArray is unresolved
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isResolved();
+    }
+
     public void accept(DatabaseTypeVisitor visitor) {
     }
 

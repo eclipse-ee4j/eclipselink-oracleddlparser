@@ -19,7 +19,7 @@ public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisit
 
     protected String cursorName;
     protected DatabaseType dataType;
-    
+
     public PLSQLCursorType(String cursorName) {
 		this.cursorName = cursorName;
     }
@@ -38,12 +38,13 @@ public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisit
 	public void addCompositeType(DatabaseType enclosedType) {
 		setDataType(enclosedType);
 	}
-    
+
 	public boolean isWeaklyTypes() {
 		return dataType == null;
 	}
 
 	public boolean isResolved() {
+        // if the dataType is unresolved, then this PLSQLCursor is unresolved
 		if (dataType == null) {
 			return false;
 		}

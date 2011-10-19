@@ -41,6 +41,19 @@ public class FunctionType extends ProcedureType {
     }
 
     @Override
+    public boolean isResolved() {
+        // if the returnArg is unresolved, then this function is unresolved
+        if (returnArgument == null) {
+            return false;
+        }
+        if (!returnArgument.isResolved()) {
+            return false;
+        }
+        // use ProcedureType's isResolved()
+        return super.isResolved();
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("FUNCTION ");
         if (schema != null) {

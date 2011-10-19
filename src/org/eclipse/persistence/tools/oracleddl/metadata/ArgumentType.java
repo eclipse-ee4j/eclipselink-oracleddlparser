@@ -22,7 +22,7 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
     protected DatabaseType dataType;
     protected ArgumentTypeDirection direction;
     protected boolean optional = false;
-    
+
     public ArgumentType(String argumentName) {
         this.argumentName = argumentName;
     }
@@ -46,6 +46,7 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
 	}
 
 	public boolean isResolved() {
+        // if dataType is unresolved, then this argument is unresolved
 		if (dataType == null) {
 			return false;
 		}
@@ -66,7 +67,7 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
 		}
 		return dataType.getTypeName();
     }
-    
+
     public boolean optional() {
     	return optional;
     }

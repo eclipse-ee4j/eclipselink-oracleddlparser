@@ -46,6 +46,17 @@ public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable 
 	}
 
     @Override
+    public boolean isResolved() {
+        // if any of the field types are unresolved, then this record is unresolved
+        for (FieldType fType : fields) {
+            if (!fType.isResolved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString());
         sb.append(" (");

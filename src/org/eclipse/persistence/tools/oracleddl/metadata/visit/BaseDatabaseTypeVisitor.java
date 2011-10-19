@@ -159,7 +159,13 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     public void beginVisit(PLSQLRecordType databaseType) {
     }
     public void visit(PLSQLRecordType databaseType) {
-        //TODO
+        beginVisit(databaseType);
+        if (databaseType.getFields() != null) {
+            for (FieldType fieldType : databaseType.getFields()) {
+                fieldType.accept(this);
+            }
+        }
+        endVisit(databaseType);
     }
     public void endVisit(PLSQLRecordType databaseType) {
     }
@@ -233,18 +239,23 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void visit(VArrayType databaseType) {
         beginVisit(databaseType);
-        databaseType.getEnclosedType().accept(this);
+        DatabaseType dt = databaseType.getEnclosedType();
+        if (dt != null) {
+            dt.accept(this);
+        }
         endVisit(databaseType);
     }
     public void endVisit(VArrayType databaseType) {
     }
 
     public void beginVisit(ObjectTableType databaseType) {
-
     }
     public void visit(ObjectTableType databaseType) {
         beginVisit(databaseType);
-        databaseType.getEnclosedType().accept(this);
+        DatabaseType dt = databaseType.getEnclosedType();
+        if (dt != null) {
+            dt.accept(this);
+        }
         endVisit(databaseType);
     }
     public void endVisit(ObjectTableType databaseType) {

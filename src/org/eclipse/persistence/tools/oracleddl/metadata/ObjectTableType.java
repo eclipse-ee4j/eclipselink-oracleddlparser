@@ -26,5 +26,6 @@ public class ObjectTableType extends CompositeDatabaseTypeBase implements Compos
     }
 
     public void accept(DatabaseTypeVisitor visitor) {
+        visitor.visit(this);
     }
 }
