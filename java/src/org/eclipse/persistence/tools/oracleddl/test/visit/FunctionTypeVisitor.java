@@ -21,25 +21,29 @@ import java.util.List;
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.BaseDatabaseTypeVisitor;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection.RETURN;
 
 class FunctionTypeVisitor extends BaseDatabaseTypeVisitor {
 
     public String funcName;
     public String schema;
     public List<String> argData = new ArrayList<String>();
-    public String returnArg; 
-    
+    public String returnArg;
+
     public void beginVisit(FunctionType funcType) {
         funcName = funcType.getProcedureName();
         schema = funcType.getSchema();
         returnArg = funcType.getReturnArgument().getTypeName();
     }
-    
+
     public void beginVisit(ArgumentType argType) {
         if (argType.optional()) {
-            argData.add(argType.getArgumentName() + "(opt) " + argType.getDirection() + " " + argType.getDataType());
-        } else {
-            argData.add(argType.getArgumentName() + " " + argType.getDirection() + " " + argType.getDataType());
+            argData.add(argType.getArgumentName() + "(opt) " + argType.getDirection() + " " +
+                argType.getDataType());
+        }
+        else if (argType.getDirection() != RETURN) {
+            argData.add(argType.getArgumentName() + " " + argType.getDirection() + " " +
+                argType.getDataType());
         }
     }
 
