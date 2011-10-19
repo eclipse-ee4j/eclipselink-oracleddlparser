@@ -89,6 +89,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     public void setTypesRepository(DatabaseTypesRepository typesRepository) {
         this.typesRepository = typesRepository;
     }
+    public DatabaseTypesRepository getTypesRepository() {
+        return typesRepository;
+    }
 
     public DatabaseType getTypeFromRepository(String typeName) {
         return typesRepository.getDatabaseType(typeName);
@@ -1746,7 +1749,6 @@ String s = null;
       }
       if (dataType == null) {
           dataType = new UnresolvedType(s);
-          localTypes.put(s, dataType);
       }
       {if (true) return dataType;}
     throw new Error("Missing return statement in function");
@@ -2615,11 +2617,6 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3R_55() {
-    if (jj_scan_token(K_NVARCHAR2)) return true;
-    return false;
-  }
-
   private boolean jj_3R_28() {
     if (jj_scan_token(K_LONG)) return true;
     return false;
@@ -2872,13 +2869,13 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_58() {
-    if (jj_3R_6()) return true;
+  private boolean jj_3_8() {
+    if (jj_3R_9()) return true;
     return false;
   }
 
-  private boolean jj_3_8() {
-    if (jj_3R_9()) return true;
+  private boolean jj_3R_58() {
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -3019,14 +3016,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_21() {
-    if (jj_3R_11()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(169)) jj_scanpos = xsp;
-    return false;
-  }
-
   private boolean jj_3R_33() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3034,6 +3023,14 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_60()) return true;
     }
+    return false;
+  }
+
+  private boolean jj_3_21() {
+    if (jj_3R_11()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(169)) jj_scanpos = xsp;
     return false;
   }
 
@@ -3160,13 +3157,13 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+  private boolean jj_3R_56() {
+    if (jj_scan_token(K_NATIONAL)) return true;
     return false;
   }
 
-  private boolean jj_3R_56() {
-    if (jj_scan_token(K_NATIONAL)) return true;
+  private boolean jj_3R_13() {
+    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
     return false;
   }
 
@@ -3182,6 +3179,11 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_13()) return true;
     }
+    return false;
+  }
+
+  private boolean jj_3R_55() {
+    if (jj_scan_token(K_NVARCHAR2)) return true;
     return false;
   }
 

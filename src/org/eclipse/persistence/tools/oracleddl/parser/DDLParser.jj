@@ -115,6 +115,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*
     public void setTypesRepository(DatabaseTypesRepository typesRepository) {
         this.typesRepository = typesRepository;
     }
+    public DatabaseTypesRepository getTypesRepository() {
+        return typesRepository;
+    }
 
     public DatabaseType getTypeFromRepository(String typeName) {
         return typesRepository.getDatabaseType(typeName);
@@ -972,7 +975,6 @@ DatabaseType typeSpec():
       }
       if (dataType == null) {
           dataType = new UnresolvedType(s);
-          localTypes.put(s, dataType);
       }
       return dataType;    }
 }

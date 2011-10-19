@@ -15,6 +15,7 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 //DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection.RETURN;
 
 public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
@@ -84,7 +85,15 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(argumentName);
+        StringBuilder sb = new StringBuilder();
+        if (argumentName != null) {
+            sb.append(argumentName);
+        }
+        else {
+            if (direction == RETURN) {
+                sb.append(RETURN);
+            }
+        }
         sb.append("\t");
         if (dataType == null) {
             sb.append("unknown datatype");
