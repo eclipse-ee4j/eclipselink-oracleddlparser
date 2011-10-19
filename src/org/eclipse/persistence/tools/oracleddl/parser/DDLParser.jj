@@ -1213,6 +1213,8 @@ ArgumentType functionReturnSpec():
       ArgumentType returnType = new ArgumentType(null);
       returnType.setDirection(ArgumentTypeDirection.RETURN);
       returnType.setDataType(dataType);
+      if (!dataType.isResolved()) {
+          ((UnresolvedType)dataType).setOwningType(returnType);      }
       return returnType;
     }
 }
@@ -1231,6 +1233,9 @@ void argument(ProcedureType procedureType)      :
     {
       argumentType = new ArgumentType(t.image);
       argumentType.setDataType(argumentDataType);
+      if (!argumentDataType.isResolved()) {
+          ((UnresolvedType)argumentDataType).setOwningType(argumentType);
+      }
       if (direction != null) {
           if ("OUT".equals(direction)) {
               argDirection = ArgumentTypeDirection.OUT;

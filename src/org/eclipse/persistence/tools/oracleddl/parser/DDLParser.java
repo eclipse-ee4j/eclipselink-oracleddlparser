@@ -2212,6 +2212,9 @@ String s = null;
       ArgumentType returnType = new ArgumentType(null);
       returnType.setDirection(ArgumentTypeDirection.RETURN);
       returnType.setDataType(dataType);
+      if (!dataType.isResolved()) {
+          ((UnresolvedType)dataType).setOwningType(returnType);
+      }
       {if (true) return returnType;}
     throw new Error("Missing return statement in function");
   }
@@ -2250,6 +2253,9 @@ String s = null;
     }
       argumentType = new ArgumentType(t.image);
       argumentType.setDataType(argumentDataType);
+      if (!argumentDataType.isResolved()) {
+          ((UnresolvedType)argumentDataType).setOwningType(argumentType);
+      }
       if (direction != null) {
           if ("OUT".equals(direction)) {
               argDirection = ArgumentTypeDirection.OUT;
@@ -2629,6 +2635,12 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_22() {
+    if (jj_scan_token(K_IN)) return true;
+    if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
   private boolean jj_3R_53() {
     if (jj_scan_token(K_NCHAR)) return true;
     return false;
@@ -2636,12 +2648,6 @@ String s = null;
 
   private boolean jj_3_11() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3_22() {
-    if (jj_scan_token(K_IN)) return true;
-    if (jj_scan_token(K_OUT)) return true;
     return false;
   }
 
@@ -3154,13 +3160,13 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_56() {
-    if (jj_scan_token(K_NATIONAL)) return true;
+  private boolean jj_3R_13() {
+    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+  private boolean jj_3R_56() {
+    if (jj_scan_token(K_NATIONAL)) return true;
     return false;
   }
 
