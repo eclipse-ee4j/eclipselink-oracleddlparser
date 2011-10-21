@@ -29,7 +29,7 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
 
     public PLSQLPackageType() {
     }
-    
+
     public PLSQLPackageType(String packageName) {
 		setPackageName(packageName);
 	}
@@ -59,7 +59,7 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
     public List<PLSQLType> getTypes() {
 		return types;
 	}
-    
+
     public void addType(PLSQLType type) {
         if (types == null) {
             types = new ArrayList<PLSQLType>();
@@ -96,26 +96,38 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
 
 	public boolean isResolved() {
 		// if any of the enclosed types are unresolved, then this package is unresolved
-		for (PLSQLType type : types) {
-			if (!type.isResolved()) {
-				return false;
-			}
-		}
-		for (PLSQLCursorType cursor : cursors) {
-			if (!cursor.isResolved()) {
-				return false;
-			}
-		}
-		for (ProcedureType procedure : procedures) {
-			if (!procedure.isResolved()) {
-				return false;
-			}
-		}
+
+	    if (types != null) {
+    		for (PLSQLType type : types) {
+    			if (!type.isResolved()) {
+    				return false;
+    			}
+    		}
+	    }
+        if (cursors != null) {
+    		for (PLSQLCursorType cursor : cursors) {
+    			if (!cursor.isResolved()) {
+    				return false;
+    			}
+    		}
+        }
+        if (procedures != null) {
+    		for (ProcedureType procedure : procedures) {
+    			if (!procedure.isResolved()) {
+    				return false;
+    			}
+    		}
+        }
 		return true;
 	}
 
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
+
+    @Override
+    public String toString() {
+        return getTypeName() + "@" + Integer.toHexString(System.identityHashCode(this));
+    }
 
 }

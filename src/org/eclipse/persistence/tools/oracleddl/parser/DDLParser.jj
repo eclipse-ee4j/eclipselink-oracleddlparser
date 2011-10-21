@@ -117,11 +117,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*
     }
     public DatabaseTypesRepository getTypesRepository() {
         return typesRepository;
-    }
-
-    public DatabaseType getTypeFromRepository(String typeName) {
-        return typesRepository.getDatabaseType(typeName);
-    }      
+    }     
 }
 
 PARSER_END(DDLParser)
@@ -431,7 +427,7 @@ PLSQLPackageType parsePLSQLPackage():
      <K_END> [ OracleObjectName() ] <O_SEMICOLON>
      <EOF>
     {
-      // TODO - TBD typesRepository.setDatabaseType(packageName, packageType);
+      typesRepository.setDatabaseType(packageName, packageType);
       return packageType;
     }
 }
@@ -452,7 +448,7 @@ ProcedureType parseTopLevelProcedure():
     [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ] [ <K_AS> | <K_IS> ]
         skipToEnd()
     {
-      // TODO - TBD typesRepository.setDatabaseType(procedureName, procedureType);
+      typesRepository.setDatabaseType(procedureName, procedureType);
       return procedureType;
     }
 }
@@ -475,7 +471,7 @@ FunctionType parseTopLevelFunction():
         skipToEnd()
     {
       functionType.setReturnArgument(returnType);
-      // TODO - TBD typesRepository.setDatabaseType(functionName, functionType);
+      typesRepository.setDatabaseType(functionName, functionType);
       return functionType;
     }
 }
@@ -505,7 +501,7 @@ Token iot = null;
          if (iot != null) {
              tableType.setIOT(true);
          }
-         // TODO - TBD typesRepository.setDatabaseType(tableName, tableType);
+         typesRepository.setDatabaseType(tableName, tableType);
          return tableType;
      }
 }
@@ -552,7 +548,7 @@ DatabaseType enclosedType = null;
     {
         if (enclosedType != null) {
             ((CompositeDatabaseType)databaseType).addCompositeType(enclosedType);        }
-        // TODO - TBD typesRepository.setDatabaseType(typeName, databaseType);
+        typesRepository.setDatabaseType(typeName, databaseType);
         return databaseType;
     }
 }

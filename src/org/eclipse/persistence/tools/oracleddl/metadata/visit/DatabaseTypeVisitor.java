@@ -35,6 +35,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum;
@@ -71,7 +72,6 @@ public interface DatabaseTypeVisitor {
 	public void visit(VarChar2Type databaseType);
 	public void visit(LongType databaseType) ;
 
-	//composite visit callbacks
 	public void beginVisit(ArgumentType databaseType);
 	public void visit(ArgumentType databaseType);
 	public void endVisit(ArgumentType databaseType);
@@ -119,5 +119,9 @@ public interface DatabaseTypeVisitor {
     public void beginVisit(ObjectTableType databaseType);
     public void visit(ObjectTableType databaseType);
     public void endVisit(ObjectTableType databaseType);
-    
+
+    public void beginVisit(ROWTYPEType databaseType);
+    public void visit(ROWTYPEType databaseType);
+    public void endVisit(ROWTYPEType databaseType);
+
 }

@@ -20,6 +20,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.BinaryType;
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
 import org.eclipse.persistence.tools.oracleddl.metadata.CharType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ClobType;
+import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.DecimalType;
 import org.eclipse.persistence.tools.oracleddl.metadata.DoubleType;
@@ -40,6 +41,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum;
@@ -98,6 +100,52 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
 
     //composite visit callbacks
+    public void visit(CompositeDatabaseType databaseType) {
+        //extremely bad hack :-(
+        if (databaseType instanceof ArgumentType) {
+            visit((ArgumentType)databaseType);
+        }
+        else if (databaseType instanceof FunctionType) {
+            visit((FunctionType)databaseType);
+        }
+        else if (databaseType instanceof PLSQLPackageType) {
+            visit((PLSQLPackageType)databaseType);
+        }
+        else if (databaseType instanceof PLSQLPackageType) {
+            visit((ProcedureType)databaseType);
+        }
+        else if (databaseType instanceof TableType) {
+            visit((TableType)databaseType);
+        }
+        else if (databaseType instanceof ArgumentType) {
+            visit((ArgumentType)databaseType);
+        }
+        else if (databaseType instanceof FieldType) {
+            visit((FieldType)databaseType);
+        }
+        else if (databaseType instanceof PLSQLCursorType) {
+            visit((PLSQLCursorType)databaseType);
+        }
+        else if (databaseType instanceof PLSQLRecordType) {
+            visit((PLSQLRecordType)databaseType);
+        }
+        else if (databaseType instanceof PLSQLCollectionType) {
+            visit((PLSQLCollectionType)databaseType);
+        }
+        else if (databaseType instanceof ObjectType) {
+            visit((ObjectType)databaseType);
+        }
+        else if (databaseType instanceof VArrayType) {
+            visit((VArrayType)databaseType);
+        }
+        else if (databaseType instanceof ObjectTableType) {
+            visit((ObjectTableType)databaseType);
+        }
+        else if (databaseType instanceof ROWTYPEType) {
+            visit((ROWTYPEType)databaseType);
+        }
+    }
+
     public void beginVisit(ArgumentType databaseType) {
     }
     public void visit(ArgumentType databaseType) {
@@ -259,6 +307,19 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
         endVisit(databaseType);
     }
     public void endVisit(ObjectTableType databaseType) {
+    }
+
+    public void beginVisit(ROWTYPEType databaseType) {
+    }
+    public void visit(ROWTYPEType databaseType) {
+        beginVisit(databaseType);
+        DatabaseType dt = databaseType.getEnclosedType();
+        if (dt != null) {
+            dt.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(ROWTYPEType databaseType) {
     }
 
 }

@@ -93,10 +93,6 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         return typesRepository;
     }
 
-    public DatabaseType getTypeFromRepository(String typeName) {
-        return typesRepository.getDatabaseType(typeName);
-    }
-
 // stripped-down version of PLSQL grammar: only parses package/top-level DDL specifications
 
 // PLSQLPackage at 'top-level'
@@ -195,7 +191,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
     jj_consume_token(O_SEMICOLON);
     jj_consume_token(0);
-      // TODO - TBD typesRepository.setDatabaseType(packageName, packageType);
+      typesRepository.setDatabaseType(packageName, packageType);
       {if (true) return packageType;}
     throw new Error("Missing return statement in function");
   }
@@ -254,7 +250,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       ;
     }
     skipToEnd();
-      // TODO - TBD typesRepository.setDatabaseType(procedureName, procedureType);
+      typesRepository.setDatabaseType(procedureName, procedureType);
       {if (true) return procedureType;}
     throw new Error("Missing return statement in function");
   }
@@ -316,7 +312,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
     skipToEnd();
       functionType.setReturnArgument(returnType);
-      // TODO - TBD typesRepository.setDatabaseType(functionName, functionType);
+      typesRepository.setDatabaseType(functionName, functionType);
       {if (true) return functionType;}
     throw new Error("Missing return statement in function");
   }
@@ -411,7 +407,7 @@ Token iot = null;
          if (iot != null) {
              tableType.setIOT(true);
          }
-         // TODO - TBD typesRepository.setDatabaseType(tableName, tableType);
+         typesRepository.setDatabaseType(tableName, tableType);
          {if (true) return tableType;}
     throw new Error("Missing return statement in function");
   }
@@ -578,7 +574,7 @@ DatabaseType enclosedType = null;
         if (enclosedType != null) {
             ((CompositeDatabaseType)databaseType).addCompositeType(enclosedType);
         }
-        // TODO - TBD typesRepository.setDatabaseType(typeName, databaseType);
+        typesRepository.setDatabaseType(typeName, databaseType);
         {if (true) return databaseType;}
     throw new Error("Missing return statement in function");
   }
@@ -2617,6 +2613,11 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
+  private boolean jj_3R_55() {
+    if (jj_scan_token(K_NVARCHAR2)) return true;
+    return false;
+  }
+
   private boolean jj_3R_28() {
     if (jj_scan_token(K_LONG)) return true;
     return false;
@@ -3179,11 +3180,6 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_13()) return true;
     }
-    return false;
-  }
-
-  private boolean jj_3R_55() {
-    if (jj_scan_token(K_NVARCHAR2)) return true;
     return false;
   }
 

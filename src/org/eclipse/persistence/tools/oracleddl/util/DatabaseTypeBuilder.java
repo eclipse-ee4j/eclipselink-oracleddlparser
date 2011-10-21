@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.Stack;
 
 //DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
@@ -32,6 +33,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.UnresolvedTypesVisitor;
@@ -63,19 +65,23 @@ public class DatabaseTypeBuilder {
         "SELECT DBMS_METADATA.GET_DDL('";
     static final String DBMS_METADATA_GET_DDL_STMT1 =
     	"', AO.OBJECT_NAME) AS RESULT FROM ALL_OBJECTS AO WHERE ";
-    static final String DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS =
-        "NOT REGEXP_LIKE(OWNER," +
-            "'*SYS*|XDB|*ORD*|DBSNMP|ANONYMOUS|OUTLN|MGMT_VIEW|SI_INFORMTN_SCHEMA|WK_TEST|WKPROXY') ";
-    static final String DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 =
-        "REGEXP_LIKE(OWNER,'";
-    static final String DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2 =
-        "') ";
-    static final String DBMS_METADATA_GET_DDL_STMT2 =
-    	"AND OBJECT_TYPE = '";
-    static final String DBMS_METADATA_GET_DDL_STMT3 =
-    	"' AND OBJECT_NAME LIKE '";
-    static final String DBMS_METADATA_DDL_STMT_SUFFIX =
-        "'";
+    static final String EXCLUDED_ADMIN_SCHEMAS =
+        "'*SYS*|XDB|*ORD*|DBSNMP|ANONYMOUS|OUTLN|MGMT_VIEW|SI_INFORMTN_SCHEMA|WK_TEST|WKPROXY'";
+    static final String DBMS_METADATA_GET_DDL_STMT_SUFFIX =
+        " REGEXP_LIKE(OWNER,?) AND OBJECT_TYPE = ? AND OBJECT_NAME LIKE ?";
+
+    //OBJECT_TYPE codes from ALL_OBJECTS view - we are only interested in top-level types:
+    static final int UNKNOWN_CODE = -1;
+    static final int FUNCTION_CODE = 1;
+    static final int PACKAGE_CODE = 2;
+    static final int PROCEDURE_CODE = 3;
+    static final int TABLE_CODE = 4;
+    static final int TYPE_CODE = 5;
+    static final String ALL_OBJECTS_OBJECT_TYPE_FIELD = "OBJECT_TYPE";
+    static final String GET_OBJECT_TYPE_STMT =
+        "SELECT DECODE(AO." + ALL_OBJECTS_OBJECT_TYPE_FIELD +
+            ", 'FUNCTION', 1, 'PACKAGE', 2, 'PROCEDURE', 3, 'TABLE', 4, 'TYPE', 5, -1) AS OBJECT_TYPE" +
+            " FROM ALL_OBJECTS AO WHERE (STATUS = 'VALID' AND OWNER LIKE ? AND OBJECT_NAME = ?)";
 
     protected boolean transformsSet = false;
 
@@ -85,96 +91,93 @@ public class DatabaseTypeBuilder {
 
     public List<TableType> buildTables(Connection conn, String schemaPattern, String tablePattern)
         throws ParseException {
+        return buildTables(conn, schemaPattern, tablePattern, true);
+    }
+    protected List<TableType> buildTables(Connection conn, String schemaPattern, String tablePattern,
+        boolean resolveTypes) throws ParseException {
         String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
         String tablePatternU = tablePattern == null ? null : tablePattern.toUpperCase();
-    	List<TableType> tableTypes = null;
+        List<TableType> tableTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-        	List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "TABLE" +
-        		DBMS_METADATA_GET_DDL_STMT1 +
-        	    (schemaPatternExcludesAdminSchemas(schemaPatternU)
-        	        ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-        	        : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
-        	          DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
-        		DBMS_METADATA_GET_DDL_STMT2 + "TABLE" + DBMS_METADATA_GET_DDL_STMT3 +
-        		tablePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
+            List<String> ddls = getDDLs(conn, "TABLE", DBMS_METADATA_GET_DDL_STMT_PREFIX + "TABLE" +
+                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
+                schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, tablePatternU);
             if (ddls != null) {
-            	tableTypes = new ArrayList<TableType>();
-            	for (String ddl : ddls) {
-	                DDLParser parser = newDDLParser(ddl);
-	                TableType tableType = parser.parseTable();
-	                if (tableType != null) {
-	                	tableTypes.add(tableType);
-	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-	                    unresolvedTypesVisitor.visit(tableType);
-	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), tableType);
-	                    }
-	                }
-            	}
+                tableTypes = new ArrayList<TableType>();
+                for (String ddl : ddls) {
+                    DDLParser parser = newDDLParser(ddl);
+                    TableType tableType = parser.parseTable();
+                    if (tableType != null) {
+                        tableTypes.add(tableType);
+                        if (resolveTypes) {
+                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                            unresolvedTypesVisitor.visit(tableType);
+                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                                resolvedTypes(conn, schemaPatternU, parser,
+                                    unresolvedTypesVisitor.getUnresolvedTypes(), tableType);
+                            }
+                        }
+                    }
+                }
             }
         }
         return tableTypes;
     }
 
-    protected void resolvedTypes(DDLParser parser, List<UnresolvedType> unresolvedTypes, DatabaseType databaseType) {
-        // TODO - go thru list of unresolved types and fix up the databaseType's object-graph
-        for (UnresolvedType uType : unresolvedTypes) {
-            String typeName = uType.getTypeName();
-            int rowTypeIdx = typeName.lastIndexOf(ROWTYPE_MACRO) ;
-            if (rowTypeIdx != -1) {
-                String tableName = typeName.substring(0, rowTypeIdx);
-            }
-        }
-    }
-
     public List<PLSQLPackageType> buildPackages(Connection conn, String schemaPattern,
         String packagePattern) throws ParseException {
+        return buildPackages(conn, schemaPattern, packagePattern, true);
+    }
+    protected List<PLSQLPackageType> buildPackages(Connection conn, String schemaPattern,
+        String packagePattern, boolean resolveTypes) throws ParseException {
         String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
         String packagePatternU = packagePattern == null ? null : packagePattern.toUpperCase();
-    	List<PLSQLPackageType> packageTypes = null;
+        List<PLSQLPackageType> packageTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "PACKAGE" +
-                DBMS_METADATA_GET_DDL_STMT1 +
-                (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
-                      DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
-                DBMS_METADATA_GET_DDL_STMT2 + "PACKAGE" + DBMS_METADATA_GET_DDL_STMT3 +
-                packagePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
+            List<String> ddls = getDDLs(conn, "PACKAGE", DBMS_METADATA_GET_DDL_STMT_PREFIX + "PACKAGE" +
+                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
+                schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, packagePatternU);
             if (ddls != null) {
-            	packageTypes = new ArrayList<PLSQLPackageType>();
-            	for (String ddl : ddls) {
-	                DDLParser parser = newDDLParser(ddl);
-	                PLSQLPackageType packageType = parser.parsePLSQLPackage();
-	                if (packageType != null) {
-	                	packageTypes.add(packageType);
-	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-	                    unresolvedTypesVisitor.visit(packageType);
-	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), packageType);
-	                    }
-	                }
-            	}
+                packageTypes = new ArrayList<PLSQLPackageType>();
+                for (String ddl : ddls) {
+                    DDLParser parser = newDDLParser(ddl);
+                    PLSQLPackageType packageType = parser.parsePLSQLPackage();
+                    if (packageType != null) {
+                        packageTypes.add(packageType);
+                        if (resolveTypes) {
+                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                            unresolvedTypesVisitor.visit(packageType);
+                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                                resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
+                                    packageType);
+                            }
+                        }
+                    }
+                }
             }
-
         }
         return packageTypes;
     }
 
     public List<ProcedureType> buildProcedures(Connection conn, String schemaPattern,
         String procedurePattern) throws ParseException {
+        return buildProcedures(conn, schemaPattern, procedurePattern, true);
+    }
+    protected List<ProcedureType> buildProcedures(Connection conn, String schemaPattern,
+        String procedurePattern, boolean resolveTypes) throws ParseException {
         String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
         String procedurePatternU = procedurePattern == null ? null : procedurePattern.toUpperCase();
     	List<ProcedureType> procedureTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "PROCEDURE" +
-                DBMS_METADATA_GET_DDL_STMT1 +
-                (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
-                      DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
-                DBMS_METADATA_GET_DDL_STMT2 + "PROCEDURE" + DBMS_METADATA_GET_DDL_STMT3 +
-                procedurePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
+            List<String> ddls = getDDLs(conn, "PROCEDURE", DBMS_METADATA_GET_DDL_STMT_PREFIX + "PROCEDURE" +
+                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
+                schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, procedurePatternU);
             if (ddls != null) {
             	procedureTypes = new ArrayList<ProcedureType>();
             	for (String ddl : ddls) {
@@ -182,11 +185,14 @@ public class DatabaseTypeBuilder {
 	                ProcedureType procedureType = parser.parseTopLevelProcedure();
 	                if (procedureType != null) {
 	                	procedureTypes.add(procedureType);
-	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-	                    unresolvedTypesVisitor.visit(procedureType);
-	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), procedureType);
-	                    }
+                        if (resolveTypes) {
+    	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+    	                    unresolvedTypesVisitor.visit(procedureType);
+    	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+    	                        resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
+    	                            procedureType);
+    	                    }
+                        }
 	                }
             	}
             }
@@ -197,18 +203,19 @@ public class DatabaseTypeBuilder {
 
     public List<FunctionType> buildFunctions(Connection conn, String schemaPattern,
         String functionPattern) throws ParseException {
+        return buildFunctions(conn, schemaPattern, functionPattern, true);
+    }
+    protected List<FunctionType> buildFunctions(Connection conn, String schemaPattern,
+        String functionPattern, boolean resolveTypes) throws ParseException {
         String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
         String functionPatternU = functionPattern == null ? null : functionPattern.toUpperCase();
     	List<FunctionType> functionTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "FUNCTION" +
-                DBMS_METADATA_GET_DDL_STMT1 +
-                (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
-                      DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
-                DBMS_METADATA_GET_DDL_STMT2 + "FUNCTION" + DBMS_METADATA_GET_DDL_STMT3 +
-                functionPatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
+            List<String> ddls = getDDLs(conn, "FUNCTION", DBMS_METADATA_GET_DDL_STMT_PREFIX + "FUNCTION" +
+                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
+                schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, functionPatternU);
             if (ddls != null) {
             	functionTypes = new ArrayList<FunctionType>();
             	for (String ddl : ddls) {
@@ -216,11 +223,14 @@ public class DatabaseTypeBuilder {
 	                FunctionType functionType = parser.parseTopLevelFunction();
 	                if (functionType != null) {
 	                	functionTypes.add(functionType);
-	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-	                    unresolvedTypesVisitor.visit(functionType);
-	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), functionType);
-	                    }
+                        if (resolveTypes) {
+    	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+    	                    unresolvedTypesVisitor.visit(functionType);
+    	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+    	                        resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
+    	                            functionType);
+    	                    }
+                        }
 	                }
             	}
             }
@@ -229,20 +239,21 @@ public class DatabaseTypeBuilder {
         return functionTypes;
     }
 
-    public List<CompositeDatabaseType> buildType(Connection conn, String schemaPattern,
+    public List<CompositeDatabaseType> buildTypes(Connection conn, String schemaPattern,
         String typePattern) throws ParseException {
+        return buildTypes(conn, schemaPattern, typePattern, true);
+    }
+    protected List<CompositeDatabaseType> buildTypes(Connection conn, String schemaPattern,
+        String typePattern, boolean resolveTypes) throws ParseException {
         String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
         String typePatternU = typePattern == null ? null : typePattern.toUpperCase();
     	List<CompositeDatabaseType> databaseTypes = null;
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, DBMS_METADATA_GET_DDL_STMT_PREFIX + "TYPE" +
-                DBMS_METADATA_GET_DDL_STMT1 +
-                (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? DBMS_METADATA_GET_DDL_EXCLUDE_ADMIN_SCHEMAS
-                    : DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA1 + schemaPatternU +
-                      DBMS_METADATA_GET_DDL_INCLUDE_SCHEMA2) +
-                DBMS_METADATA_GET_DDL_STMT2 + "TYPE" + DBMS_METADATA_GET_DDL_STMT3 +
-                typePatternU + DBMS_METADATA_DDL_STMT_SUFFIX);
+            List<String> ddls = getDDLs(conn, "TYPE", DBMS_METADATA_GET_DDL_STMT_PREFIX + "TYPE" +
+                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
+                schemaPatternExcludesAdminSchemas(schemaPatternU)
+                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, typePatternU);
             if (ddls != null) {
             	databaseTypes = new ArrayList<CompositeDatabaseType>();
             	for (String ddl : ddls) {
@@ -250,10 +261,13 @@ public class DatabaseTypeBuilder {
 	            	CompositeDatabaseType databaseType = parser.parseType();
 	                if (databaseType != null) {
 	                	databaseTypes.add(databaseType);
-	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-	                        resolvedTypes(parser, unresolvedTypesVisitor.getUnresolvedTypes(), databaseType);
-	                    }
+                        if (resolveTypes) {
+    	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+    	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+    	                        resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
+    	                            databaseType);
+    	                    }
+                        }
 	                }
             	}
             }
@@ -267,11 +281,17 @@ public class DatabaseTypeBuilder {
         return parser;
     }
 
-    protected List<String> getDDLs(Connection conn, String metadataSpec) {
+    protected List<String> getDDLs(Connection conn, String typeSpec, String metadataSpec,
+        String schemaPattern, String typeName) {
     	List<String> ddls = null;
+        PreparedStatement pStmt = null;
+        ResultSet rs = null;
         try {
-            PreparedStatement ps = conn.prepareStatement(metadataSpec);
-            ResultSet rs = ps.executeQuery();
+            pStmt = conn.prepareStatement(metadataSpec);
+            pStmt.setString(1, schemaPattern);
+            pStmt.setString(2, typeSpec);
+            pStmt.setString(3, typeName);
+            rs = pStmt.executeQuery();
             if (rs.next()) {
             	ddls = new ArrayList<String>();
                 do {
@@ -283,18 +303,194 @@ public class DatabaseTypeBuilder {
 
                 } while (rs.next());
             }
-            try {
-                rs.close();
-                ps.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                }
+                catch (SQLException e) {
+                    // ignore
+                }
             }
-            catch (Exception e) {
-                e.printStackTrace();
+            if (pStmt != null) {
+                try {
+                    pStmt.close();
+                }
+                catch (SQLException e) {
+                    // ignore
+                }
+            }
+        }
+        return ddls;
+    }
+
+    protected void resolvedTypes(Connection conn, String schemaPattern, DDLParser parser,
+        List<UnresolvedType> unresolvedTypes, DatabaseType databaseType) throws ParseException {
+        // fix up the databaseType's object-graph
+        Stack<UnresolvedType> stac = new Stack<UnresolvedType>();
+        for (UnresolvedType uType : unresolvedTypes) {
+            stac.push(uType);
+        }
+        boolean done = false;
+        while (!done) {
+            UnresolvedType uType = stac.pop();
+            String typeName = uType.getTypeName();
+            int rowtypeIdx = typeName.lastIndexOf(ROWTYPE_MACRO);
+            if (rowtypeIdx != -1) {
+                String tableName = typeName.substring(0, rowtypeIdx);
+                int dotIdx = tableName.lastIndexOf('.');
+                if (dotIdx == -1) {
+                    DatabaseTypesRepository typesRepository = parser.getTypesRepository();
+                    TableType tableType = (TableType)typesRepository.getDatabaseType(tableName);
+                    if (tableType == null) {
+                        List<TableType> tables = buildTables(conn, null, tableName, false);
+                        if (tables != null && tables.size() > 0) {
+                            tableType = tables.get(0);
+                            typesRepository.setDatabaseType(tableType.getTableName(), tableType);
+                        }
+                    };
+                    ROWTYPEType rType = new ROWTYPEType(typeName);
+                    rType.addCompositeType(tableType);
+                    uType.getOwningType().addCompositeType(rType);
+                    //always a chance that tableType has some unresolved columns
+                    if (!tableType.isResolved()) {
+                        UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                        unresolvedTypesVisitor.visit(tableType);
+                        for (UnresolvedType u2Type : unresolvedTypesVisitor.getUnresolvedTypes()) {
+                            if (!stac.contains(u2Type)) {
+                                stac.push(u2Type);
+                            }
+                        }
+                    }
+                }
+                else {
+                    //TODO - table is in a different schema
+                }
+            }
+            else {
+                int typeIdx = typeName.lastIndexOf(TYPE_MACRO);
+                if (typeIdx != -1) {
+                    String tableAndColumnName = typeName.substring(0, typeIdx);
+                    int dotIdx = tableAndColumnName.lastIndexOf('.');
+                    String tableName = tableAndColumnName.substring(0, dotIdx);
+                    String columnName = tableAndColumnName.substring(dotIdx,
+                        tableAndColumnName.length()-1);
+                    System.identityHashCode(tableName);
+                    System.identityHashCode(columnName);
+                }
+                else {
+                    CompositeDatabaseType resolvedType = null;
+                    String objectTypeName = typeName;
+                    String schema = schemaPattern;
+                    int dotIdx = typeName.lastIndexOf('.');
+                    if (dotIdx != -1) {
+                        schema = typeName.substring(0, dotIdx);
+                        objectTypeName = typeName.substring(dotIdx + 1, typeName.length());
+                    }
+                    int objectType = getObjectType(conn, schema, objectTypeName);
+                    switch (objectType) {
+                        case FUNCTION_CODE :
+                            List<FunctionType> functions = buildFunctions(conn, schema,
+                                objectTypeName, false);
+                            if (functions != null && functions.size() > 0) {
+                                resolvedType = functions.get(0); // only care about first one
+                            }
+                            break;
+                        case PACKAGE_CODE :
+                            List<PLSQLPackageType> packages = buildPackages(conn, schema,
+                                objectTypeName, false);
+                            if (packages != null && packages.size() > 0) {
+                                resolvedType = packages.get(0); // only care about first one
+                            }
+                            break;
+                        case PROCEDURE_CODE :
+                            List<ProcedureType> procedures = buildProcedures(conn, schema,
+                                objectTypeName, false);
+                            if (procedures != null && procedures.size() > 0) {
+                                resolvedType = procedures.get(0); // only care about first one
+                            }
+                            break;
+                        case TABLE_CODE :
+                            List<TableType> tables = buildTables(conn, schema,
+                                objectTypeName, false);
+                            if (tables != null && tables.size() > 0) {
+                                resolvedType = tables.get(0); // only care about first one
+                            }
+                            break;
+                        case TYPE_CODE :
+                            List<CompositeDatabaseType> types = buildTypes(conn, schema,
+                                objectTypeName, false);
+                            if (types != null && types.size() > 0) {
+                                resolvedType = types.get(0); // only care about first one
+                            }
+                            break;
+                        case UNKNOWN_CODE :
+                        default :
+                            break;
+                    }
+                    if (resolvedType != null) {
+                        uType.getOwningType().addCompositeType(resolvedType);
+                        //always a chance that resolvedType refers to something that is un-resolved
+                        if (!resolvedType.isResolved()) {
+                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                            unresolvedTypesVisitor.visit(resolvedType);
+                            for (UnresolvedType u2Type : unresolvedTypesVisitor.getUnresolvedTypes()) {
+                                if (!stac.contains(u2Type)) {
+                                    stac.push(u2Type);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (stac.isEmpty()) {
+                done = true;
+            }
+        }
+    }
+
+    protected int getObjectType(Connection conn, String schema,  String typeName) {
+        int objectType = -1;
+        String schemaPattern = schema == null ? "%" : schema;
+        PreparedStatement pStmt = null;
+        ResultSet rs = null;
+        try {
+            pStmt = conn.prepareStatement(GET_OBJECT_TYPE_STMT);
+            pStmt.setString(1, schemaPattern);
+            pStmt.setString(2, typeName);
+            boolean worked = pStmt.execute();
+            if (worked) {
+                rs = pStmt.getResultSet();
+                rs.next();
+                objectType = rs.getInt(ALL_OBJECTS_OBJECT_TYPE_FIELD);
             }
         }
         catch (SQLException e) {
             e.printStackTrace();
         }
-        return ddls;
+        finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                }
+                catch (SQLException e) {
+                    // ignore
+                }
+            }
+            if (pStmt != null) {
+                try {
+                    pStmt.close();
+                }
+                catch (SQLException e) {
+                    // ignore
+                }
+            }
+        }
+        return objectType;
     }
 
     public Properties getTransformProperties() throws DatabaseTypeBuilderException  {

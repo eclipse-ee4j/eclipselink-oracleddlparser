@@ -36,6 +36,17 @@ public class ObjectType extends CompositeDatabaseTypeBase implements CompositeDa
         fields.add((FieldType)enclosedType);
     }
 
+    @Override
+    public boolean isResolved() {
+        // if any of the field types are unresolved, then this objectType is unresolved
+        for (FieldType fType : fields) {
+            if (!fType.isResolved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void accept(DatabaseTypeVisitor visitor) {
         visitor.visit(this);
     }
