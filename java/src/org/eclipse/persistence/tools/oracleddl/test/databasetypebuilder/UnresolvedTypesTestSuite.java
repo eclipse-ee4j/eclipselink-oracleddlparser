@@ -16,39 +16,39 @@ package org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder;
 //javase imports
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 //JUnit4 imports
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+//import org.junit.Ignore;
+import org.junit.Test;
 
-//testing imports
+//DDL imports
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
+
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
 
-@RunWith(Suite.class)
-@SuiteClasses({
-    IOTTableDDLTestSuite.class,
-    ProcedureDDLTestSuite.class,
-    TableDDLTestSuite.class,
-    TransformsTestSuite.class,
-    UnresolvedTypesTestSuite.class
-  }
-)
-public class DatabaseTypeBuilderTestSuite {
+public class UnresolvedTypesTestSuite {
 
-    //shared JUnit fixtures
+    //JUnit fixture(s)
+    static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
-    static DatabaseTypeBuilder dtBuilder = null;
 
-    @BeforeClass
-    public static void setUp() throws ClassNotFoundException, SQLException {
-        if (conn == null) {
-            conn = buildConnection();
-        }
+	@BeforeClass
+	static public void setUp() throws ClassNotFoundException, SQLException {
+        conn = buildConnection();
         dtBuilder = new DatabaseTypeBuilder();
-    }
+	}
 
+	static final String TESMANPACK_PACKAGE = "TESMANPACK";
+    @Test
+    public void testUnresolvedTypeResolution() throws ParseException {
+        List<PLSQLPackageType> packages = dtBuilder.buildPackages(conn, null, TESMANPACK_PACKAGE);
+        for (PLSQLPackageType p : packages) {
+            System.out.println(p.toString() + (p.isResolved() ? " is resolved." : " is not resolved."));
+        }
+    }
 }
