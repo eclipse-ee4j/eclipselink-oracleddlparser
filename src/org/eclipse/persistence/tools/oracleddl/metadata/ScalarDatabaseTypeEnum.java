@@ -44,7 +44,7 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
     ;
 
     private final String typeName;
-    
+
     ScalarDatabaseTypeEnum(String typeName) {
         this.typeName = typeName;
     }
@@ -64,5 +64,9 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
+
+    public String shortName() {
+        return toString();
+    }
 
 }

@@ -21,6 +21,8 @@ public interface DatabaseType {
     public boolean isComposite();
 
     public boolean isResolved();
-    
+
     public void accept(DatabaseTypeVisitor visitor);
+
+    public String shortName();
 }

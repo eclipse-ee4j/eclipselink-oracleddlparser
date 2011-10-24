@@ -84,6 +84,31 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
 	}
 
     @Override
+    public String shortName() {
+        StringBuilder sb = new StringBuilder();
+        if (argumentName != null) {
+            sb.append(argumentName);
+        }
+        else {
+            if (direction == RETURN) {
+                sb.append(RETURN);
+            }
+        }
+        sb.append(" ");
+        if (direction != RETURN) {
+            sb.append(direction.toString());
+            sb.append(" ");
+        }
+        if (dataType == null) {
+            sb.append("<null/>");
+        }
+        else {
+            sb.append(dataType.shortName());
+        }
+        return sb.toString();
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (argumentName != null) {
@@ -94,15 +119,19 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
                 sb.append(RETURN);
             }
         }
-        sb.append("\t");
+        sb.append(" ");
+        if (direction != RETURN) {
+            sb.append(direction.toString());
+            sb.append(" ");
+        }
         if (dataType == null) {
-            sb.append("unknown datatype");
+            sb.append("<null/>");
         }
         else {
             sb.append(dataType.toString());
         }
         if (optional) {
-            sb.append(" (OPTIONAL)");
+            sb.append(" (opt)");
         }
         return sb.toString();
     }

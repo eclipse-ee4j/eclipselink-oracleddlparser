@@ -87,17 +87,22 @@ public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(fieldName);
-        sb.append("\t");
+        sb.append(" ");
         if (dataType == null) {
-            sb.append("unknown datatype");
+            sb.append("<null/>");
         }
         else {
-            sb.append(dataType.toString());
+            sb.append(dataType.shortName());
         }
         if (notNull) {
             sb.append(" (NOT NULL)");
         }
         return sb.toString();
+    }
+
+    @Override
+    public String shortName() {
+        return toString();
     }
 
 	public void accept(DatabaseTypeVisitor visitor) {

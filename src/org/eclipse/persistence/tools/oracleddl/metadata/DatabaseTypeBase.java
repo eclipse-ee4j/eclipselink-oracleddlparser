@@ -15,11 +15,11 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 abstract class DatabaseTypeBase {
 
 	protected String typeName;
-	
+
 	public DatabaseTypeBase(String typeName) {
 		this.typeName = typeName;
 	}
-	
+
 	public String getTypeName() {
 		return typeName;
 	}
@@ -31,6 +31,10 @@ abstract class DatabaseTypeBase {
 	public boolean isResolved() {
 		return true;
 	}
+
+    public String shortName() {
+        return toString();
+    }
 
 	@Override
 	public String toString() {

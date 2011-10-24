@@ -61,24 +61,16 @@ public class FunctionType extends ProcedureType {
             sb.append(".");
         }
         sb.append(procedureName);
-        sb.append(" (");
-        for (int i=0; i<arguments.size();) {
+        sb.append("(");
+        for (int i = 0; i < arguments.size();) {
             ArgumentType arg = arguments.get(i);
-            sb.append(arg.argumentName);
-            if (arg.optional) {
-                sb.append("(opt) ");
-            } else {
-                sb.append(" ");
-            }
-            sb.append(arg.getDirection());
-            sb.append(" ");
-            sb.append(arg.getDataType());
+            sb.append(arg.toString());
             if (++i < arguments.size()) {
                 sb.append(", ");
             }
         }
-        sb.append(") RETURN ");
-        sb.append(returnArgument.getDataType());
+        sb.append(") ");
+        sb.append(returnArgument.toString());
         return sb.toString();
     }
 

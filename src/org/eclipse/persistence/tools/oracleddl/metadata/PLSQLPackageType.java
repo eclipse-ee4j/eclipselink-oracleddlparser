@@ -126,8 +126,13 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
 	}
 
     @Override
+    public String shortName() {
+        return toString();
+    }
+
+    @Override
     public String toString() {
-        return getTypeName() + "@" + Integer.toHexString(System.identityHashCode(this));
+        return getTypeName();
     }
 
 }

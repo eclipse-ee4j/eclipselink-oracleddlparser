@@ -70,4 +70,8 @@ public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisit
 		visitor.visit(this);
 	}
 
+    public String shortName() {
+        return toString();
+    }
+
 }

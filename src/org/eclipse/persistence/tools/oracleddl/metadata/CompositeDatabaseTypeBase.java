@@ -19,4 +19,5 @@ public abstract class CompositeDatabaseTypeBase extends DatabaseTypeBase {
 	}
 
 	public abstract void addCompositeType(DatabaseType enclosedType);
+
 }

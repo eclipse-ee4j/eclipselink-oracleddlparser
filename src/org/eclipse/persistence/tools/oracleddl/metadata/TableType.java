@@ -90,6 +90,11 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     }
 
     @Override
+    public String shortName() {
+        return typeName;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(TYPENAME);
         sb.append(" ");
@@ -122,7 +127,7 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
         }
         sb.append(")");
         if (iot) {
-            sb.append("ORGANIZATION INDEX");
+            sb.append(" ORGANIZATION INDEX");
         }
         return sb.toString();
     }

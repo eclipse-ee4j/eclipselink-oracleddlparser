@@ -49,17 +49,25 @@ public class ROWTYPEType implements CompositeDatabaseType, DatabaseTypeVisitable
     }
 
     @Override
+    public String shortName() {
+        StringBuilder sb = new StringBuilder(typeName);
+        if (!enclosedType.isResolved()) {
+            sb.append("[u]");
+        }
+        return sb.toString();
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (typeName != null) {
             sb.append(typeName);
         }
-        sb.append("\t");
         if (enclosedType == null) {
-            sb.append("unknown datatype");
+            sb.append("<null/>");
         }
         else if (!enclosedType.isResolved()) {
-            sb.append("unresolved datatype");
+            sb.append("[u]");
         }
         return sb.toString();
     }

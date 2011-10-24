@@ -52,6 +52,11 @@ public class ObjectType extends CompositeDatabaseTypeBase implements CompositeDa
     }
 
     @Override
+    public String shortName() {
+        return typeName;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString());
         sb.append(" (");

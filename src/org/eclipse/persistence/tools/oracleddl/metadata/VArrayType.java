@@ -42,6 +42,26 @@ public class VArrayType extends CompositeDatabaseTypeBase implements CompositeDa
         return enclosedType.isResolved();
     }
 
+    @Override
+    public String shortName() {
+        return super.toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.append(" VARRAY(");
+        if (size > 0) {
+            sb.append(size);
+        }
+        sb.append(") OF ");
+        sb.append(enclosedType.shortName());
+        if (!enclosedType.isResolved()) {
+            sb.append("[u]");
+        }
+        return sb.toString();
+    }
+
     public void accept(DatabaseTypeVisitor visitor) {
     }
 

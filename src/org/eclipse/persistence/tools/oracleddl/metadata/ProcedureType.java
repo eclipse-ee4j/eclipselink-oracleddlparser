@@ -95,18 +95,10 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
             sb.append(".");
         }
         sb.append(procedureName);
-        sb.append(" (");
-        for (int i=0; i<arguments.size();) {
+        sb.append("(");
+        for (int i = 0; i < arguments.size();) {
             ArgumentType arg = arguments.get(i);
-            sb.append(arg.argumentName);
-            if (arg.optional) {
-                sb.append("(opt) ");
-            } else {
-                sb.append(" ");
-            }
-            sb.append(arg.getDirection());
-            sb.append(" ");
-            sb.append(arg.getDataType());
+            sb.append(arg.toString());
             if (++i < arguments.size()) {
                 sb.append(", ");
             }
