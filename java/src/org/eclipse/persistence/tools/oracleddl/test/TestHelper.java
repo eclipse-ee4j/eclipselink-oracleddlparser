@@ -28,7 +28,9 @@ public class TestHelper {
     public static final String DEFAULT_DATABASE_PASSWORD = "tiger";
     public static final String DATABASE_URL_KEY = "db.url";
     public static final String DEFAULT_DATABASE_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
-    
+    public static final String DATABASE_DDL_KEY = "db.ddl";
+    public static final String DEFAULT_DATABASE_DDL = "false";
+
     public static Connection buildConnection() throws ClassNotFoundException, SQLException {
         String username = System.getProperty(DATABASE_USERNAME_KEY, DEFAULT_DATABASE_USERNAME);
         String password = System.getProperty(DATABASE_PASSWORD_KEY, DEFAULT_DATABASE_PASSWORD);
@@ -36,12 +38,12 @@ public class TestHelper {
         Class.forName(DATABASE_DRIVER);
         return DriverManager.getConnection(url, username, password);
     }
-    
+
     public static void createDbArtifact(Connection conn, String createTableDDL) throws SQLException {
         PreparedStatement pStmt = conn.prepareStatement(createTableDDL);
         pStmt.execute();
     }
-    
+
     public static void dropDbArtifact(Connection conn, String dropTableDDL) {
         try {
             PreparedStatement pStmt = conn.prepareStatement(dropTableDDL);
