@@ -30,7 +30,9 @@ import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.UnresolvedTypesVisitor;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
@@ -41,7 +43,7 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DA
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createDbArtifact;
 
-public class UnresolvedTypesTestSuite {
+public class TypeResolutionTestSuite {
 
     static final String CREATE_TESTMAN_TYPE1 =
         "CREATE OR REPLACE TYPE TESMAN_TYPE1 AS OBJECT (" +
@@ -78,9 +80,21 @@ public class UnresolvedTypesTestSuite {
     static final String TESMANPACK_PACKAGE = "TESMANPACK";
     static final String CREATE_TESTMAN_PACKAGE =
         "CREATE OR REPLACE PACKAGE " + TESMANPACK_PACKAGE + " AS" +
+            "\n\tTYPE EMPREC IS RECORD ( " +
+                "\n\tEMPNO EMP.EMPNO%TYPE," +
+                "\n\tENAME EMP.ENAME%TYPE," +
+                "\n\tJOB EMP.JOB%TYPE," +
+                "\n\tMGR EMP.MGR%TYPE," +
+                "\n\tHIREDATE EMP.HIREDATE%TYPE," +
+                "\n\tSAL EMP.SAL%TYPE," +
+                "\n\tCOMM EMP.COMM%TYPE," +
+                "\n\tDEPTNO EMP.DEPTNO%TYPE" +
+            "\n\t);" +
             "\n\tFUNCTION TESMANFUNC17(PARAM1 IN INTEGER) RETURN TESMAN_TABLE2%ROWTYPE;" +
             "\n\tPROCEDURE TESMANPROC17(PARAM1 IN INTEGER, REC OUT TESMAN_TABLE2%ROWTYPE);" +
             "\n\tPROCEDURE TESMANPROC17b(OLDREC IN TESMAN_TABLE3%ROWTYPE, NEWREC OUT TESMAN_TABLE3%ROWTYPE);" +
+            "\n\tPROCEDURE EMP_TEST(E1 IN EMPREC, NAME IN VARCHAR2);" +
+            "\n\tPROCEDURE EMP_TEST2(NAME IN EMP.ENAME%TYPE);" +
         "END " + TESMANPACK_PACKAGE + ";";
     static final String CREATE_TESTMAN_PACKAGE_BODY =
         "CREATE OR REPLACE PACKAGE BODY " + TESMANPACK_PACKAGE + " AS" +
@@ -103,6 +117,14 @@ public class UnresolvedTypesTestSuite {
             "\n\tBEGIN" +
                 "\n\tNEWREC := OLDREC;" +
             "\n\tEND;" +
+            "\n\tPROCEDURE EMP_TEST(E1 IN EMPREC, NAME IN VARCHAR2) AS" +
+            "\n\tBEGIN" +
+                "\n\tnull;" +
+            "\n\tEND EMP_TEST;" +
+            "\n\tPROCEDURE EMP_TEST2(NAME IN EMP.ENAME%TYPE) AS" +
+            "\n\tBEGIN" +
+                "\n\tnull;" +
+            "\n\tEND EMP_TEST2;" +
         "END " + TESMANPACK_PACKAGE + ";";
 
     //JUnit fixture(s)
@@ -187,6 +209,10 @@ public class UnresolvedTypesTestSuite {
     @Test
     public void testUnresolvedTypeResolution() throws ParseException {
         assertEquals("incorrect procedure name", TESMANPACK_PACKAGE , tesmanPackage.getPackageName());
+        UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
+        visitor.visit(tesmanPackage);
+        assertEquals(TESMANPACK_PACKAGE + " should not have any unresolved types",
+            0, visitor.getUnresolvedTypes().size());
 
         FunctionType func1 = (FunctionType)tesmanPackage.getProcedures().get(0);
         DatabaseType tesmanfunc17ReturnType = func1.getReturnArgument().getDataType();
@@ -199,5 +225,15 @@ public class UnresolvedTypesTestSuite {
         DatabaseType oldrecDatabaseType = proc3Args.get(0).getDataType();
         DatabaseType newrecDatabaseType = proc3Args.get(1).getDataType();
         assertSame(oldrecDatabaseType, newrecDatabaseType);
+
+        PLSQLRecordType empRecType = (PLSQLRecordType)tesmanPackage.getTypes().get(0);
+        PLSQLRecordType empRecType2 = (PLSQLRecordType)tesmanPackage.getProcedures().get(3).
+            getArguments().get(0).getDataType();
+        assertSame(empRecType, empRecType2);
+
+        DatabaseType empDotEnamePcentTYPE1 = empRecType.getFields().get(1).getDataType();
+        ArgumentType nameArg = tesmanPackage.getProcedures().get(4).getArguments().get(0);
+        DatabaseType empDotEnamePcentTYPE2 = nameArg.getDataType();
+        assertSame(empDotEnamePcentTYPE1, empDotEnamePcentTYPE2);
     }
 }

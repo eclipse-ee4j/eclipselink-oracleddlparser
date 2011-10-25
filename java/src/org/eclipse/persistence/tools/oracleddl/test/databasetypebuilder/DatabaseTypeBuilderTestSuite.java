@@ -34,7 +34,7 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConne
     ProcedureDDLTestSuite.class,
     TableDDLTestSuite.class,
     TransformsTestSuite.class,
-    UnresolvedTypesTestSuite.class
+    TypeResolutionTestSuite.class
   }
 )
 public class DatabaseTypeBuilderTestSuite {
