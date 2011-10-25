@@ -13,8 +13,10 @@
 package org.eclipse.persistence.tools.oracleddl.metadata.visit;
 
 //javase imports
+import java.lang.reflect.Method;
 import java.util.List;
 
+//DDL imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.BinaryType;
 import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
@@ -45,6 +47,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum;
+import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
@@ -101,49 +104,7 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
 
     //composite visit callbacks
     public void visit(CompositeDatabaseType databaseType) {
-        //extremely bad hack :-(
-        if (databaseType instanceof ArgumentType) {
-            visit((ArgumentType)databaseType);
-        }
-        else if (databaseType instanceof FunctionType) {
-            visit((FunctionType)databaseType);
-        }
-        else if (databaseType instanceof PLSQLPackageType) {
-            visit((PLSQLPackageType)databaseType);
-        }
-        else if (databaseType instanceof PLSQLPackageType) {
-            visit((ProcedureType)databaseType);
-        }
-        else if (databaseType instanceof TableType) {
-            visit((TableType)databaseType);
-        }
-        else if (databaseType instanceof ArgumentType) {
-            visit((ArgumentType)databaseType);
-        }
-        else if (databaseType instanceof FieldType) {
-            visit((FieldType)databaseType);
-        }
-        else if (databaseType instanceof PLSQLCursorType) {
-            visit((PLSQLCursorType)databaseType);
-        }
-        else if (databaseType instanceof PLSQLRecordType) {
-            visit((PLSQLRecordType)databaseType);
-        }
-        else if (databaseType instanceof PLSQLCollectionType) {
-            visit((PLSQLCollectionType)databaseType);
-        }
-        else if (databaseType instanceof ObjectType) {
-            visit((ObjectType)databaseType);
-        }
-        else if (databaseType instanceof VArrayType) {
-            visit((VArrayType)databaseType);
-        }
-        else if (databaseType instanceof ObjectTableType) {
-            visit((ObjectTableType)databaseType);
-        }
-        else if (databaseType instanceof ROWTYPEType) {
-            visit((ROWTYPEType)databaseType);
-        }
+        CompositeDatabaseTypeHandler.handle(this, databaseType);
     }
 
     public void beginVisit(ArgumentType databaseType) {
@@ -322,4 +283,78 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     public void endVisit(ROWTYPEType databaseType) {
     }
 
+    public void beginVisit(TYPEType databaseType) {
+    }
+    public void visit(TYPEType databaseType) {
+        beginVisit(databaseType);
+        DatabaseType dt = databaseType.getEnclosedType();
+        if (dt != null) {
+            dt.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(TYPEType databaseType) {
+    }
+
+    //use reflection to avoid huge if-then-else tree of if (databaseType instanceof xxx)
+    static CompositeDatabaseTypeHandler handler = new CompositeDatabaseTypeHandler();
+    static class CompositeDatabaseTypeHandler {
+        static Method[] methods = CompositeDatabaseTypeHandler.class.getMethods();
+        public static void handle(DatabaseTypeVisitor visitor, Object o) {
+            for (Method m : methods) {
+                if (m.getParameterTypes()[1] == o.getClass()) {
+                    try {
+                        m.invoke(null, visitor, o);
+                        return;
+                    }
+                    catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            throw new RuntimeException("Can't handle");
+        }
+        public static void handle(DatabaseTypeVisitor visitor, ArgumentType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, FunctionType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, PLSQLPackageType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, ProcedureType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, TableType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, FieldType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, PLSQLCursorType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, PLSQLRecordType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, PLSQLCollectionType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, ObjectType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, VArrayType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, ObjectTableType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, ROWTYPEType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, TYPEType databaseType){
+            visitor.visit(databaseType);
+        }
+    }
 }

@@ -642,7 +642,7 @@ DatabaseType enclosedType = null;
     }
       if (column != null) {
               column.setDataType(columnType);
-              if (!columnType.isResolved()) {
+              if (columnType instanceof UnresolvedType) {
                   ((UnresolvedType)columnType).setOwningType(column);
               }
               if (notNull) {
@@ -1861,7 +1861,6 @@ String s = null;
     fieldDeclarations(plsqlRecordType);
     jj_consume_token(O_CLOSEPAREN);
       packageType.addType(plsqlRecordType);
-      // TODO - TBD typesRepository.setDatabaseType(typeName, plsqlRecordType);
       localTypes.put(typeName, plsqlRecordType);
   }
 
@@ -1902,6 +1901,9 @@ String s = null;
       fieldType = new FieldType(s);
       fieldType.setDataType(dataType);
       plsqlRecordType.addCompositeType(fieldType);
+      if (dataType instanceof UnresolvedType) {
+          ((UnresolvedType)dataType).setOwningType(plsqlRecordType);
+      }
   }
 
   final public void subtypeDeclaration(PLSQLPackageType packageType) throws ParseException {
@@ -1970,8 +1972,7 @@ String s = null;
     default:
       ;
     }
-      if (!nestedType.isResolved())
-      {
+      if (nestedType instanceof UnresolvedType) {
         ((UnresolvedType)nestedType).setOwningType(plsqlTable);
       }
       plsqlTable.addCompositeType(nestedType);
@@ -2210,7 +2211,7 @@ String s = null;
       ArgumentType returnType = new ArgumentType(null);
       returnType.setDirection(ArgumentTypeDirection.RETURN);
       returnType.setDataType(dataType);
-      if (!dataType.isResolved()) {
+      if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(returnType);
       }
       {if (true) return returnType;}
@@ -2251,7 +2252,7 @@ String s = null;
     }
       argumentType = new ArgumentType(t.image);
       argumentType.setDataType(argumentDataType);
-      if (!argumentDataType.isResolved()) {
+      if (argumentDataType instanceof UnresolvedType) {
           ((UnresolvedType)argumentDataType).setOwningType(argumentType);
       }
       if (direction != null) {
@@ -3017,6 +3018,14 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_21() {
+    if (jj_3R_11()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(169)) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3R_33() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3024,14 +3033,6 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_60()) return true;
     }
-    return false;
-  }
-
-  private boolean jj_3_21() {
-    if (jj_3R_11()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(169)) jj_scanpos = xsp;
     return false;
   }
 
@@ -3158,13 +3159,13 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_56() {
-    if (jj_scan_token(K_NATIONAL)) return true;
+  private boolean jj_3R_13() {
+    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+  private boolean jj_3R_56() {
+    if (jj_scan_token(K_NATIONAL)) return true;
     return false;
   }
 

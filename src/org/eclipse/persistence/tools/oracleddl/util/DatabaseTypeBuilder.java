@@ -30,10 +30,13 @@ import java.util.Stack;
 //DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
+import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.UnresolvedTypesVisitor;
@@ -390,8 +393,45 @@ public class DatabaseTypeBuilder {
                     String tableAndColumnName = typeName.substring(0, typeIdx);
                     int dotIdx = tableAndColumnName.lastIndexOf('.');
                     String tableName = tableAndColumnName.substring(0, dotIdx);
-                    String columnName = tableAndColumnName.substring(dotIdx,
-                        tableAndColumnName.length()-1);
+                    String columnName = tableAndColumnName.substring(dotIdx+1,
+                        tableAndColumnName.length());
+                    resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(typeName);
+                    if (resolvedType == null) {
+                        TableType tableType = (TableType)typesRepository.getDatabaseType(tableName);
+                        if (tableType == null) {
+                            List<TableType> tables = buildTables(conn, null, tableName, false);
+                            if (tables != null && tables.size() > 0) {
+                                tableType = tables.get(0);
+                                typesRepository.setDatabaseType(tableName, tableType);
+                            }
+                        }
+                        TYPEType tType = new TYPEType(typeName);
+                        for (Iterator<FieldType> i = tableType.getColumns().iterator();
+                            i.hasNext();) {
+                            FieldType field = i.next();
+                            if (columnName.equals(field.getFieldName())) {
+                                tType.addCompositeType(field.getDataType());
+                                break;
+                            }
+                        }
+                        typesRepository.setDatabaseType(typeName, tType);
+                        resolvedType = tType;
+                    }
+                    if (uType.getOwningType() instanceof PLSQLRecordType) {
+                        PLSQLRecordType uRecordType = (PLSQLRecordType)uType.getOwningType();
+                        FieldType field = null;
+                        for (Iterator<FieldType> i = uRecordType.getFields().iterator();
+                            i.hasNext();) {
+                            field = i.next();
+                            if (columnName.equals(field.getFieldName())) {
+                                field.addCompositeType(resolvedType);
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        uType.getOwningType().addCompositeType(resolvedType);
+                    }
                 }
                 else {
                     String objectTypeName = typeName;

@@ -577,7 +577,7 @@ void columnDeclaration(CompositeDatabaseType enclosingType) #void:
     {
       if (column != null) {
 	      column.setDataType(columnType);
-	      if (!columnType.isResolved()) {
+	      if (columnType instanceof UnresolvedType) {
 	          ((UnresolvedType)columnType).setOwningType(column);
 	      }
 	      if (notNull) {
@@ -1033,7 +1033,6 @@ void recordDeclaration(PLSQLPackageType packageType, String typeName) #void:
         fieldDeclarations(plsqlRecordType)
     <O_CLOSEPAREN>
     {      packageType.addType(plsqlRecordType);
-      // TODO - TBD typesRepository.setDatabaseType(typeName, plsqlRecordType);
       localTypes.put(typeName, plsqlRecordType);
     }
 }
@@ -1055,7 +1054,10 @@ void fieldDeclaration(PLSQLRecordType plsqlRecordType):
     {
       fieldType = new FieldType(s);
       fieldType.setDataType(dataType);
-      plsqlRecordType.addCompositeType(fieldType);    }
+      plsqlRecordType.addCompositeType(fieldType);
+      if (dataType instanceof UnresolvedType) {
+          ((UnresolvedType)dataType).setOwningType(plsqlRecordType);
+      }    }
 }
 
 void subtypeDeclaration(PLSQLPackageType packageType) #void:
@@ -1079,8 +1081,7 @@ void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) #void:
     <K_TABLE> <K_OF> nestedType = typeSpec() [ <K_NOT> <K_NULL> ]
         [ <K_INDEX> <K_BY> plsqlTableIndexByDeclaration(plsqlTable) ]
     {
-      if (!nestedType.isResolved())
-      {
+      if (nestedType instanceof UnresolvedType) {
         ((UnresolvedType)nestedType).setOwningType(plsqlTable);      }
       plsqlTable.addCompositeType(nestedType);
       packageType.addType(plsqlTable);
@@ -1207,7 +1208,7 @@ ArgumentType functionReturnSpec():
       ArgumentType returnType = new ArgumentType(null);
       returnType.setDirection(ArgumentTypeDirection.RETURN);
       returnType.setDataType(dataType);
-      if (!dataType.isResolved()) {
+      if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(returnType);      }
       return returnType;
     }
@@ -1227,7 +1228,7 @@ void argument(ProcedureType procedureType) #void:
     {
       argumentType = new ArgumentType(t.image);
       argumentType.setDataType(argumentDataType);
-      if (!argumentDataType.isResolved()) {
+      if (argumentDataType instanceof UnresolvedType) {
           ((UnresolvedType)argumentDataType).setOwningType(argumentType);
       }
       if (direction != null) {

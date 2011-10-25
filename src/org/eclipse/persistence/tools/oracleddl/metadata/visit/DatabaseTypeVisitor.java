@@ -39,6 +39,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum;
+import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
@@ -123,5 +124,9 @@ public interface DatabaseTypeVisitor {
     public void beginVisit(ROWTYPEType databaseType);
     public void visit(ROWTYPEType databaseType);
     public void endVisit(ROWTYPEType databaseType);
+
+    public void beginVisit(TYPEType databaseType);
+    public void visit(TYPEType databaseType);
+    public void endVisit(TYPEType databaseType);
 
 }
