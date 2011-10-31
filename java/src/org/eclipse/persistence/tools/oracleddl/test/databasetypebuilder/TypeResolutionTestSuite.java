@@ -213,24 +213,37 @@ public class TypeResolutionTestSuite {
         visitor.visit(tesmanPackage);
         assertEquals(TESMANPACK_PACKAGE + " should not have any unresolved types",
             0, visitor.getUnresolvedTypes().size());
+    }
 
+    @Test
+    public void testSame_TESTMAN_TABLE2_ROWTYPE() {
         FunctionType func1 = (FunctionType)tesmanPackage.getProcedures().get(0);
         DatabaseType tesmanfunc17ReturnType = func1.getReturnArgument().getDataType();
         ProcedureType proc2 = tesmanPackage.getProcedures().get(1);
         DatabaseType tesmanproc17OutArgType = proc2.getArguments().get(1).getDataType();
         assertSame(tesmanfunc17ReturnType, tesmanproc17OutArgType);
+    }
 
+    @Test
+    public void testSame_TESMAN_TABLE3_ROWTYPE() {
         ProcedureType proc3 = tesmanPackage.getProcedures().get(2);
         List<ArgumentType> proc3Args = proc3.getArguments();
         DatabaseType oldrecDatabaseType = proc3Args.get(0).getDataType();
         DatabaseType newrecDatabaseType = proc3Args.get(1).getDataType();
         assertSame(oldrecDatabaseType, newrecDatabaseType);
+    }
 
+    @Test
+    public void testSame_EMPREC() {
         PLSQLRecordType empRecType = (PLSQLRecordType)tesmanPackage.getTypes().get(0);
         PLSQLRecordType empRecType2 = (PLSQLRecordType)tesmanPackage.getProcedures().get(3).
             getArguments().get(0).getDataType();
         assertSame(empRecType, empRecType2);
+    }
 
+    @Test
+    public void testSame_EMPdotEMPNO_TYPE() {
+        PLSQLRecordType empRecType = (PLSQLRecordType)tesmanPackage.getTypes().get(0);
         DatabaseType empDotEnamePcentTYPE1 = empRecType.getFields().get(1).getDataType();
         ArgumentType nameArg = tesmanPackage.getProcedures().get(4).getArguments().get(0);
         DatabaseType empDotEnamePcentTYPE2 = nameArg.getDataType();
