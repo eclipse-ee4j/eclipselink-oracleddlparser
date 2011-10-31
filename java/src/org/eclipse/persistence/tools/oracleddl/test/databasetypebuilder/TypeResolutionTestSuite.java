@@ -34,6 +34,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.UnresolvedTypesVisitor;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
@@ -64,8 +65,9 @@ public class TypeResolutionTestSuite {
         ")";
     static final String CREATE_TESTMAN_TYPE3 =
         "CREATE OR REPLACE TYPE TESMAN_TYPE3 AS VARRAY(2) OF TESMAN_TYPE2";
+    static final String TESMAN_TABLE1 = "TESMAN_TABLE1";
     static final String CREATE_TESTMAN_TABLE1 =
-        "CREATE OR REPLACE TABLE TESMAN_TABLE1 (" +
+        "CREATE OR REPLACE TABLE " + TESMAN_TABLE1 + " (" +
             "\n\tIDE\tNUMBER," +
             "\n\tIDTT\tTESMAN_TYPE1" +
         ")";
@@ -310,6 +312,25 @@ public class TypeResolutionTestSuite {
         UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
         visitor.visit(objectType);
         assertEquals(EMP_OBJECT_TYPE + " should not have any unresolved types",
+            0, visitor.getUnresolvedTypes().size());
+    }
+
+    @Test
+    public void testTableTypeRefersToGlobalTypes() {
+        boolean worked = true;
+        String msg = null;
+        TableType tableType = null;
+        try {
+            tableType = dtBuilder.buildTables(conn, null, TESMAN_TABLE1).get(0);
+        }
+        catch (Exception e) {
+            worked = false;
+            msg = e.getMessage();
+        }
+        assertTrue(msg,worked);
+        UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
+        visitor.visit(tableType);
+        assertEquals(TESMAN_TABLE1 + "should not have any unresolved types",
             0, visitor.getUnresolvedTypes().size());
     }
 }
