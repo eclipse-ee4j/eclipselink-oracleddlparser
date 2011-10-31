@@ -266,6 +266,7 @@ public class DatabaseTypeBuilder {
 	                	databaseTypes.add(databaseType);
                         if (resolveTypes) {
     	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+    	                    unresolvedTypesVisitor.visit(databaseType);
     	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
     	                        resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
     	                            databaseType);
