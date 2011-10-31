@@ -23,12 +23,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 //DDL imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
@@ -89,8 +92,9 @@ public class TypeResolutionTestSuite {
             "\n\tADDR_REGION\tREGION," +
             "\n\tPOSTCODE\tINTEGER," +
          ")";
+    static final String EMP_OBJECT_TYPE = "EMP_OBJECT";
     static final String CREATE_EMP_OBJECT =
-        "CREATE OR REPLACE TYPE EMP_OBJECT AS OBJECT (" +
+        "CREATE OR REPLACE TYPE " + EMP_OBJECT_TYPE + " AS OBJECT (" +
             "\n\tEMPLOYEE_ID\tNUMBER(8)," +
             "\n\tADDRESS\tEMP_ADDRESS," +
             "\n\tEMPLOYEE_NAME\tVARCHAR2(80)," +
@@ -289,5 +293,24 @@ public class TypeResolutionTestSuite {
         ArgumentType aRegion = echoRegionProc.getArguments().get(0);
         ArgumentType returnRegion = echoRegionProc.getReturnArgument();
         assertSame(aRegion.getDataType(), returnRegion.getDataType());
+    }
+
+    @Test
+    public void testObjectTypeRefersToGlobalTypes() {
+        boolean worked = true;
+        String msg = null;
+        ObjectType objectType = null;
+        try {
+            objectType = (ObjectType)dtBuilder.buildTypes(conn, null, EMP_OBJECT_TYPE).get(0);
+        }
+        catch (Exception e) {
+            worked = false;
+            msg = e.getMessage();
+        }
+        assertTrue(msg,worked);
+        UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
+        visitor.visit(objectType);
+        assertEquals(EMP_OBJECT_TYPE + " should not have any unresolved types",
+            0, visitor.getUnresolvedTypes().size());
     }
 }
