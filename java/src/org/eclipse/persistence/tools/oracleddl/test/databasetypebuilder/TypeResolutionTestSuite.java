@@ -77,6 +77,25 @@ public class TypeResolutionTestSuite {
             "\n\tID\tINTEGER," +
             "\n\tTT3\tTESMAN_TYPE3" +
             ")";
+    static final String CREATE_REGION =
+        "CREATE OR REPLACE TYPE REGION AS OBJECT (" +
+            "\n\tREG_ID\tNUMBER(5)," +
+            "\n\tREG_NAME\tVARCHAR2(50)" +
+        ")";
+    static final String CREATE_EMP_ADDRESS =
+        "CREATE OR REPLACE TYPE EMP_ADDRESS AS OBJECT (" +
+            "\n\tSTREET\tVARCHAR2(100)," +
+            "\n\tSUBURB\tVARCHAR2(50)," +
+            "\n\tADDR_REGION\tREGION," +
+            "\n\tPOSTCODE\tINTEGER," +
+         ")";
+    static final String CREATE_EMP_OBJECT =
+        "CREATE OR REPLACE TYPE EMP_OBJECT AS OBJECT (" +
+            "\n\tEMPLOYEE_ID\tNUMBER(8)," +
+            "\n\tADDRESS\tEMP_ADDRESS," +
+            "\n\tEMPLOYEE_NAME\tVARCHAR2(80)," +
+            "\n\tDATE_OF_HIRE\tDATE" +
+        ")";
     static final String TESMANPACK_PACKAGE = "TESMANPACK";
     static final String CREATE_TESTMAN_PACKAGE =
         "CREATE OR REPLACE PACKAGE " + TESMANPACK_PACKAGE + " AS" +
@@ -95,6 +114,9 @@ public class TypeResolutionTestSuite {
             "\n\tPROCEDURE TESMANPROC17b(OLDREC IN TESMAN_TABLE3%ROWTYPE, NEWREC OUT TESMAN_TABLE3%ROWTYPE);" +
             "\n\tPROCEDURE EMP_TEST(E1 IN EMPREC, NAME IN VARCHAR2);" +
             "\n\tPROCEDURE EMP_TEST2(NAME IN EMP.ENAME%TYPE);" +
+            "\n\tFUNCTION ECHOREGION(AREGION IN REGION) RETURN REGION;" +
+            "\n\tFUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN EMP_ADDRESS) RETURN EMP_ADDRESS;" +
+            "\n\tFUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN EMP_OBJECT) RETURN EMP_OBJECT;" +
         "END " + TESMANPACK_PACKAGE + ";";
     static final String CREATE_TESTMAN_PACKAGE_BODY =
         "CREATE OR REPLACE PACKAGE BODY " + TESMANPACK_PACKAGE + " AS" +
@@ -125,8 +147,19 @@ public class TypeResolutionTestSuite {
             "\n\tBEGIN" +
                 "\n\tnull;" +
             "\n\tEND EMP_TEST2;" +
-        "END " + TESMANPACK_PACKAGE + ";";
-
+            "\n\tFUNCTION ECHOREGION(AREGION IN REGION) RETURN REGION AS" +
+            "\n\tBEGIN" +
+                "\n\tRETURN AREGION;" +
+            "\n\tEND ECHOREGION;" +
+            "\n\tFUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN EMP_ADDRESS) RETURN EMP_ADDRESS AS" +
+            "\n\tBEGIN" +
+                "\n\tRETURN ANEMPADDRESS;" +
+            "\n\tEND ECHOEMPADDRESS;" +
+            "\n\tFUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN EMP_OBJECT) RETURN EMP_OBJECT AS" +
+            "\n\tBEGIN" +
+                "\n\tRETURN ANEMPOBJECT;" +
+            "\n\tEND ECHOEMPADDRESS;" +
+      "END " + TESMANPACK_PACKAGE + ";";
     //JUnit fixture(s)
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
@@ -248,5 +281,13 @@ public class TypeResolutionTestSuite {
         ArgumentType nameArg = tesmanPackage.getProcedures().get(4).getArguments().get(0);
         DatabaseType empDotEnamePcentTYPE2 = nameArg.getDataType();
         assertSame(empDotEnamePcentTYPE1, empDotEnamePcentTYPE2);
+    }
+
+    @Test
+    public void testPackageRefersToGlobalTypes() {
+        FunctionType echoRegionProc = (FunctionType)tesmanPackage.getProcedures().get(5);
+        ArgumentType aRegion = echoRegionProc.getArguments().get(0);
+        ArgumentType returnRegion = echoRegionProc.getReturnArgument();
+        assertSame(aRegion.getDataType(), returnRegion.getDataType());
     }
 }
