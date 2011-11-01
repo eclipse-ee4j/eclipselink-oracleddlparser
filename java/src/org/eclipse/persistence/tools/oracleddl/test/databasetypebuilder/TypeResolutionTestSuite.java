@@ -217,6 +217,24 @@ public class TypeResolutionTestSuite {
                 //ignore
             }
             try {
+                createDbArtifact(conn, CREATE_REGION);
+            }
+            catch (SQLException e) {
+                //ignore
+            }
+            try {
+                createDbArtifact(conn, CREATE_EMP_ADDRESS);
+            }
+            catch (SQLException e) {
+                //ignore
+            }
+            try {
+                createDbArtifact(conn, CREATE_EMP_OBJECT);
+            }
+            catch (SQLException e) {
+                //ignore
+            }
+            try {
                 createDbArtifact(conn, CREATE_TESTMAN_PACKAGE);
             }
             catch (SQLException e) {
