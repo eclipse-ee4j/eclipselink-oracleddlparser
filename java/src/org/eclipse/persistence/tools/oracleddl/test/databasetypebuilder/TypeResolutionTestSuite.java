@@ -163,8 +163,21 @@ public class TypeResolutionTestSuite {
             "\n\tFUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN EMP_OBJECT) RETURN EMP_OBJECT AS" +
             "\n\tBEGIN" +
                 "\n\tRETURN ANEMPOBJECT;" +
-            "\n\tEND ECHOEMPADDRESS;" +
+            "\n\tEND ECHOEMPOBJECT;" +
       "END " + TESMANPACK_PACKAGE + ";";
+    static final String OTHER_PACKAGE = "TESMANPACK2";
+    static final String CREATE_OTHER_PACKAGE =
+        "CREATE OR REPLACE PACKAGE " + OTHER_PACKAGE + " AS" +
+            "\n\tPROCEDURE SOMEPROC(E1 IN " + TESMANPACK_PACKAGE + "." + "EMPREC);" +
+        "END " + OTHER_PACKAGE + ";";
+    static final String CREATE_OTHER_PACKAGE_BODY =
+        "CREATE OR REPLACE PACKAGE BODY " + OTHER_PACKAGE + " AS" +
+            "\n\tPROCEDURE SOMEPROC(E1 IN " + TESMANPACK_PACKAGE + "." + "EMPREC) AS" +
+            "\n\tBEGIN" +
+                "\n\tnull;" +
+            "\n\tEND OTHER_PACKAGE;" +
+        "END " + OTHER_PACKAGE + ";";
+
     //JUnit fixture(s)
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
@@ -242,6 +255,18 @@ public class TypeResolutionTestSuite {
             }
             try {
                 createDbArtifact(conn, CREATE_TESTMAN_PACKAGE_BODY);
+            }
+            catch (SQLException e) {
+                //ignore
+            }
+            try {
+                createDbArtifact(conn, CREATE_OTHER_PACKAGE);
+            }
+            catch (SQLException e) {
+                //ignore
+            }
+            try {
+                createDbArtifact(conn, CREATE_OTHER_PACKAGE_BODY);
             }
             catch (SQLException e) {
                 //ignore
@@ -348,7 +373,26 @@ public class TypeResolutionTestSuite {
         assertTrue(msg,worked);
         UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
         visitor.visit(tableType);
-        assertEquals(TESMAN_TABLE1 + "should not have any unresolved types",
+        assertEquals(TESMAN_TABLE1 + " should not have any unresolved types",
+            0, visitor.getUnresolvedTypes().size());
+    }
+
+    @Test
+    public void testPLSQLRecordTypeRefersToDifferentPackage() {
+        boolean worked = true;
+        String msg = null;
+        PLSQLPackageType otherPackage = null;
+        try {
+            otherPackage = dtBuilder.buildPackages(conn, null, OTHER_PACKAGE).get(0);
+        }
+        catch (Exception e) {
+            worked = false;
+            msg = e.getMessage();
+        }
+        assertTrue(msg,worked);
+        UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
+        visitor.visit(otherPackage);
+        assertEquals(OTHER_PACKAGE + " should not have any unresolved types",
             0, visitor.getUnresolvedTypes().size());
     }
 }
