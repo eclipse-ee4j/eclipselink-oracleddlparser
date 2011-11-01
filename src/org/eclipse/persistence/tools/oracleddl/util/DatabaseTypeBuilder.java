@@ -34,6 +34,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
@@ -441,8 +442,28 @@ public class DatabaseTypeBuilder {
                     if (dotIdx != -1) {
                         schema = typeName.substring(0, dotIdx);
                         objectTypeName = typeName.substring(dotIdx + 1, typeName.length());
+                        //schema could be name of package within same schema
+                        PLSQLPackageType otherPackage = (PLSQLPackageType)typesRepository.getDatabaseType(schema);
+                        if (otherPackage == null) {
+                            List<PLSQLPackageType> packages = buildPackages(conn, null, schema, false);
+                            if (packages != null && packages.size() > 0) {
+                                otherPackage = packages.get(0);
+                            }
+                        }
+                        if (otherPackage != null) {
+                            for (PLSQLType typ : otherPackage.getTypes()) {
+                                if (objectTypeName.equals(typ.getTypeName())) {
+                                    resolvedType = typ;
+                                    typesRepository.setDatabaseType(otherPackage.getPackageName(), otherPackage);
+                                    objectTypeName = schema + "." + objectTypeName;
+                                    break;
+                                }
+                            }
+                        }
                     }
-                    resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(objectTypeName);
+                    else {
+                        resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(objectTypeName);
+                    }
                     if (resolvedType == null) {
                         int objectTypeCode = getObjectType(conn, schema, objectTypeName);
                         switch (objectTypeCode) {
@@ -520,8 +541,10 @@ public class DatabaseTypeBuilder {
             boolean worked = pStmt.execute();
             if (worked) {
                 rs = pStmt.getResultSet();
-                rs.next();
-                objectType = rs.getInt(ALL_OBJECTS_OBJECT_TYPE_FIELD);
+                boolean b = rs.next();
+                if (b) {
+                    objectType = rs.getInt(ALL_OBJECTS_OBJECT_TYPE_FIELD);
+                }
             }
         }
         catch (SQLException e) {
