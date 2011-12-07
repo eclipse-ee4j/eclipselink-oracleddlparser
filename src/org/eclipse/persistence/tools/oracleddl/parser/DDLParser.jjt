@@ -135,7 +135,7 @@ SKIP:{
 }
 
 // PLSQL reserved keywords (prefix with K_ to avoid naming conflicts) - NB: incomplete list
-TOKEN: {  
+TOKEN [IGNORE_CASE]: {  
           <K_A: "A">
         | <K_ADD: "ADD">
         | <K_ALTER: "ALTER">
