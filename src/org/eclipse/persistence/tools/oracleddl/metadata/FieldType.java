@@ -100,7 +100,6 @@ public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
         return sb.toString();
     }
 
-    @Override
     public String shortName() {
         return toString();
     }

@@ -83,7 +83,6 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
 		setDataType(enclosedType);
 	}
 
-    @Override
     public String shortName() {
         StringBuilder sb = new StringBuilder();
         if (argumentName != null) {

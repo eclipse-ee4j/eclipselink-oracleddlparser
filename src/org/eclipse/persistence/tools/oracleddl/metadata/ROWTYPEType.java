@@ -48,7 +48,6 @@ public class ROWTYPEType implements CompositeDatabaseType, DatabaseTypeVisitable
         return enclosedType.isResolved();
     }
 
-    @Override
     public String shortName() {
         StringBuilder sb = new StringBuilder(typeName);
         if (!enclosedType.isResolved()) {

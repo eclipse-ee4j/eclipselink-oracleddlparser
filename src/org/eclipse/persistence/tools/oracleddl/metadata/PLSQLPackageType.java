@@ -125,7 +125,6 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
 		visitor.visit(this);
 	}
 
-    @Override
     public String shortName() {
         return toString();
     }
