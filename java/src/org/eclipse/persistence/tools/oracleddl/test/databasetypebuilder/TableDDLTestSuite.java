@@ -39,22 +39,28 @@ import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
 //testing imports
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
+
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_CREATE_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DEBUG_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DROP_KEY;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_USERNAME_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_CREATE;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_DEBUG;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_DROP;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_USERNAME;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createDbArtifact;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropDbArtifact;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.runDdl;
 
 public class TableDDLTestSuite {
 
     static final String SIMPLETABLE = "DTB_SIMPLETABLE";
-    static final String SIMPLETABLE_FIELD1 = 
+    static final String SIMPLETABLE_FIELD1 =
         "ID";
-    static final String SIMPLETABLE_FIELD2 = 
+    static final String SIMPLETABLE_FIELD2 =
         "NAME";
-    static final String SIMPLETABLE_FIELD3 = 
+    static final String SIMPLETABLE_FIELD3 =
         "SINCE";
-    static final String CREATE_SIMPLETABLE = 
+    static final String CREATE_SIMPLETABLE =
         "CREATE TABLE " + SIMPLETABLE + " (\n" +
             SIMPLETABLE_FIELD1 + " INTEGER NOT NULL,\n" +
             SIMPLETABLE_FIELD2 + " VARCHAR2(25),\n" +
@@ -63,19 +69,37 @@ public class TableDDLTestSuite {
         ")";
     static final String DROP_SIMPLETABLE =
         "DROP TABLE " + SIMPLETABLE;
-    
+
     //fixtures
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
     static TableType tableType = null;
     static List<String> expectedFieldNames = new ArrayList<String>();
     static List<String> expectedPKFieldNames = new ArrayList<String>();
+
+    static boolean ddlCreate = false;
+    static boolean ddlDrop = false;
+    static boolean ddlDebug = false;
+
     @BeforeClass
     public static void setUp() throws SQLException, ClassNotFoundException {
         conn = buildConnection();
         dtBuilder = new DatabaseTypeBuilder();
-        //send DDL to database
-        createDbArtifact(conn, CREATE_SIMPLETABLE);
+        String ddlCreateProp = System.getProperty(DATABASE_DDL_CREATE_KEY, DEFAULT_DATABASE_DDL_CREATE);
+        if ("true".equalsIgnoreCase(ddlCreateProp)) {
+            ddlCreate = true;
+        }
+        String ddlDropProp = System.getProperty(DATABASE_DDL_DROP_KEY, DEFAULT_DATABASE_DDL_DROP);
+        if ("true".equalsIgnoreCase(ddlDropProp)) {
+            ddlDrop = true;
+        }
+        String ddlDebugProp = System.getProperty(DATABASE_DDL_DEBUG_KEY, DEFAULT_DATABASE_DDL_DEBUG);
+        if ("true".equalsIgnoreCase(ddlDebugProp)) {
+            ddlDebug = true;
+        }
+        if (ddlCreate) {
+            runDdl(conn, CREATE_SIMPLETABLE, ddlDebug);
+        }
         boolean worked = true;
         String msg = null;
         try {
@@ -95,18 +119,25 @@ public class TableDDLTestSuite {
         expectedFieldNames.add(SIMPLETABLE_FIELD2);
         expectedFieldNames.add(SIMPLETABLE_FIELD3);
     }
-    
+
+    @AfterClass
+    public static void tearDown() {
+        if (ddlDrop) {
+            runDdl(conn, DROP_SIMPLETABLE, ddlDebug);
+        }
+    }
+
     @Test
     public void testTableName() {
         assertEquals("incorrect table name", SIMPLETABLE , tableType.getTableName());
     }
-    
+
     @Test
     public void testNumberOfColumns() {
         List<FieldType> columns = tableType.getColumns();
         assertTrue("incorrect number of columns", columns.size() ==  3);
     }
-    
+
     @Test
     public void testPrimaryKeys() {
         List<FieldType> columns = tableType.getColumns();
@@ -118,7 +149,7 @@ public class TableDDLTestSuite {
         }
         assertEquals("incorrect PK column names", expectedPKFieldNames, pkFieldNames);
     }
-    
+
     @Test
     public void testColumnNames() {
         List<FieldType> columns = tableType.getColumns();
@@ -128,7 +159,7 @@ public class TableDDLTestSuite {
         }
         assertEquals("incorrect column names", expectedFieldNames, fieldNames);
     }
-    
+
     @Test
     public void testColumnTypes() {
         List<FieldType> columns = tableType.getColumns();
@@ -155,10 +186,4 @@ public class TableDDLTestSuite {
         assertFalse("incorrect NULL constraint for column [" + SIMPLETABLE_FIELD3 + "]",
             field3.notNull());
     }
-
-    @AfterClass
-    public static void tearDown() {
-        dropDbArtifact(conn, DROP_SIMPLETABLE);
-    }
-
 }

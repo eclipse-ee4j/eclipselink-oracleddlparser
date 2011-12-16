@@ -40,21 +40,27 @@ import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
 //testing imports
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
+
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_CREATE_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DEBUG_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DROP_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_CREATE;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_DEBUG;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_DROP;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createDbArtifact;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.dropDbArtifact;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.runDdl;
 
 
 public class IOTTableDDLTestSuite {
 
     static final String IOTTABLE = "DTB_IOTTABLE";
-    static final String IOTTABLE_FIELD1 = 
+    static final String IOTTABLE_FIELD1 =
         "ID";
-    static final String IOTTABLE_FIELD2 = 
+    static final String IOTTABLE_FIELD2 =
         "NAME";
-    static final String IOTTABLE_FIELD3 = 
+    static final String IOTTABLE_FIELD3 =
         "RID";
-    static final String CREATE_IOTTABLE = 
+    static final String CREATE_IOTTABLE =
         "CREATE TABLE " + IOTTABLE + " (\n" +
             IOTTABLE_FIELD1 + " NUMBER(4,0) NOT NULL ENABLE,\n" +
             IOTTABLE_FIELD2 + " VARCHAR2(25),\n" +
@@ -63,19 +69,37 @@ public class IOTTableDDLTestSuite {
         ") ORGANIZATION INDEX NOCOMPRESS OVERFLOW";
     static final String DROP_IOTTABLE =
         "DROP TABLE " + IOTTABLE;
-    
+
     //fixtures
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
     static TableType tableType = null;
     static List<String> expectedFieldNames = new ArrayList<String>();
     static List<String> expectedPKFieldNames = new ArrayList<String>();
+
+    static boolean ddlCreate = false;
+    static boolean ddlDrop = false;
+    static boolean ddlDebug = false;
+
     @BeforeClass
     public static void setUp() throws SQLException, ClassNotFoundException {
         conn = buildConnection();
         dtBuilder = new DatabaseTypeBuilder();
-        //send DDL to database
-        createDbArtifact(conn, CREATE_IOTTABLE);
+        String ddlCreateProp = System.getProperty(DATABASE_DDL_CREATE_KEY, DEFAULT_DATABASE_DDL_CREATE);
+        if ("true".equalsIgnoreCase(ddlCreateProp)) {
+            ddlCreate = true;
+        }
+        String ddlDropProp = System.getProperty(DATABASE_DDL_DROP_KEY, DEFAULT_DATABASE_DDL_DROP);
+        if ("true".equalsIgnoreCase(ddlDropProp)) {
+            ddlDrop = true;
+        }
+        String ddlDebugProp = System.getProperty(DATABASE_DDL_DEBUG_KEY, DEFAULT_DATABASE_DDL_DEBUG);
+        if ("true".equalsIgnoreCase(ddlDebugProp)) {
+            ddlDebug = true;
+        }
+        if (ddlCreate) {
+            runDdl(conn, CREATE_IOTTABLE, ddlDebug);
+        }
         boolean worked = true;
         String msg = null;
         try {
@@ -94,18 +118,25 @@ public class IOTTableDDLTestSuite {
         expectedFieldNames.add(IOTTABLE_FIELD2);
         expectedFieldNames.add(IOTTABLE_FIELD3);
     }
-    
+
+    @AfterClass
+    static public void tearDown() {
+        if (ddlDrop) {
+            runDdl(conn, DROP_IOTTABLE, ddlDebug);
+        }
+    }
+
     @Test
     public void testTableName() {
         assertEquals("incorrect table name", IOTTABLE , tableType.getTableName());
     }
-    
+
     @Test
     public void testNumberOfColumns() {
         List<FieldType> columns = tableType.getColumns();
         assertTrue("incorrect number of columns", columns.size() ==  3);
     }
-    
+
     @Test
     public void testPrimaryKeys() {
         List<FieldType> columns = tableType.getColumns();
@@ -117,7 +148,7 @@ public class IOTTableDDLTestSuite {
         }
         assertEquals("incorrect PK column names", expectedPKFieldNames, pkFieldNames);
     }
-    
+
     @Test
     public void testColumnNames() {
         List<FieldType> columns = tableType.getColumns();
@@ -127,7 +158,7 @@ public class IOTTableDDLTestSuite {
         }
         assertEquals("incorrect column names", expectedFieldNames, fieldNames);
     }
-    
+
     @Test
     public void testColumnTypes() {
         List<FieldType> columns = tableType.getColumns();
@@ -153,10 +184,5 @@ public class IOTTableDDLTestSuite {
             new URowIdType().getTypeName(), col3Type.getTypeName());
         assertFalse("incorrect NULL constraint for column [" + IOTTABLE_FIELD3 + "]",
             field3.notNull());
-    }
-
-    @AfterClass
-    public static void tearDown() {
-        dropDbArtifact(conn, DROP_IOTTABLE);
     }
 }

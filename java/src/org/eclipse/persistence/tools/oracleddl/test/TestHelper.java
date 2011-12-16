@@ -28,8 +28,12 @@ public class TestHelper {
     public static final String DEFAULT_DATABASE_PASSWORD = "tiger";
     public static final String DATABASE_URL_KEY = "db.url";
     public static final String DEFAULT_DATABASE_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
-    public static final String DATABASE_DDL_KEY = "db.ddl";
-    public static final String DEFAULT_DATABASE_DDL = "false";
+    public static final String DATABASE_DDL_CREATE_KEY = "db.ddl.create";
+    public static final String DEFAULT_DATABASE_DDL_CREATE = "false";
+    public static final String DATABASE_DDL_DROP_KEY = "db.ddl.drop";
+    public static final String DEFAULT_DATABASE_DDL_DROP = "false";
+    public static final String DATABASE_DDL_DEBUG_KEY = "db.ddl.debug";
+    public static final String DEFAULT_DATABASE_DDL_DEBUG = "false";
 
     public static Connection buildConnection() throws ClassNotFoundException, SQLException {
         String username = System.getProperty(DATABASE_USERNAME_KEY, DEFAULT_DATABASE_USERNAME);
@@ -39,18 +43,15 @@ public class TestHelper {
         return DriverManager.getConnection(url, username, password);
     }
 
-    public static void createDbArtifact(Connection conn, String createTableDDL) throws SQLException {
-        PreparedStatement pStmt = conn.prepareStatement(createTableDDL);
-        pStmt.execute();
-    }
-
-    public static void dropDbArtifact(Connection conn, String dropTableDDL) {
+    public static void runDdl(Connection conn, String ddl, boolean printStackTrace) {
         try {
-            PreparedStatement pStmt = conn.prepareStatement(dropTableDDL);
+            PreparedStatement pStmt = conn.prepareStatement(ddl);
             pStmt.execute();
         }
-        catch (Exception e) {
-            // ignore
+        catch (SQLException e) {
+            if (printStackTrace) {
+                e.printStackTrace();
+            }
         }
     }
 }

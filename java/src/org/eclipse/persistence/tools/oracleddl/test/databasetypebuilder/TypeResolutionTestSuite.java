@@ -15,10 +15,10 @@ package org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder;
 
 //javase imports
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 //JUnit4 imports
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -41,69 +41,73 @@ import org.eclipse.persistence.tools.oracleddl.test.AllTests;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
 //testing imports
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_KEY;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_CREATE_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_CREATE;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DEBUG_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_DEBUG;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DROP_KEY;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_DROP;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
-import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.createDbArtifact;
+import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.runDdl;
 
 public class TypeResolutionTestSuite {
 
-    static final String CREATE_TESTMAN_TYPE1 =
-        "CREATE OR REPLACE TYPE TESMAN_TYPE1 AS OBJECT (" +
+    static final String CREATE_DDLRESOLVTEST_TYPE1 =
+        "CREATE OR REPLACE TYPE DDLRESOLVTEST_TYPE1 AS OBJECT (" +
         	"\n\tACCT\tNUMBER," +
             "\n\tCOUNTRY\tVARCHAR2(30)," +
             "\n\tADDR_DIVISION\tVARCHAR2(30)," +
             "\n\tSTATE\tVARCHAR2(30)" +
         ")";
-    static final String CREATE_TESTMAN_TYPE2 =
-        "CREATE OR REPLACE TYPE TESMAN_TYPE2 AS OBJECT (" +
+    static final String CREATE_DDLRESOLVTEST_TYPE2 =
+        "CREATE OR REPLACE TYPE DDLRESOLVTEST_TYPE2 AS OBJECT (" +
             "\n\tPNR\tNUMBER," +
             "\n\tCOMPANY\tVARCHAR2(30)," +
             "\n\tSE\tVARCHAR2(30)," +
             "\n\tSCRIP\tVARCHAR2(30)," +
-            "\n\tTT\tTESMAN_TYPE1" +
+            "\n\tTT\tDDLRESOLVTEST_TYPE1" +
         ")";
-    static final String CREATE_TESTMAN_TYPE3 =
-        "CREATE OR REPLACE TYPE TESMAN_TYPE3 AS VARRAY(2) OF TESMAN_TYPE2";
-    static final String TESMAN_TABLE1 = "TESMAN_TABLE1";
-    static final String CREATE_TESTMAN_TABLE1 =
-        "CREATE OR REPLACE TABLE " + TESMAN_TABLE1 + " (" +
+    static final String CREATE_DDLRESOLVTEST_TYPE3 =
+        "CREATE OR REPLACE TYPE DDLRESOLVTEST_TYPE3 AS VARRAY(2) OF DDLRESOLVTEST_TYPE2";
+    static final String DDLRESOLVTEST_TABLE1 = "DDLRESOLVTEST_TABLE1";
+    static final String CREATE_DDLRESOLVTEST_TABLE1 =
+        "CREATE TABLE " + DDLRESOLVTEST_TABLE1 + " (" +
             "\n\tIDE\tNUMBER," +
-            "\n\tIDTT\tTESMAN_TYPE1" +
-        ")";
-    static final String CREATE_TESTMAN_TABLE2 =
-        "CREATE OR REPLACE TABLE TESMAN_TABLE2 (" +
+            "\n\tIDTT\tDDLRESOLVTEST_TYPE1" +
+        "\n)";
+    static final String CREATE_DDLRESOLVTEST_TABLE2 =
+        "CREATE TABLE DDLRESOLVTEST_TABLE2 (" +
             "\n\tSRNO\tNUMBER," +
-            "\n\tDETAIL\tTESMAN_TYPE2" +
-        ")";
-    static final String CREATE_TESTMAN_TABLE3 =
-        "CREATE OR REPLACE TABLE TESMAN_TABLE3 (" +
+            "\n\tDETAIL\tDDLRESOLVTEST_TYPE2" +
+        "\n)";
+    static final String CREATE_DDLRESOLVTEST_TABLE3 =
+        "CREATE TABLE DDLRESOLVTEST_TABLE3 (" +
             "\n\tID\tINTEGER," +
-            "\n\tTT3\tTESMAN_TYPE3" +
-            ")";
-    static final String CREATE_REGION =
-        "CREATE OR REPLACE TYPE REGION AS OBJECT (" +
+            "\n\tTT3\tDDLRESOLVTEST_TYPE3" +
+        "\n)";
+    static final String CREATE_DDLRESOLVTEST_REGION =
+        "CREATE OR REPLACE TYPE DDLRESOLVTEST_REGION AS OBJECT (" +
             "\n\tREG_ID\tNUMBER(5)," +
             "\n\tREG_NAME\tVARCHAR2(50)" +
-        ")";
-    static final String CREATE_EMP_ADDRESS =
-        "CREATE OR REPLACE TYPE EMP_ADDRESS AS OBJECT (" +
+        "\n)";
+    static final String CREATE_DDLRESOLVTEST_EMP_ADDRESS =
+        "CREATE OR REPLACE TYPE DDLRESOLVTEST_EMP_ADDRESS AS OBJECT (" +
             "\n\tSTREET\tVARCHAR2(100)," +
             "\n\tSUBURB\tVARCHAR2(50)," +
-            "\n\tADDR_REGION\tREGION," +
-            "\n\tPOSTCODE\tINTEGER," +
-         ")";
-    static final String EMP_OBJECT_TYPE = "EMP_OBJECT";
+            "\n\tADDR_REGION\tDDLRESOLVTEST_REGION," +
+            "\n\tPOSTCODE\tINTEGER" +
+         "\n)";
+    static final String EMP_OBJECT_TYPE = "DDLRESOLVTEST_EMP_OBJECT";
     static final String CREATE_EMP_OBJECT =
         "CREATE OR REPLACE TYPE " + EMP_OBJECT_TYPE + " AS OBJECT (" +
             "\n\tEMPLOYEE_ID\tNUMBER(8)," +
-            "\n\tADDRESS\tEMP_ADDRESS," +
+            "\n\tADDRESS\tDDLRESOLVTEST_EMP_ADDRESS," +
             "\n\tEMPLOYEE_NAME\tVARCHAR2(80)," +
             "\n\tDATE_OF_HIRE\tDATE" +
-        ")";
-    static final String TESMANPACK_PACKAGE = "TESMANPACK";
-    static final String CREATE_TESTMAN_PACKAGE =
-        "CREATE OR REPLACE PACKAGE " + TESMANPACK_PACKAGE + " AS" +
+        "\n)";
+    static final String DDLRESOLVTEST_PACKAGE = "DDLRESOLVTEST_PACKAGE";
+    static final String CREATE_DDLRESOLVTEST_PACKAGE =
+        "CREATE OR REPLACE PACKAGE " + DDLRESOLVTEST_PACKAGE + " AS" +
             "\n\tTYPE EMPREC IS RECORD ( " +
                 "\n\tEMPNO EMP.EMPNO%TYPE," +
                 "\n\tENAME EMP.ENAME%TYPE," +
@@ -114,20 +118,20 @@ public class TypeResolutionTestSuite {
                 "\n\tCOMM EMP.COMM%TYPE," +
                 "\n\tDEPTNO EMP.DEPTNO%TYPE" +
             "\n\t);" +
-            "\n\tFUNCTION TESMANFUNC17(PARAM1 IN INTEGER) RETURN TESMAN_TABLE2%ROWTYPE;" +
-            "\n\tPROCEDURE TESMANPROC17(PARAM1 IN INTEGER, REC OUT TESMAN_TABLE2%ROWTYPE);" +
-            "\n\tPROCEDURE TESMANPROC17b(OLDREC IN TESMAN_TABLE3%ROWTYPE, NEWREC OUT TESMAN_TABLE3%ROWTYPE);" +
+            "\n\tFUNCTION DDLRESOLVTESTFUNC17(PARAM1 IN INTEGER) RETURN DDLRESOLVTEST_TABLE2%ROWTYPE;" +
+            "\n\tPROCEDURE DDLRESOLVTESTPROC17(PARAM1 IN INTEGER, REC OUT DDLRESOLVTEST_TABLE2%ROWTYPE);" +
+            "\n\tPROCEDURE DDLRESOLVTESTPROC17b(OLDREC IN DDLRESOLVTEST_TABLE3%ROWTYPE, NEWREC OUT DDLRESOLVTEST_TABLE3%ROWTYPE);" +
             "\n\tPROCEDURE EMP_TEST(E1 IN EMPREC, NAME IN VARCHAR2);" +
             "\n\tPROCEDURE EMP_TEST2(NAME IN EMP.ENAME%TYPE);" +
-            "\n\tFUNCTION ECHOREGION(AREGION IN REGION) RETURN REGION;" +
-            "\n\tFUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN EMP_ADDRESS) RETURN EMP_ADDRESS;" +
-            "\n\tFUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN EMP_OBJECT) RETURN EMP_OBJECT;" +
-        "END " + TESMANPACK_PACKAGE + ";";
-    static final String CREATE_TESTMAN_PACKAGE_BODY =
-        "CREATE OR REPLACE PACKAGE BODY " + TESMANPACK_PACKAGE + " AS" +
-            "\n\tFUNCTION TESMANFUNC17(PARAM1 IN INTEGER) RETURN TESMAN_TABLE2%ROWTYPE AS" +
-                "\n\tL_DATA1 TESMAN_TABLE2%ROWTYPE;" +
-                "\n\tCURSOR C_EMP(PARAMTEMP IN INTEGER) IS SELECT * FROM TESMAN_TABLE2 TE WHERE TE.SRNO=PARAMTEMP;" +
+            "\n\tFUNCTION ECHOREGION(AREGION IN DDLRESOLVTEST_REGION) RETURN DDLRESOLVTEST_REGION;" +
+            "\n\tFUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN DDLRESOLVTEST_EMP_ADDRESS) RETURN DDLRESOLVTEST_EMP_ADDRESS;" +
+            "\n\tFUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN DDLRESOLVTEST_EMP_OBJECT) RETURN DDLRESOLVTEST_EMP_OBJECT;" +
+        "\nEND " + DDLRESOLVTEST_PACKAGE + ";";
+    static final String CREATE_DDLRESOLVTEST_PACKAGE_BODY =
+        "CREATE OR REPLACE PACKAGE BODY " + DDLRESOLVTEST_PACKAGE + " AS" +
+            "\n\tFUNCTION DDLRESOLVTESTFUNC17(PARAM1 IN INTEGER) RETURN DDLRESOLVTEST_TABLE2%ROWTYPE AS" +
+                "\n\tL_DATA1 DDLRESOLVTEST_TABLE2%ROWTYPE;" +
+                "\n\tCURSOR C_EMP(PARAMTEMP IN INTEGER) IS SELECT * FROM DDLRESOLVTEST_TABLE2 TE WHERE TE.SRNO=PARAMTEMP;" +
             "\n\tBEGIN" +
                 "\n\tOPEN C_EMP(PARAM1);" +
                 "\n\tLOOP" +
@@ -136,11 +140,11 @@ public class TypeResolutionTestSuite {
                 "\n\tEND LOOP;" +
                 "\n\tRETURN L_DATA1;" +
             "\n\tEND;" +
-            "\n\tPROCEDURE TESMANPROC17( PARAM1 IN INTEGER, REC OUT TESMAN_TABLE2%ROWTYPE) AS" +
+            "\n\tPROCEDURE DDLRESOLVTESTPROC17( PARAM1 IN INTEGER, REC OUT DDLRESOLVTEST_TABLE2%ROWTYPE) AS" +
             "\n\tBEGIN" +
-                "\n\tREC := TESMANFUNC17(PARAM1);" +
+                "\n\tREC := DDLRESOLVTESTFUNC17(PARAM1);" +
             "\n\tEND;" +
-            "\n\tPROCEDURE TESMANPROC17b(OLDREC IN TESMAN_TABLE3%ROWTYPE, NEWREC OUT TESMAN_TABLE3%ROWTYPE) AS" +
+            "\n\tPROCEDURE DDLRESOLVTESTPROC17b(OLDREC IN DDLRESOLVTEST_TABLE3%ROWTYPE, NEWREC OUT DDLRESOLVTEST_TABLE3%ROWTYPE) AS" +
             "\n\tBEGIN" +
                 "\n\tNEWREC := OLDREC;" +
             "\n\tEND;" +
@@ -152,36 +156,54 @@ public class TypeResolutionTestSuite {
             "\n\tBEGIN" +
                 "\n\tnull;" +
             "\n\tEND EMP_TEST2;" +
-            "\n\tFUNCTION ECHOREGION(AREGION IN REGION) RETURN REGION AS" +
+            "\n\tFUNCTION ECHOREGION(AREGION IN DDLRESOLVTEST_REGION) RETURN DDLRESOLVTEST_REGION AS" +
             "\n\tBEGIN" +
                 "\n\tRETURN AREGION;" +
             "\n\tEND ECHOREGION;" +
-            "\n\tFUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN EMP_ADDRESS) RETURN EMP_ADDRESS AS" +
+            "\n\tFUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN DDLRESOLVTEST_EMP_ADDRESS) RETURN DDLRESOLVTEST_EMP_ADDRESS AS" +
             "\n\tBEGIN" +
                 "\n\tRETURN ANEMPADDRESS;" +
             "\n\tEND ECHOEMPADDRESS;" +
-            "\n\tFUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN EMP_OBJECT) RETURN EMP_OBJECT AS" +
+            "\n\tFUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN DDLRESOLVTEST_EMP_OBJECT) RETURN DDLRESOLVTEST_EMP_OBJECT AS" +
             "\n\tBEGIN" +
                 "\n\tRETURN ANEMPOBJECT;" +
             "\n\tEND ECHOEMPOBJECT;" +
-      "END " + TESMANPACK_PACKAGE + ";";
-    static final String OTHER_PACKAGE = "TESMANPACK2";
+      "\nEND " + DDLRESOLVTEST_PACKAGE + ";";
+    static final String OTHER_PACKAGE = "DDLRESOLVTEST_PACKAGE2";
     static final String CREATE_OTHER_PACKAGE =
         "CREATE OR REPLACE PACKAGE " + OTHER_PACKAGE + " AS" +
-            "\n\tPROCEDURE SOMEPROC(E1 IN " + TESMANPACK_PACKAGE + "." + "EMPREC);" +
-        "END " + OTHER_PACKAGE + ";";
+            "\n\tPROCEDURE SOMEPROC(E1 IN " + DDLRESOLVTEST_PACKAGE + "." + "EMPREC);" +
+        "\nEND " + OTHER_PACKAGE + ";";
     static final String CREATE_OTHER_PACKAGE_BODY =
         "CREATE OR REPLACE PACKAGE BODY " + OTHER_PACKAGE + " AS" +
-            "\n\tPROCEDURE SOMEPROC(E1 IN " + TESMANPACK_PACKAGE + "." + "EMPREC) AS" +
+            "\n\tPROCEDURE SOMEPROC(E1 IN " + DDLRESOLVTEST_PACKAGE + "." + "EMPREC) AS" +
             "\n\tBEGIN" +
                 "\n\tnull;" +
-            "\n\tEND OTHER_PACKAGE;" +
-        "END " + OTHER_PACKAGE + ";";
+            "\n\tEND SOMEPROC;" +
+        "\nEND " + OTHER_PACKAGE + ";";
+
+    static final String DROP_OTHER_PACKAGE =
+        "DROP PACKAGE " + OTHER_PACKAGE;
+    static final String DROP_DDLRESOLVTEST_PACKAGE =
+        "DROP PACKAGE " + DDLRESOLVTEST_PACKAGE;
+    static final String DROP_EMP_OBJECT = "DROP TYPE " + EMP_OBJECT_TYPE;
+    static final String DROP_DDLRESOLVTEST_EMP_ADDRESS = "DROP TYPE DDLRESOLVTEST_EMP_ADDRESS";
+    static final String DROP_DDLRESOLVTEST_REGION = "DROP TYPE DDLRESOLVTEST_REGION";
+    static final String DROP_DDLRESOLVTEST_TABLE3 = "DROP TABLE DDLRESOLVTEST_TABLE3";
+    static final String DROP_DDLRESOLVTEST_TABLE2 = "DROP TABLE DDLRESOLVTEST_TABLE2";
+    static final String DROP_DDLRESOLVTEST_TABLE1 = "DROP TABLE DDLRESOLVTEST_TABLE1";
+    static final String DROP_DDLRESOLVTEST_TYPE3 = "DROP TYPE DDLRESOLVTEST_TYPE3";
+    static final String DROP_DDLRESOLVTEST_TYPE2 = "DROP TYPE DDLRESOLVTEST_TYPE2";
+    static final String DROP_DDLRESOLVTEST_TYPE1 = "DROP TYPE DDLRESOLVTEST_TYPE1";
 
     //JUnit fixture(s)
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
-    static PLSQLPackageType tesmanPackage = null;
+    static PLSQLPackageType ddlresolvtestPackage = null;
+
+    static boolean ddlCreate = false;
+    static boolean ddlDrop = false;
+    static boolean ddlDebug = false;
 
 	@BeforeClass
 	static public void setUp() {
@@ -191,92 +213,38 @@ public class TypeResolutionTestSuite {
         catch (Exception e) {
             e.printStackTrace();
         }
-        String ddl = System.getProperty(DATABASE_DDL_KEY, DEFAULT_DATABASE_DDL);
-        if ("true".equalsIgnoreCase(ddl)) {
-            try {
-                createDbArtifact(conn, CREATE_TESTMAN_TYPE1);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_TESTMAN_TYPE2);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_TESTMAN_TYPE3);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_TESTMAN_TABLE1);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_TESTMAN_TABLE2);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_TESTMAN_TABLE3);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_REGION);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_EMP_ADDRESS);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_EMP_OBJECT);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_TESTMAN_PACKAGE);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_TESTMAN_PACKAGE_BODY);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_OTHER_PACKAGE);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
-            try {
-                createDbArtifact(conn, CREATE_OTHER_PACKAGE_BODY);
-            }
-            catch (SQLException e) {
-                //ignore
-            }
+        String ddlCreateProp = System.getProperty(DATABASE_DDL_CREATE_KEY, DEFAULT_DATABASE_DDL_CREATE);
+        if ("true".equalsIgnoreCase(ddlCreateProp)) {
+            ddlCreate = true;
+        }
+        String ddlDropProp = System.getProperty(DATABASE_DDL_DROP_KEY, DEFAULT_DATABASE_DDL_DROP);
+        if ("true".equalsIgnoreCase(ddlDropProp)) {
+            ddlDrop = true;
+        }
+        String ddlDebugProp = System.getProperty(DATABASE_DDL_DEBUG_KEY, DEFAULT_DATABASE_DDL_DEBUG);
+        if ("true".equalsIgnoreCase(ddlDebugProp)) {
+            ddlDebug = true;
+        }
+        if (ddlCreate) {
+            runDdl(conn, CREATE_DDLRESOLVTEST_TYPE1, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_TYPE2, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_TYPE3, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_TABLE1, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_TABLE2, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_TABLE3, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_REGION, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_EMP_ADDRESS, ddlDebug);
+            runDdl(conn, CREATE_EMP_OBJECT, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_PACKAGE, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_PACKAGE_BODY, ddlDebug);
+            runDdl(conn, CREATE_OTHER_PACKAGE, ddlDebug);
+            runDdl(conn, CREATE_OTHER_PACKAGE_BODY, ddlDebug);
         }
         dtBuilder = new DatabaseTypeBuilder();
         boolean worked = true;
         String msg = null;
         try {
-            tesmanPackage = dtBuilder.buildPackages(conn, null, TESMANPACK_PACKAGE).get(0);
+            ddlresolvtestPackage = dtBuilder.buildPackages(conn, null, DDLRESOLVTEST_PACKAGE).get(0);
         }
         catch (Exception e) {
             worked = false;
@@ -287,27 +255,45 @@ public class TypeResolutionTestSuite {
         }
 	}
 
+    @AfterClass
+    static public void tearDown() {
+        if (ddlDrop) {
+            runDdl(conn, DROP_OTHER_PACKAGE, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_PACKAGE, ddlDebug);
+            runDdl(conn, DROP_EMP_OBJECT, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_EMP_ADDRESS, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_REGION, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_TABLE3, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_TABLE2, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_TABLE1, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_TYPE3, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_TYPE2, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_TYPE1, ddlDebug);
+        }
+
+    }
+
     @Test
     public void testUnresolvedTypeResolution() throws ParseException {
-        assertEquals("incorrect procedure name", TESMANPACK_PACKAGE , tesmanPackage.getPackageName());
+        assertEquals("incorrect procedure name", DDLRESOLVTEST_PACKAGE , ddlresolvtestPackage.getPackageName());
         UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
-        visitor.visit(tesmanPackage);
-        assertEquals(TESMANPACK_PACKAGE + " should not have any unresolved types",
+        visitor.visit(ddlresolvtestPackage);
+        assertEquals(DDLRESOLVTEST_PACKAGE + " should not have any unresolved types",
             0, visitor.getUnresolvedTypes().size());
     }
 
     @Test
-    public void testSame_TESTMAN_TABLE2_ROWTYPE() {
-        FunctionType func1 = (FunctionType)tesmanPackage.getProcedures().get(0);
+    public void testSame_DDLRESOLVTEST_TABLE2_ROWTYPE() {
+        FunctionType func1 = (FunctionType)ddlresolvtestPackage.getProcedures().get(0);
         DatabaseType tesmanfunc17ReturnType = func1.getReturnArgument().getDataType();
-        ProcedureType proc2 = tesmanPackage.getProcedures().get(1);
+        ProcedureType proc2 = ddlresolvtestPackage.getProcedures().get(1);
         DatabaseType tesmanproc17OutArgType = proc2.getArguments().get(1).getDataType();
         assertSame(tesmanfunc17ReturnType, tesmanproc17OutArgType);
     }
 
     @Test
-    public void testSame_TESMAN_TABLE3_ROWTYPE() {
-        ProcedureType proc3 = tesmanPackage.getProcedures().get(2);
+    public void testSame_DDLRESOLVTEST_TABLE3_ROWTYPE() {
+        ProcedureType proc3 = ddlresolvtestPackage.getProcedures().get(2);
         List<ArgumentType> proc3Args = proc3.getArguments();
         DatabaseType oldrecDatabaseType = proc3Args.get(0).getDataType();
         DatabaseType newrecDatabaseType = proc3Args.get(1).getDataType();
@@ -316,24 +302,24 @@ public class TypeResolutionTestSuite {
 
     @Test
     public void testSame_EMPREC() {
-        PLSQLRecordType empRecType = (PLSQLRecordType)tesmanPackage.getTypes().get(0);
-        PLSQLRecordType empRecType2 = (PLSQLRecordType)tesmanPackage.getProcedures().get(3).
+        PLSQLRecordType empRecType = (PLSQLRecordType)ddlresolvtestPackage.getTypes().get(0);
+        PLSQLRecordType empRecType2 = (PLSQLRecordType)ddlresolvtestPackage.getProcedures().get(3).
             getArguments().get(0).getDataType();
         assertSame(empRecType, empRecType2);
     }
 
     @Test
     public void testSame_EMPdotEMPNO_TYPE() {
-        PLSQLRecordType empRecType = (PLSQLRecordType)tesmanPackage.getTypes().get(0);
+        PLSQLRecordType empRecType = (PLSQLRecordType)ddlresolvtestPackage.getTypes().get(0);
         DatabaseType empDotEnamePcentTYPE1 = empRecType.getFields().get(1).getDataType();
-        ArgumentType nameArg = tesmanPackage.getProcedures().get(4).getArguments().get(0);
+        ArgumentType nameArg = ddlresolvtestPackage.getProcedures().get(4).getArguments().get(0);
         DatabaseType empDotEnamePcentTYPE2 = nameArg.getDataType();
         assertSame(empDotEnamePcentTYPE1, empDotEnamePcentTYPE2);
     }
 
     @Test
     public void testPackageRefersToGlobalTypes() {
-        FunctionType echoRegionProc = (FunctionType)tesmanPackage.getProcedures().get(5);
+        FunctionType echoRegionProc = (FunctionType)ddlresolvtestPackage.getProcedures().get(5);
         ArgumentType aRegion = echoRegionProc.getArguments().get(0);
         ArgumentType returnRegion = echoRegionProc.getReturnArgument();
         assertSame(aRegion.getDataType(), returnRegion.getDataType());
@@ -364,7 +350,7 @@ public class TypeResolutionTestSuite {
         String msg = null;
         TableType tableType = null;
         try {
-            tableType = dtBuilder.buildTables(conn, null, TESMAN_TABLE1).get(0);
+            tableType = dtBuilder.buildTables(conn, null, DDLRESOLVTEST_TABLE1).get(0);
         }
         catch (Exception e) {
             worked = false;
@@ -373,7 +359,7 @@ public class TypeResolutionTestSuite {
         assertTrue(msg,worked);
         UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
         visitor.visit(tableType);
-        assertEquals(TESMAN_TABLE1 + " should not have any unresolved types",
+        assertEquals(DDLRESOLVTEST_TABLE1 + " should not have any unresolved types",
             0, visitor.getUnresolvedTypes().size());
     }
 

@@ -22,10 +22,11 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-    TableDDLTestSuite.class,
+    CaseSensitivePackageTestSuite.class,
     FunctionDDLTestSuite.class,
     ProcedureDDLTestSuite.class,
     PackageDDLTestSuite.class,
+    TableDDLTestSuite.class,
     TypeDDLTestSuite.class
 })
 public class DDLParserTestSuite {
