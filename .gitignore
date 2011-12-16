@@ -1,5 +1,5 @@
 .DS_Store
 *.class
-classes
+target/classes
 bin
 .settings/org.eclipse.jdt.core.prefs

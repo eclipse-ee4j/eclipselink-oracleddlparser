@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
-Export-Package: org.eclipse.persistence.tools.oracleddl.metadata,org.e
- clipse.persistence.tools.oracleddl.metadata.visit,org.eclipse.persist
- ence.tools.oracleddl.parser,org.eclipse.persistence.tools.oracleddl.u
- til
+Export-Package: org.eclipse.persistence.tools.oracleddl.metadata;versi
+ on="1.0.0",org.eclipse.persistence.tools.oracleddl.metadata.visit;ver
+ sion="1.0.0",org.eclipse.persistence.tools.oracleddl.parser;version="
+ 1.0.0",org.eclipse.persistence.tools.oracleddl.util;version="1.0.0"
 Bundle-ClassPath: .
 Implementation-Version: 1.0.0.qualifier
 Specification-Vendor: Eclipse.org - EclipseLink Project
