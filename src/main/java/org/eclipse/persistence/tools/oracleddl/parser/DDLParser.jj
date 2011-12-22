@@ -74,6 +74,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TimeStampType;
 import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
@@ -97,7 +98,6 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SYS_REFCURSOR_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIME_TYPE;
-import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIMESTAMP_TYPE;
 
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
   protected JJTDDLParserState jjtree = new JJTDDLParserState();
@@ -677,7 +677,10 @@ DatabaseType datatype():
  Token precision = null;
  Long sl;
  Long pl;
- Token scale = null;}
+ Token scale = null;
+ Token withTimeZone = null;
+ Token withLocalTimeZone = null;
+}
 {
     <K_BINARY_INTEGER>  { return BINARY_INTEGER_TYPE;}
     | <K_BINARY_FLOAT>  { return BINARY_FLOAT_TYPE;}
@@ -784,9 +787,22 @@ DatabaseType datatype():
                 dt = new IntervalYearToMonth(pl);
             }
             return dt;	    }
-    | ( <K_TIME> { return TIME_TYPE;}
-        | <K_TIMESTAMP> { return TIMESTAMP_TYPE;}
-      ) [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] [ <K_WITH> [ <K_LOCAL> ] <K_TIME> <K_ZONE> ]
+    | <K_TIME> { return TIME_TYPE;}
+    | <K_TIMESTAMP> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        [ <K_WITH> [ withLocalTimeZone=<K_LOCAL> ] withTimeZone=<K_TIME> <K_ZONE> ]
+        { 
+          if (precision == null) {
+              dt = new TimeStampType();
+          }
+          else {
+              pl = Long.decode(precision.image);
+              dt = new TimeStampType(pl);
+          }
+          if (withLocalTimeZone !=  null) {
+              ((TimeStampType)dt).setWithLocalTimeZone();          }
+          else if (withTimeZone != null) {
+              ((TimeStampType)dt).setWithTimeZone();          }
+          return dt;        }
     | <K_INTEGER>  { return INTEGER_TYPE;}
     | <K_INT>      { return INTEGER_TYPE;}
     | <K_SMALLINT> { return SMALLINT_TYPE;}

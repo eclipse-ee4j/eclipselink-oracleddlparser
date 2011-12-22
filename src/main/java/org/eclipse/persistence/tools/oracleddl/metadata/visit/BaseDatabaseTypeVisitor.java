@@ -49,6 +49,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum;
 import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TimeStampType;
 import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
@@ -100,6 +101,8 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     public void visit(VarChar2Type databaseType) {
     }
     public void visit(LongType databaseType) {
+    }
+    public void visit(TimeStampType databaseType) {
     }
 
     //composite visit callbacks
