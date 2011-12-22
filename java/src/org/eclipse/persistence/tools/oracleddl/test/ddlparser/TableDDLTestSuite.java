@@ -41,7 +41,7 @@ public class TableDDLTestSuite {
 
     //JUnit fixture(s)
     static DDLParser parser = null;
-	
+
 	@BeforeClass
 	static public void setUp() {
         parser = new DDLParser(new InputStream() {
@@ -118,8 +118,8 @@ public class TableDDLTestSuite {
         assertTrue("dummy table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
         assertEquals("dummy table wrong schema",
-            (String)DUMMY_TABLE_SCHEMA.subSequence(0, DUMMY_TABLE_SCHEMA.length()-1),
-            (String)tableType.getSchema());
+            DUMMY_TABLE_SCHEMA.subSequence(0, DUMMY_TABLE_SCHEMA.length()-1),
+            tableType.getSchema());
     }
 
     static final String DUMMY_TABLE_QUOTED_SCHEMA = "\"SCOTT\".";
@@ -143,8 +143,8 @@ public class TableDDLTestSuite {
         assertTrue("dummy table should not contain any unresolved column datatypes",
             l.getUnresolvedTypes().isEmpty());
         assertEquals("dummy table wrong schema",
-            (String)DUMMY_TABLE_SCHEMA.subSequence(0, DUMMY_TABLE_SCHEMA.length()-1),
-            (String)tableType.getSchema());
+            DUMMY_TABLE_SCHEMA.subSequence(0, DUMMY_TABLE_SCHEMA.length()-1),
+            tableType.getSchema());
     }
 
     static final String NORMAL = "NORMAL";
@@ -201,7 +201,7 @@ public class TableDDLTestSuite {
         assertEquals("incorrect type for " + COMM + " column",
             new NumericType().getTypeName(), col4.getTypeName());
     }
-    
+
     static final String IOT_TABLE =
         " FOO_IOT (\n" +
             ENAME + " VARCHAR2(10),\n" +
@@ -252,4 +252,27 @@ public class TableDDLTestSuite {
             new NumericType().getTypeName(), col4.getTypeName());
     }
 
+    static final String TIMESTAMP_TABLE = "TIMESTAMP_TABLE (" +
+            "\nID NUMBER(10,0) NOT NULL ENABLE," +
+            "\nRUN_DATE TIMESTAMP (6)," +
+            "\nRAW_RESULT BLOB," +
+            "\nANALYSIS_ID NUMBER(10,0)," +
+            "\nPRIMARY KEY (ID) ENABLE\n" +
+        ");";
+    @Test
+    public void testTimestampTable() {
+        parser.ReInit(new StringReader(CREATE_TABLE_PREFIX + TIMESTAMP_TABLE));
+        boolean worked = true;
+        String message = "";
+        @SuppressWarnings("unused")
+        TableType tableType = null;
+        try {
+            tableType = parser.parseTable();
+        }
+        catch (ParseException pe) {
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("timestamp table did not parse:\n" + message, worked);
+    }
 }
