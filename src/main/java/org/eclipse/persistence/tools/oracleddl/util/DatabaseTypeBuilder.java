@@ -13,8 +13,10 @@
 package org.eclipse.persistence.tools.oracleddl.util;
 
 //javase imports
+import java.io.Reader;
 import java.io.StringReader;
 import java.sql.CallableStatement;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,12 +28,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.Stack;
+import java.util.TreeSet;
 
 //DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
@@ -40,16 +45,61 @@ import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
+import org.eclipse.persistence.tools.oracleddl.metadata.VArrayType;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.UnresolvedTypesVisitor;
 import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 
 public class DatabaseTypeBuilder {
 
-    //special catalog
+    //misc. string constants
+    public static final String BEGIN = "BEGIN";
+    public static final String END = "END";
+    public static final String FORWARD_SLASH = "/";
+    public static final String NOT ="NOT ";
+    public static final String OR =" OR ";
+    public static final String RESULT ="RESULT";
+    public static final String PERCENT = "%";
+    public static final String NEW_LINE = "\n";
     public static final String TOPLEVEL = "TOPLEVEL";
-    public static final String ROWTYPE_MACRO = "%ROWTYPE";
-    public static final String TYPE_MACRO = "%TYPE";
+    public static final String ROWTYPE_MACRO = PERCENT + "ROWTYPE";
+    public static final String TYPE_MACRO = PERCENT + "TYPE";
+    public static final String TRANSFORM_PREFIX =
+        "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'";
+    public static final String DBMS_METADATA_GET_DDL_STMT_PREFIX =
+        "SELECT DBMS_METADATA.GET_DDL('";
+    public static final String DBMS_METADATA_GET_DDL_STMT1 =
+        "', AO.OBJECT_NAME) AS " + RESULT + " FROM ALL_OBJECTS AO WHERE ";
+    public static final String EXCLUDED_ADMIN_SCHEMAS =
+        "'*SYS*|XDB|*ORD*|DBSNMP|ANONYMOUS|OUTLN|MGMT_VIEW|SI_INFORMTN_SCHEMA|WK_TEST|WKPROXY'";
+    public static final String DBMS_METADATA_GET_DDL_STMT_STMT2 =
+        "REGEXP_LIKE(OWNER,?) AND";
+    public static final String DBMS_METADATA_GET_DDL_STMT_STMT3 =
+        " OBJECT_TYPE = ? AND";
+    public static final String DBMS_METADATA_GET_DDL_STMT_SUFFIX =
+        " OBJECT_NAME LIKE ?";
+    //OBJECT_TYPE codes from ALL_OBJECTS view - we are only interested in top-level types:
+    public static final int OBJECT_TYPE_UNKNOWN_CODE = -1;
+    public static final String ALL_OBJECTS_OBJECT_TYPE_FIELD = "OBJECT_TYPE";
+    public static final String OBJECT_TYPE_FUNCTION = "FUNCTION";
+    public static final int OBJECT_TYPE_FUNCTION_CODE = 1;
+    public static final String OBJECT_TYPE_PACKAGE = "PACKAGE";
+    public static final int OBJECT_TYPE_PACKAGE_CODE = 2;
+    public static final String OBJECT_TYPE_PROCEDURE = "PROCEDURE";
+    public static final int OBJECT_TYPE_PROCEDURE_CODE = 3;
+    public static final String OBJECT_TYPE_TABLE = "TABLE";
+    public static final int OBJECT_TYPE_TABLE_CODE = 4;
+    public static final String OBJECT_TYPE_TYPE = "TYPE";
+    public static final int OBJECT_TYPE_TYPE_CODE = 5;
+    public static final String GET_OBJECT_TYPE_STMT =
+        "SELECT DECODE(AO." + ALL_OBJECTS_OBJECT_TYPE_FIELD +
+            ", '" + OBJECT_TYPE_FUNCTION + "', " + OBJECT_TYPE_FUNCTION_CODE +
+            ", '" + OBJECT_TYPE_PACKAGE + "', " + OBJECT_TYPE_PACKAGE_CODE +
+            ", '" + OBJECT_TYPE_PROCEDURE + "', " + OBJECT_TYPE_PROCEDURE_CODE +
+            ", '" + OBJECT_TYPE_TABLE + "', " + OBJECT_TYPE_TABLE_CODE +
+            ", '" + OBJECT_TYPE_TYPE + "', " + OBJECT_TYPE_TYPE_CODE +
+            "," + OBJECT_TYPE_UNKNOWN_CODE + ") AS OBJECT_TYPE FROM ALL_OBJECTS AO WHERE " +
+            	"(STATUS = 'VALID' AND OWNER LIKE ? AND OBJECT_NAME = ?)";
 
     static DBMSMetadataSessionTransforms TRANSFORMS_FACTORY;
     static {
@@ -65,52 +115,44 @@ public class DatabaseTypeBuilder {
         }
     }
 
-    static final String DBMS_METADATA_GET_DDL_STMT_PREFIX =
-        "SELECT DBMS_METADATA.GET_DDL('";
-    static final String DBMS_METADATA_GET_DDL_STMT1 =
-    	"', AO.OBJECT_NAME) AS RESULT FROM ALL_OBJECTS AO WHERE ";
-    static final String EXCLUDED_ADMIN_SCHEMAS =
-        "'*SYS*|XDB|*ORD*|DBSNMP|ANONYMOUS|OUTLN|MGMT_VIEW|SI_INFORMTN_SCHEMA|WK_TEST|WKPROXY'";
-    static final String DBMS_METADATA_GET_DDL_STMT_SUFFIX =
-        " REGEXP_LIKE(OWNER,?) AND OBJECT_TYPE = ? AND OBJECT_NAME LIKE ?";
-
-    //OBJECT_TYPE codes from ALL_OBJECTS view - we are only interested in top-level types:
-    static final int UNKNOWN_CODE = -1;
-    static final int FUNCTION_CODE = 1;
-    static final int PACKAGE_CODE = 2;
-    static final int PROCEDURE_CODE = 3;
-    static final int TABLE_CODE = 4;
-    static final int TYPE_CODE = 5;
-    static final String ALL_OBJECTS_OBJECT_TYPE_FIELD = "OBJECT_TYPE";
-    static final String GET_OBJECT_TYPE_STMT =
-        "SELECT DECODE(AO." + ALL_OBJECTS_OBJECT_TYPE_FIELD +
-            ", 'FUNCTION', 1, 'PACKAGE', 2, 'PROCEDURE', 3, 'TABLE', 4, 'TYPE', 5, -1) AS OBJECT_TYPE" +
-            " FROM ALL_OBJECTS AO WHERE (STATUS = 'VALID' AND OWNER LIKE ? AND OBJECT_NAME = ?)";
-
     protected boolean transformsSet = false;
 
     public DatabaseTypeBuilder() {
         super();
     }
 
-    public List<TableType> buildTables(Connection conn, String schemaPattern, String tablePattern)
-        throws ParseException {
+    public List<TableType> buildTables(Connection conn, String schemaPattern,
+        String tablePattern) throws ParseException {
         return buildTables(conn, schemaPattern, tablePattern, true);
     }
-    protected List<TableType> buildTables(Connection conn, String schemaPattern, String tablePattern,
-        boolean resolveTypes) throws ParseException {
-        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
-        String tablePatternU = tablePattern == null ? null : tablePattern.toUpperCase();
+    protected List<TableType> buildTables(Connection conn, String schemaPattern,
+        String tablePattern, boolean resolveTypes) throws ParseException {
+        List<String> schemaPatterns = new ArrayList<String>();
+        schemaPatterns.add(schemaPattern);
+        List<String> tablePatterns = new ArrayList<String>();
+        tablePatterns.add(tablePattern);
+        return buildTables(conn, schemaPatterns, tablePatterns, resolveTypes);
+    }
+    public List<TableType> buildTables(Connection conn, List<String> schemaPatterns,
+        List<String> tablePatterns) throws ParseException {
+        return buildTables(conn, schemaPatterns, tablePatterns, true);
+    }
+    protected List<TableType> buildTables(Connection conn, List<String> schemaPatterns,
+        List<String> tablePatterns, boolean resolveTypes) throws ParseException {
         List<TableType> tableTypes = null;
+        List<String> copyOfSchemaPatterns = new ArrayList<String>();
+        List<String> copyOfTablePatterns = new ArrayList<String>();
+        String getDDlStmt = buildDDLStmt(OBJECT_TYPE_TABLE, schemaPatterns, tablePatterns,
+            copyOfSchemaPatterns, copyOfTablePatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, "TABLE", DBMS_METADATA_GET_DDL_STMT_PREFIX + "TABLE" +
-                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
-                schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, tablePatternU);
+            List<String> ddls = getDDLs(conn, OBJECT_TYPE_TABLE, getDDlStmt, copyOfSchemaPatterns,
+                copyOfTablePatterns);
             if (ddls != null) {
+                //need 'set' semantics to ensure no duplicates; using TreeSet also sorts
+                TreeSet<String> distinctDDLs = new TreeSet<String>();
+                distinctDDLs.addAll(ddls);
                 tableTypes = new ArrayList<TableType>();
-                for (String ddl : ddls) {
+                for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl);
                     TableType tableType = parser.parseTable();
                     if (tableType != null) {
@@ -119,7 +161,7 @@ public class DatabaseTypeBuilder {
                             UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
                             unresolvedTypesVisitor.visit(tableType);
                             if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                                resolvedTypes(conn, schemaPatternU, parser,
+                                resolvedTypes(conn, tableType.getSchema(), parser,
                                     unresolvedTypesVisitor.getUnresolvedTypes(), tableType);
                             }
                         }
@@ -136,18 +178,32 @@ public class DatabaseTypeBuilder {
     }
     protected List<PLSQLPackageType> buildPackages(Connection conn, String schemaPattern,
         String packagePattern, boolean resolveTypes) throws ParseException {
-        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
-        String packagePatternU = packagePattern == null ? null : packagePattern.toUpperCase();
+        List<String> schemaPatterns = new ArrayList<String>();
+        schemaPatterns.add(schemaPattern);
+        List<String> packagePatterns = new ArrayList<String>();
+        packagePatterns.add(packagePattern);
+        return buildPackages(conn, schemaPatterns, packagePatterns, resolveTypes);
+    }
+    public List<PLSQLPackageType> buildPackages(Connection conn, List<String> schemaPatterns,
+        List<String> packagePatterns) throws ParseException {
+        return buildPackages(conn, schemaPatterns, packagePatterns, true);
+    }
+    protected List<PLSQLPackageType> buildPackages(Connection conn, List<String> schemaPatterns,
+        List<String> packagePatterns, boolean resolveTypes) throws ParseException {
         List<PLSQLPackageType> packageTypes = null;
+        List<String> copyOfSchemaPatterns = new ArrayList<String>();
+        List<String> copyOfPackagePatterns = new ArrayList<String>();
+        String getDDlStmt = buildDDLStmt(OBJECT_TYPE_PACKAGE, schemaPatterns, packagePatterns,
+            copyOfSchemaPatterns, copyOfPackagePatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, "PACKAGE", DBMS_METADATA_GET_DDL_STMT_PREFIX + "PACKAGE" +
-                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
-                schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, packagePatternU);
+            List<String> ddls = getDDLs(conn, OBJECT_TYPE_PACKAGE, getDDlStmt, copyOfSchemaPatterns,
+                copyOfPackagePatterns);
             if (ddls != null) {
+                //need 'set' semantics to ensure no duplicates
+                TreeSet<String> distinctDDLs = new TreeSet<String>();
+                distinctDDLs.addAll(ddls);
                 packageTypes = new ArrayList<PLSQLPackageType>();
-                for (String ddl : ddls) {
+                for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl);
                     PLSQLPackageType packageType = parser.parsePLSQLPackage();
                     if (packageType != null) {
@@ -156,8 +212,8 @@ public class DatabaseTypeBuilder {
                             UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
                             unresolvedTypesVisitor.visit(packageType);
                             if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                                resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
-                                    packageType);
+                                resolvedTypes(conn, packageType.getSchema(), parser,
+                                    unresolvedTypesVisitor.getUnresolvedTypes(), packageType);
                             }
                         }
                     }
@@ -173,34 +229,47 @@ public class DatabaseTypeBuilder {
     }
     protected List<ProcedureType> buildProcedures(Connection conn, String schemaPattern,
         String procedurePattern, boolean resolveTypes) throws ParseException {
-        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
-        String procedurePatternU = procedurePattern == null ? null : procedurePattern.toUpperCase();
-    	List<ProcedureType> procedureTypes = null;
+        List<String> schemaPatterns = new ArrayList<String>();
+        schemaPatterns.add(schemaPattern);
+        List<String> procedurePatterns = new ArrayList<String>();
+        procedurePatterns.add(procedurePattern);
+        return buildProcedures(conn, schemaPatterns, procedurePatterns, resolveTypes);
+    }
+    public List<ProcedureType> buildProcedures(Connection conn, List<String> schemaPatterns,
+        List<String> procedurePatterns) throws ParseException {
+        return buildProcedures(conn, schemaPatterns, procedurePatterns, true);
+    }
+    protected List<ProcedureType> buildProcedures(Connection conn, List<String> schemaPatterns,
+        List<String> procedurePatterns, boolean resolveTypes) throws ParseException {
+        List<ProcedureType> procedureTypes = null;
+        List<String> copyOfSchemaPatterns = new ArrayList<String>();
+        List<String> copyOfProcedurePatterns = new ArrayList<String>();
+        String getDDlStmt = buildDDLStmt(OBJECT_TYPE_PROCEDURE, schemaPatterns, procedurePatterns,
+            copyOfSchemaPatterns, copyOfProcedurePatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, "PROCEDURE", DBMS_METADATA_GET_DDL_STMT_PREFIX + "PROCEDURE" +
-                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
-                schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, procedurePatternU);
+            List<String> ddls = getDDLs(conn, OBJECT_TYPE_PROCEDURE, getDDlStmt, copyOfSchemaPatterns,
+                copyOfProcedurePatterns);
             if (ddls != null) {
-            	procedureTypes = new ArrayList<ProcedureType>();
-            	for (String ddl : ddls) {
-	                DDLParser parser = newDDLParser(ddl);
-	                ProcedureType procedureType = parser.parseTopLevelProcedure();
-	                if (procedureType != null) {
-	                	procedureTypes.add(procedureType);
+                //need 'set' semantics to ensure no duplicates
+                TreeSet<String> distinctDDLs = new TreeSet<String>();
+                distinctDDLs.addAll(ddls);
+                procedureTypes = new ArrayList<ProcedureType>();
+                for (String ddl : distinctDDLs) {
+                    DDLParser parser = newDDLParser(ddl);
+                    ProcedureType procedureType = parser.parseTopLevelProcedure();
+                    if (procedureType != null) {
+                        procedureTypes.add(procedureType);
                         if (resolveTypes) {
-    	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-    	                    unresolvedTypesVisitor.visit(procedureType);
-    	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-    	                        resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
-    	                            procedureType);
-    	                    }
+                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                            unresolvedTypesVisitor.visit(procedureType);
+                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                                resolvedTypes(conn, procedureType.getSchema(), parser,
+                                    unresolvedTypesVisitor.getUnresolvedTypes(), procedureType);
+                            }
                         }
-	                }
-            	}
+                    }
+                }
             }
-
         }
         return procedureTypes;
     }
@@ -211,73 +280,145 @@ public class DatabaseTypeBuilder {
     }
     protected List<FunctionType> buildFunctions(Connection conn, String schemaPattern,
         String functionPattern, boolean resolveTypes) throws ParseException {
-        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
-        String functionPatternU = functionPattern == null ? null : functionPattern.toUpperCase();
-    	List<FunctionType> functionTypes = null;
+        List<String> schemaPatterns = new ArrayList<String>();
+        schemaPatterns.add(schemaPattern);
+        List<String> functionPatterns = new ArrayList<String>();
+        functionPatterns.add(functionPattern);
+        return buildFunctions(conn, schemaPatterns, functionPatterns, resolveTypes);
+    }
+    public List<FunctionType> buildFunctions(Connection conn, List<String> schemaPatterns,
+        List<String> functionPatterns) throws ParseException {
+        return buildFunctions(conn, schemaPatterns, functionPatterns, true);
+    }
+    protected List<FunctionType> buildFunctions(Connection conn, List<String> schemaPatterns,
+        List<String> functionPatterns, boolean resolveTypes) throws ParseException {
+        List<FunctionType> functionsTypes = null;
+        List<String> copyOfSchemaPatterns = new ArrayList<String>();
+        List<String> copyOfFunctionPatterns = new ArrayList<String>();
+        String getDDlStmt = buildDDLStmt(OBJECT_TYPE_FUNCTION, schemaPatterns, functionPatterns,
+            copyOfSchemaPatterns, copyOfFunctionPatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, "FUNCTION", DBMS_METADATA_GET_DDL_STMT_PREFIX + "FUNCTION" +
-                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
-                schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, functionPatternU);
+            List<String> ddls = getDDLs(conn, OBJECT_TYPE_FUNCTION, getDDlStmt, copyOfSchemaPatterns,
+                copyOfFunctionPatterns);
             if (ddls != null) {
-            	functionTypes = new ArrayList<FunctionType>();
-            	for (String ddl : ddls) {
-	                DDLParser parser = newDDLParser(ddl);
-	                FunctionType functionType = parser.parseTopLevelFunction();
-	                if (functionType != null) {
-	                	functionTypes.add(functionType);
+                //need 'set' semantics to ensure no duplicates
+                TreeSet<String> distinctDDLs = new TreeSet<String>();
+                distinctDDLs.addAll(ddls);
+                functionsTypes = new ArrayList<FunctionType>();
+                for (String ddl : distinctDDLs) {
+                    DDLParser parser = newDDLParser(ddl);
+                    FunctionType functionType = parser.parseTopLevelFunction();
+                    if (functionType != null) {
+                        functionsTypes.add(functionType);
                         if (resolveTypes) {
-    	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-    	                    unresolvedTypesVisitor.visit(functionType);
-    	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-    	                        resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
-    	                            functionType);
-    	                    }
+                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                            unresolvedTypesVisitor.visit(functionType);
+                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                                resolvedTypes(conn, functionType.getSchema(), parser,
+                                    unresolvedTypesVisitor.getUnresolvedTypes(), functionType);
+                            }
                         }
-	                }
-            	}
+                    }
+                }
             }
-
         }
-        return functionTypes;
+        return functionsTypes;
     }
 
     public List<CompositeDatabaseType> buildTypes(Connection conn, String schemaPattern,
-        String typePattern) throws ParseException {
-        return buildTypes(conn, schemaPattern, typePattern, true);
+        String namePattern) throws ParseException {
+        return buildTypes(conn, schemaPattern, namePattern, true);
     }
     protected List<CompositeDatabaseType> buildTypes(Connection conn, String schemaPattern,
-        String typePattern, boolean resolveTypes) throws ParseException {
-        String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
-        String typePatternU = typePattern == null ? null : typePattern.toUpperCase();
-    	List<CompositeDatabaseType> databaseTypes = null;
+        String namePattern, boolean resolveTypes) throws ParseException {
+        List<String> schemaPatterns = new ArrayList<String>();
+        schemaPatterns.add(schemaPattern);
+        List<String> namePatterns = new ArrayList<String>();
+        namePatterns.add(namePattern);
+        return buildTypes(conn, schemaPatterns, namePatterns, resolveTypes);
+    }
+    public List<CompositeDatabaseType> buildTypes(Connection conn, List<String> schemaPatterns,
+        List<String> namePatterns) throws ParseException {
+        return buildTypes(conn, schemaPatterns, namePatterns, true);
+    }
+    protected List<CompositeDatabaseType> buildTypes(Connection conn, List<String> schemaPatterns,
+        List<String> namePatterns, boolean resolveTypes) throws ParseException {
+        List<CompositeDatabaseType> databaseTypes = null;
+        List<String> copyOfSchemaPatterns = new ArrayList<String>();
+        List<String> copyOfNamePatterns = new ArrayList<String>();
+        String getDDlStmt = buildDDLStmt(OBJECT_TYPE_TYPE, schemaPatterns, namePatterns,
+            copyOfSchemaPatterns, copyOfNamePatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
-            List<String> ddls = getDDLs(conn, "TYPE", DBMS_METADATA_GET_DDL_STMT_PREFIX + "TYPE" +
-                DBMS_METADATA_GET_DDL_STMT1 + (schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? "NOT" : "") + DBMS_METADATA_GET_DDL_STMT_SUFFIX,
-                schemaPatternExcludesAdminSchemas(schemaPatternU)
-                    ? EXCLUDED_ADMIN_SCHEMAS : schemaPatternU, typePatternU);
+            List<String> ddls = getDDLs(conn, OBJECT_TYPE_TYPE, getDDlStmt, copyOfSchemaPatterns,
+                copyOfNamePatterns);
             if (ddls != null) {
-            	databaseTypes = new ArrayList<CompositeDatabaseType>();
-            	for (String ddl : ddls) {
-	                DDLParser parser = newDDLParser(ddl);
-	            	CompositeDatabaseType databaseType = parser.parseType();
-	                if (databaseType != null) {
-	                	databaseTypes.add(databaseType);
+                //need 'set' semantics to ensure no duplicates
+                TreeSet<String> distinctDDLs = new TreeSet<String>();
+                distinctDDLs.addAll(ddls);
+                databaseTypes = new ArrayList<CompositeDatabaseType>();
+                for (String ddl : distinctDDLs) {
+                    DDLParser parser = newDDLParser(ddl);
+                    CompositeDatabaseType databaseType = parser.parseType();
+                    if (databaseType != null) {
+                        databaseTypes.add(databaseType);
                         if (resolveTypes) {
-    	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-    	                    unresolvedTypesVisitor.visit(databaseType);
-    	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-    	                        resolvedTypes(conn, schemaPatternU, parser, unresolvedTypesVisitor.getUnresolvedTypes(),
-    	                            databaseType);
-    	                    }
+                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                            unresolvedTypesVisitor.visit(databaseType);
+                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                                String schemaPattern = null;
+                                if (databaseType instanceof ObjectTableType) {
+                                    schemaPattern = ((ObjectTableType)databaseType).getSchema();
+                                }
+                                else if (databaseType instanceof ObjectType) {
+                                    schemaPattern = ((ObjectType)databaseType).getSchema();
+                                }
+                                else if (databaseType instanceof VArrayType) {
+                                    schemaPattern = ((VArrayType)databaseType).getSchema();
+                                }
+                                else {
+                                    schemaPattern = PERCENT;
+                                }
+                                resolvedTypes(conn, schemaPattern, parser,
+                                    unresolvedTypesVisitor.getUnresolvedTypes(), databaseType);
+                            }
                         }
-	                }
-            	}
+                    }
+                }
             }
         }
         return databaseTypes;
+    }
+
+    protected String buildDDLStmt(String objectType, List<String> schemaPatterns,
+        List<String> namePatterns, List<String> copyOfSchemaPatterns,
+        List<String> copyOfNamePatterns) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(DBMS_METADATA_GET_DDL_STMT_PREFIX);
+        sb.append(objectType);
+        sb.append(DBMS_METADATA_GET_DDL_STMT1);
+        for (int i = 0, len = schemaPatterns.size(); i < len; i++) {
+            String schemaPattern = schemaPatterns.get(i);
+            String schemaPatternU = schemaPattern == null ? null : schemaPattern.toUpperCase();
+            String namePattern = namePatterns.get(i);
+            String namePatternU = namePattern == null ? null : namePattern.toUpperCase();
+            copyOfNamePatterns.add(namePatternU);
+            sb.append('(');
+            if (schemaPatternExcludesAdminSchemas(schemaPatternU)) {
+                sb.append(NOT);
+                copyOfSchemaPatterns.add(EXCLUDED_ADMIN_SCHEMAS);
+            }
+            else {
+                copyOfSchemaPatterns.add(schemaPatternU);
+            }
+            sb.append(DBMS_METADATA_GET_DDL_STMT_STMT2);
+            sb.append(DBMS_METADATA_GET_DDL_STMT_STMT3);
+            sb.append(DBMS_METADATA_GET_DDL_STMT_SUFFIX);
+            sb.append(')');
+            if (i < len -1) {
+                sb.append(OR);
+            }
+        }
+        return sb.toString();
     }
 
     protected DDLParser newDDLParser(String ddl) {
@@ -286,26 +427,49 @@ public class DatabaseTypeBuilder {
         return parser;
     }
 
-    protected List<String> getDDLs(Connection conn, String typeSpec, String metadataSpec,
-        String schemaPattern, String typeName) {
-    	List<String> ddls = null;
+    protected List<String> getDDLs(Connection conn, String typeSpec, String getDDlStmt,
+        List<String> schemaPatterns, List<String> typeNamePatterns) {
+        List<String> ddls = null;
         PreparedStatement pStmt = null;
         ResultSet rs = null;
         try {
-            pStmt = conn.prepareStatement(metadataSpec);
-            pStmt.setString(1, schemaPattern);
-            pStmt.setString(2, typeSpec);
-            pStmt.setString(3, typeName);
+            pStmt = conn.prepareStatement(getDDlStmt);
+            int j = 0;
+            for (int i = 0, len = schemaPatterns.size(); i < len; i++) {
+                pStmt.setString(++j, schemaPatterns.get(i));
+                pStmt.setString(++j, typeSpec);
+                pStmt.setString(++j, typeNamePatterns.get(i));
+            }
             rs = pStmt.executeQuery();
             if (rs.next()) {
-            	ddls = new ArrayList<String>();
+                ddls = new ArrayList<String>();
                 do {
-                	String ddl = rs.getString("RESULT").trim();
-                    if (ddl.endsWith("/")) {
-                        ddl = (String)ddl.subSequence(0, ddl.length()-1);
+                    Clob clob = rs.getClob(RESULT);
+                    String ddl = null;
+                    if (clob != null) {
+                        Reader is = clob.getCharacterStream();
+                        StringBuffer sb = new StringBuffer();
+                        int length = (int)clob.length();
+                        if (length > 0) {
+                            char[] buffer = new char[length];
+                            // Read stream and append to StringBuffer.
+                            try {
+                                while (is.read(buffer) != -1) {
+                                    sb.append(buffer);
+                                }
+                            }
+                            catch (Exception e) {
+                                //e.printStackTrace();
+                            }
+                            ddl = sb.toString().trim();
+                        }
                     }
-                	ddls.add(ddl);
-
+                    if (ddl != null) {
+                        if (ddl.endsWith(FORWARD_SLASH)) {
+                            ddl = (String)ddl.subSequence(0, ddl.length()-1);
+                        }
+                        ddls.add(ddl);
+                    }
                 } while (rs.next());
             }
         }
@@ -467,42 +631,42 @@ public class DatabaseTypeBuilder {
                     if (resolvedType == null) {
                         int objectTypeCode = getObjectType(conn, schema, objectTypeName);
                         switch (objectTypeCode) {
-                            case FUNCTION_CODE :
+                            case OBJECT_TYPE_FUNCTION_CODE :
                                 List<FunctionType> functions = buildFunctions(conn, schema,
                                     objectTypeName, false);
                                 if (functions != null && functions.size() > 0) {
                                     resolvedType = functions.get(0); // only care about first one
                                 }
                                 break;
-                            case PACKAGE_CODE :
+                            case OBJECT_TYPE_PACKAGE_CODE :
                                 List<PLSQLPackageType> packages = buildPackages(conn, schema,
                                     objectTypeName, false);
                                 if (packages != null && packages.size() > 0) {
                                     resolvedType = packages.get(0); // only care about first one
                                 }
                                 break;
-                            case PROCEDURE_CODE :
+                            case OBJECT_TYPE_PROCEDURE_CODE :
                                 List<ProcedureType> procedures = buildProcedures(conn, schema,
                                     objectTypeName, false);
                                 if (procedures != null && procedures.size() > 0) {
                                     resolvedType = procedures.get(0); // only care about first one
                                 }
                                 break;
-                            case TABLE_CODE :
+                            case OBJECT_TYPE_TABLE_CODE :
                                 List<TableType> tables = buildTables(conn, schema,
                                     objectTypeName, false);
                                 if (tables != null && tables.size() > 0) {
                                     resolvedType = tables.get(0); // only care about first one
                                 }
                                 break;
-                            case TYPE_CODE :
+                            case OBJECT_TYPE_TYPE_CODE :
                                 List<CompositeDatabaseType> types = buildTypes(conn, schema,
                                     objectTypeName, false);
                                 if (types != null && types.size() > 0) {
                                     resolvedType = types.get(0); // only care about first one
                                 }
                                 break;
-                            case UNKNOWN_CODE :
+                            case OBJECT_TYPE_UNKNOWN_CODE :
                             default :
                                 break;
                         }
@@ -531,7 +695,7 @@ public class DatabaseTypeBuilder {
 
     protected int getObjectType(Connection conn, String schema,  String typeName) {
         int objectType = -1;
-        String schemaPattern = schema == null ? "%" : schema;
+        String schemaPattern = schema == null ? PERCENT : schema;
         PreparedStatement pStmt = null;
         ResultSet rs = null;
         try {
@@ -590,16 +754,18 @@ public class DatabaseTypeBuilder {
         CallableStatement cStmt = null;
         try {
             Properties transformProperties = getTransformProperties();
-            StringBuilder sb = new StringBuilder("BEGIN");
+            StringBuilder sb = new StringBuilder(BEGIN);
             for (Map.Entry<Object, Object> me : transformProperties.entrySet()) {
-                sb.append("\n");
-                sb.append("DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'");
+                sb.append(NEW_LINE);
+                sb.append(TRANSFORM_PREFIX);
                 sb.append(me.getKey());
                 sb.append("',");
                 sb.append(me.getValue());
                 sb.append(");");
             }
-            sb.append("\nEND;");
+            sb.append(NEW_LINE);
+            sb.append(END);
+            sb.append(";");
             cStmt = conn.prepareCall(sb.toString());
             cStmt.execute();
         }
@@ -622,6 +788,6 @@ public class DatabaseTypeBuilder {
 
     static boolean schemaPatternExcludesAdminSchemas(String schemaPattern) {
         return (schemaPattern == null || schemaPattern.length() == 0 ||
-            TOPLEVEL.equals(schemaPattern) || "%".equals(schemaPattern));
+            TOPLEVEL.equals(schemaPattern) || PERCENT.equals(schemaPattern));
     }
 }
