@@ -368,153 +368,155 @@ public interface DDLParserConstants {
   /** RegularExpression Id. */
   int K_SIBLINGS = 177;
   /** RegularExpression Id. */
-  int K_SINGLE = 178;
+  int K_SIGNTYPE = 178;
   /** RegularExpression Id. */
-  int K_SIMPLE_INTEGER = 179;
+  int K_SINGLE = 179;
   /** RegularExpression Id. */
-  int K_SMALLINT = 180;
+  int K_SIMPLE_INTEGER = 180;
   /** RegularExpression Id. */
-  int K_SOME = 181;
+  int K_SMALLINT = 181;
   /** RegularExpression Id. */
-  int K_STRING = 182;
+  int K_SOME = 182;
   /** RegularExpression Id. */
-  int K_SUBMUlookISET = 183;
+  int K_STRING = 183;
   /** RegularExpression Id. */
-  int K_SUBTYPE = 184;
+  int K_SUBMUlookISET = 184;
   /** RegularExpression Id. */
-  int K_SYS_REFCURSOR = 185;
+  int K_SUBTYPE = 185;
   /** RegularExpression Id. */
-  int K_TABLE = 186;
+  int K_SYS_REFCURSOR = 186;
   /** RegularExpression Id. */
-  int K_TEMPORARY = 187;
+  int K_TABLE = 187;
   /** RegularExpression Id. */
-  int K_THE = 188;
+  int K_TEMPORARY = 188;
   /** RegularExpression Id. */
-  int K_TIME = 189;
+  int K_THE = 189;
   /** RegularExpression Id. */
-  int K_TIMESTAMP = 190;
+  int K_TIME = 190;
   /** RegularExpression Id. */
-  int K_TO = 191;
+  int K_TIMESTAMP = 191;
   /** RegularExpression Id. */
-  int K_TRANSACTION = 192;
+  int K_TO = 192;
   /** RegularExpression Id. */
-  int K_TRUE = 193;
+  int K_TRANSACTION = 193;
   /** RegularExpression Id. */
-  int K_TRUST = 194;
+  int K_TRUE = 194;
   /** RegularExpression Id. */
-  int K_TYPE = 195;
+  int K_TRUST = 195;
   /** RegularExpression Id. */
-  int K_TYPE2 = 196;
+  int K_TYPE = 196;
   /** RegularExpression Id. */
-  int K_UNDER_PATH = 197;
+  int K_TYPE2 = 197;
   /** RegularExpression Id. */
-  int K_UNTIL = 198;
+  int K_UNDER_PATH = 198;
   /** RegularExpression Id. */
-  int K_UPDATED = 199;
+  int K_UNTIL = 199;
   /** RegularExpression Id. */
-  int K_UPSERT = 200;
+  int K_UPDATED = 200;
   /** RegularExpression Id. */
-  int K_UROWID = 201;
+  int K_UPSERT = 201;
   /** RegularExpression Id. */
-  int K_USING = 202;
+  int K_UROWID = 202;
   /** RegularExpression Id. */
-  int K_VARCHAR2 = 203;
+  int K_USING = 203;
   /** RegularExpression Id. */
-  int K_VARCHAR = 204;
+  int K_VARCHAR2 = 204;
   /** RegularExpression Id. */
-  int K_VARRAY = 205;
+  int K_VARCHAR = 205;
   /** RegularExpression Id. */
-  int K_VARYING = 206;
+  int K_VARRAY = 206;
   /** RegularExpression Id. */
-  int K_WITH = 207;
+  int K_VARYING = 207;
   /** RegularExpression Id. */
-  int K_WHILE = 208;
+  int K_WITH = 208;
   /** RegularExpression Id. */
-  int K_WNDS = 209;
+  int K_WHILE = 209;
   /** RegularExpression Id. */
-  int K_WNPS = 210;
+  int K_WNDS = 210;
   /** RegularExpression Id. */
-  int K_WORK = 211;
+  int K_WNPS = 211;
   /** RegularExpression Id. */
-  int K_YEAR = 212;
+  int K_WORK = 212;
   /** RegularExpression Id. */
-  int K_YES = 213;
+  int K_YEAR = 213;
   /** RegularExpression Id. */
-  int K_ZONE = 214;
+  int K_YES = 214;
   /** RegularExpression Id. */
-  int O_ASSIGN = 215;
+  int K_ZONE = 215;
   /** RegularExpression Id. */
-  int O_ASTERISK = 216;
+  int O_ASSIGN = 216;
   /** RegularExpression Id. */
-  int O_ATSIGN = 217;
+  int O_ASTERISK = 217;
   /** RegularExpression Id. */
-  int O_CLOSEPAREN = 218;
+  int O_ATSIGN = 218;
   /** RegularExpression Id. */
-  int O_CONCAT = 219;
+  int O_CLOSEPAREN = 219;
   /** RegularExpression Id. */
-  int O_COLON = 220;
+  int O_CONCAT = 220;
   /** RegularExpression Id. */
-  int O_COMMA = 221;
+  int O_COLON = 221;
   /** RegularExpression Id. */
-  int O_DOT = 222;
+  int O_COMMA = 222;
   /** RegularExpression Id. */
-  int O_DOUBLEDOT = 223;
+  int O_DOT = 223;
   /** RegularExpression Id. */
-  int O_DOLLAR = 224;
+  int O_DOUBLEDOT = 224;
   /** RegularExpression Id. */
-  int O_PERCENT = 225;
+  int O_DOLLAR = 225;
   /** RegularExpression Id. */
-  int O_EQUAL = 226;
+  int O_PERCENT = 226;
   /** RegularExpression Id. */
-  int O_GREATER = 227;
+  int O_EQUAL = 227;
   /** RegularExpression Id. */
-  int O_GREATEREQUAL = 228;
+  int O_GREATER = 228;
   /** RegularExpression Id. */
-  int O_JOINPLUS = 229;
+  int O_GREATEREQUAL = 229;
   /** RegularExpression Id. */
-  int O_LESS = 230;
+  int O_JOINPLUS = 230;
   /** RegularExpression Id. */
-  int O_LESSEQUAL = 231;
+  int O_LESS = 231;
   /** RegularExpression Id. */
-  int O_MINUS = 232;
+  int O_LESSEQUAL = 232;
   /** RegularExpression Id. */
-  int O_NOTEQUAL2 = 233;
+  int O_MINUS = 233;
   /** RegularExpression Id. */
-  int O_NOTEQUAL = 234;
+  int O_NOTEQUAL2 = 234;
   /** RegularExpression Id. */
-  int O_OPENPAREN = 235;
+  int O_NOTEQUAL = 235;
   /** RegularExpression Id. */
-  int O_PLUS = 236;
+  int O_OPENPAREN = 236;
   /** RegularExpression Id. */
-  int O_POUND = 237;
+  int O_PLUS = 237;
   /** RegularExpression Id. */
-  int O_QUESTIONMARK = 238;
+  int O_POUND = 238;
   /** RegularExpression Id. */
-  int O_SEMICOLON = 239;
+  int O_QUESTIONMARK = 239;
   /** RegularExpression Id. */
-  int O_SLASH = 240;
+  int O_SEMICOLON = 240;
   /** RegularExpression Id. */
-  int O_TILDE = 241;
+  int O_SLASH = 241;
   /** RegularExpression Id. */
-  int S_NUMBER = 242;
+  int O_TILDE = 242;
   /** RegularExpression Id. */
-  int FLOAT = 243;
+  int S_NUMBER = 243;
   /** RegularExpression Id. */
-  int INTEGER = 244;
+  int FLOAT = 244;
   /** RegularExpression Id. */
-  int DIGIT = 245;
+  int INTEGER = 245;
   /** RegularExpression Id. */
-  int S_IDENTIFIER = 246;
+  int DIGIT = 246;
   /** RegularExpression Id. */
-  int LETTER = 247;
+  int S_IDENTIFIER = 247;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 248;
+  int LETTER = 248;
   /** RegularExpression Id. */
-  int S_BIND = 249;
+  int SPECIAL_CHARS = 249;
   /** RegularExpression Id. */
-  int S_CHAR_LITERAL = 250;
+  int S_BIND = 250;
   /** RegularExpression Id. */
-  int S_QUOTED_IDENTIFIER = 251;
+  int S_CHAR_LITERAL = 251;
+  /** RegularExpression Id. */
+  int S_QUOTED_IDENTIFIER = 252;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -699,6 +701,7 @@ public interface DDLParserConstants {
     "\"SET\"",
     "\"SETS\"",
     "\"SIBLINGS\"",
+    "\"SIGNTYPE\"",
     "\"SINGLE\"",
     "\"SIMPLE_INTEGER\"",
     "\"SMALLINT\"",

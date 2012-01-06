@@ -93,6 +93,7 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.PLS_INTEGER_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.POSITIVE_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.ROWID_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIGN_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_INTEGER_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SYS_REFCURSOR_TYPE;
@@ -306,6 +307,7 @@ TOKEN [IGNORE_CASE]: {
         | <K_SET: "SET">
         | <K_SETS: "SETS">
         | <K_SIBLINGS: "SIBLINGS">
+        | <K_SIGNTYPE: "SIGNTYPE">
         | <K_SINGLE: "SINGLE">
         | <K_SIMPLE_INTEGER: "SIMPLE_INTEGER">
         | <K_SMALLINT: "SMALLINT">
@@ -683,6 +685,7 @@ DatabaseType datatype():
     | <K_BINARY_DOUBLE> { return BINARY_DOUBLE_TYPE;}
     | <K_NATURAL>       { return NATURAL_TYPE;}
     | <K_POSITIVE>      { return POSITIVE_TYPE;}
+    | <K_SIGNTYPE>      { return SIGN_TYPE;}
     | ( t=<K_NUMBER>
         | t=<K_NUMERIC>
         | t=<K_DECIMAL>
