@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>oracleddlparser</name>
+	<name>org.eclipse.persistence.oracleddlparser</name>
 	<comment>JavaCC Nature</comment>
 	<projects>
 	</projects>

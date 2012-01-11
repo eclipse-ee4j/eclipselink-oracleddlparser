@@ -15,6 +15,6 @@ Implementation-Vendor: Eclipse.org - EclipseLink Project
 Bundle-Vendor: Eclipse.org - EclipseLink Project
 Bundle-Version: 1.0.0.qualifier
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: org.eclipse.persistence.tools.oracleddl
+Bundle-SymbolicName: org.eclipse.persistence.oracleddlparser
 Specification-Version: 1.0.0
 
