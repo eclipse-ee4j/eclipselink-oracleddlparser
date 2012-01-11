@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
     <name>EclipseLink Oracle DDL Aggregator</name>
     <groupId>org.eclipse.persistence</groupId>
-    <artifactId>oracleddlAggregator</artifactId>
+    <artifactId>oracleddl.aggregator</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <url>http://www.eclipse.org/eclipselink/</url>
@@ -17,8 +17,10 @@
 
     <modules>
         <module>oracleddlparser</module>
-        <module>oracleddlFeature</module>
-        <module>oracleddlUpdateSite</module>
+        <module>oracleddl.feature</module>
+        <module>oracleddl.source.feature</module>
+        <module>oracleddl.repository</module>
+        <module>oracleddl.parent</module>
     </modules>
 
     <build>

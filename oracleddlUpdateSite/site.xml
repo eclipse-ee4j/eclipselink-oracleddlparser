@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/oracleddlFeature_1.0.0.qualifier.jar" id="oracleddlFeature" version="1.0.0.qualifier">
-      <category name="oracleDDL_parser"/>
-   </feature>
-   <category-def name="oracleDDL_parser" label="Oracle DDL Parser"/>
-</site>
