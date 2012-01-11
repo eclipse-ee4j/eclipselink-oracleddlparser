@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
+    <artifactId>oracleddlFeature</artifactId>
+    <packaging>eclipse-feature</packaging>
 
-    <name>EclipseLink Oracle DDL Parser</name>
-    <artifactId>org.eclipse.persistence.oracleddlparser</artifactId>
-    <packaging>eclipse-plugin</packaging>
-       
     <parent>
         <groupId>org.eclipse.persistence</groupId>
         <artifactId>oracleddlParent</artifactId>
@@ -13,20 +12,4 @@
         <relativePath>../oracleddlParent</relativePath>
     </parent>
 
-    <!-- properties>
-        Moved to Parent...
-    </properties>
-    
-    <organization>
-        Moved to Parent...
-    </organization>
-    
-    <pluginRepositories>
-        Moved to Parent...
-    </pluginRepositories>
-    
-    <build>
-        Moved to Parent...
-    </build -->
-    
 </project>
