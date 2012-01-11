@@ -12,21 +12,5 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../oracleddlParent</relativePath>
     </parent>
-
-    <!-- properties>
-        Moved to Parent...
-    </properties>
-    
-    <organization>
-        Moved to Parent...
-    </organization>
-    
-    <pluginRepositories>
-        Moved to Parent...
-    </pluginRepositories>
-    
-    <build>
-        Moved to Parent...
-    </build -->
     
 </project>
