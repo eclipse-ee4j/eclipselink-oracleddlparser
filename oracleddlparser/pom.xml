@@ -12,6 +12,7 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../oracleddlParent</relativePath>
     </parent>
+<<<<<<< HEAD
 
     <!-- properties>
         Moved to Parent...
@@ -28,5 +29,7 @@
     <build>
         Moved to Parent...
     </build -->
+=======
+>>>>>>> b371e5c381cd001df10ed84585a9447e5356a01d
     
 </project>

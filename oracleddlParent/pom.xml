@@ -3,7 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
+<<<<<<< HEAD
     <name>Oracle DDL Parser Parent</name>
+=======
+    <name>EclipseLink Oracle DDL Parent</name>
+>>>>>>> b371e5c381cd001df10ed84585a9447e5356a01d
     <groupId>org.eclipse.persistence</groupId>
     <artifactId>oracleddlParent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -28,11 +32,20 @@
     	<src>./src/main/java,./src/test/java</src>
     </properties>
 
+<<<<<<< HEAD
     <modules>
         <module>../oracleddlparser</module>
         <module>../oracleddlFeature</module>
         <module>../oracleddlUpdateSite</module>
     </modules>
+=======
+    <!-- modules>
+    Moved to Aggregator
+        <module>../oracleddlparser</module>
+        <module>../oracleddlFeature</module>
+        <module>../oracleddlUpdateSite</module>
+    </modules -->
+>>>>>>> b371e5c381cd001df10ed84585a9447e5356a01d
 
     <organization>
         <name>Eclipse.org - EclipseLink Project</name>
@@ -40,7 +53,11 @@
     </organization>
     
     <build>
+<<<<<<< HEAD
         <defaultGoal>install</defaultGoal>
+=======
+        <defaultGoal>verify</defaultGoal>
+>>>>>>> b371e5c381cd001df10ed84585a9447e5356a01d
         <plugins>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>

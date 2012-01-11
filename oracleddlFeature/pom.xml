@@ -2,6 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
+<<<<<<< HEAD
+=======
+    <name>EclipseLink Oracle DDL Feature</name>
+>>>>>>> b371e5c381cd001df10ed84585a9447e5356a01d
     <artifactId>oracleddlFeature</artifactId>
     <packaging>eclipse-feature</packaging>
 
