@@ -75,6 +75,7 @@
       dir="${dbws.plugins.dir}"
       includes="${dbws.plugins}, org.eclipse.persistence.dbws.builder_${version.string}.jar"
     />
+
     <pathelement path="../../eclipselink.jar"/-->
   </path>
 
