@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class ClobType extends SizedType implements DatabaseTypeVisitable {
 
-    static final String TYPENAME = "CLOB";
+    public static final String TYPENAME = "CLOB";
 	static final long DEFAULT_SIZE = 0l;
 	
     public ClobType() {

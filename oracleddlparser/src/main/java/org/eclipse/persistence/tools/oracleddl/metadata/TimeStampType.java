@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class TimeStampType extends SizedType implements DatabaseTypeVisitable {
 
-	static final String TYPENAME = "TIMESTAMP";
+	public static final String TYPENAME = "TIMESTAMP";
 	static final long DEFAULT_SIZE = 6l;
 
 	protected boolean withTimeZone = false;

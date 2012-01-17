@@ -16,7 +16,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class NClobType extends ClobType {
 
-    static final String TYPENAME = "NCLOB";
+    public static final String TYPENAME = "NCLOB";
 
     public NClobType() {
         super(TYPENAME, DEFAULT_SIZE);

@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class CharType extends SizedType implements DatabaseTypeVisitable {
 
-	static final String TYPENAME = "CHAR";
+	public static final String TYPENAME = "CHAR";
 	static final long DEFAULT_SIZE = 1l;
 	
     public CharType() {

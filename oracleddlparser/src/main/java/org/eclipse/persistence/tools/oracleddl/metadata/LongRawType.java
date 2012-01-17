@@ -16,7 +16,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class LongRawType extends BlobType {
     
-    static final String TYPENAME = "LONG RAW";
+    public static final String TYPENAME = "LONG RAW";
 
     public LongRawType() {
         super(TYPENAME, BlobType.DEFAULT_SIZE);

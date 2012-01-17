@@ -16,8 +16,8 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class VarChar2Type extends VarCharType {
 
-	static final String TYPENAME = "VARCHAR2";
-	
+	public static final String TYPENAME = "VARCHAR2";
+
     public VarChar2Type() {
         super(VarCharType.DEFAULT_SIZE);
         this.typeName = TYPENAME;
@@ -30,7 +30,7 @@ public class VarChar2Type extends VarCharType {
         super(size);
         this.typeName = typeName;
 	}
-	
+
 	@Override
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);

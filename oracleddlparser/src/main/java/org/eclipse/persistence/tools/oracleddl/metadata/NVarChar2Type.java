@@ -16,7 +16,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class NVarChar2Type extends VarChar2Type {
 
-	static final String TYPENAME = "NVARCHAR2";
+	public static final String TYPENAME = "NVARCHAR2";
 	
     public NVarChar2Type() {
         super(VarCharType.DEFAULT_SIZE);

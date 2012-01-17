@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class URowIdType extends SizedType implements DatabaseTypeVisitable {
 	
-    static final String TYPENAME = "UROWID";
+    public static final String TYPENAME = "UROWID";
 	static long DEFAULT_SIZE = 4000l;
 
     public URowIdType() {

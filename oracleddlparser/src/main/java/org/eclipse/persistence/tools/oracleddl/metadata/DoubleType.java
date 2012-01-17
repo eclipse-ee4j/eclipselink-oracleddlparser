@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class DoubleType extends PrecisionType implements DatabaseTypeVisitable {
 
-	static final String TYPENAME = "DOUBLE";
+	public static final String TYPENAME = "DOUBLE";
 	static final long DEFAULT_PRECISON = 38l;
 
     public DoubleType() {

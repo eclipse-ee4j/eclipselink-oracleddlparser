@@ -16,7 +16,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class LongType extends VarChar2Type {
 
-    static final String TYPENAME = "LONG";
+    public static final String TYPENAME = "LONG";
 
     public LongType() {
         super(TYPENAME, VarCharType.DEFAULT_SIZE);

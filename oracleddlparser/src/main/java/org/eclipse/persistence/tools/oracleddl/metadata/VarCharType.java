@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class VarCharType extends SizedType implements DatabaseTypeVisitable {
 
-    static final String TYPENAME = "VARCHAR";
+    public static final String TYPENAME = "VARCHAR";
 	static long DEFAULT_SIZE = 1l;
 
     public VarCharType() {

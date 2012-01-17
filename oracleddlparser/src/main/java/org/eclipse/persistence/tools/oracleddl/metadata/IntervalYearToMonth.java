@@ -17,8 +17,8 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class IntervalYearToMonth extends ScalarDatabaseTypeBase implements ScalarDatabaseType, DatabaseTypeVisitable {
 
-	static final String TYPENAME_YEARPART = "INTERVAL YEAR";
-	static final String TYPENAME_MONTHPART = "TO MONTH";
+	public static final String TYPENAME_YEARPART = "INTERVAL YEAR";
+	public static final String TYPENAME_MONTHPART = "TO MONTH";
 	static final long DEFAULT_YEAR_PRECISION = 2L;
 	
 	protected long yearPrecision;

@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class BinaryType extends SizedType implements DatabaseTypeVisitable {
 
-	static final String TYPENAME = "BINARY";
+	public static final String TYPENAME = "BINARY";
 	static final long DEFAULT_SIZE = 0l;
 	
     public BinaryType() {

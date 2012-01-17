@@ -16,7 +16,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class RawType extends BlobType {
 
-    static final String TYPENAME = "RAW";
+    public static final String TYPENAME = "RAW";
 
     public RawType() {
         super(TYPENAME, BlobType.DEFAULT_SIZE);

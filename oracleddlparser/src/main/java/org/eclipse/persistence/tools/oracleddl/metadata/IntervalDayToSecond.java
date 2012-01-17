@@ -17,8 +17,8 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class IntervalDayToSecond extends ScalarDatabaseTypeBase implements ScalarDatabaseType, DatabaseTypeVisitable {
 
-	static final String TYPENAME_DAYPART = "INTERVAL DAY";
-	static final String TYPENAME_SECONDPART = "TO SECOND";
+	public static final String TYPENAME_DAYPART = "INTERVAL DAY";
+	public static final String TYPENAME_SECONDPART = "TO SECOND";
 	static final long DEFAULT_DAY_PRECISION = 2L;
 	static final long DEFAULT_SECOND_PRECISION = 6L;
 	
