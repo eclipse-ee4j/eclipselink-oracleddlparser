@@ -72,6 +72,8 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.ROWID_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIGN_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_DOUBLE_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_FLOAT_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SYS_REFCURSOR_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIME_TYPE;
@@ -691,6 +693,8 @@ DatabaseType enclosedType = null;
     case K_ROWID:
     case K_SIGNTYPE:
     case K_SIMPLE_INTEGER:
+    case K_SIMPLE_DOUBLE:
+    case K_SIMPLE_FLOAT:
     case K_SMALLINT:
     case K_SYS_REFCURSOR:
     case K_TIME:
@@ -956,6 +960,10 @@ String s = null;
                         dt = new NumericType(pl, sl);
                         }
                     }
+                //sometimes need to know difference between NUMERIC and NUMBER
+                if (dt != INTEGER_TYPE && t.kind == K_NUMBER) {
+                    ((NumericType)dt).setNumberSynonym(true);
+                }
             }
             else  if (t.kind == K_DECIMAL || t.kind == K_DEC) {
                 if (precision != null && precision.image.equals("*")) {
@@ -1199,6 +1207,14 @@ String s = null;
         case K_SIMPLE_INTEGER:
           jj_consume_token(K_SIMPLE_INTEGER);
                            {if (true) return SIMPLE_INTEGER_TYPE;}
+          break;
+        case K_SIMPLE_FLOAT:
+          jj_consume_token(K_SIMPLE_FLOAT);
+                         {if (true) return SIMPLE_FLOAT_TYPE;}
+          break;
+        case K_SIMPLE_DOUBLE:
+          jj_consume_token(K_SIMPLE_DOUBLE);
+                          {if (true) return SIMPLE_DOUBLE_TYPE;}
           break;
         case K_SYS_REFCURSOR:
           jj_consume_token(K_SYS_REFCURSOR);
@@ -1710,6 +1726,8 @@ String s = null;
     case K_ROWID:
     case K_SIGNTYPE:
     case K_SIMPLE_INTEGER:
+    case K_SIMPLE_DOUBLE:
+    case K_SIMPLE_FLOAT:
     case K_SMALLINT:
     case K_SYS_REFCURSOR:
     case K_TIME:
@@ -1911,7 +1929,7 @@ String s = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_DEFAULT:
     case O_ASSIGN:
-      variableDefaultAssignment();
+      fieldDefaultAssignment();
       break;
     default:
       ;
@@ -1922,6 +1940,21 @@ String s = null;
       if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(plsqlRecordType);
       }
+  }
+
+  final public void fieldDefaultAssignment() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case O_ASSIGN:
+      jj_consume_token(O_ASSIGN);
+      break;
+    case K_DEFAULT:
+      jj_consume_token(K_DEFAULT);
+      break;
+    default:
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    skipToNextArg();
   }
 
   final public void subtypeDeclaration(PLSQLPackageType packageType) throws ParseException {
@@ -2620,23 +2653,7 @@ String s = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3_13() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_29() {
-    if (jj_scan_token(K_LONG)) return true;
-    return false;
-  }
-
-  private boolean jj_3_20() {
-    if (jj_scan_token(K_IN)) return true;
-    if (jj_scan_token(K_OUT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_55() {
+  private boolean jj_3R_57() {
     if (jj_scan_token(K_NCHAR)) return true;
     return false;
   }
@@ -2646,7 +2663,7 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_54() {
+  private boolean jj_3R_56() {
     if (jj_scan_token(K_CHARACTER)) return true;
     return false;
   }
@@ -2662,20 +2679,25 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3R_55() {
+    if (jj_scan_token(K_VARCHAR2)) return true;
+    return false;
+  }
+
   private boolean jj_3_5() {
     if (jj_3R_6()) return true;
     if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
-  private boolean jj_3R_53() {
-    if (jj_scan_token(K_VARCHAR2)) return true;
-    return false;
-  }
-
   private boolean jj_3_12() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_54() {
+    if (jj_scan_token(K_VARCHAR)) return true;
     return false;
   }
 
@@ -2710,11 +2732,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_52() {
-    if (jj_scan_token(K_VARCHAR)) return true;
-    return false;
-  }
-
   private boolean jj_3R_24() {
     if (jj_scan_token(K_BINARY_DOUBLE)) return true;
     return false;
@@ -2722,6 +2739,12 @@ String s = null;
 
   private boolean jj_3R_23() {
     if (jj_scan_token(K_BINARY_FLOAT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -2804,7 +2827,13 @@ String s = null;
     jj_scanpos = xsp;
     if (jj_3R_58()) {
     jj_scanpos = xsp;
-    if (jj_3R_59()) return true;
+    if (jj_3R_59()) {
+    jj_scanpos = xsp;
+    if (jj_3R_60()) {
+    jj_scanpos = xsp;
+    if (jj_3R_61()) return true;
+    }
+    }
     }
     }
     }
@@ -2851,9 +2880,9 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_18() {
-    if (jj_scan_token(O_DOT)) return true;
-    if (jj_3R_6()) return true;
+  private boolean jj_3_10() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
@@ -2863,13 +2892,7 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_10() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_51() {
+  private boolean jj_3R_53() {
     if (jj_scan_token(K_CHAR)) return true;
     return false;
   }
@@ -2880,8 +2903,16 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_50() {
+  private boolean jj_3R_52() {
     if (jj_scan_token(K_DOUBLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    if (jj_3R_6()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2894,20 +2925,12 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_11() {
-    if (jj_3R_6()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_49() {
+  private boolean jj_3R_51() {
     if (jj_scan_token(K_UROWID)) return true;
     return false;
   }
 
-  private boolean jj_3R_48() {
+  private boolean jj_3R_50() {
     if (jj_scan_token(K_ROWID)) return true;
     return false;
   }
@@ -2917,28 +2940,33 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_47() {
+  private boolean jj_3R_49() {
     if (jj_scan_token(K_BFILE)) return true;
     return false;
   }
 
-  private boolean jj_3R_46() {
+  private boolean jj_3R_48() {
     if (jj_scan_token(K_NCLOB)) return true;
     return false;
   }
 
-  private boolean jj_3R_45() {
+  private boolean jj_3R_47() {
     if (jj_scan_token(K_BLOB)) return true;
     return false;
   }
 
-  private boolean jj_3_8() {
-    if (jj_3R_9()) return true;
+  private boolean jj_3R_46() {
+    if (jj_scan_token(K_SYS_REFCURSOR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_45() {
+    if (jj_scan_token(K_SIMPLE_DOUBLE)) return true;
     return false;
   }
 
   private boolean jj_3R_44() {
-    if (jj_scan_token(K_SYS_REFCURSOR)) return true;
+    if (jj_scan_token(K_SIMPLE_FLOAT)) return true;
     return false;
   }
 
@@ -2957,14 +2985,21 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3_8() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
   private boolean jj_3R_40() {
     if (jj_scan_token(K_REAL)) return true;
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
+  private boolean jj_3_18() {
+    if (jj_3R_10()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(199)) jj_scanpos = xsp;
     return false;
   }
 
@@ -2976,11 +3011,17 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_18() {
-    if (jj_3R_10()) return true;
+  private boolean jj_3_3() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_19() {
+    if (jj_3R_11()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(197)) jj_scanpos = xsp;
+    if (jj_scan_token(169)) jj_scanpos = xsp;
     return false;
   }
 
@@ -3004,20 +3045,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_19() {
-    if (jj_3R_11()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(169)) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3_16() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
@@ -3029,13 +3056,19 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_35() {
-    if (jj_scan_token(K_TIMESTAMP)) return true;
+  private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
   private boolean jj_3R_20() {
     if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_35() {
+    if (jj_scan_token(K_TIMESTAMP)) return true;
     return false;
   }
 
@@ -3054,7 +3087,7 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_59() {
+  private boolean jj_3R_61() {
     if (jj_scan_token(K_CLOB)) return true;
     return false;
   }
@@ -3095,27 +3128,6 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3_17() {
-    if (jj_scan_token(K_INTERVAL)) return true;
-    if (jj_scan_token(K_DAY)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_58() {
-    if (jj_scan_token(K_NATIONAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_32() {
-    if (jj_scan_token(K_DATE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_31() {
-    if (jj_scan_token(K_BOOLEAN)) return true;
-    return false;
-  }
-
   private boolean jj_3R_13() {
     if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
     return false;
@@ -3136,6 +3148,32 @@ String s = null;
     return false;
   }
 
+  private boolean jj_3R_60() {
+    if (jj_scan_token(K_NATIONAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3_17() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    if (jj_scan_token(K_DAY)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_32() {
+    if (jj_scan_token(K_DATE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_scan_token(K_BOOLEAN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_59() {
+    if (jj_scan_token(K_NVARCHAR2)) return true;
+    return false;
+  }
+
   private boolean jj_3_7() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3147,13 +3185,13 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_57() {
-    if (jj_scan_token(K_NVARCHAR2)) return true;
+  private boolean jj_3R_30() {
+    if (jj_scan_token(K_RAW)) return true;
     return false;
   }
 
-  private boolean jj_3R_30() {
-    if (jj_scan_token(K_RAW)) return true;
+  private boolean jj_3R_58() {
+    if (jj_scan_token(K_NVARCHAR)) return true;
     return false;
   }
 
@@ -3163,8 +3201,19 @@ String s = null;
     return false;
   }
 
-  private boolean jj_3R_56() {
-    if (jj_scan_token(K_NVARCHAR)) return true;
+  private boolean jj_3_13() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_20() {
+    if (jj_scan_token(K_IN)) return true;
+    if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_29() {
+    if (jj_scan_token(K_LONG)) return true;
     return false;
   }
 

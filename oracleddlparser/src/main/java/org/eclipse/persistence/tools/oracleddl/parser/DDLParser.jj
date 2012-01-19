@@ -96,6 +96,8 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.ROWID_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIGN_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_DOUBLE_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_FLOAT_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SYS_REFCURSOR_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIME_TYPE;
@@ -314,6 +316,8 @@ TOKEN [IGNORE_CASE]: {
         | <K_SIGNTYPE: "SIGNTYPE">
         | <K_SINGLE: "SINGLE">
         | <K_SIMPLE_INTEGER: "SIMPLE_INTEGER">
+        | <K_SIMPLE_DOUBLE: "SIMPLE_DOUBLE">
+        | <K_SIMPLE_FLOAT: "SIMPLE_FLOAT">
         | <K_SMALLINT: "SMALLINT">
         | <K_SOME: "SOME">
         | <K_STRING: "STRING">
@@ -714,6 +718,10 @@ DatabaseType datatype():
                         dt = new NumericType(pl, sl);
 	                }
 	            }
+                //sometimes need to know difference between NUMERIC and NUMBER
+                if (dt != INTEGER_TYPE && t.kind == K_NUMBER) {
+                    ((NumericType)dt).setNumberSynonym(true);
+                }
             }
             else  if (t.kind == K_DECIMAL || t.kind == K_DEC) {
                 if (precision != null && precision.image.equals("*")) {
@@ -823,6 +831,8 @@ DatabaseType datatype():
     | <K_MLSLABEL> { return MLSLABEL_TYPE;}
     | <K_PLS_INTEGER> { return PLS_INTEGER_TYPE;}
     | <K_SIMPLE_INTEGER> { return SIMPLE_INTEGER_TYPE;}
+    | <K_SIMPLE_FLOAT> { return SIMPLE_FLOAT_TYPE;}
+    | <K_SIMPLE_DOUBLE> { return SIMPLE_DOUBLE_TYPE;}
     | <K_SYS_REFCURSOR>  { return SYS_REFCURSOR_TYPE;}
     | <K_BLOB > { return new BlobType();}
     | <K_NCLOB> { return new NClobType();}
@@ -1072,7 +1082,7 @@ void fieldDeclaration(PLSQLRecordType plsqlRecordType):
   FieldType fieldType = null;
 }
 {
-    s=typeName() dataType=typeSpec() [ <K_NOT> <K_NULL> ] [ variableDefaultAssignment() ]
+    s=typeName() dataType=typeSpec() [ <K_NOT> <K_NULL> ] [ fieldDefaultAssignment() ]
     {
       fieldType = new FieldType(s);
       fieldType.setDataType(dataType);
@@ -1080,6 +1090,12 @@ void fieldDeclaration(PLSQLRecordType plsqlRecordType):
       if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(plsqlRecordType);
       }    }
+}
+
+void fieldDefaultAssignment()      :
+{}
+{
+    ( <O_ASSIGN> | <K_DEFAULT> ) skipToNextArg()
 }
 
 void subtypeDeclaration(PLSQLPackageType packageType)      :

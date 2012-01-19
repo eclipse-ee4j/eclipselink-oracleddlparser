@@ -20,14 +20,15 @@ public class NumericType extends PrecisionType implements DatabaseTypeVisitable 
 	public static final String TYPENAME = "NUMERIC";
 	static final long DEFAULT_PRECISON = 38l;
 
+	protected boolean numberSynonym = false;
     public NumericType() {
         super(TYPENAME, DEFAULT_PRECISON);
     }
-    
+
     public NumericType(long precision) {
         super(TYPENAME, precision);
     }
-    
+
     public NumericType(long precision, long scale) {
         super(TYPENAME, precision, scale);
     }
@@ -36,8 +37,15 @@ public class NumericType extends PrecisionType implements DatabaseTypeVisitable 
 	public long getDefaultPrecision() {
 		return DEFAULT_PRECISON;
 	}
-	
-	public void accept(DatabaseTypeVisitor visitor) {
+
+    public boolean isNumberSynonym() {
+        return numberSynonym;
+    }
+    public void setNumberSynonym(boolean numberSynonym) {
+        this.numberSynonym = numberSynonym;
+    }
+
+    public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 }

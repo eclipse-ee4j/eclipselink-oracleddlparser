@@ -18,27 +18,29 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVisitable {
 
     BFILE_TYPE("BFILE"),
-    BIGINT_TYPE("BIGINT"),
+    BIGINT_TYPE("BIGINT"), //not a native Oracle datatype (only used for JDBC conversion)
     BINARY_DOUBLE_TYPE("BINARY_DOUBLE"),
     BINARY_FLOAT_TYPE("BINARY_FLOAT"),
     BINARY_INTEGER_TYPE("BINARY_INTEGER"),
-    BIT_TYPE("BIT"),
+    BIT_TYPE("BIT"), //not a native Oracle datatype (only used for JDBC conversion)
     BOOLEAN_TYPE("BOOLEAN"),
     DATALINK_TYPE("DATALINK"),
     DATE_TYPE("DATE"),
     INTEGER_TYPE("INTEGER"),
-    LONGVARBINARY_TYPE("LONGVARBINARY"),
-    LONGVARCHAR_TYPE("LONGVARCHAR"),
+    LONGVARBINARY_TYPE("LONGVARBINARY"), //not a native Oracle datatype (only used for JDBC conversion)
+    LONGVARCHAR_TYPE("LONGVARCHAR"), //not a native Oracle datatype (only used for JDBC conversion)
     MLSLABEL_TYPE("MLSLABEL"),
     NATURAL_TYPE("NATURAL"),
     PLS_INTEGER_TYPE("PLS_INTEGER"),
     POSITIVE_TYPE("POSITIVE"),
     ROWID_TYPE("ROWID"),
     SIGN_TYPE("SIGNTYPE"),
-    SIMPLE_INTEGER_TYPE("SIMPLE INTEGER"),
+    SIMPLE_INTEGER_TYPE("SIMPLE_INTEGER"),
+    SIMPLE_DOUBLE_TYPE("SIMPLE_DOUBLE"),
+    SIMPLE_FLOAT_TYPE("SIMPLE_FLOAT"),
     SYS_REFCURSOR_TYPE("SYS_REFCURSOR"),
     SMALLINT_TYPE("SMALLINT"),
-    TIME_TYPE("TIME"),
+    TIME_TYPE("TIME"), //not a native Oracle datatype (only used for JDBC conversion)
     NULL_TYPE("NULL"),
     ;
 
