@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.junit.launchconfig">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/oracleddlparser.test/src/org/eclipse/persistence/tools/oracleddl/test/AllTests.java"/>
+<listEntry value="/org.eclipse.persistence.oracleddlparser/src/test/java/org/eclipse/persistence/tools/oracleddl/test/AllTests.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
