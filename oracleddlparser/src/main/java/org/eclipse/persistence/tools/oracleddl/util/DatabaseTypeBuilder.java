@@ -672,7 +672,21 @@ public class DatabaseTypeBuilder {
                         }
                     }
                     if (resolvedType != null) {
-                        uType.getOwningType().addCompositeType(resolvedType);
+                        CompositeDatabaseType owningType = uType.getOwningType();
+                        if (owningType instanceof PLSQLRecordType && !(resolvedType instanceof FieldType)) {
+                            PLSQLRecordType recordType = (PLSQLRecordType)owningType;
+                            //special fixing-up for unresolved types in records
+                            for (FieldType field : recordType.getFields()) {
+                                if (!field.isResolved()) {
+                                    if (field.getDataType().getTypeName().equals(resolvedType.getTypeName())) {
+                                        field.setDataType(resolvedType);
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            owningType.addCompositeType(resolvedType);
+                        }
                         typesRepository.setDatabaseType(objectTypeName, resolvedType);
                         //always a chance that resolvedType refers to something that is un-resolved
                         if (!resolvedType.isResolved()) {

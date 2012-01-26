@@ -31,7 +31,9 @@ public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable 
 
 	@Override
 	public void addCompositeType(DatabaseType enclosedType) {
-	    fields.add((FieldType)enclosedType);
+	    if (enclosedType instanceof FieldType) {
+	        fields.add((FieldType)enclosedType);
+	    }
 	}
 
     /**
