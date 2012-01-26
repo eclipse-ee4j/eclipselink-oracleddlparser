@@ -158,6 +158,11 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
                 plsqlType.accept(this);
             }
         }
+        if (databaseType.getCursors() != null) {
+            for (PLSQLCursorType cursorType : databaseType.getCursors()) {
+                cursorType.accept(this);
+            }
+        }
         if (databaseType.getProcedures() != null) {
             for (ProcedureType procType : databaseType.getProcedures()) {
                 procType.accept(this);

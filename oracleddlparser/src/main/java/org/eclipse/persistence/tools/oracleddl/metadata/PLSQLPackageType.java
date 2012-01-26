@@ -75,6 +75,13 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
 		return procedures;
 	}
 
+    public void addCursor(PLSQLCursorType cursorType) {
+        if (getCursors() == null) {
+            cursors = new ArrayList<PLSQLCursorType>();
+        }
+        cursors.add(cursorType);
+    }
+
 	public void addProcedure(ProcedureType procedureType) {
         if (getProcedures() == null) {
             procedures = new ArrayList<ProcedureType>();

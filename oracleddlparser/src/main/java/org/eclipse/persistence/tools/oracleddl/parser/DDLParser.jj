@@ -67,6 +67,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.NVarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
@@ -1052,7 +1053,7 @@ void aTypeDeclaration(PLSQLPackageType packageType, String typeName)      :
     | subtypeDeclaration(packageType)
     | plsqlTableDeclaration(packageType, typeName)
     | varrayDeclaration(packageType)
-    | refCursorDeclaration(packageType)
+    | refCursorDeclaration(packageType, typeName)
 }
 
 void recordDeclaration(PLSQLPackageType packageType, String typeName)      :
@@ -1175,17 +1176,25 @@ void varrayDeclaration(PLSQLPackageType packageType)      :
         <K_OF> datatype() [ <K_NOT> <K_NULL> ]
 }
 
-void refCursorDeclaration(PLSQLPackageType packageType)      :
-{String s = null;}
+void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName)      :
+{PLSQLCursorType cursorType = null;}
 {
-    <K_REF> <K_CURSOR> [ refCursorTypeSpec(packageType) ]
+    <K_REF> <K_CURSOR>
+      {
+        cursorType = new PLSQLCursorType(cursorTypeName);
+        packageType.addCursor(cursorType);
+        localTypes.put(cursorTypeName, cursorType);
+      }
+      [ refCursorTypeSpec(cursorType) ]
 }
 
-void refCursorTypeSpec(PLSQLPackageType packageType)      :
+void refCursorTypeSpec(PLSQLCursorType cursorType)      :
 {String s = null;}
 {
     <K_RETURN> [LOOKAHEAD(3) s=columnSpec() [ <K_TYPE2> ]
     | LOOKAHEAD(3) s=tableSpec() [ <K_ROWTYPE> ] ]
+    {
+      //TODO - figure out cursor's embedded type    }
 }
 
 void cursorDeclaration(PLSQLPackageType packageType)      :

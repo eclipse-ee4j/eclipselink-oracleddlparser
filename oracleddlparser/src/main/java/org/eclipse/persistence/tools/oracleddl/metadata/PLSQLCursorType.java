@@ -17,6 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
+    static final String REF_CURSOR = "REF CURSOR";
     protected String cursorName;
     protected DatabaseType dataType;
 
@@ -39,12 +40,12 @@ public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisit
 		setDataType(enclosedType);
 	}
 
-	public boolean isWeaklyTypes() {
+	public boolean isWeaklyTyped() {
 		return dataType == null;
 	}
 
 	public boolean isResolved() {
-        // if the dataType is unresolved, then this PLSQLCursor is unresolved
+        // if the dataType is unresolved, then this PLSQLCursor is a weakly-typed REF CURSOR
 		if (dataType == null) {
 			return false;
 		}
@@ -61,7 +62,7 @@ public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisit
 
     public String getTypeName() {
 		if (dataType == null) {
-			return null;
+			return REF_CURSOR + "(" + cursorName + ")";
 		}
 		return dataType.getTypeName();
     }

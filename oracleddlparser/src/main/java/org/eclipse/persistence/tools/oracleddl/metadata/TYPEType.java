@@ -26,6 +26,9 @@ public class TYPEType implements CompositeDatabaseType, DatabaseTypeVisitable {
     }
 
     public String getTypeName() {
+        if (isResolved()) {
+            return enclosedType.getTypeName();
+        }
 		return typeName;
     }
 
