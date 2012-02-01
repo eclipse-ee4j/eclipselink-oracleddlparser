@@ -34,6 +34,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLSubType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
@@ -130,5 +131,9 @@ public interface DatabaseTypeVisitor {
     public void beginVisit(TYPEType databaseType);
     public void visit(TYPEType databaseType);
     public void endVisit(TYPEType databaseType);
+
+    public void beginVisit(PLSQLSubType databaseType);
+    public void visit(PLSQLSubType plsqlSubType);
+    public void endVisit(PLSQLSubType databaseType);
 
 }

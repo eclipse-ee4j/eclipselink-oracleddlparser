@@ -75,4 +75,19 @@ public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisit
         return toString();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(cursorName);
+        sb.append(" IS ");
+        sb.append(REF_CURSOR);
+        if (dataType != null) {
+            sb.append(" RETURN ");
+            sb.append(dataType.getTypeName());
+            if (!dataType.isResolved()) {
+                sb.append("[u]");
+            }
+        }
+        return sb.toString();
+    }
+
 }

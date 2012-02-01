@@ -70,6 +70,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLSubType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
@@ -653,7 +654,7 @@ void packageDeclaration(PLSQLPackageType packageType) #void:
 {}
 {
     LOOKAHEAD(2) variableDeclaration(packageType)
-    | typeDeclaration(packageType)
+    | typeOrSubTypeDeclaration(packageType)
     | cursorDeclaration(packageType)
     | procedureSpec(packageType)
     | functionSpec(packageType)
@@ -662,11 +663,16 @@ void packageDeclaration(PLSQLPackageType packageType) #void:
 }
 
 void variableDeclaration(PLSQLPackageType packageType):
-{}
+{Token varName = null;
+ DatabaseType varType;}
 {
-    <S_IDENTIFIER> [ <K_CONSTANT> ] typeSpec() [ <K_NOT> <K_NULL> ]
+    varName=<S_IDENTIFIER> [ <K_CONSTANT> ] varType=typeSpec() [ <K_NOT> <K_NULL> ]
         [ variableDefaultAssignment() ]
-    <O_SEMICOLON>}
+    <O_SEMICOLON>
+    {
+        FieldType variable = new FieldType(varName.image);
+        variable.setDataType(varType);
+        packageType.addLocalVariable(variable);    }}
 
 void variableDefaultAssignment() #void:
 {}
@@ -1034,19 +1040,23 @@ String typeName() #void:
     {return token.image;}
 }
 
+void typeOrSubTypeDeclaration(PLSQLPackageType packageType) #void:
+{String s = null;}
+{
+      typeDeclaration(packageType)
+    | subtypeDeclaration(packageType)
+}
+
 void typeDeclaration(PLSQLPackageType packageType) #void:
 {String s = null;}
 {
-    <K_TYPE> s=typeName() <K_IS>
-        aTypeDeclaration(packageType, s)
-    <O_SEMICOLON>
+    <K_TYPE> s=typeName() <K_IS> aTypeDeclaration(packageType, s) <O_SEMICOLON>
 }
 
 void aTypeDeclaration(PLSQLPackageType packageType, String typeName) #void:
 {}
 {
     recordDeclaration(packageType, typeName)
-    | subtypeDeclaration(packageType)
     | plsqlTableDeclaration(packageType, typeName)
     | varrayDeclaration(packageType)
     | refCursorDeclaration(packageType, typeName)
@@ -1096,14 +1106,29 @@ void fieldDefaultAssignment() #void:
 }
 
 void subtypeDeclaration(PLSQLPackageType packageType) #void:
-{}
+{String subtypeName;
+DatabaseType subtype;
+Token notNull = null;
+Token rangeStart = null;
+Token rangeEnd = null;}
 {
-    <K_SUBTYPE> OracleObjectName() <K_IS> datatype()
-        ( <K_RANGE> <S_NUMBER> <O_DOUBLEDOT> <S_NUMBER>
-        | <S_NUMBER> [ <O_COMMA> <S_NUMBER> ]
-        | <K_CHARACTER> <K_SET> <S_IDENTIFIER>
-        ) [ <K_NOT> <K_NULL> ]
-
+    <K_SUBTYPE> subtypeName=OracleObjectName() <K_IS> subtype=typeSpec()
+        [ <K_RANGE> rangeStart=<S_NUMBER> <O_DOUBLEDOT> rangeEnd=<S_NUMBER> ]
+        [ <K_NOT> notNull=<K_NULL> ] <O_SEMICOLON>
+    {
+      PLSQLSubType newPLSQLSubType = new PLSQLSubType(subtypeName);
+      newPLSQLSubType.addCompositeType(subtype);
+      packageType.addType(newPLSQLSubType);
+      if (notNull != null) {
+          newPLSQLSubType.setNotNull(true);      }
+      if (rangeStart != null) {
+          long rStart = Long.decode(rangeStart.image).longValue();
+          long rEnd = Long.decode(rangeEnd.image).longValue();
+          newPLSQLSubType.setHasRange(true);
+          newPLSQLSubType.setRangeStart(rStart);
+          newPLSQLSubType.setRangeEnd(rEnd);      }
+      localTypes.put(subtypeName, newPLSQLSubType);
+    }
 }
 
 void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) #void:
@@ -1187,10 +1212,19 @@ void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName) #
 void refCursorTypeSpec(PLSQLCursorType cursorType) #void:
 {String s = null;}
 {
-    <K_RETURN> [LOOKAHEAD(3) s=columnSpec() [ <K_TYPE2> ]
-    | LOOKAHEAD(3) s=tableSpec() [ <K_ROWTYPE> ] ]
+    <K_RETURN> [LOOKAHEAD(3) s=columnSpec() [ <K_TYPE2>
+        {
+          s += tokenImage[K_TYPE2].substring(1, tokenImage[K_TYPE2].length() - 1);
+        }
+      ]
+    | LOOKAHEAD(3) s=tableSpec() [ <K_ROWTYPE>
+        {
+          s += tokenImage[K_ROWTYPE].substring(1, tokenImage[K_ROWTYPE].length() - 1);
+        }
+      ]
+    ]
     {
-      //TODO - figure out cursor's embedded type    }
+      cursorType.setDataType(new UnresolvedType(s));    }
 }
 
 void cursorDeclaration(PLSQLPackageType packageType) #void:

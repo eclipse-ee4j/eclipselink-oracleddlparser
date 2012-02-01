@@ -26,6 +26,7 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
 	protected List<PLSQLType> types;
 	protected List<PLSQLCursorType> cursors;
 	protected List<ProcedureType> procedures;
+	protected List<FieldType> localVariables;
 
     public PLSQLPackageType() {
     }
@@ -64,7 +65,9 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
         if (types == null) {
             types = new ArrayList<PLSQLType>();
         }
-        types.add(type);
+        if (!types.contains(type)) {
+            types.add(type);
+        }
     }
 
 	public List<PLSQLCursorType> getCursors() {
@@ -75,21 +78,38 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
 		return procedures;
 	}
 
+    public List<FieldType> getLocalVariables() {
+        return localVariables;
+    }
+
     public void addCursor(PLSQLCursorType cursorType) {
         if (getCursors() == null) {
             cursors = new ArrayList<PLSQLCursorType>();
         }
-        cursors.add(cursorType);
+        if (!cursors.contains(cursorType)) {
+            cursors.add(cursorType);
+        }
     }
 
 	public void addProcedure(ProcedureType procedureType) {
         if (getProcedures() == null) {
             procedures = new ArrayList<ProcedureType>();
         }
-        procedures.add(procedureType);
+        if (!procedures.contains(procedureType)) {
+            procedures.add(procedureType);
+        }
     }
 
-	public void addCompositeType(DatabaseType enclosedType) {
+    public void addLocalVariable(FieldType var) {
+        if (getLocalVariables() == null) {
+            localVariables = new ArrayList<FieldType>();
+        }
+        if (!localVariables.contains(var)) {
+            localVariables.add(var);
+        }
+    }
+
+    public void addCompositeType(DatabaseType enclosedType) {
     	// TODO
     }
 

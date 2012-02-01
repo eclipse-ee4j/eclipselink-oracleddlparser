@@ -41,6 +41,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLSubType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
@@ -200,6 +201,19 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     public void endVisit(PLSQLCollectionType databaseType) {
     }
 
+    public void beginVisit(PLSQLSubType databaseType) {
+    }
+    public void visit(PLSQLSubType databaseType) {
+        beginVisit(databaseType);
+        DatabaseType nestedType = databaseType.getEnclosedType();
+        if (nestedType != null) {
+            nestedType.accept(this);
+        }
+        endVisit(databaseType);
+    }
+    public void endVisit(PLSQLSubType databaseType) {
+    }
+
     public void beginVisit(ProcedureType databaseType) {
     }
     public void visit(ProcedureType databaseType) {
@@ -304,7 +318,7 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     public void endVisit(TYPEType databaseType) {
     }
 
-    //use reflection to avoid huge if-then-else tree of if (databaseType instanceof xxx)
+    //use reflection to avoid huge if-then-else tree: if (databaseType instanceof xxx)
     static CompositeDatabaseTypeHandler handler = new CompositeDatabaseTypeHandler();
     static class CompositeDatabaseTypeHandler {
         static Method[] methods = CompositeDatabaseTypeHandler.class.getMethods();
@@ -347,6 +361,9 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
             visitor.visit(databaseType);
         }
         public static void handle(DatabaseTypeVisitor visitor, PLSQLCollectionType databaseType){
+            visitor.visit(databaseType);
+        }
+        public static void handle(DatabaseTypeVisitor visitor, PLSQLSubType databaseType){
             visitor.visit(databaseType);
         }
         public static void handle(DatabaseTypeVisitor visitor, ObjectType databaseType){

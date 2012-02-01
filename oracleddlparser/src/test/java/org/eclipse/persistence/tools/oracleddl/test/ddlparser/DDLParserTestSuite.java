@@ -22,6 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+    AnchoredTypesTestSuite.class,
     CaseSensitivePackageTestSuite.class,
     FunctionDDLTestSuite.class,
     ProcedureDDLTestSuite.class,

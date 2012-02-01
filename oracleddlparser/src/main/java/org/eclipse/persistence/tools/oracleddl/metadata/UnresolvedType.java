@@ -19,15 +19,15 @@ public class UnresolvedType extends DatabaseTypeBase implements DatabaseType, Da
 
     protected CompositeDatabaseType owningType;
 
+    public UnresolvedType(String unresolvedTypeName) {
+        super(unresolvedTypeName);
+    }
+
     public CompositeDatabaseType getOwningType() {
         return owningType;
     }
     public void setOwningType(CompositeDatabaseType owningType) {
         this.owningType = owningType;
-    }
-
-    public UnresolvedType(String unresolvedTypeName) {
-        super(unresolvedTypeName);
     }
 
 	public String getUnresolvedTypeName() {
