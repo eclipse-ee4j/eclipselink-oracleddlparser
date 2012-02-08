@@ -5,11 +5,19 @@
 <booleanAttribute key="M2_NON_RECURSIVE" value="false"/>
 <booleanAttribute key="M2_OFFLINE" value="false"/>
 <stringAttribute key="M2_PROFILES" value=""/>
-<listAttribute key="M2_PROPERTIES"/>
-<stringAttribute key="M2_RUNTIME" value="C:\apache-maven-3.0"/>
+<listAttribute key="M2_PROPERTIES">
+<listEntry value="db.oracle.driver=${db.oracle.driver}"/>
+<listEntry value="db.oracle.platform=${db.oracle.platform}"/>
+<listEntry value="db.oracle.pwd=${db.oracle.pwd}"/>
+<listEntry value="db.oracle.url=${db.oracle.url}"/>
+<listEntry value="db.oracle.user=${db.oracle.user}"/>
+<listEntry value="db.ddl.create=${db.ddl.create}"/>
+<listEntry value="db.ddl.debug=${db.ddl.debug}"/>
+<listEntry value="db.ddl.drop=${db.ddl.drop}"/>
+</listAttribute>
+<stringAttribute key="M2_RUNTIME" value="EMBEDDED"/>
 <booleanAttribute key="M2_SKIP_TESTS" value="false"/>
 <booleanAttribute key="M2_UPDATE_SNAPSHOTS" value="false"/>
 <booleanAttribute key="M2_WORKSPACE_RESOLUTION" value="false"/>
-<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6-current"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:/org.eclipse.persistence.oracleddlparser}"/>
 </launchConfiguration>

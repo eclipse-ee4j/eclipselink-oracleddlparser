@@ -56,6 +56,16 @@
 	          <id>test</id>
 	          <phase>test</phase>
               <configuration>
+	              <systemPropertyVariables>
+	               <db.user>${db.oracle.user}</db.user>
+			       <db.pwd>${db.oracle.pwd}</db.pwd>
+			       <db.url>${db.oracle.url}</db.url>
+			       <db.platform>${db.oracle.platform}</db.platform>
+			       <db.driver>${db.oracle.driver}</db.driver>
+			       <db.ddl.create>${db.ddl.create}</db.ddl.create>
+			       <db.ddl.drop>${db.ddl.drop}</db.ddl.drop>
+			       <db.ddl.debug>${db.ddl.debug}</db.ddl.debug>
+	              </systemPropertyVariables>
                   <forkMode>once</forkMode>
                   <redirectTestOutputToFile>true</redirectTestOutputToFile>
                   <includes>
