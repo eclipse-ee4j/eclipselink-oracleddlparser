@@ -21,6 +21,7 @@
         <module>oracleddl.source.feature</module>
         <module>oracleddl.repository</module>
         <module>oracleddl.parent</module>
+        <module>oracleddl.target</module>
     </modules>
 
     <build>
