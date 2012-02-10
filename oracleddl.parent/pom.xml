@@ -18,7 +18,7 @@
     <properties>
         <!-- TOOL Properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tycho.version>0.13.0</tycho.version>
+        <tycho.version>0.14.0</tycho.version>
         <junit4-version>4.8.1</junit4-version>
         <!-- PROJECT Properties -->
     	<release.version>1.0.0</release.version>
@@ -124,16 +124,12 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>maven-eclipse</id>
-            <url>http://repo1.maven.org</url>
+            <id>tycho14-staging</id>
+            <url>https://oss.sonatype.org/content/repositories/orgeclipsetycho-004/</url>
         </pluginRepository>
         <pluginRepository>
-            <id>tycho-snapshots</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </pluginRepository> 
-        <pluginRepository>
-            <id>sonatype-staging</id>
-            <url>https://repository.sonatype.org/content/repositories/sonatype_org-031/</url>
+            <id>maven-eclipse</id>
+            <url>http://repo1.maven.org</url>
         </pluginRepository>
     </pluginRepositories>
 
