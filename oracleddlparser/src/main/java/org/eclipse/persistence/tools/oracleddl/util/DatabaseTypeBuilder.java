@@ -502,7 +502,9 @@ public class DatabaseTypeBuilder {
         // fix up the databaseType's object-graph
         Stack<UnresolvedType> stac = new Stack<UnresolvedType>();
         for (UnresolvedType uType : unresolvedTypes) {
-            stac.push(uType);
+            if (!stac.contains(uType)) {
+                stac.push(uType);
+            }
         }
         boolean done = false;
         DatabaseTypesRepository typesRepository = parser.getTypesRepository();
@@ -522,14 +524,14 @@ public class DatabaseTypeBuilder {
                         if (rowtypeCompositeType == null) {
                             List<TableType> tables = buildTables(conn, null, tableName, false);
                             if (tables != null && tables.size() > 0) {
-                                rowtypeCompositeType = tables.get(0);
-                                typesRepository.setDatabaseType(rowtypeCompositeType.getTypeName(),
-                                    rowtypeCompositeType);
+                                TableType tableType = tables.get(0);
+                                typesRepository.setDatabaseType(tableType.getTableName(), tableType);
+                                ROWTYPEType rType = new ROWTYPEType(typeName);
+                                rType.addCompositeType(tableType);
+                                uType.getOwningType().addCompositeType(rType);
+                                typesRepository.setDatabaseType(rType.getTypeName(), rType);
+                                rowtypeCompositeType = tableType;
                             }
-                            ROWTYPEType rType = new ROWTYPEType(typeName);
-                            rType.addCompositeType(rowtypeCompositeType);
-                            uType.getOwningType().addCompositeType(rType);
-                            typesRepository.setDatabaseType(typeName, rType);
                         }
                         else {
                             uType.getOwningType().addCompositeType(rowtypeCompositeType);

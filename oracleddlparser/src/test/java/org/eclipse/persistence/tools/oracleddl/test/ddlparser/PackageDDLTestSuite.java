@@ -24,8 +24,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -79,8 +77,8 @@ public class PackageDDLTestSuite {
         }
         assertTrue("empty package should parse", worked);
         assertEquals("empty package wrong name", packageType.getPackageName(), EMPTY_PACKAGE);
-        assertNull("empty package should have no procedures", packageType.getProcedures());
-        assertNull("empty package should have no types", packageType.getTypes());
+        assertTrue("empty package should have no procedures", packageType.getProcedures().isEmpty());
+        assertTrue("empty package should have no types", packageType.getTypes().isEmpty());
     }
 
     /*
@@ -123,8 +121,8 @@ public class PackageDDLTestSuite {
         }
         assertTrue("simple package should parse", worked);
         assertEquals("simple package has wrong name", packageType.getPackageName(), SIMPLE_PACKAGE);
-        assertNull("simple package should have no procedures", packageType.getProcedures());
-        assertNotNull("simple package should have types", packageType.getTypes());
+        assertTrue("simple package should have no procedures", packageType.getProcedures().isEmpty());
+        assertFalse("simple package should have types", packageType.getTypes().isEmpty());
         assertEquals("simple package should have exactly 1 type", 1, packageType.getTypes().size());
         PLSQLType type = packageType.getTypes().get(0);
         assertEquals("type has wrong name", SIMPLE_TYPE, type.getTypeName());
@@ -194,8 +192,8 @@ public class PackageDDLTestSuite {
         }
         assertTrue("npackage should parse", worked);
         assertEquals("npackage has wrong name", packageType.getPackageName(), NPACKAGE);
-        assertNull("npackage should have no procedures", packageType.getProcedures());
-        assertNotNull("npackage should have types", packageType.getTypes());
+        assertTrue("npackage should have no procedures", packageType.getProcedures().isEmpty());
+        assertFalse("npackage should have types", packageType.getTypes().isEmpty());
         assertEquals("npackage should have exactly 2 types", 2, packageType.getTypes().size());
         PLSQLType ntype1 = packageType.getTypes().get(0);
         assertEquals("ntype1 has wrong name", NTYPE1, ntype1.getTypeName());
@@ -241,8 +239,8 @@ public class PackageDDLTestSuite {
         assertTrue("package with collection should parse", worked);
         assertEquals("package with collection has wrong name", packageType.getPackageName(),
             PACKAGE_WCOLLECTION);
-        assertNull("package with collection should have no procedures", packageType.getProcedures());
-        assertNotNull("package with collection should have types", packageType.getTypes());
+        assertTrue("package with collection should have no procedures", packageType.getProcedures().isEmpty());
+        assertFalse("package with collection should have types", packageType.getTypes().isEmpty());
         assertEquals("package with collection should have exactly 1 type", 1,
             packageType.getTypes().size());
         PLSQLType t1 = packageType.getTypes().get(0);
@@ -310,10 +308,10 @@ public class PackageDDLTestSuite {
         assertTrue("package with collection containing record should parse", worked);
         assertEquals("package with collection containing record has wrong name",
             packageType.getPackageName(), PACKAGE_WCOLLECTION_WRECORD);
-        assertNull("package with collection containing record should have no procedures",
-            packageType.getProcedures());
-        assertNotNull("package with collection containing record should have types",
-            packageType.getTypes());
+        assertTrue("package with collection containing record should have no procedures",
+            packageType.getProcedures().isEmpty());
+        assertFalse("package with collection containing record should have types",
+            packageType.getTypes().isEmpty());
         assertEquals("package with collection containing record should have exactly 2 types", 2,
             packageType.getTypes().size());
         PLSQLType t1 = packageType.getTypes().get(0);
@@ -432,10 +430,10 @@ public class PackageDDLTestSuite {
         assertTrue("package with deeply nested types should parse", worked);
         assertEquals("package with deeply nested types has wrong name",
             packageType.getPackageName(), PACKAGE_WDEEPLY_NESTED_TYPES);
-        assertNull("package with deeply nested types should have no procedures",
-            packageType.getProcedures());
-        assertNotNull("package with deeply nested types should have types",
-            packageType.getTypes());
+        assertTrue("package with deeply nested types should have no procedures",
+            packageType.getProcedures().isEmpty());
+        assertFalse("package with deeply nested types should have types",
+            packageType.getTypes().isEmpty());
         assertEquals("package with deeply nested types should have exactly 5 types", 5,
             packageType.getTypes().size());
         PLSQLType t1 = packageType.getTypes().get(0);

@@ -2009,6 +2009,9 @@ Token rangeEnd = null;
     jj_consume_token(O_SEMICOLON);
       PLSQLSubType newPLSQLSubType = new PLSQLSubType(subtypeName);
       newPLSQLSubType.addCompositeType(subtype);
+      if (subtype instanceof UnresolvedType) {
+          ((UnresolvedType)subtype).setOwningType(newPLSQLSubType);
+      }
       packageType.addType(newPLSQLSubType);
       if (notNull != null) {
           newPLSQLSubType.setNotNull(true);
@@ -2186,7 +2189,13 @@ Token rangeEnd = null;
     default:
       ;
     }
-      cursorType.setDataType(new UnresolvedType(s));
+      DatabaseType localType = localTypes.get(s);
+      if (localType == null) {
+          cursorType.setDataType(new UnresolvedType(s));
+      }
+      else {
+        cursorType.setDataType(localType);
+      }
   }
 
   final public void cursorDeclaration(PLSQLPackageType packageType) throws ParseException {
@@ -2699,24 +2708,24 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3R_11() {
+    if (jj_scan_token(K_TYPE2)) return true;
+    return false;
+  }
+
   private boolean jj_3R_57() {
     if (jj_scan_token(K_VARCHAR2)) return true;
     return false;
   }
 
-  private boolean jj_3R_11() {
-    if (jj_scan_token(K_TYPE2)) return true;
+  private boolean jj_3R_13() {
+    if (jj_scan_token(K_ROWTYPE)) return true;
     return false;
   }
 
   private boolean jj_3_12() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_13() {
-    if (jj_scan_token(K_ROWTYPE)) return true;
     return false;
   }
 
@@ -2910,17 +2919,25 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3_18() {
+    if (jj_3R_10()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_11()) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3_10() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
-  private boolean jj_3_18() {
-    if (jj_3R_10()) return true;
+  private boolean jj_3_19() {
+    if (jj_3R_12()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_11()) jj_scanpos = xsp;
+    if (jj_3R_13()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2937,14 +2954,6 @@ Token rangeEnd = null;
 
   private boolean jj_3R_54() {
     if (jj_scan_token(K_DOUBLE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_19() {
-    if (jj_3R_12()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_13()) jj_scanpos = xsp;
     return false;
   }
 
@@ -3049,6 +3058,26 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3R_15() {
+    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_14()) {
+    jj_scanpos = xsp;
+    if (jj_3R_15()) return true;
+    }
+    return false;
+  }
+
   private boolean jj_3R_41() {
     if (jj_scan_token(K_FLOAT)) return true;
     return false;
@@ -3072,26 +3101,6 @@ Token rangeEnd = null;
 
   private boolean jj_3R_38() {
     if (jj_scan_token(K_INTEGER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_15() {
-    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_14() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_14()) {
-    jj_scanpos = xsp;
-    if (jj_3R_15()) return true;
-    }
     return false;
   }
 
@@ -3147,14 +3156,14 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_8() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
   private boolean jj_3_20() {
     if (jj_scan_token(K_IN)) return true;
     if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_8() {
+    if (jj_3R_6()) return true;
     return false;
   }
 

@@ -58,6 +58,9 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
     }
 
     public List<PLSQLType> getTypes() {
+        if (types == null) {
+            types = new ArrayList<PLSQLType>();
+        }
 		return types;
 	}
 
@@ -71,14 +74,23 @@ public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisi
     }
 
 	public List<PLSQLCursorType> getCursors() {
+        if (cursors == null) {
+            cursors = new ArrayList<PLSQLCursorType>();
+        }
 		return cursors;
 	}
 
 	public List<ProcedureType> getProcedures() {
+        if (procedures == null) {
+            procedures = new ArrayList<ProcedureType>();
+        }
 		return procedures;
 	}
 
     public List<FieldType> getLocalVariables() {
+        if (localVariables == null) {
+            localVariables = new ArrayList<FieldType>();
+        }
         return localVariables;
     }
 

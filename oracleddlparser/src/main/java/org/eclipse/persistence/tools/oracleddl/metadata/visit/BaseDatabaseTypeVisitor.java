@@ -154,17 +154,22 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void visit(PLSQLPackageType databaseType) {
         beginVisit(databaseType);
-        if (databaseType.getTypes() != null) {
+        if (!databaseType.getTypes().isEmpty()) {
             for (PLSQLType plsqlType : databaseType.getTypes()) {
                 plsqlType.accept(this);
             }
         }
-        if (databaseType.getCursors() != null) {
+        if (!databaseType.getLocalVariables().isEmpty()) {
+            for (FieldType fieldType : databaseType.getLocalVariables()) {
+                fieldType.accept(this);
+            }
+        }
+        if (!databaseType.getCursors().isEmpty()) {
             for (PLSQLCursorType cursorType : databaseType.getCursors()) {
                 cursorType.accept(this);
             }
         }
-        if (databaseType.getProcedures() != null) {
+        if (!databaseType.getProcedures().isEmpty()) {
             for (ProcedureType procType : databaseType.getProcedures()) {
                 procType.accept(this);
             }

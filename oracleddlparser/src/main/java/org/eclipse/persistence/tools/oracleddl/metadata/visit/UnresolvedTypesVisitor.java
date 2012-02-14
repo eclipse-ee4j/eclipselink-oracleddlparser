@@ -14,7 +14,9 @@ package org.eclipse.persistence.tools.oracleddl.metadata.visit;
 
 //javase imports
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
@@ -23,16 +25,33 @@ import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
 public class UnresolvedTypesVisitor extends BaseDatabaseTypeVisitor {
 
     protected List<UnresolvedType> unresolvedTypes = new ArrayList<UnresolvedType>();
+    protected Map<String, List<UnresolvedType>> uniq = new HashMap<String, List<UnresolvedType>>();
 
     public List<UnresolvedType> getUnresolvedTypes() {
         return unresolvedTypes;
     }
 
     public void visit(UnresolvedType unresolvedType) {
-        unresolvedTypes.add(unresolvedType);
+        String typeName = unresolvedType.getTypeName();
+        List<UnresolvedType> similarUnresolvedTypes = uniq.get(typeName);
+        if (similarUnresolvedTypes == null) {
+            similarUnresolvedTypes = new ArrayList<UnresolvedType>();
+            uniq.put(typeName, similarUnresolvedTypes);
+        }
+        boolean addToUnresolvedTypes = false;
+        for (UnresolvedType similarUnresolvedType : similarUnresolvedTypes) {
+            if (unresolvedType.getOwningType() != similarUnresolvedType.getOwningType()) {
+                addToUnresolvedTypes = true;
+                break;
+            }
+        }
+        if (addToUnresolvedTypes || similarUnresolvedTypes.isEmpty()) {
+            similarUnresolvedTypes.add(unresolvedType);
+            unresolvedTypes.add(unresolvedType);
+        }
     }
 
     public void visit(UnresolvedSizedType unresolvedType) {
-        unresolvedTypes.add(unresolvedType);
+        visit((UnresolvedType)unresolvedType);
     }
 }

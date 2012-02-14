@@ -40,7 +40,6 @@ import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
 //testing imports
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
-
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_CREATE_KEY;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DEBUG_KEY;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DROP_KEY;
@@ -49,7 +48,6 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DA
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DEFAULT_DATABASE_DDL_DROP;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConnection;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.runDdl;
-
 
 public class IOTTableDDLTestSuite {
 

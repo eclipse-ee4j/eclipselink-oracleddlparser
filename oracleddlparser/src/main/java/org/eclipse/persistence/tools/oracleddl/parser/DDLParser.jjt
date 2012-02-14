@@ -1118,6 +1118,8 @@ Token rangeEnd = null;}
     {
       PLSQLSubType newPLSQLSubType = new PLSQLSubType(subtypeName);
       newPLSQLSubType.addCompositeType(subtype);
+      if (subtype instanceof UnresolvedType) {
+          ((UnresolvedType)subtype).setOwningType(newPLSQLSubType);      }
       packageType.addType(newPLSQLSubType);
       if (notNull != null) {
           newPLSQLSubType.setNotNull(true);      }
@@ -1224,7 +1226,11 @@ void refCursorTypeSpec(PLSQLCursorType cursorType) #void:
       ]
     ]
     {
-      cursorType.setDataType(new UnresolvedType(s));    }
+      DatabaseType localType = localTypes.get(s);
+      if (localType == null) {          cursorType.setDataType(new UnresolvedType(s));
+      }
+      else {
+        cursorType.setDataType(localType);      }    }
 }
 
 void cursorDeclaration(PLSQLPackageType packageType) #void:
