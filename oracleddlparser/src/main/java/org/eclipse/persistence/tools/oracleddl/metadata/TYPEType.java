@@ -39,7 +39,7 @@ public class TYPEType extends CompositeDatabaseTypeWithEnclosedType implements C
 
     @Override
     public boolean isTYPEType() {
-        return false;
+        return true;
     }
 
     public String shortName() {
