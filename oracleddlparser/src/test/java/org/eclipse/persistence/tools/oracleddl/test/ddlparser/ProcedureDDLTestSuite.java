@@ -45,7 +45,7 @@ public class ProcedureDDLTestSuite {
     static final String CREATE_PROCEDURE_PREFIX = "CREATE PROCEDURE ";
     //JUnit fixture(s)
     static DDLParser parser = null;
-	
+
 	@BeforeClass
 	static public void setUp() {
         parser = new DDLParser(new InputStream() {
@@ -58,7 +58,7 @@ public class ProcedureDDLTestSuite {
 
 
     static final String EMPTY_PROCEDURE = "EMPTY_PROCEDURE";
-	static final String CREATE_EMPTY_PROCEDURE = 
+	static final String CREATE_EMPTY_PROCEDURE =
 	    CREATE_PROCEDURE_PREFIX + EMPTY_PROCEDURE + " IS BEGIN null; END";
     @Test
     public void testEmptyProcedure() {
@@ -78,7 +78,7 @@ public class ProcedureDDLTestSuite {
 
     static final String DUMMY_PROCEDURE = "DUMMY_PROCEDURE";
     static final String DUMMY_ARG = "DUM";
-    static final String CREATE_DUMMY_PROCEDURE = 
+    static final String CREATE_DUMMY_PROCEDURE =
         CREATE_PROCEDURE_PREFIX + DUMMY_PROCEDURE + " (" + DUMMY_ARG + " IN VARCHAR2) AS " +
     	"BEGIN " +
     	  "null;" +
@@ -109,7 +109,7 @@ public class ProcedureDDLTestSuite {
     }
 
     static final String DUMMY_PROCEDURE_SCHEMA = "SCOTT";
-    static final String CREATE_DUMMY_PROCEDURE_SCHEMA = 
+    static final String CREATE_DUMMY_PROCEDURE_SCHEMA =
         CREATE_PROCEDURE_PREFIX + DUMMY_PROCEDURE_SCHEMA + "." + DUMMY_PROCEDURE + " (" + DUMMY_ARG + " IN VARCHAR2) AS " +
         "BEGIN " +
           "null;" +
@@ -139,13 +139,13 @@ public class ProcedureDDLTestSuite {
         ArgumentType arg1 = procedureType.getArguments().get(0);
         assertEquals("dummy procedure's argument wrong name", arg1.getArgumentName(), DUMMY_ARG);
     }
-    
+
     static final String PROCEDURE_W_IN_OUT_ARGS = "INOUTARGSSP";
     static final String IN_ARG = "T";
     static final String OUT_ARG = "U";
     static final String OUT_ARG2 = "V";
     static final String CREATE_PROCEDURE_W_IN_OUT_ARGS =
-        CREATE_PROCEDURE_PREFIX + PROCEDURE_W_IN_OUT_ARGS + 
+        CREATE_PROCEDURE_PREFIX + PROCEDURE_W_IN_OUT_ARGS +
             " ( " + IN_ARG + " IN VARCHAR2, " + OUT_ARG + " OUT VARCHAR2, " + OUT_ARG2 + " OUT NUMERIC) AS " +
         "BEGIN " +
           "null;" +
@@ -175,7 +175,7 @@ public class ProcedureDDLTestSuite {
         ArgumentType arg1 = procedureType.getArguments().get(0);
         assertEquals("procedure with in and out args - arg1 wrong name", arg1.getArgumentName(),
             IN_ARG);
-        DatabaseType arg1Type = arg1.getDataType();
+        DatabaseType arg1Type = arg1.getEnclosedType();
         assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
             new VarChar2Type().getTypeName(), arg1Type.getTypeName());
         assertTrue("incorrect direction for " + arg1.getArgumentName(),
@@ -183,7 +183,7 @@ public class ProcedureDDLTestSuite {
         ArgumentType arg2 = procedureType.getArguments().get(1);
         assertEquals("procedure with in and out args - arg2 wrong name", arg2.getArgumentName(),
             OUT_ARG);
-        DatabaseType arg2Type = arg2.getDataType();
+        DatabaseType arg2Type = arg2.getEnclosedType();
         assertEquals("incorrect type for " + arg2.getArgumentName() + " type",
             new VarChar2Type().getTypeName(), arg2Type.getTypeName());
         assertTrue("incorrect direction for " + arg2.getArgumentName(),
@@ -191,7 +191,7 @@ public class ProcedureDDLTestSuite {
         ArgumentType arg3 = procedureType.getArguments().get(2);
         assertEquals("procedure with in and out args - arg3 wrong name", arg3.getArgumentName(),
             OUT_ARG2);
-        DatabaseType arg3Type = arg3.getDataType();
+        DatabaseType arg3Type = arg3.getEnclosedType();
         assertEquals("incorrect type for " + arg3.getArgumentName() + " type",
             new NumericType().getTypeName(), arg3Type.getTypeName());
         assertTrue("incorrect direction for " + arg3.getArgumentName(),
@@ -201,7 +201,7 @@ public class ProcedureDDLTestSuite {
     static final String PROCEDURE_W_SYS_REFCURSOR = "GETALL";
     static final String SYS_REF_OUT_ARG = "SIMPL";
     static final String CREATE_PROCEDURE_W_SYS_REFCURSOR =
-        CREATE_PROCEDURE_PREFIX + PROCEDURE_W_SYS_REFCURSOR + 
+        CREATE_PROCEDURE_PREFIX + PROCEDURE_W_SYS_REFCURSOR +
             " ( " + SYS_REF_OUT_ARG + " OUT SYS_REFCURSOR) AS " +
         "BEGIN " +
           "OPEN SIMPL FOR SELECT * FROM simplesp;" +
@@ -231,7 +231,7 @@ public class ProcedureDDLTestSuite {
         ArgumentType arg1 = procedureType.getArguments().get(0);
         assertEquals("procedure with SYS_REFCURSOR - arg1 wrong name", arg1.getArgumentName(),
             SYS_REF_OUT_ARG);
-        DatabaseType arg1Type = arg1.getDataType();
+        DatabaseType arg1Type = arg1.getEnclosedType();
         assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
             SYS_REFCURSOR_TYPE.getTypeName(), arg1Type.getTypeName());
         assertTrue("incorrect direction for " + arg1.getArgumentName(),
@@ -241,7 +241,7 @@ public class ProcedureDDLTestSuite {
     static final String PROCEDURE_W_INOUT_ARG = "INOUTARGSP";
     static final String INOUT_ARG = "X";
     static final String CREATE_PROCEDURE_W_INOUT_ARG =
-        CREATE_PROCEDURE_PREFIX + PROCEDURE_W_INOUT_ARG + 
+        CREATE_PROCEDURE_PREFIX + PROCEDURE_W_INOUT_ARG +
             " ( " + INOUT_ARG + " IN OUT NUMERIC) AS " +
         "BEGIN " +
             "null;" +
@@ -271,7 +271,7 @@ public class ProcedureDDLTestSuite {
         ArgumentType arg1 = procedureType.getArguments().get(0);
         assertEquals("procedure with INOUT arg - arg1 wrong name", arg1.getArgumentName(),
             INOUT_ARG);
-        DatabaseType arg1Type = arg1.getDataType();
+        DatabaseType arg1Type = arg1.getEnclosedType();
         assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
             new NumericType().getTypeName(), arg1Type.getTypeName());
         assertTrue("incorrect direction for " + arg1.getArgumentName(),

@@ -25,9 +25,9 @@ import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
 
 /**
- * Test FunctionType visit method chain.  Ensures that all required 
+ * Test FunctionType visit method chain.  Ensures that all required
  * information can be retrieved via FunctionType.accept().
- * 
+ *
  * This test covers:
  *  - FunctionType
  *  - DatabaseType
@@ -37,7 +37,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
  *
  */
 public class FunctionTypeTest {
-    
+
     protected static String FUNCTION = "FUNCTION TLUSER.GET_EMP_SALARY (EMP_ID IN VARCHAR) RETURN FLOAT";
 
     @Test
@@ -48,12 +48,12 @@ public class FunctionTypeTest {
         // add arg "EMP_ID"
         ArgumentType arg = new ArgumentType("EMP_ID");
         arg.setDirection(ArgumentTypeDirection.IN);
-        arg.setDataType(new VarCharType());
-        function.addCompositeType(arg);
+        arg.setEnclosedType(new VarCharType());
+        function.addArgument(arg);
         // set return argument
         arg = new ArgumentType("");
         arg.setDirection(ArgumentTypeDirection.RETURN);
-        arg.setDataType(new FloatType());
+        arg.setEnclosedType(new FloatType());
         function.setReturnArgument(arg);
 
         // visit

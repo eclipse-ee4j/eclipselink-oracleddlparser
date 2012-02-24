@@ -163,14 +163,14 @@ public class TableDDLTestSuite {
     public void testColumnTypes() {
         List<FieldType> columns = tableType.getColumns();
         FieldType field1 = columns.get(0);
-        DatabaseType col1Type = field1.getDataType();
+        DatabaseType col1Type = field1.getEnclosedType();
         assertEquals("incorrect type for column [" + SIMPLETABLE_FIELD1 + "]",
             ScalarDatabaseTypeEnum.INTEGER_TYPE.getTypeName(), col1Type.getTypeName());
         assertTrue("incorrect NULL constraint for column [" + SIMPLETABLE_FIELD1 + "]",
             field1.notNull());
 
         FieldType field2 = columns.get(1);
-        DatabaseType col2Type = field2.getDataType();
+        DatabaseType col2Type = field2.getEnclosedType();
         assertEquals("incorrect type for column [" + SIMPLETABLE_FIELD2 + "]",
             new VarChar2Type().getTypeName(), col2Type.getTypeName());
         assertFalse("incorrect NULL constraint for column [" + SIMPLETABLE_FIELD2 + "]",
@@ -179,7 +179,7 @@ public class TableDDLTestSuite {
             ((SizedType)col2Type).getSize() == 25);
 
         FieldType field3 = columns.get(2);
-        DatabaseType col3Type = field3.getDataType();
+        DatabaseType col3Type = field3.getEnclosedType();
         assertEquals("incorrect type for column [" + SIMPLETABLE_FIELD3 + "]",
             ScalarDatabaseTypeEnum.DATE_TYPE.getTypeName(), col3Type.getTypeName());
         assertFalse("incorrect NULL constraint for column [" + SIMPLETABLE_FIELD3 + "]",

@@ -31,6 +31,11 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
     public PLSQLPackageType() {
     }
 
+    @Override
+    public String getTypeName() {
+        return "PACKAGE " + packageName;
+    }
+
     public PLSQLPackageType(String packageName) {
 		setPackageName(packageName);
 	}
@@ -63,7 +68,6 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
         }
 		return types;
 	}
-
     public void addType(PLSQLType type) {
         if (types == null) {
             types = new ArrayList<PLSQLType>();
@@ -121,13 +125,12 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
         }
     }
 
-    public void addCompositeType(DatabaseType enclosedType) {
-    	// TODO
+    public DatabaseType getEnclosedType() {
+        return null;
     }
-
-	public String getTypeName() {
-		return "PACKAGE " + packageName;
-	}
+    public void setEnclosedType(DatabaseType enclosedType) {
+        //no-op
+    }
 
 	public boolean isComposite() {
 		return true;

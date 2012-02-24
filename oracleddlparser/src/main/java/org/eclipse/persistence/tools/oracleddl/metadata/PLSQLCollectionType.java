@@ -17,21 +17,11 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class PLSQLCollectionType extends PLSQLType implements DatabaseTypeVisitable {
 
-    protected DatabaseType nestedType;
     protected DatabaseType indexType;
-
-    boolean indexed = false;
+    protected boolean indexed = false;
 
 	public PLSQLCollectionType(String collectionName) {
 		super(collectionName);
-	}
-
-    public DatabaseType getNestedType() {
-        return nestedType;
-    }
-	@Override
-	public void addCompositeType(DatabaseType enclosedType) {
-	    nestedType = enclosedType;
 	}
 
     public boolean isIndexed() {
@@ -49,12 +39,21 @@ public class PLSQLCollectionType extends PLSQLType implements DatabaseTypeVisita
     }
 
     @Override
+    public DatabaseType getEnclosedType() {
+        return enclosedType;
+    }
+    @Override
+    public void setEnclosedType(DatabaseType enclosedType) {
+        this.enclosedType = enclosedType;
+    }
+
+    @Override
     public boolean isResolved() {
         // if the nestedType is unresolved, then this PLSQLCollection is unresolved
-        if (nestedType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return nestedType.isResolved();
+        return enclosedType.isResolved();
     }
 
     @Override

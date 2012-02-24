@@ -13,6 +13,8 @@
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
 public interface CompositeDatabaseType extends DatabaseType {
-	
-	public void addCompositeType(DatabaseType enclosedType);
+
+    public DatabaseType getEnclosedType();
+
+	public void setEnclosedType(DatabaseType enclosedType);
 }

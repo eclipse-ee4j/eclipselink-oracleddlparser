@@ -26,9 +26,9 @@ import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
 import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
 
 /**
- * Test ProcedureType visit method chain.  Ensures that all required 
+ * Test ProcedureType visit method chain.  Ensures that all required
  * information can be retrieved via ProcedureType.accept().
- * 
+ *
  * This test covers:
  *  - ProcedureType
  *  - ArgumentType
@@ -37,8 +37,8 @@ import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
  *
  */
 public class ProcedureTypeTest {
-    
-    protected static String PROCEDURE = 
+
+    protected static String PROCEDURE =
         "PROCEDURE TLUSER.UPDATE_EMP_SALARY (EMP_ID IN VARCHAR, AMOUNT INOUT FLOAT, " +
             "NOTES(opt) IN VARCHAR2)";
 
@@ -50,17 +50,17 @@ public class ProcedureTypeTest {
         // add args "EMP_ID", "AMOUNT" and "NOTES"
         ArgumentType arg = new ArgumentType("EMP_ID");
         arg.setDirection(ArgumentTypeDirection.IN);
-        arg.setDataType(new VarCharType());
-        procedure.addCompositeType(arg);
+        arg.setEnclosedType(new VarCharType());
+        procedure.addArgument(arg);
         arg = new ArgumentType("AMOUNT");
         arg.setDirection(ArgumentTypeDirection.INOUT);
-        arg.setDataType(new FloatType());
-        procedure.addCompositeType(arg);
+        arg.setEnclosedType(new FloatType());
+        procedure.addArgument(arg);
         arg = new ArgumentType("NOTES");
         arg.setDirection(ArgumentTypeDirection.IN);
-        arg.setDataType(new VarChar2Type());
+        arg.setEnclosedType(new VarChar2Type());
         arg.setOptional();
-        procedure.addCompositeType(arg);
+        procedure.addArgument(arg);
 
         // visit
         ProcedureTypeVisitor visitor = new ProcedureTypeVisitor();

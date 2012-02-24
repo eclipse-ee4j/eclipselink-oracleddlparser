@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2012 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -8,23 +8,24 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *     Mike Norman - June 10 2011, created DDL parser package
+ *     Mike Norman - Feb 23 2012, created 'is-a' Testable interfaces
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
-public abstract class CompositeDatabaseTypeBase extends DatabaseTypeBase {
+public class CompositeDatabaseTypeWithEnclosedType extends CompositeDatabaseTypeBase {
 
-    public CompositeDatabaseTypeBase(String typeName) {
-		super(typeName);
-	}
-
-    @Override
-    public boolean isComposite() {
-        return true;
+    public CompositeDatabaseTypeWithEnclosedType(String typeName) {
+        super(typeName);
     }
 
-    public abstract DatabaseType getEnclosedType();
+    protected DatabaseType enclosedType;
 
-    public abstract void setEnclosedType(DatabaseType enclosedType);
+    public DatabaseType getEnclosedType() {
+        return enclosedType;
+    }
+
+    public void setEnclosedType(DatabaseType enclosedType) {
+        this.enclosedType = enclosedType;
+    }
 
 }

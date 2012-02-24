@@ -16,9 +16,7 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public class TYPEType extends CompositeDatabaseTypeBase implements CompositeDatabaseType, DatabaseTypeVisitable {
-
-    protected DatabaseType enclosedType;
+public class TYPEType extends CompositeDatabaseTypeWithEnclosedType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     public TYPEType(String typeName) {
         super(typeName);
@@ -29,13 +27,6 @@ public class TYPEType extends CompositeDatabaseTypeBase implements CompositeData
             return enclosedType.getTypeName();
         }
 		return typeName;
-    }
-
-	public void addCompositeType(DatabaseType enclosedType) {
-		this.enclosedType = enclosedType;
-	}
-    public DatabaseType getEnclosedType() {
-        return enclosedType;
     }
 
     public boolean isResolved() {
@@ -49,72 +40,6 @@ public class TYPEType extends CompositeDatabaseTypeBase implements CompositeData
     @Override
     public boolean isTYPEType() {
         return false;
-    }
-
-    //for following DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosedType
-
-    @Override
-    public boolean isObjectTableType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isObjectTableType();
-    }
-
-    public boolean isObjectType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isObjectType();
-    }
-
-    public boolean isPLSQLCollectionType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isPLSQLCollectionType();
-    }
-
-    public boolean isPLSQLCursorType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isPLSQLCursorType();
-    }
-
-    public boolean isPLSQLRecordType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isPLSQLRecordType();
-    }
-
-    public boolean isPLSQLSubType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isPLSQLSubType();
-    }
-
-    public boolean isTableType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isTableType();
-    }
-
-    public boolean isDbTableType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isDbTableType();
-    }
-
-    public boolean isVArrayType() {
-        if (enclosedType == null) {
-            return false;
-        }
-        return enclosedType.isVArrayType();
     }
 
     public String shortName() {

@@ -138,7 +138,7 @@ public class AnchoredTypesResolutionTestSuite {
         assertTrue(ANCHORED_TYPE3_NAME + " is supposed to be resolved",
             cursorType.isResolved());
         assertSame(ANCHORED_TYPE2_NAME + " is supposed to be identical to " +
-            ANCHORED_TYPE3_NAME + "'s return type", plsqlType2, cursorType.getDataType());
+            ANCHORED_TYPE3_NAME + "'s return type", plsqlType2, cursorType.getEnclosedType());
     }
 
 }

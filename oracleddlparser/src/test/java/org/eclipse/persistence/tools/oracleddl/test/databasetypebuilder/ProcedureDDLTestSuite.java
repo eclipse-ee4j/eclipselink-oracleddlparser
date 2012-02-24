@@ -129,6 +129,6 @@ public class ProcedureDDLTestSuite {
         List<ArgumentType> args = procedureType.getArguments();
         ArgumentType argFirst = args.get(0);
         assertEquals("incorrect type for args  " + argFirst.getArgumentName(),
-            new VarCharType().getTypeName(), argFirst.getDataType().getTypeName());
+            new VarCharType().getTypeName(), argFirst.getEnclosedType().getTypeName());
     }
 }

@@ -29,26 +29,33 @@ public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable 
 		super(recordName);
 	}
 
-	@Override
-	public void addCompositeType(DatabaseType enclosedType) {
-	    if (enclosedType.isFieldType()) {
-	        fields.add((FieldType)enclosedType);
-        } else {
-            // if not a FieldType instance we may need to update
-            // an existing field with a resolved type
-            for (FieldType fld : fields) {
-                if (fld.dataType.getTypeName().equals(enclosedType.getTypeName())) {
-                    fld.setDataType(enclosedType);
-                }
-            }
-	    }
-	}
-
     /**
      * Returns the list of FieldType instances.
      */
     public List<FieldType> getFields() {
         return fields;
+    }
+    public void addField(DatabaseType databaseType) {
+        if (databaseType.isFieldType()) {
+            fields.add((FieldType)databaseType);
+        } else {
+            // if not a FieldType instance we may need to update
+            // an existing field with a resolved type
+            for (FieldType fld : fields) {
+                if (fld.getEnclosedType().getTypeName().equals(databaseType.getTypeName())) {
+                    fld.setEnclosedType(databaseType);
+                }
+            }
+        }
+    }
+
+    @Override
+    public DatabaseType getEnclosedType() {
+        return null;
+    }
+    @Override
+    public void setEnclosedType(DatabaseType enclosedType) {
+        //no-op
     }
 
 	public void accept(DatabaseTypeVisitor visitor) {

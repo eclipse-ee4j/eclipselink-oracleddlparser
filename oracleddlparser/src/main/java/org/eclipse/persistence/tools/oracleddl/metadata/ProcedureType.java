@@ -36,7 +36,6 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
     public String getProcedureName() {
         return procedureName;
     }
-
     public void setProcedureName(String procedureName) {
         this.procedureName = procedureName;
         super.typeName = "PROCEDURE " + procedureName;
@@ -63,12 +62,18 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
         this.overload = overload;
     }
 
+    public DatabaseType getEnclosedType() {
+        return null;
+    }
+    public void setEnclosedType(DatabaseType enclosedType) {
+        //no-op
+    }
+
     public List<ArgumentType> getArguments() {
         return arguments;
     }
-
-    public boolean isFunction() {
-        return false;
+    public void addArgument(ArgumentType arg) {
+        arguments.add(arg);
     }
 
     @Override
@@ -90,11 +95,6 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
     @Override
     public boolean isFunctionType() {
         return false;
-    }
-
-    @Override
-    public void addCompositeType(DatabaseType enclosedType) {
-        arguments.add((ArgumentType)enclosedType);
     }
 
     @Override

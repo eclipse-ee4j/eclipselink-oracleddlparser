@@ -27,9 +27,9 @@ import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
 import org.eclipse.persistence.tools.oracleddl.test.visit.TableTypeVisitor;
 
 /**
- * Test TableType visit method chain.  Ensures that all required 
+ * Test TableType visit method chain.  Ensures that all required
  * information can be retrieved via TableType.accept().
- * 
+ *
  * This test covers:
  *  - TableType
  *  - FieldType
@@ -37,7 +37,7 @@ import org.eclipse.persistence.tools.oracleddl.test.visit.TableTypeVisitor;
  *
  */
 public class TableTypeTest {
-    
+
     //JUnit fixture(s)
     static TableType table = null;
     @BeforeClass
@@ -46,18 +46,18 @@ public class TableTypeTest {
         table = new TableType("EMPLOYEE");
         table.setSchema("TLUSER");
         FieldType col = new FieldType("ID");
-        col.setDataType(new VarCharType());
+        col.setEnclosedType(new VarCharType());
         col.setPk();
-        table.addCompositeType(col);
+        table.addColumn(col);
         col = new FieldType("NAME");
-        col.setDataType(new VarChar2Type());
+        col.setEnclosedType(new VarChar2Type());
         col.setNotNull();
-        table.addCompositeType(col);
+        table.addColumn(col);
         col = new FieldType("DEPT");
-        col.setDataType(new NumericType());
-        table.addCompositeType(col);
+        col.setEnclosedType(new NumericType());
+        table.addColumn(col);
     }
-    
+
     static String TABLE =
         "TABLE TLUSER.EMPLOYEE (\n" +
             "\tID\tVARCHAR\n" +

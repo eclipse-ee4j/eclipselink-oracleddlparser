@@ -41,7 +41,7 @@ public class FunctionDDLTestSuite {
     static final String CREATE_FUNCTION_PREFIX = "CREATE FUNCTION ";
     //JUnit fixture(s)
     static DDLParser parser = null;
-	
+
 	@BeforeClass
 	static public void setUp() {
         parser = new DDLParser(new InputStream() {
@@ -53,7 +53,7 @@ public class FunctionDDLTestSuite {
 	}
 
     static final String EMPTY_FUNCTION = "EMPTY_FUNCTION";
-	static final String CREATE_EMPTY_FUNCTION = 
+	static final String CREATE_EMPTY_FUNCTION =
 	    CREATE_FUNCTION_PREFIX + EMPTY_FUNCTION + " RETURN DECIMAL IS BEGIN RETURN 0; END";
     @Test
     public void testEmptyFunction() {
@@ -73,13 +73,13 @@ public class FunctionDDLTestSuite {
 
     static final String SIMPLE_FUNCTION = "SIMPLE_FUNCTION";
     static final String SIMPLE_ARG = "DEPT";
-    static final String CREATE_SIMPLE_FUNCTION = 
+    static final String CREATE_SIMPLE_FUNCTION =
         CREATE_FUNCTION_PREFIX + SIMPLE_FUNCTION + " (" + SIMPLE_ARG + " IN DECIMAL) RETURN DECIMAL AS " +
     	"BEGIN " +
             "SELECT max(SAL) INTO MAXSAL FROM SIMPLESF WHERE DEPTNO = DEPT; " +
             "RETURN(MAXSAL); " +
         "END";
-    
+
     @Test
     public void testSimpleFunction() {
         parser.ReInit(new StringReader(CREATE_SIMPLE_FUNCTION));
@@ -106,7 +106,7 @@ public class FunctionDDLTestSuite {
             functionType.getArguments().size() == 1);
         ArgumentType arg1 = functionType.getArguments().get(0);
         assertEquals("dummy procedure's argument wrong name", arg1.getArgumentName(), SIMPLE_ARG);
-        DatabaseType arg1Type = arg1.getDataType();
+        DatabaseType arg1Type = arg1.getEnclosedType();
         assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
             new DecimalType().getTypeName(), arg1Type.getTypeName());
         assertTrue("incorrect direction for " + arg1.getArgumentName(),
@@ -117,7 +117,7 @@ public class FunctionDDLTestSuite {
     static final String PROCEDURE_W_SYS_REFCURSOR = "GETALL";
     static final String SYS_REF_OUT_ARG = "SIMPL";
     static final String CREATE_PROCEDURE_W_SYS_REFCURSOR =
-        CREATE_FUNCTION_PREFIX + PROCEDURE_W_SYS_REFCURSOR + 
+        CREATE_FUNCTION_PREFIX + PROCEDURE_W_SYS_REFCURSOR +
             " ( " + SYS_REF_OUT_ARG + " OUT SYS_REFCURSOR) AS " +
         "BEGIN " +
           "OPEN SIMPL FOR SELECT * FROM simplesp;" +
@@ -157,7 +157,7 @@ public class FunctionDDLTestSuite {
     static final String PROCEDURE_W_INOUT_ARG = "INOUTARGSP";
     static final String INOUT_ARG = "X";
     static final String CREATE_PROCEDURE_W_INOUT_ARG =
-        CREATE_FUNCTION_PREFIX + PROCEDURE_W_INOUT_ARG + 
+        CREATE_FUNCTION_PREFIX + PROCEDURE_W_INOUT_ARG +
             " ( " + INOUT_ARG + " IN OUT NUMERIC) AS " +
         "BEGIN " +
             "null;" +

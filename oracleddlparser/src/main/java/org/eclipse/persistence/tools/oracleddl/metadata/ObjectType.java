@@ -24,16 +24,21 @@ public class ObjectType extends CompositeDatabaseTypeBase implements CompositeDa
        this.schema = schema;
     }
 
+    public DatabaseType getEnclosedType() {
+        return null;
+    }
+    public void setEnclosedType(DatabaseType enclosedType) {
+        //no-op
+    }
+
     /**
      * Returns the list of FieldType instances.
      */
     public List<FieldType> getFields() {
         return fields;
     }
-
-    @Override
-    public void addCompositeType(DatabaseType enclosedType) {
-        fields.add((FieldType)enclosedType);
+    public void addField(FieldType field) {
+        fields.add(field);
     }
 
     @Override

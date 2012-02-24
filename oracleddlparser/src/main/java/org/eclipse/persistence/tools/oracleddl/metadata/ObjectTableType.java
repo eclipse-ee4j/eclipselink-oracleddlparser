@@ -2,10 +2,9 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public class ObjectTableType extends CompositeDatabaseTypeBase implements CompositeDatabaseType {
+public class ObjectTableType extends CompositeDatabaseTypeWithEnclosedType implements CompositeDatabaseType {
 
     protected String schema;
-    protected DatabaseType enclosedType;
 
     public ObjectTableType(String typeName) {
         super(typeName);
@@ -16,13 +15,6 @@ public class ObjectTableType extends CompositeDatabaseTypeBase implements Compos
     }
     public void setSchema(String schema) {
        this.schema = schema;
-    }
-
-    public DatabaseType getEnclosedType() {
-        return enclosedType;
-    }
-    public void addCompositeType(DatabaseType enclosedType) {
-        this.enclosedType = enclosedType;
     }
 
     @Override

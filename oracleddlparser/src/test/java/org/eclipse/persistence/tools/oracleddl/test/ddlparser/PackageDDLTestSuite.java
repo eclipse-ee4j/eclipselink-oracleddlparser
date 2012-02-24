@@ -247,7 +247,7 @@ public class PackageDDLTestSuite {
         assertEquals("collection type1 has wrong name", PACKAGE_WCOLLECTION_NAME, t1.getTypeName());
         PLSQLCollectionType collType = (PLSQLCollectionType)t1;
         assertTrue("nestedType should be associative", collType.isIndexed());
-        DatabaseType nestedType = collType.getNestedType();
+        DatabaseType nestedType = collType.getEnclosedType();
         assertEquals("nestedType has wrong name", new VarChar2Type().getTypeName(),
             nestedType.getTypeName());
         VarChar2Type varcharNestedType = (VarChar2Type)nestedType;
@@ -324,19 +324,19 @@ public class PackageDDLTestSuite {
         assertEquals("package with collection containing record type1 field1 has wrong type",
             new VarChar2Type().getTypeName(), fields.get(0).getTypeName());
         assertEquals("package with collection containing record type1 field1 has wrong size",
-            20L, ((SizedType)fields.get(0).getDataType()).getSize());
+            20L, ((SizedType)fields.get(0).getEnclosedType()).getSize());
         assertEquals("package with collection containing record type1 field2 has wrong name",
             PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD2_NAME, fields.get(1).getFieldName());
         assertEquals("package with collection containing record type1 field2 has wrong type",
             new VarChar2Type().getTypeName(), fields.get(1).getTypeName());
         assertEquals("package with collection containing record type1 field2 has wrong size",
-            2000L, ((SizedType)fields.get(1).getDataType()).getSize());
+            2000L, ((SizedType)fields.get(1).getEnclosedType()).getSize());
         assertEquals("package with collection containing record type1 field3 has wrong name",
             PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD3_NAME, fields.get(2).getFieldName());
         assertEquals("package with collection containing record type1 field3 has wrong type",
             new VarChar2Type().getTypeName(), fields.get(2).getTypeName());
         assertEquals("package with collection containing record type1 field3 has wrong size",
-            2000L, ((SizedType)fields.get(2).getDataType()).getSize());
+            2000L, ((SizedType)fields.get(2).getEnclosedType()).getSize());
         assertEquals("package with collection containing record type1 field4 has wrong name",
             PACKAGE_WCOLLECTION_WRECORD_TYPE1_FIELD4_NAME, fields.get(3).getFieldName());
         assertEquals("package with collection containing record type1 field4 has wrong type",
@@ -351,7 +351,7 @@ public class PackageDDLTestSuite {
         PLSQLCollectionType collT2 = (PLSQLCollectionType)t2;
         assertFalse("package with collection containing record type2 nestedType should " +
         		"not be associative", collT2.isIndexed());
-        DatabaseType nestedType = collT2.getNestedType();
+        DatabaseType nestedType = collT2.getEnclosedType();
         assertEquals("package with collection containing record type2 nestedType has wrong name",
             PACKAGE_WCOLLECTION_WRECORD_TYPE1, nestedType.getTypeName());
         assertSame("package with collection containing record type2 nestedType wrong instance",
@@ -442,7 +442,7 @@ public class PackageDDLTestSuite {
         PLSQLCollectionType collT1 = (PLSQLCollectionType)t1;
         assertTrue("package with deeply nested types type1 nestedType should " +
                 "be associative", collT1.isIndexed());
-        DatabaseType nestedType = collT1.getNestedType();
+        DatabaseType nestedType = collT1.getEnclosedType();
         assertEquals("package with deeply nested types type1 nestedType has wrong name",
             new VarChar2Type().getTypeName(), nestedType.getTypeName());
         assertEquals("package with deeply nested types type1 nestedType has wrong size",
@@ -453,7 +453,7 @@ public class PackageDDLTestSuite {
         PLSQLCollectionType collT2 = (PLSQLCollectionType)t2;
         assertTrue("package with deeply nested types type2 nestedType should " +
                 "be associative", collT2.isIndexed());
-        nestedType = collT2.getNestedType();
+        nestedType = collT2.getEnclosedType();
         assertEquals("package with deeply nested types type2 nestedType has wrong name",
             new NumericType().getTypeName(), nestedType.getTypeName());
 

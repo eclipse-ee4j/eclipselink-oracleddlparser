@@ -580,7 +580,7 @@ DatabaseType enclosedType = null;
     }
     jj_consume_token(0);
         if (enclosedType != null) {
-            ((CompositeDatabaseType)databaseType).addCompositeType(enclosedType);
+            ((CompositeDatabaseType)databaseType).setEnclosedType(enclosedType);
         }
         typesRepository.setDatabaseType(typeName, databaseType);
         {if (true) return databaseType;}
@@ -608,9 +608,17 @@ DatabaseType enclosedType = null;
     if (jj_2_6(2)) {
       s = OracleObjectName();
            column = new FieldType(s);
-           if (enclosingType != null) {
-               enclosingType.addCompositeType(column);
-           }
+                   if (enclosingType != null) {
+                       if (enclosingType.isPLSQLRecordType()) {
+                               ((PLSQLRecordType)enclosingType).addField(column);
+                       }
+                           else if (enclosingType.isTableType()) {
+                               ((TableType)enclosingType).addColumn(column);
+                           }
+                           else if (enclosingType.isObjectType()) {
+                               ((ObjectType)enclosingType).addField(column);
+                           }
+                   }
       columnType = columnTypeSpec(enclosingType);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_NOT:
@@ -649,7 +657,7 @@ DatabaseType enclosedType = null;
       throw new ParseException();
     }
       if (column != null) {
-              column.setDataType(columnType);
+              column.setEnclosedType(columnType);
               if (columnType instanceof UnresolvedType) {
                   ((UnresolvedType)columnType).setOwningType(column);
               }
@@ -837,7 +845,7 @@ String s = null;
     }
     jj_consume_token(O_SEMICOLON);
         FieldType variable = new FieldType(varName.image);
-        variable.setDataType(varType);
+        variable.setEnclosedType(varType);
         packageType.addLocalVariable(variable);
   }
 
@@ -1799,13 +1807,13 @@ String s = null;
           UnresolvedType uType = new UnresolvedType(spec);
           if (isTYPEType) {
               TYPEType tType = new TYPEType(s);
-              tType.addCompositeType(uType);
+              tType.setEnclosedType(uType);
               uType.setOwningType(tType);
               dataType = tType;
           }
           else if (isROWTYPEType) {
               ROWTYPEType rType = new ROWTYPEType(s);
-              rType.addCompositeType(uType);
+              rType.setEnclosedType(uType);
               uType.setOwningType(rType);
               dataType = rType;
           }
@@ -1978,8 +1986,8 @@ String s = null;
       ;
     }
       fieldType = new FieldType(s);
-      fieldType.setDataType(dataType);
-      plsqlRecordType.addCompositeType(fieldType);
+      fieldType.setEnclosedType(dataType);
+      plsqlRecordType.addField(fieldType);
       if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(plsqlRecordType);
       }
@@ -2030,7 +2038,7 @@ Token rangeEnd = null;
     }
     jj_consume_token(O_SEMICOLON);
       PLSQLSubType newPLSQLSubType = new PLSQLSubType(subtypeName);
-      newPLSQLSubType.addCompositeType(subtype);
+      newPLSQLSubType.setEnclosedType(subtype);
       if (subtype instanceof UnresolvedType) {
           ((UnresolvedType)subtype).setOwningType(newPLSQLSubType);
       }
@@ -2075,9 +2083,8 @@ Token rangeEnd = null;
       if (nestedType instanceof UnresolvedType) {
         ((UnresolvedType)nestedType).setOwningType(plsqlTable);
       }
-      plsqlTable.addCompositeType(nestedType);
+      plsqlTable.setEnclosedType(nestedType);
       packageType.addType(plsqlTable);
-      // TODO - TBD typesRepository.setDatabaseType(typeName, plsqlTable);
       localTypes.put(typeName, plsqlTable);
   }
 
@@ -2223,21 +2230,21 @@ Token rangeEnd = null;
               if (isTYPEType) {
                   TYPEType tType = new TYPEType(s);
                   UnresolvedType uType = new UnresolvedType(s);
-                  tType.addCompositeType(uType);
+                  tType.setEnclosedType(uType);
                   uType.setOwningType(tType);
                   localType = tType;
               }
               else if (isROWTYPEType) {
                   ROWTYPEType rType = new ROWTYPEType(s);
                   UnresolvedType uType = new UnresolvedType(s);
-                  rType.addCompositeType(uType);
+                  rType.setEnclosedType(uType);
                   uType.setOwningType(rType);
                   localType = rType;
               }
               else {
-                  localType = varField.getDataType();
+                  localType = varField.getEnclosedType();
               }
-              cursorType.setDataType(localType);
+              cursorType.setEnclosedType(localType);
                   break;
               }
           }
@@ -2247,23 +2254,23 @@ Token rangeEnd = null;
                   UnresolvedType uType = new UnresolvedType(spec);
                   if (isTYPEType) {
                       TYPEType tType = new TYPEType(s);
-                      tType.addCompositeType(uType);
+                      tType.setEnclosedType(uType);
                       uType.setOwningType(tType);
-                      cursorType.setDataType(tType);
+                      cursorType.setEnclosedType(tType);
                   }
                   else if (isROWTYPEType) {
                       ROWTYPEType rType = new ROWTYPEType(s);
-                      rType.addCompositeType(uType);
+                      rType.setEnclosedType(uType);
                       uType.setOwningType(rType);
-                      cursorType.setDataType(rType);
+                      cursorType.setEnclosedType(rType);
                   }
                   else {
                       uType.setOwningType(cursorType);
-                      cursorType.setDataType(uType);
+                      cursorType.setEnclosedType(uType);
                   }
               }
               else {
-                  cursorType.setDataType(localType);
+                  cursorType.setEnclosedType(localType);
               }
           }
   }
@@ -2370,7 +2377,7 @@ Token rangeEnd = null;
     dataType = typeSpec();
       ArgumentType returnType = new ArgumentType(null);
       returnType.setDirection(ArgumentTypeDirection.RETURN);
-      returnType.setDataType(dataType);
+      returnType.setEnclosedType(dataType);
       if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(returnType);
       }
@@ -2411,7 +2418,7 @@ Token rangeEnd = null;
       ;
     }
       argumentType = new ArgumentType(t.image);
-      argumentType.setDataType(argumentDataType);
+      argumentType.setEnclosedType(argumentDataType);
       if (argumentDataType instanceof UnresolvedType) {
           ((UnresolvedType)argumentDataType).setOwningType(argumentType);
       }
@@ -2427,7 +2434,7 @@ Token rangeEnd = null;
       if (defaultAssignment) {
           argumentType.setOptional();
       }
-      procedureType.addCompositeType(argumentType);
+      procedureType.addArgument(argumentType);
   }
 
   final public String direction() throws ParseException {
@@ -2767,6 +2774,11 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3R_58() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    return false;
+  }
+
   private boolean jj_3R_14() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
@@ -2782,11 +2794,6 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_58() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    return false;
-  }
-
   private boolean jj_3R_20() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_6()) return true;
@@ -2798,17 +2805,17 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3_14() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
   private boolean jj_3_18() {
     if (jj_3R_10()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_11()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_14() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
@@ -2834,12 +2841,6 @@ Token rangeEnd = null;
   private boolean jj_3R_19() {
     if (jj_scan_token(O_DOT)) return true;
     if (jj_3R_6()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -2874,6 +2875,12 @@ Token rangeEnd = null;
 
   private boolean jj_3R_29() {
     if (jj_scan_token(K_SIGNTYPE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3059,12 +3066,6 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_53() {
     if (jj_scan_token(K_UROWID)) return true;
     return false;
@@ -3077,6 +3078,12 @@ Token rangeEnd = null;
 
   private boolean jj_3_15() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3154,12 +3161,6 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_39() {
     if (jj_scan_token(K_INT)) return true;
     return false;
@@ -3167,6 +3168,12 @@ Token rangeEnd = null;
 
   private boolean jj_3R_38() {
     if (jj_scan_token(K_INTEGER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3206,14 +3213,14 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
+  private boolean jj_3R_63() {
+    if (jj_scan_token(K_CLOB)) return true;
     return false;
   }
 
-  private boolean jj_3R_63() {
-    if (jj_scan_token(K_CLOB)) return true;
+  private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3229,12 +3236,6 @@ Token rangeEnd = null;
 
   private boolean jj_3R_17() {
     if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(O_DOT)) return true;
     return false;
   }
 
@@ -3274,6 +3275,12 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3_1() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(O_DOT)) return true;
+    return false;
+  }
+
   private boolean jj_3R_61() {
     if (jj_scan_token(K_NVARCHAR2)) return true;
     return false;
@@ -3300,14 +3307,14 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3_6() {
-    if (jj_3R_6()) return true;
-    if (jj_3R_7()) return true;
+  private boolean jj_3_13() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3_13() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
+  private boolean jj_3_6() {
+    if (jj_3R_6()) return true;
+    if (jj_3R_7()) return true;
     return false;
   }
 
@@ -3321,13 +3328,13 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(K_ROWTYPE)) return true;
+  private boolean jj_3R_59() {
+    if (jj_scan_token(K_NCHAR)) return true;
     return false;
   }
 
-  private boolean jj_3R_59() {
-    if (jj_scan_token(K_NCHAR)) return true;
+  private boolean jj_3R_13() {
+    if (jj_scan_token(K_ROWTYPE)) return true;
     return false;
   }
 

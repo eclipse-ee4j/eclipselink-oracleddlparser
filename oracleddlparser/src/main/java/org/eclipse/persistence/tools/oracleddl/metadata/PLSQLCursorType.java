@@ -15,121 +15,42 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public class PLSQLCursorType extends DatabaseTypeTestableBase implements CompositeDatabaseType, DatabaseTypeVisitable {
+public class PLSQLCursorType extends CompositeDatabaseTypeWithEnclosedType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     static final String REF_CURSOR = "REF CURSOR";
     protected String cursorName;
-    protected DatabaseType dataType;
 
     public PLSQLCursorType(String cursorName) {
+		super(null);
 		this.cursorName = cursorName;
+    }
+
+    @Override
+    public String getTypeName() {
+        if (enclosedType == null) {
+            return REF_CURSOR + "(" + cursorName + ")";
+        }
+        return enclosedType.getTypeName();
     }
 
     public String getCursorName() {
         return cursorName;
     }
 
-    public DatabaseType getDataType() {
-        return dataType;
-    }
-    public void setDataType(DatabaseType dataType) {
-        this.dataType = dataType;
-    }
-
-	public void addCompositeType(DatabaseType enclosedType) {
-		setDataType(enclosedType);
-	}
-
-	public boolean isWeaklyTyped() {
-		return dataType == null;
+    public boolean isWeaklyTyped() {
+		return enclosedType == null;
 	}
 
 	public boolean isResolved() {
         // if the dataType is unresolved, then this PLSQLCursor is a weakly-typed REF CURSOR
-		if (dataType == null) {
+		if (enclosedType == null) {
 			return false;
 		}
-		return dataType.isResolved();
+		return enclosedType.isResolved();
 	}
-
-	public boolean isComposite() {
-		if (dataType == null) {
-			// by default, a Field is 'simple' until otherwise configured 'composite'
-			return false;
-		}
-		return dataType.isComposite();
-	}
-
-    //for all DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosed dataType
-
-    public boolean isObjectTableType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isObjectTableType();
-    }
-
-    public boolean isObjectType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isObjectType();
-    }
-
-    public boolean isPLSQLCollectionType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isPLSQLCollectionType();
-    }
 
     public boolean isPLSQLCursorType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isPLSQLCursorType();
-    }
-
-    public boolean isPLSQLRecordType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isPLSQLRecordType();
-    }
-
-    public boolean isPLSQLSubType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isPLSQLSubType();
-    }
-
-    public boolean isTableType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isTableType();
-    }
-
-    public boolean isDbTableType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isDbTableType();
-    }
-
-    public boolean isVArrayType() {
-        if (dataType == null) {
-            return false;
-        }
-        return dataType.isVArrayType();
-    }
-
-    public String getTypeName() {
-		if (dataType == null) {
-			return REF_CURSOR + "(" + cursorName + ")";
-		}
-		return dataType.getTypeName();
+        return true;
     }
 
 	public void accept(DatabaseTypeVisitor visitor) {
@@ -145,10 +66,10 @@ public class PLSQLCursorType extends DatabaseTypeTestableBase implements Composi
         StringBuilder sb = new StringBuilder(cursorName);
         sb.append(" IS ");
         sb.append(REF_CURSOR);
-        if (dataType != null) {
+        if (enclosedType != null) {
             sb.append(" RETURN ");
-            sb.append(dataType.getTypeName());
-            if (!dataType.isResolved()) {
+            sb.append(enclosedType.getTypeName());
+            if (!enclosedType.isResolved()) {
                 sb.append("[u]");
             }
         }

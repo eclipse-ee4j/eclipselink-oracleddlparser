@@ -39,11 +39,11 @@ class FunctionTypeVisitor extends BaseDatabaseTypeVisitor {
     public void beginVisit(ArgumentType argType) {
         if (argType.optional()) {
             argData.add(argType.getArgumentName() + "(opt) " + argType.getDirection() + " " +
-                argType.getDataType());
+                argType.getEnclosedType());
         }
         else if (argType.getDirection() != RETURN) {
             argData.add(argType.getArgumentName() + " " + argType.getDirection() + " " +
-                argType.getDataType());
+                argType.getEnclosedType());
         }
     }
 

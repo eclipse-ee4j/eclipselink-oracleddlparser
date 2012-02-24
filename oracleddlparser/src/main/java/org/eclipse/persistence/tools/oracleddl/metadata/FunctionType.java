@@ -22,11 +22,6 @@ public class FunctionType extends ProcedureType {
         super(procedureName);
     }
 
-    @Override
-    public boolean isFunction() {
-        return true;
-    }
-
     public void setProcedureName(String procedureName) {
         this.procedureName = procedureName;
         super.typeName = "FUNCTION " + procedureName;

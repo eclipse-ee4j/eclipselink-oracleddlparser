@@ -52,12 +52,28 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
        this.schema = schema;
     }
 
-    public void addCompositeType(DatabaseType enclosedType) {
-        columns.add((FieldType)enclosedType);
+    public DatabaseType getEnclosedType() {
+        return null;
+    }
+    public void setEnclosedType(DatabaseType enclosedType) {
+        //no-op
     }
 
     public List<FieldType> getColumns() {
         return columns;
+    }
+    public void addColumn(DatabaseType databaseType) {
+        if (databaseType.isFieldType()) {
+            columns.add((FieldType)databaseType);
+        } else {
+            // if not a FieldType instance we may need to update
+            // an existing column with a resolved type
+            for (FieldType col : columns) {
+                if (col.getEnclosedType().getTypeName().equals(databaseType.getTypeName())) {
+                    col.setEnclosedType(databaseType);
+                }
+            }
+        }
     }
 
     public void setIOT(boolean iot) {

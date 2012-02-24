@@ -20,7 +20,7 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirec
 public class ArgumentType extends DatabaseTypeTestableBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String argumentName;
-    protected DatabaseType dataType;
+    protected DatabaseType enclosedType;
     protected ArgumentTypeDirection direction;
     protected boolean optional = false;
 
@@ -32,11 +32,11 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return argumentName;
     }
 
-    public DatabaseType getDataType() {
-        return dataType;
+    public DatabaseType getEnclosedType() {
+        return enclosedType;
     }
-    public void setDataType(DatabaseType dataType) {
-        this.dataType = dataType;
+    public void setEnclosedType(DatabaseType enclosedType) {
+        this.enclosedType = enclosedType;
     }
 
 	public ArgumentTypeDirection getDirection() {
@@ -48,18 +48,18 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
 
 	public boolean isResolved() {
         // if dataType is unresolved, then this argument is unresolved
-		if (dataType == null) {
+		if (enclosedType == null) {
 			return false;
 		}
-		return dataType.isResolved();
+		return enclosedType.isResolved();
 	}
 
 	public boolean isComposite() {
-		if (dataType == null) {
+		if (enclosedType == null) {
 			// by default, an argument is 'simple' until otherwise configured 'composite'
 			return false;
 		}
-		return dataType.isComposite();
+		return enclosedType.isComposite();
 	}
 
     @Override
@@ -68,10 +68,10 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
     }
 
     public String getTypeName() {
-		if (dataType == null) {
+		if (enclosedType == null) {
 			return null;
 		}
-		return dataType.getTypeName();
+		return enclosedType.getTypeName();
     }
 
     public boolean optional() {
@@ -83,10 +83,6 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
     public void unsetOptional() {
     	optional = false;
     }
-
-	public void addCompositeType(DatabaseType enclosedType) {
-		setDataType(enclosedType);
-	}
 
     public String shortName() {
         StringBuilder sb = new StringBuilder();
@@ -103,11 +99,11 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
             sb.append(direction.toString());
             sb.append(" ");
         }
-        if (dataType == null) {
+        if (enclosedType == null) {
             sb.append("<null/>");
         }
         else {
-            sb.append(dataType.shortName());
+            sb.append(enclosedType.shortName());
         }
         return sb.toString();
     }
@@ -115,66 +111,66 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
     //for all DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosed dataType
 
     public boolean isObjectTableType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isObjectTableType();
+        return enclosedType.isObjectTableType();
     }
 
     public boolean isObjectType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isObjectType();
+        return enclosedType.isObjectType();
     }
 
     public boolean isPLSQLCollectionType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isPLSQLCollectionType();
+        return enclosedType.isPLSQLCollectionType();
     }
 
     public boolean isPLSQLCursorType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isPLSQLCursorType();
+        return enclosedType.isPLSQLCursorType();
     }
 
     public boolean isPLSQLRecordType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isPLSQLRecordType();
+        return enclosedType.isPLSQLRecordType();
     }
 
     public boolean isPLSQLSubType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isPLSQLSubType();
+        return enclosedType.isPLSQLSubType();
     }
 
     public boolean isTableType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isTableType();
+        return enclosedType.isTableType();
     }
 
     public boolean isDbTableType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isDbTableType();
+        return enclosedType.isDbTableType();
     }
 
     public boolean isVArrayType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isVArrayType();
+        return enclosedType.isVArrayType();
     }
 
     @Override
@@ -193,11 +189,11 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
             sb.append(direction.toString());
             sb.append(" ");
         }
-        if (dataType == null) {
+        if (enclosedType == null) {
             sb.append("<null/>");
         }
         else {
-            sb.append(dataType.toString());
+            sb.append(enclosedType.toString());
         }
         if (optional) {
             sb.append(" (opt)");

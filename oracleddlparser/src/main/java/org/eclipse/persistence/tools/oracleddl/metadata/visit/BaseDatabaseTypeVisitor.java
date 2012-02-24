@@ -115,9 +115,9 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void visit(ArgumentType databaseType) {
         beginVisit(databaseType);
-        DatabaseType dt = databaseType.getDataType();
-        if (dt != null) {
-            dt.accept(this);
+        DatabaseType enclosedType = databaseType.getEnclosedType();
+        if (enclosedType != null) {
+            enclosedType.accept(this);
         }
         endVisit(databaseType);
     }
@@ -128,9 +128,9 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void visit(FieldType databaseType) {
         beginVisit(databaseType);
-        DatabaseType dt = databaseType.getDataType();
-        if (dt != null) {
-            dt.accept(this);
+        DatabaseType enclosedType = databaseType.getEnclosedType();
+        if (enclosedType != null) {
+            enclosedType.accept(this);
         }
         endVisit(databaseType);
     }
@@ -141,9 +141,9 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void visit(PLSQLCursorType databaseType) {
         beginVisit(databaseType);
-        DatabaseType dt = databaseType.getDataType();
-        if (dt != null) {
-            dt.accept(this);
+        DatabaseType enclosedType = databaseType.getEnclosedType();
+        if (enclosedType != null) {
+            enclosedType.accept(this);
         }
         endVisit(databaseType);
     }
@@ -197,9 +197,9 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
     public void visit(PLSQLCollectionType databaseType) {
         beginVisit(databaseType);
-        DatabaseType nestedType = databaseType.getNestedType();
-        if (nestedType != null) {
-            nestedType.accept(this);
+        DatabaseType enclosedType = databaseType.getEnclosedType();
+        if (enclosedType != null) {
+            enclosedType.accept(this);
         }
         endVisit(databaseType);
     }

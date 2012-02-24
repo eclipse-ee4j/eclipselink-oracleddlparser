@@ -529,8 +529,8 @@ public class DatabaseTypeBuilder {
                     if (tables != null && tables.size() > 0) {
                         tableType = tables.get(0);
                         typesRepository.setDatabaseType(tableType.getTableName(), tableType);
-                        rType.addCompositeType(tableType);
-                        uType.getOwningType().addCompositeType(rType);
+                        rType.setEnclosedType(tableType);
+                        uType.getOwningType().setEnclosedType(rType);
                         typesRepository.setDatabaseType(rType.getTypeName(), rType);
                     }
                     //always a chance that tableType has some unresolved column type
@@ -548,14 +548,14 @@ public class DatabaseTypeBuilder {
                     }
                 }
                 else {
-                    uType.getOwningType().addCompositeType(resolvedType);
+                    uType.getOwningType().setEnclosedType(resolvedType);
                 }
             }
             else if (owningType.isTYPEType()) {
                 TYPEType tType = (TYPEType)owningType;
                 DatabaseType foundType = findField(typeName1, databaseType);
                 if (foundType != null) {
-                    tType.addCompositeType(foundType);
+                    tType.setEnclosedType(foundType);
                     //TODO - figure out TYPEType's that go 'into' a  local variable
                     resolvedType = (CompositeDatabaseType)foundType;
                 }
@@ -631,14 +631,14 @@ public class DatabaseTypeBuilder {
                         //special fixing-up for unresolved types in records
                         for (FieldType field : recordType.getFields()) {
                             if (!field.isResolved()) {
-                                if (field.getDataType().getTypeName().equals(resolvedType.getTypeName())) {
-                                    field.setDataType(resolvedType);
+                                if (field.getEnclosedType().getTypeName().equals(resolvedType.getTypeName())) {
+                                    field.setEnclosedType(resolvedType);
                                 }
                             }
                         }
                     }
                     else {
-                        owningType.addCompositeType(resolvedType);
+                        owningType.setEnclosedType(resolvedType);
                     }
                     typesRepository.setDatabaseType(resolvedType.getTypeName(), resolvedType);
                     //always a chance that resolvedType refers to something that is un-resolved

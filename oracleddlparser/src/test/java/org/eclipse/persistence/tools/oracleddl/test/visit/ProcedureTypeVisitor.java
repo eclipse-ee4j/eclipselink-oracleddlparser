@@ -25,23 +25,23 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.BaseDatabaseTypeVi
 /**
  * Visitor for use with ProcedureType.  The visit methods
  * simply gather all relevant information such that it
- * can be returned as a String when visiting is complete. 
+ * can be returned as a String when visiting is complete.
  */
 class ProcedureTypeVisitor extends BaseDatabaseTypeVisitor {
     public String procName;
     public String schema;
     public List<String> argData = new ArrayList<String>();
-    
+
     public void beginVisit(ProcedureType procType) {
         procName = procType.getProcedureName();
         schema = procType.getSchema();
     }
-    
+
     public void beginVisit(ArgumentType argType) {
         if (argType.optional()) {
-            argData.add(argType.getArgumentName() + "(opt) " + argType.getDirection() + " " + argType.getDataType());
+            argData.add(argType.getArgumentName() + "(opt) " + argType.getDirection() + " " + argType.getEnclosedType());
         } else {
-            argData.add(argType.getArgumentName() + " " + argType.getDirection() + " " + argType.getDataType());
+            argData.add(argType.getArgumentName() + " " + argType.getDirection() + " " + argType.getEnclosedType());
         }
     }
 

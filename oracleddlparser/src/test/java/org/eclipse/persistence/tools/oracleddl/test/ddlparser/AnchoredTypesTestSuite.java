@@ -154,9 +154,9 @@ public class AnchoredTypesTestSuite {
         assertFalse(ANCHORED_TYPE2_NAME + "_CURSOR is not supposed to be weakly typed",
             cursor.isWeaklyTyped());
         assertEquals(ANCHORED_TYPE2_NAME + "_CURSOR returns wrong type", ANCHORED_TYPE2_NAME,
-            cursor.getDataType().getTypeName());
+            cursor.getEnclosedType().getTypeName());
         assertFalse(ANCHORED_TYPE2_NAME + "_CURSOR's return type is not supposed to be resolved",
-            cursor.getDataType().isResolved());
+            cursor.getEnclosedType().isResolved());
     }
 
     /*
@@ -194,7 +194,7 @@ public class AnchoredTypesTestSuite {
             packageType.getLocalVariables().size());
         FieldType var1 = packageType.getLocalVariables().get(0);
         assertEquals(VAR_NAME + " wrong name", VAR_NAME, var1.getFieldName());
-        assertEquals(VAR_NAME + " wrong datatype", ANCHORED_TYPE2, var1.getDataType().getTypeName());
+        assertEquals(VAR_NAME + " wrong datatype", ANCHORED_TYPE2, var1.getEnclosedType().getTypeName());
         assertEquals(ANCHORED_TYPES_TEST3_PACKAGE + " package should have exactly 1 type", 1,
             packageType.getTypes().size());
         PLSQLType type1 = packageType.getTypes().get(0);
@@ -216,8 +216,8 @@ public class AnchoredTypesTestSuite {
         assertFalse(ANCHORED_TYPE2_NAME + "_CURSOR is not supposed to be weakly typed",
             cursor.isWeaklyTyped());
         assertEquals(ANCHORED_TYPE2_NAME + "_CURSOR returns wrong type", ANCHORED_TYPE2_NAME + "%TYPE",
-            cursor.getDataType().getTypeName());
+            cursor.getEnclosedType().getTypeName());
         assertFalse(ANCHORED_TYPE2_NAME + "_CURSOR's return type is not supposed to be resolved",
-            cursor.getDataType().isResolved());
+            cursor.getEnclosedType().isResolved());
     }
 }

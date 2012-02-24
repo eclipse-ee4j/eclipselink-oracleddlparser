@@ -14,7 +14,7 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public abstract class PLSQLType extends CompositeDatabaseTypeBase implements CompositeDatabaseType {
+public abstract class PLSQLType extends CompositeDatabaseTypeWithEnclosedType implements CompositeDatabaseType {
 
     protected PLSQLPackageType parentType;
 
@@ -29,12 +29,12 @@ public abstract class PLSQLType extends CompositeDatabaseTypeBase implements Com
         this.parentType = parentType;
     }
 
-    @Override
-    public void accept(DatabaseTypeVisitor visitor) {
+    public boolean isComposite() {
+        return true;
     }
 
     @Override
-    public void addCompositeType(DatabaseType enclosedType) {
+    public void accept(DatabaseTypeVisitor visitor) {
     }
 
     @Override

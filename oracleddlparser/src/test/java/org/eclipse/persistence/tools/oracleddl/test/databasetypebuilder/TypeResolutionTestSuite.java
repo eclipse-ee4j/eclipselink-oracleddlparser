@@ -285,9 +285,9 @@ public class TypeResolutionTestSuite {
     @Test
     public void testSame_DDLRESOLVTEST_TABLE2_ROWTYPE() {
         FunctionType func1 = (FunctionType)ddlresolvtestPackage.getProcedures().get(0);
-        DatabaseType tesmanfunc17ReturnType = func1.getReturnArgument().getDataType();
+        DatabaseType tesmanfunc17ReturnType = func1.getReturnArgument().getEnclosedType();
         ProcedureType proc2 = ddlresolvtestPackage.getProcedures().get(1);
-        DatabaseType tesmanproc17OutArgType = proc2.getArguments().get(1).getDataType();
+        DatabaseType tesmanproc17OutArgType = proc2.getArguments().get(1).getEnclosedType();
         assertSame(tesmanfunc17ReturnType, tesmanproc17OutArgType);
     }
 
@@ -295,8 +295,8 @@ public class TypeResolutionTestSuite {
     public void testSame_DDLRESOLVTEST_TABLE3_ROWTYPE() {
         ProcedureType proc3 = ddlresolvtestPackage.getProcedures().get(2);
         List<ArgumentType> proc3Args = proc3.getArguments();
-        DatabaseType oldrecDatabaseType = proc3Args.get(0).getDataType();
-        DatabaseType newrecDatabaseType = proc3Args.get(1).getDataType();
+        DatabaseType oldrecDatabaseType = proc3Args.get(0).getEnclosedType();
+        DatabaseType newrecDatabaseType = proc3Args.get(1).getEnclosedType();
         assertSame(oldrecDatabaseType, newrecDatabaseType);
     }
 
@@ -304,16 +304,16 @@ public class TypeResolutionTestSuite {
     public void testSame_EMPREC() {
         PLSQLRecordType empRecType = (PLSQLRecordType)ddlresolvtestPackage.getTypes().get(0);
         PLSQLRecordType empRecType2 = (PLSQLRecordType)ddlresolvtestPackage.getProcedures().get(3).
-            getArguments().get(0).getDataType();
+            getArguments().get(0).getEnclosedType();
         assertSame(empRecType, empRecType2);
     }
 
     @Test
     public void testSame_EMPdotEMPNO_TYPE() {
         PLSQLRecordType empRecType = (PLSQLRecordType)ddlresolvtestPackage.getTypes().get(0);
-        DatabaseType empDotEnamePcentTYPE1 = empRecType.getFields().get(1).getDataType();
+        DatabaseType empDotEnamePcentTYPE1 = empRecType.getFields().get(1).getEnclosedType();
         ArgumentType nameArg = ddlresolvtestPackage.getProcedures().get(4).getArguments().get(0);
-        DatabaseType empDotEnamePcentTYPE2 = nameArg.getDataType();
+        DatabaseType empDotEnamePcentTYPE2 = nameArg.getEnclosedType();
         assertSame(empDotEnamePcentTYPE1, empDotEnamePcentTYPE2);
     }
 
@@ -322,7 +322,7 @@ public class TypeResolutionTestSuite {
         FunctionType echoRegionProc = (FunctionType)ddlresolvtestPackage.getProcedures().get(5);
         ArgumentType aRegion = echoRegionProc.getArguments().get(0);
         ArgumentType returnRegion = echoRegionProc.getReturnArgument();
-        assertSame(aRegion.getDataType(), returnRegion.getDataType());
+        assertSame(aRegion.getEnclosedType(), returnRegion.getEnclosedType());
     }
 
     @Test

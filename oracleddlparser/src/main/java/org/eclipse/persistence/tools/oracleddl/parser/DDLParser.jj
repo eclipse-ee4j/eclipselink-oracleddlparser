@@ -557,7 +557,7 @@ DatabaseType enclosedType = null;
      <EOF>
     {
         if (enclosedType != null) {
-            ((CompositeDatabaseType)databaseType).addCompositeType(enclosedType);        }
+            ((CompositeDatabaseType)databaseType).setEnclosedType(enclosedType);        }
         typesRepository.setDatabaseType(typeName, databaseType);
         return databaseType;
     }
@@ -580,9 +580,17 @@ void columnDeclaration(CompositeDatabaseType enclosingType)      :
     (  LOOKAHEAD(2)       s=OracleObjectName()
          {
            column = new FieldType(s);
-           if (enclosingType != null) {
-               enclosingType.addCompositeType(column);
-           }         }
+		   if (enclosingType != null) {
+		       if (enclosingType.isPLSQLRecordType()) {
+			       ((PLSQLRecordType)enclosingType).addField(column);
+		       }
+			   else if (enclosingType.isTableType()) {
+			       ((TableType)enclosingType).addColumn(column);
+			   }
+			   else if (enclosingType.isObjectType()) {
+			       ((ObjectType)enclosingType).addField(column);
+			   }
+		   }         }
          columnType=columnTypeSpec(enclosingType) [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
        | LOOKAHEAD(2)
          [ <K_CONSTRAINT> ] [ OracleObjectName() ] <K_PRIMARY> <K_KEY>
@@ -590,7 +598,7 @@ void columnDeclaration(CompositeDatabaseType enclosingType)      :
     )
     {
       if (column != null) {
-	      column.setDataType(columnType);
+	      column.setEnclosedType(columnType);
 	      if (columnType instanceof UnresolvedType) {
 	          ((UnresolvedType)columnType).setOwningType(column);
 	      }
@@ -677,7 +685,7 @@ void variableDeclaration(PLSQLPackageType packageType):
     <O_SEMICOLON>
     {
         FieldType variable = new FieldType(varName.image);
-        variable.setDataType(varType);
+        variable.setEnclosedType(varType);
         packageType.addLocalVariable(variable);    }}
 
 void variableDefaultAssignment()      :
@@ -1023,13 +1031,13 @@ DatabaseType typeSpec():
           UnresolvedType uType = new UnresolvedType(spec);
           if (isTYPEType) {
               TYPEType tType = new TYPEType(s);
-              tType.addCompositeType(uType);
+              tType.setEnclosedType(uType);
               uType.setOwningType(tType);
               dataType = tType;
           }
           else if (isROWTYPEType) {
               ROWTYPEType rType = new ROWTYPEType(s);
-              rType.addCompositeType(uType);
+              rType.setEnclosedType(uType);
               uType.setOwningType(rType);
               dataType = rType;
           }
@@ -1126,8 +1134,8 @@ void fieldDeclaration(PLSQLRecordType plsqlRecordType):
     s=typeName() dataType=typeSpec() [ <K_NOT> <K_NULL> ] [ fieldDefaultAssignment() ]
     {
       fieldType = new FieldType(s);
-      fieldType.setDataType(dataType);
-      plsqlRecordType.addCompositeType(fieldType);
+      fieldType.setEnclosedType(dataType);
+      plsqlRecordType.addField(fieldType);
       if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(plsqlRecordType);
       }    }
@@ -1151,7 +1159,7 @@ Token rangeEnd = null;}
         [ <K_NOT> notNull=<K_NULL> ] <O_SEMICOLON>
     {
       PLSQLSubType newPLSQLSubType = new PLSQLSubType(subtypeName);
-      newPLSQLSubType.addCompositeType(subtype);
+      newPLSQLSubType.setEnclosedType(subtype);
       if (subtype instanceof UnresolvedType) {
           ((UnresolvedType)subtype).setOwningType(newPLSQLSubType);      }
       packageType.addType(newPLSQLSubType);
@@ -1179,9 +1187,8 @@ void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName)      :
     {
       if (nestedType instanceof UnresolvedType) {
         ((UnresolvedType)nestedType).setOwningType(plsqlTable);      }
-      plsqlTable.addCompositeType(nestedType);
+      plsqlTable.setEnclosedType(nestedType);
       packageType.addType(plsqlTable);
-      // TODO - TBD typesRepository.setDatabaseType(typeName, plsqlTable);
       localTypes.put(typeName, plsqlTable);
     }
 }
@@ -1273,20 +1280,20 @@ void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType)
               if (isTYPEType) {
                   TYPEType tType = new TYPEType(s);
                   UnresolvedType uType = new UnresolvedType(s);
-                  tType.addCompositeType(uType);
+                  tType.setEnclosedType(uType);
                   uType.setOwningType(tType);
                   localType = tType;
               }
               else if (isROWTYPEType) {
                   ROWTYPEType rType = new ROWTYPEType(s);
                   UnresolvedType uType = new UnresolvedType(s);
-                  rType.addCompositeType(uType);
+                  rType.setEnclosedType(uType);
                   uType.setOwningType(rType);
                   localType = rType;
               }
               else {
-                  localType = varField.getDataType();              }
-              cursorType.setDataType(localType);
+                  localType = varField.getEnclosedType();              }
+              cursorType.setEnclosedType(localType);
 	          break;
 	      }
 	  }
@@ -1296,23 +1303,23 @@ void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType)
 	          UnresolvedType uType = new UnresolvedType(spec);
 	          if (isTYPEType) {
 	              TYPEType tType = new TYPEType(s);
-	              tType.addCompositeType(uType);
+	              tType.setEnclosedType(uType);
 	              uType.setOwningType(tType);
-	              cursorType.setDataType(tType);
+	              cursorType.setEnclosedType(tType);
 	          }
 	          else if (isROWTYPEType) {
 	              ROWTYPEType rType = new ROWTYPEType(s);
-	              rType.addCompositeType(uType);
+	              rType.setEnclosedType(uType);
 	              uType.setOwningType(rType);
-	              cursorType.setDataType(rType);
+	              cursorType.setEnclosedType(rType);
 	          }
 	          else {
 	              uType.setOwningType(cursorType);
-	              cursorType.setDataType(uType);
+	              cursorType.setEnclosedType(uType);
 	          }
 	      }
 	      else {
-	          cursorType.setDataType(localType);	      }
+	          cursorType.setEnclosedType(localType);	      }
 	  }    }
 }
 
@@ -1373,7 +1380,7 @@ ArgumentType functionReturnSpec():
     {
       ArgumentType returnType = new ArgumentType(null);
       returnType.setDirection(ArgumentTypeDirection.RETURN);
-      returnType.setDataType(dataType);
+      returnType.setEnclosedType(dataType);
       if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(returnType);      }
       return returnType;
@@ -1393,7 +1400,7 @@ void argument(ProcedureType procedureType)      :
         [ <K_NOCOPY> ] argumentDataType=typeSpec() [ defaultAssignment=argumentDefaultAssignment() ]
     {
       argumentType = new ArgumentType(t.image);
-      argumentType.setDataType(argumentDataType);
+      argumentType.setEnclosedType(argumentDataType);
       if (argumentDataType instanceof UnresolvedType) {
           ((UnresolvedType)argumentDataType).setOwningType(argumentType);
       }
@@ -1405,7 +1412,7 @@ void argument(ProcedureType procedureType)      :
               argDirection = ArgumentTypeDirection.INOUT;          }
           argumentType.setDirection(argDirection);      }      if (defaultAssignment) {
           argumentType.setOptional();      }
-      procedureType.addCompositeType(argumentType);
+      procedureType.addArgument(argumentType);
     }
 }
 

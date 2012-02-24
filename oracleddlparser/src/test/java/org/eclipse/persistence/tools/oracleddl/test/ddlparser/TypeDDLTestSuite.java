@@ -95,12 +95,12 @@ public class TypeDDLTestSuite {
         assertEquals("incorrect name for " + SIMPLE_TYPE_FIELD1_NAME + " field ",
             SIMPLE_TYPE_FIELD1_NAME, field1.getFieldName());
         assertEquals("incorrect type for " + SIMPLE_TYPE_FIELD1_NAME + " field ",
-            SIMPLE_TYPE_FIELD1_TYPE, field1.getDataType().toString());
+            SIMPLE_TYPE_FIELD1_TYPE, field1.getEnclosedType().toString());
         FieldType field2 = fields.get(1);
         assertEquals("incorrect name for " + SIMPLE_TYPE_FIELD2_NAME + " field ",
             SIMPLE_TYPE_FIELD2_NAME, field2.getFieldName());
         assertEquals("incorrect type for " + SIMPLE_TYPE_FIELD2_NAME + " field ",
-            SIMPLE_TYPE_FIELD2_TYPE, field2.getDataType().toString());
+            SIMPLE_TYPE_FIELD2_TYPE, field2.getEnclosedType().toString());
     }
 
     /*
@@ -218,22 +218,22 @@ public class TypeDDLTestSuite {
         assertEquals("incorrect name for " + TWUT_FIELD1_NAME + " field ",
             TWUT_FIELD1_NAME, field1.getFieldName());
         assertEquals("incorrect type for " + TWUT_FIELD1_NAME + " field ",
-            TWUT_FIELD1_TYPE, field1.getDataType().toString());
+            TWUT_FIELD1_TYPE, field1.getEnclosedType().toString());
         FieldType field2 = fields.get(1);
         assertEquals("incorrect name for " + TWUT_FIELD2_NAME + " field ",
             TWUT_FIELD2_NAME, field2.getFieldName());
         assertEquals("incorrect type for " + TWUT_FIELD2_NAME + " field ",
-            TWUT_FIELD2_TYPE, field2.getDataType().toString());
+            TWUT_FIELD2_TYPE, field2.getEnclosedType().toString());
         FieldType field3 = fields.get(2);
         assertEquals("incorrect name for " + TWUT_FIELD3_NAME + " field ",
             TWUT_FIELD3_NAME, field3.getFieldName());
         assertEquals("incorrect type for " + TWUT_FIELD3_NAME + " field ",
-            TWUT_FIELD3_TYPE, field3.getDataType().toString());
+            TWUT_FIELD3_TYPE, field3.getEnclosedType().toString());
         FieldType field4 = fields.get(3);
         assertEquals("incorrect name for " + TWUT_FIELD4_NAME + " field ",
             TWUT_FIELD4_NAME, field4.getFieldName());
         assertEquals("incorrect type for " + TWUT_FIELD4_NAME + " field ",
-            TWUT_FIELD4_TYPE, field4.getDataType().toString());
+            TWUT_FIELD4_TYPE, field4.getEnclosedType().toString());
     }
 
 }

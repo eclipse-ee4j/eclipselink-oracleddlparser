@@ -17,7 +17,6 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class PLSQLSubType extends PLSQLType implements DatabaseTypeVisitable {
 
-    protected DatabaseType enclosedType;
     protected boolean notNull = false;
     protected boolean hasRange = false;
     protected long rangeStart;
@@ -25,18 +24,6 @@ public class PLSQLSubType extends PLSQLType implements DatabaseTypeVisitable {
 
     public PLSQLSubType(String typeName) {
         super(typeName);
-    }
-
-    @Override
-    public void addCompositeType(DatabaseType enclosedType) {
-        this.enclosedType = enclosedType;
-    }
-    public DatabaseType getEnclosedType() {
-        return enclosedType;
-    }
-
-    public boolean isComposite() {
-        return true;
     }
 
     public boolean isResolved() {

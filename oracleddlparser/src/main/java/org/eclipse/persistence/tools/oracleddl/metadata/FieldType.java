@@ -18,7 +18,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 public class FieldType extends DatabaseTypeTestableBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String fieldName;
-    protected DatabaseType dataType;
+    protected DatabaseType enclosedType;
     protected boolean notNull = false;
     protected boolean pk = false;
 
@@ -30,34 +30,34 @@ public class FieldType extends DatabaseTypeTestableBase implements CompositeData
         return fieldName;
     }
 
-    public DatabaseType getDataType() {
-        return dataType;
+    public DatabaseType getEnclosedType() {
+        return enclosedType;
     }
-    public void setDataType(DatabaseType dataType) {
-        this.dataType = dataType;
+    public void setEnclosedType(DatabaseType enclosedType) {
+        this.enclosedType = enclosedType;
     }
 
 	public boolean isResolved() {
         // if dataType is unresolved, then this field is unresolved
-		if (dataType == null) {
+		if (enclosedType == null) {
 			return false;
 		}
-		return dataType.isResolved();
+		return enclosedType.isResolved();
 	}
 
 	public boolean isComposite() {
-		if (dataType == null) {
+		if (enclosedType == null) {
 			// by default, a Field is 'simple' until otherwise configured 'composite'
 			return false;
 		}
-		return dataType.isComposite();
+		return enclosedType.isComposite();
 	}
 
     public String getTypeName() {
-		if (dataType == null) {
+		if (enclosedType == null) {
 			return null;
 		}
-		return dataType.getTypeName();
+		return enclosedType.getTypeName();
     }
 
     public boolean notNull() {
@@ -80,10 +80,6 @@ public class FieldType extends DatabaseTypeTestableBase implements CompositeData
     	this.pk = false;
     }
 
-	public void addCompositeType(DatabaseType enclosedType) {
-		setDataType(enclosedType);
-	}
-
     public String shortName() {
         return toString();
     }
@@ -95,77 +91,77 @@ public class FieldType extends DatabaseTypeTestableBase implements CompositeData
     //for the following DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosed dataType
 
     public boolean isObjectTableType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isObjectTableType();
+        return enclosedType.isObjectTableType();
     }
 
     public boolean isObjectType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isObjectType();
+        return enclosedType.isObjectType();
     }
 
     public boolean isPLSQLCollectionType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isPLSQLCollectionType();
+        return enclosedType.isPLSQLCollectionType();
     }
 
     public boolean isPLSQLCursorType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isPLSQLCursorType();
+        return enclosedType.isPLSQLCursorType();
     }
 
     public boolean isPLSQLRecordType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isPLSQLRecordType();
+        return enclosedType.isPLSQLRecordType();
     }
 
     public boolean isPLSQLSubType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isPLSQLSubType();
+        return enclosedType.isPLSQLSubType();
     }
 
     public boolean isTableType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isTableType();
+        return enclosedType.isTableType();
     }
 
     public boolean isDbTableType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isDbTableType();
+        return enclosedType.isDbTableType();
     }
 
     public boolean isVArrayType() {
-        if (dataType == null) {
+        if (enclosedType == null) {
             return false;
         }
-        return dataType.isVArrayType();
+        return enclosedType.isVArrayType();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(fieldName);
         sb.append(" ");
-        if (dataType == null) {
+        if (enclosedType == null) {
             sb.append("<null/>");
         }
         else {
-            sb.append(dataType.shortName());
+            sb.append(enclosedType.shortName());
         }
         if (notNull) {
             sb.append(" (NOT NULL)");
