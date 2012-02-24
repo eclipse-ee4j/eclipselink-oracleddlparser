@@ -19,7 +19,7 @@ public class RealType extends PrecisionType implements DatabaseTypeVisitable {
 
 	public static final String TYPENAME = "REAL";
 	static final long DEFAULT_PRECISON = 18;
-	
+
     public RealType() {
         super(TYPENAME, 18);
     }
@@ -36,8 +36,13 @@ public class RealType extends PrecisionType implements DatabaseTypeVisitable {
 	public long getDefaultPrecision() {
 		return DEFAULT_PRECISON;
 	}
-	
-	public void accept(DatabaseTypeVisitor visitor) {
+
+	@Override
+    public boolean isRealType() {
+        return true;
+    }
+
+    public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 }

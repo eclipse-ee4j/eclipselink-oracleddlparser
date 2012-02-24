@@ -15,7 +15,7 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 public abstract class SizedType extends ScalarDatabaseTypeBase implements ScalarDatabaseType {
 
 	protected long size;
-    
+
     public SizedType(String typeName, long size) {
         super(typeName);
         this.size = size;
@@ -24,8 +24,13 @@ public abstract class SizedType extends ScalarDatabaseTypeBase implements Scalar
     public long getSize() {
         return size;
     }
-    
+
     public abstract long getDefaultSize();
+
+    @Override
+    public boolean isSizedType() {
+        return true;
+    }
 
     @Override
 	public String toString() {

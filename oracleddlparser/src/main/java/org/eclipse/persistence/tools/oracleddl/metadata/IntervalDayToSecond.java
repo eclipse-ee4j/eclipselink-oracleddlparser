@@ -21,11 +21,11 @@ public class IntervalDayToSecond extends ScalarDatabaseTypeBase implements Scala
 	public static final String TYPENAME_SECONDPART = "TO SECOND";
 	static final long DEFAULT_DAY_PRECISION = 2L;
 	static final long DEFAULT_SECOND_PRECISION = 6L;
-	
+
 	protected long dayPrecision;
 	protected long secondPrecision;
 
-	public IntervalDayToSecond() {	
+	public IntervalDayToSecond() {
 		super(null);
 		this.dayPrecision = DEFAULT_DAY_PRECISION;
 		this.secondPrecision = DEFAULT_SECOND_PRECISION;
@@ -51,8 +51,13 @@ public class IntervalDayToSecond extends ScalarDatabaseTypeBase implements Scala
 	public long getSecondPrecision() {
 		return secondPrecision;
 	}
-	
-	public void accept(DatabaseTypeVisitor visitor) {
+
+	@Override
+    public boolean isIntervalDayToSecond() {
+        return true;
+    }
+
+    public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 }

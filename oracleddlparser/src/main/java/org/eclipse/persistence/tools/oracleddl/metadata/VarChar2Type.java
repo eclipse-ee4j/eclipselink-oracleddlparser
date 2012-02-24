@@ -32,6 +32,11 @@ public class VarChar2Type extends VarCharType {
 	}
 
 	@Override
+    public boolean isVarChar2Type() {
+        return true;
+    }
+
+    @Override
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}

@@ -27,5 +27,10 @@ public class RawType extends BlobType {
     public void accept(DatabaseTypeVisitor visitor) {
         visitor.visit(this);
     }
-	
+
+    @Override
+    public boolean isRawType() {
+        return true;
+    }
+
 }

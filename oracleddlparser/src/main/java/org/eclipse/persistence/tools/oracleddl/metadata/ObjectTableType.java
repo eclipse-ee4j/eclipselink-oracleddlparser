@@ -34,6 +34,11 @@ public class ObjectTableType extends CompositeDatabaseTypeBase implements Compos
         return enclosedType.isResolved();
     }
 
+    @Override
+    public boolean isObjectTableType() {
+        return true;
+    }
+
     public void accept(DatabaseTypeVisitor visitor) {
         visitor.visit(this);
     }

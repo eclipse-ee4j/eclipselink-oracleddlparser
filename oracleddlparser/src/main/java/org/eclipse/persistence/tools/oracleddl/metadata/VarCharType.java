@@ -26,13 +26,18 @@ public class VarCharType extends SizedType implements DatabaseTypeVisitable {
     public VarCharType(long size) {
         super(TYPENAME, size);
     }
-    
+
 	@Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
 	}
 
-	public void accept(DatabaseTypeVisitor visitor) {
+	@Override
+    public boolean isVarCharType() {
+        return true;
+    }
+
+    public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 

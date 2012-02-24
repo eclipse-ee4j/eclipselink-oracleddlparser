@@ -12,7 +12,7 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
-abstract class DatabaseTypeBase {
+public abstract class DatabaseTypeBase extends DatabaseTypeTestableBase implements Cloneable {
 
 	protected String typeName;
 
@@ -24,10 +24,6 @@ abstract class DatabaseTypeBase {
 		return typeName;
 	}
 
-	public boolean isComposite() {
-		return true;
-	}
-
 	public boolean isResolved() {
 		return true;
 	}
@@ -36,7 +32,18 @@ abstract class DatabaseTypeBase {
         return toString();
     }
 
-	@Override
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            //shouldn't ever happen
+            return null;
+        }
+    }
+
+    @Override
 	public String toString() {
 		return typeName;
 	}

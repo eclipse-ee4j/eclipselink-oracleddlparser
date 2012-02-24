@@ -16,13 +16,13 @@ public abstract class PrecisionType extends ScalarDatabaseTypeBase implements Sc
 
     protected long precision;
     protected long scale;
-    
+
     public PrecisionType(String typeName, long precision) {
         super(typeName);
         this.precision = precision;
         this.scale = 0;
     }
-    
+
     public PrecisionType(String typeName, long precision, long scale) {
         this(typeName, precision);
         this.scale = scale;
@@ -34,14 +34,16 @@ public abstract class PrecisionType extends ScalarDatabaseTypeBase implements Sc
     public long getScale() {
         return scale;
     }
-    
+
     public abstract long getDefaultPrecision();
 
     public boolean isSimple() {
         return true;
     }
-    public boolean isComposite() {
-        return false;
+
+    @Override
+    public boolean isPrecisionType() {
+        return true;
     }
 
     @Override

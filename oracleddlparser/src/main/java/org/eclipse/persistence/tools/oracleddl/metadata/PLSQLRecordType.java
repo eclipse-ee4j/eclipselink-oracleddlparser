@@ -31,7 +31,7 @@ public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable 
 
 	@Override
 	public void addCompositeType(DatabaseType enclosedType) {
-	    if (enclosedType instanceof FieldType) {
+	    if (enclosedType.isFieldType()) {
 	        fields.add((FieldType)enclosedType);
         } else {
             // if not a FieldType instance we may need to update
@@ -63,6 +63,11 @@ public class PLSQLRecordType extends PLSQLType implements DatabaseTypeVisitable 
                 return false;
             }
         }
+        return true;
+    }
+
+    @Override
+    public boolean isPLSQLRecordType() {
         return true;
     }
 

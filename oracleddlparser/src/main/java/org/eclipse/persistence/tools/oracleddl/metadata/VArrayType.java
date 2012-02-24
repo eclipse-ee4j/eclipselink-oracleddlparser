@@ -43,6 +43,11 @@ public class VArrayType extends CompositeDatabaseTypeBase implements CompositeDa
     }
 
     @Override
+    public boolean isVArrayType() {
+        return true;
+    }
+
+    @Override
     public String shortName() {
         return super.toString();
     }

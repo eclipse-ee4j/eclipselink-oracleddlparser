@@ -15,7 +15,7 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisitable {
+public class PLSQLCursorType extends DatabaseTypeTestableBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     static final String REF_CURSOR = "REF CURSOR";
     protected String cursorName;
@@ -59,6 +59,71 @@ public class PLSQLCursorType implements CompositeDatabaseType, DatabaseTypeVisit
 		}
 		return dataType.isComposite();
 	}
+
+    //for all DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosed dataType
+
+    public boolean isObjectTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isObjectTableType();
+    }
+
+    public boolean isObjectType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isObjectType();
+    }
+
+    public boolean isPLSQLCollectionType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLCollectionType();
+    }
+
+    public boolean isPLSQLCursorType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLCursorType();
+    }
+
+    public boolean isPLSQLRecordType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLRecordType();
+    }
+
+    public boolean isPLSQLSubType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLSubType();
+    }
+
+    public boolean isTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isTableType();
+    }
+
+    public boolean isDbTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isDbTableType();
+    }
+
+    public boolean isVArrayType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isVArrayType();
+    }
 
     public String getTypeName() {
 		if (dataType == null) {

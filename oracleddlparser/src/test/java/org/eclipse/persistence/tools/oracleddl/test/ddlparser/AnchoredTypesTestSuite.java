@@ -82,7 +82,7 @@ public class AnchoredTypesTestSuite {
             packageType.getTypes().size());
         PLSQLType type = packageType.getTypes().get(0);
         assertEquals("type has wrong name", ANCHORED_TYPE1_NAME, type.getTypeName());
-        assertTrue(ANCHORED_TYPE1_NAME+ " is not SUBTYPE", type instanceof PLSQLSubType);
+        assertTrue(ANCHORED_TYPE1_NAME+ " is not SUBTYPE", type.isPLSQLSubType());
         PLSQLSubType subType = (PLSQLSubType)type;
         assertFalse(ANCHORED_TYPE1_NAME+ " is not supposed to have a NOT NULL constraint",
             subType.isNotNull());
@@ -124,7 +124,7 @@ public class AnchoredTypesTestSuite {
             packageType.getTypes().size());
         PLSQLType type1 = packageType.getTypes().get(0);
         assertEquals("type has wrong name", ANCHORED_TYPE1_NAME, type1.getTypeName());
-        assertTrue(ANCHORED_TYPE1_NAME + " is not SUBTYPE", type1 instanceof PLSQLSubType);
+        assertTrue(ANCHORED_TYPE1_NAME + " is not SUBTYPE", type1.isPLSQLSubType());
         PLSQLSubType subType = (PLSQLSubType)type1;
         assertFalse(ANCHORED_TYPE1_NAME+ " is not supposed to have a NOT NULL constraint",
             subType.isNotNull());
@@ -137,7 +137,7 @@ public class AnchoredTypesTestSuite {
             enclosedType.getTypeName());
         PLSQLType type2 = packageType.getTypes().get(1);
         assertEquals("type has wrong name", ANCHORED_TYPE2_NAME, type2.getTypeName());
-        assertTrue(ANCHORED_TYPE2_NAME + " is not SUBTYPE", type2 instanceof PLSQLSubType);
+        assertTrue(ANCHORED_TYPE2_NAME + " is not SUBTYPE", type2.isPLSQLSubType());
         PLSQLSubType subType2 = (PLSQLSubType)type2;
         assertFalse(ANCHORED_TYPE2_NAME+ " is not supposed to have a NOT NULL constraint",
             subType2.isNotNull());
@@ -199,7 +199,7 @@ public class AnchoredTypesTestSuite {
             packageType.getTypes().size());
         PLSQLType type1 = packageType.getTypes().get(0);
         assertEquals("type has wrong name", ANCHORED_TYPE1_NAME, type1.getTypeName());
-        assertTrue(ANCHORED_TYPE1_NAME + " is not SUBTYPE", type1 instanceof PLSQLSubType);
+        assertTrue(ANCHORED_TYPE1_NAME + " is not SUBTYPE", type1.isPLSQLSubType());
         PLSQLSubType subType = (PLSQLSubType)type1;
         assertFalse(ANCHORED_TYPE1_NAME+ " is not supposed to have a NOT NULL constraint",
             subType.isNotNull());

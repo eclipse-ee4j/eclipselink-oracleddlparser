@@ -75,8 +75,10 @@ import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLSubType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
 import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TimeStampType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
 import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
@@ -982,30 +984,58 @@ DatabaseType datatype():
 }
 
 DatabaseType typeSpec():
-{DatabaseType dataType = null;
+{boolean isTYPEType = false;
+ boolean isROWTYPEType = false;
+ DatabaseType dataType = null;
+ String spec = null;
  String s = null;}
 {
     (
       dataType=datatype()
       |
-      s=columnSpec()
+      spec=columnSpec()
        [
-         ( <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ) |
-         <K_TYPE2> {s += tokenImage[K_TYPE2].substring(1, tokenImage[K_TYPE2].length() - 1);} |
-         <K_ROWTYPE> {s += tokenImage[K_ROWTYPE].substring(1, tokenImage[K_ROWTYPE].length() - 1);}
+         ( <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> )
+         |
+         <K_TYPE2>
+           {
+             isTYPEType=true;
+             s = spec + tokenImage[K_TYPE2].substring(1, tokenImage[K_TYPE2].length() - 1);
+           }
+         |
+         <K_ROWTYPE>
+           {
+             isROWTYPEType =true;
+             s = spec + tokenImage[K_ROWTYPE].substring(1, tokenImage[K_ROWTYPE].length() - 1);
+           }
        ]       
     )
     {
       if (dataType == null && localTypes != null) {
           for (String typeName : localTypes.keySet()) {
-              if (typeName.equals(s)) {
-                  dataType = localTypes.get(s);
+              if (typeName.equals(spec)) {
+                  dataType = localTypes.get(spec);
                   break;
               }
           }
       }
       if (dataType == null) {
-          dataType = new UnresolvedType(s);
+          UnresolvedType uType = new UnresolvedType(spec);
+          if (isTYPEType) {
+              TYPEType tType = new TYPEType(s);
+              tType.addCompositeType(uType);
+              uType.setOwningType(tType);
+              dataType = tType;
+          }
+          else if (isROWTYPEType) {
+              ROWTYPEType rType = new ROWTYPEType(s);
+              rType.addCompositeType(uType);
+              uType.setOwningType(rType);
+              dataType = rType;
+          }
+          else {
+              dataType = uType;
+          }
       }
       return dataType;    }
 }
@@ -1212,29 +1242,78 @@ void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName)  
         packageType.addCursor(cursorType);
         localTypes.put(cursorTypeName, cursorType);
       }
-      [ refCursorTypeSpec(cursorType) ]
+      [ refCursorTypeSpec(cursorType, packageType) ]
 }
 
-void refCursorTypeSpec(PLSQLCursorType cursorType)      :
-{String s = null;}
+void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType)      :
+{String s = null;
+ String spec = null;
+ boolean isTYPEType = false;
+ boolean isROWTYPEType = false;
+ DatabaseType localType = null;
+}
 {
-    <K_RETURN> [LOOKAHEAD(3) s=columnSpec() [ <K_TYPE2>
+    <K_RETURN> [LOOKAHEAD(3) spec=columnSpec() [ <K_TYPE2>
         {
-          s += tokenImage[K_TYPE2].substring(1, tokenImage[K_TYPE2].length() - 1);
+          isTYPEType = true;
+          s = spec + tokenImage[K_TYPE2].substring(1, tokenImage[K_TYPE2].length() - 1);
         }
       ]
-    | LOOKAHEAD(3) s=tableSpec() [ <K_ROWTYPE>
+    | LOOKAHEAD(3) spec=tableSpec() [ <K_ROWTYPE>
         {
-          s += tokenImage[K_ROWTYPE].substring(1, tokenImage[K_ROWTYPE].length() - 1);
+          isROWTYPEType = true;
+          s = spec + tokenImage[K_ROWTYPE].substring(1, tokenImage[K_ROWTYPE].length() - 1);
         }
       ]
     ]
     {
-      DatabaseType localType = localTypes.get(s);
-      if (localType == null) {          cursorType.setDataType(new UnresolvedType(s));
-      }
-      else {
-        cursorType.setDataType(localType);      }    }
+      //check local variables first
+	  for (FieldType varField : packageType.getLocalVariables()) {
+	      if (spec.equals(varField.getFieldName())) {
+              if (isTYPEType) {
+                  TYPEType tType = new TYPEType(s);
+                  UnresolvedType uType = new UnresolvedType(s);
+                  tType.addCompositeType(uType);
+                  uType.setOwningType(tType);
+                  localType = tType;
+              }
+              else if (isROWTYPEType) {
+                  ROWTYPEType rType = new ROWTYPEType(s);
+                  UnresolvedType uType = new UnresolvedType(s);
+                  rType.addCompositeType(uType);
+                  uType.setOwningType(rType);
+                  localType = rType;
+              }
+              else {
+                  localType = varField.getDataType();              }
+              cursorType.setDataType(localType);
+	          break;
+	      }
+	  }
+      if (localType == null) {
+          localType = localTypes.get(spec);
+          if (localType == null) {
+	          UnresolvedType uType = new UnresolvedType(spec);
+	          if (isTYPEType) {
+	              TYPEType tType = new TYPEType(s);
+	              tType.addCompositeType(uType);
+	              uType.setOwningType(tType);
+	              cursorType.setDataType(tType);
+	          }
+	          else if (isROWTYPEType) {
+	              ROWTYPEType rType = new ROWTYPEType(s);
+	              rType.addCompositeType(uType);
+	              uType.setOwningType(rType);
+	              cursorType.setDataType(rType);
+	          }
+	          else {
+	              uType.setOwningType(cursorType);
+	              cursorType.setDataType(uType);
+	          }
+	      }
+	      else {
+	          cursorType.setDataType(localType);	      }
+	  }    }
 }
 
 void cursorDeclaration(PLSQLPackageType packageType)      :

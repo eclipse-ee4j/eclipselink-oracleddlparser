@@ -19,7 +19,7 @@ public class BlobType extends SizedType implements DatabaseTypeVisitable {
 
     public static final String TYPENAME = "BLOB";
 	static long DEFAULT_SIZE = 0l;
-	
+
     public BlobType() {
         super(TYPENAME, DEFAULT_SIZE);
     }
@@ -29,8 +29,13 @@ public class BlobType extends SizedType implements DatabaseTypeVisitable {
 	public BlobType(String typeName, long size) {
         super(typeName, size);
 	}
-	
+
 	@Override
+    public boolean isBlobType() {
+        return true;
+    }
+
+    @Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
 	}

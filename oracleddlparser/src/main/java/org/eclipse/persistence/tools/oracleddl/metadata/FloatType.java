@@ -19,7 +19,7 @@ public class FloatType extends PrecisionType implements DatabaseTypeVisitable {
 
 	public static final String TYPENAME = "FLOAT";
 	static final long DEFAULT_PRECISON = 38l;
-	
+
     public FloatType() {
         super(TYPENAME, DEFAULT_PRECISON);
     }
@@ -33,6 +33,11 @@ public class FloatType extends PrecisionType implements DatabaseTypeVisitable {
     }
 
 	@Override
+    public boolean isFloatType() {
+        return true;
+    }
+
+    @Override
 	public long getDefaultPrecision() {
 		return DEFAULT_PRECISON;
 	}

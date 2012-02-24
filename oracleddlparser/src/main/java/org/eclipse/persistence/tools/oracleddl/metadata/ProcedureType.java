@@ -83,6 +83,16 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
     }
 
     @Override
+    public boolean isProcedureType() {
+        return true;
+    }
+
+    @Override
+    public boolean isFunctionType() {
+        return false;
+    }
+
+    @Override
     public void addCompositeType(DatabaseType enclosedType) {
         arguments.add((ArgumentType)enclosedType);
     }

@@ -54,6 +54,11 @@ public class FunctionType extends ProcedureType {
     }
 
     @Override
+    public boolean isFunctionType() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("FUNCTION ");
         if (schema != null) {

@@ -18,6 +18,11 @@ public abstract class CompositeDatabaseTypeBase extends DatabaseTypeBase {
 		super(typeName);
 	}
 
+    @Override
+    public boolean isComposite() {
+        return true;
+    }
+
 	public abstract void addCompositeType(DatabaseType enclosedType);
 
 }

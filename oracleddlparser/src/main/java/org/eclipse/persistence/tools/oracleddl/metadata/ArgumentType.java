@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisita
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection.RETURN;
 
-public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitable {
+public class ArgumentType extends DatabaseTypeTestableBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String argumentName;
     protected DatabaseType dataType;
@@ -61,6 +61,11 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
 		}
 		return dataType.isComposite();
 	}
+
+    @Override
+    public boolean isArgumentType() {
+        return true;
+    }
 
     public String getTypeName() {
 		if (dataType == null) {
@@ -107,6 +112,71 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
         return sb.toString();
     }
 
+    //for all DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosed dataType
+
+    public boolean isObjectTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isObjectTableType();
+    }
+
+    public boolean isObjectType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isObjectType();
+    }
+
+    public boolean isPLSQLCollectionType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLCollectionType();
+    }
+
+    public boolean isPLSQLCursorType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLCursorType();
+    }
+
+    public boolean isPLSQLRecordType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLRecordType();
+    }
+
+    public boolean isPLSQLSubType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLSubType();
+    }
+
+    public boolean isTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isTableType();
+    }
+
+    public boolean isDbTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isDbTableType();
+    }
+
+    public boolean isVArrayType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isVArrayType();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -137,5 +207,5 @@ public class ArgumentType implements CompositeDatabaseType, DatabaseTypeVisitabl
 
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
-	}
+    }
 }

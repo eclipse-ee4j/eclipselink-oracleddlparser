@@ -16,17 +16,19 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public class ROWTYPEType implements CompositeDatabaseType, DatabaseTypeVisitable {
+public class ROWTYPEType extends CompositeDatabaseTypeBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
-    protected String typeName;
     protected DatabaseType enclosedType;
 
     public ROWTYPEType(String typeName) {
-        this.typeName = typeName;
+        super(typeName);
     }
 
     public String getTypeName() {
-		return typeName;
+        if (isResolved()) {
+            return enclosedType.getTypeName();
+        }
+        return typeName;
     }
 
 	public void addCompositeType(DatabaseType enclosedType) {
@@ -34,10 +36,6 @@ public class ROWTYPEType implements CompositeDatabaseType, DatabaseTypeVisitable
 	}
     public DatabaseType getEnclosedType() {
         return enclosedType;
-    }
-
-    public boolean isComposite() {
-        return true;
     }
 
     public boolean isResolved() {
@@ -54,6 +52,76 @@ public class ROWTYPEType implements CompositeDatabaseType, DatabaseTypeVisitable
             sb.append("[u]");
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean isROWTYPEType() {
+        return true;
+    }
+
+    //for following DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosedType
+
+    public boolean isObjectTableType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isObjectTableType();
+    }
+
+    public boolean isObjectType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isObjectType();
+    }
+
+    public boolean isPLSQLCollectionType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isPLSQLCollectionType();
+    }
+
+    public boolean isPLSQLCursorType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isPLSQLCursorType();
+    }
+
+    public boolean isPLSQLRecordType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isPLSQLRecordType();
+    }
+
+    public boolean isPLSQLSubType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isPLSQLSubType();
+    }
+
+    public boolean isTableType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isTableType();
+    }
+
+    public boolean isDbTableType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isDbTableType();
+    }
+
+    public boolean isVArrayType() {
+        if (enclosedType == null) {
+            return false;
+        }
+        return enclosedType.isVArrayType();
     }
 
     @Override

@@ -24,8 +24,13 @@ public class LongType extends VarChar2Type {
     public LongType(long size) {
         super(TYPENAME, size);
     }
-	
+
 	@Override
+    public boolean isLongType() {
+        return true;
+    }
+
+    @Override
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}

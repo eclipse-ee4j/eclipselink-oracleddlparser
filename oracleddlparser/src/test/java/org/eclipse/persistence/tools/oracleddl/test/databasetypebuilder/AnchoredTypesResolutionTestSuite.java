@@ -67,6 +67,9 @@ public class AnchoredTypesResolutionTestSuite {
             "\nSUBTYPE " + ANCHORED_TYPE1_NAME + " IS " + ANCHORED_TYPE1 + ";" +
             "\nSUBTYPE " + ANCHORED_TYPE2_NAME + " IS " + ANCHORED_TYPE2 + ";" +
             "\nTYPE " + ANCHORED_TYPE3_NAME + " IS REF CURSOR RETURN " + ANCHORED_TYPE2_NAME + ";" +
+            "\nARECORD_VAR " + ANCHORED_TYPE2_NAME + ";" +
+            "\nSUBTYPE " + ANCHORED_TYPE1_NAME + "2 IS ARECORD_VAR.NAME%TYPE;" +
+            "\nTYPE " + ANCHORED_TYPE3_NAME + "2 IS REF CURSOR RETURN ARECORD_VAR%TYPE;" +
         "\nEND " + ANCHORED_TYPES_TEST4_PACKAGE + ";";
 
     static final String DROP_ANCHORED_TYPES_TABLE2 =

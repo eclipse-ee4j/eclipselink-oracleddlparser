@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public class PLSQLPackageType implements CompositeDatabaseType, DatabaseTypeVisitable {
+public class PLSQLPackageType extends DatabaseTypeTestableBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
 	protected String packageName;
     protected String schema;

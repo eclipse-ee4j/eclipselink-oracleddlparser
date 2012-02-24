@@ -17,7 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 public class NVarChar2Type extends VarChar2Type {
 
 	public static final String TYPENAME = "NVARCHAR2";
-	
+
     public NVarChar2Type() {
         super(VarCharType.DEFAULT_SIZE);
         this.typeName = TYPENAME;
@@ -26,8 +26,13 @@ public class NVarChar2Type extends VarChar2Type {
         super(size);
         this.typeName = TYPENAME;
     }
-	
+
 	@Override
+    public boolean isNVarChar2Type() {
+        return true;
+    }
+
+    @Override
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}

@@ -19,7 +19,7 @@ public class ClobType extends SizedType implements DatabaseTypeVisitable {
 
     public static final String TYPENAME = "CLOB";
 	static final long DEFAULT_SIZE = 0l;
-	
+
     public ClobType() {
         super(TYPENAME, DEFAULT_SIZE);
     }
@@ -31,6 +31,11 @@ public class ClobType extends SizedType implements DatabaseTypeVisitable {
 	}
 
 	@Override
+    public boolean isClobType() {
+        return true;
+    }
+
+    @Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
 	}

@@ -90,6 +90,11 @@ public class TableType extends CompositeDatabaseTypeBase implements CompositeDat
     }
 
     @Override
+    public boolean isTableType() {
+        return true;
+    }
+
+    @Override
     public String shortName() {
         return typeName;
     }

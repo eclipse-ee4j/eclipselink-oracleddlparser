@@ -45,6 +45,11 @@ public class NumericType extends PrecisionType implements DatabaseTypeVisitable 
         this.numberSynonym = numberSynonym;
     }
 
+    @Override
+    public boolean isNumericType() {
+        return true;
+    }
+
     public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}

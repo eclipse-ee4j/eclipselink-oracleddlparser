@@ -14,11 +14,9 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public interface DatabaseType {
+public interface DatabaseType extends DatabaseTypeScalarTestable, DatabaseTypeCompositeTestable {
 
     public String getTypeName();
-
-    public boolean isComposite();
 
     public boolean isResolved();
 

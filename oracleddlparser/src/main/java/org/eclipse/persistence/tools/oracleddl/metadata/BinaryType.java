@@ -19,15 +19,20 @@ public class BinaryType extends SizedType implements DatabaseTypeVisitable {
 
 	public static final String TYPENAME = "BINARY";
 	static final long DEFAULT_SIZE = 0l;
-	
+
     public BinaryType() {
         super(TYPENAME, DEFAULT_SIZE);
     }
     public BinaryType(long size) {
         super(TYPENAME, size);
     }
-    
+
 	@Override
+    public boolean isBinaryType() {
+        return true;
+    }
+
+    @Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
 	}

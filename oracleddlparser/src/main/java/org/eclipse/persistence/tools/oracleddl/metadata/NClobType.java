@@ -26,8 +26,13 @@ public class NClobType extends ClobType {
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
 	}
-	
+
 	@Override
+    public boolean isNClobType() {
+        return true;
+    }
+
+    @Override
 	public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}

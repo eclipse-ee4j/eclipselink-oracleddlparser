@@ -33,6 +33,11 @@ public class DecimalType extends PrecisionType implements DatabaseTypeVisitable 
     }
 
 	@Override
+    public boolean isDecimalType() {
+        return true;
+    }
+
+    @Override
 	public long getDefaultPrecision() {
 		return DEFAULT_PRECISON;
 	}

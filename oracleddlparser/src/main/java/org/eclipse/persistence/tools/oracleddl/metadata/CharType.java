@@ -19,7 +19,7 @@ public class CharType extends SizedType implements DatabaseTypeVisitable {
 
 	public static final String TYPENAME = "CHAR";
 	static final long DEFAULT_SIZE = 1l;
-	
+
     public CharType() {
         super(TYPENAME, DEFAULT_SIZE);
     }
@@ -29,8 +29,13 @@ public class CharType extends SizedType implements DatabaseTypeVisitable {
 	public CharType(String typename, long size) {
         super(typename, size);
 	}
-	
+
 	@Override
+    public boolean isCharType() {
+        return true;
+	}
+
+    @Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
 	}

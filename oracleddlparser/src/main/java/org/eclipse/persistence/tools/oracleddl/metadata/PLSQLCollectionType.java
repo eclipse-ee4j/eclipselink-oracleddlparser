@@ -57,6 +57,11 @@ public class PLSQLCollectionType extends PLSQLType implements DatabaseTypeVisita
         return nestedType.isResolved();
     }
 
+    @Override
+    public boolean isPLSQLCollectionType() {
+        return true;
+    }
+
     public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}

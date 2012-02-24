@@ -75,6 +75,11 @@ public class PLSQLSubType extends PLSQLType implements DatabaseTypeVisitable {
         this.rangeEnd = rangeEnd;
     }
 
+    @Override
+    public boolean isPLSQLSubType() {
+        return true;
+    }
+
     public String shortName() {
         StringBuilder sb = new StringBuilder(typeName);
         if (!enclosedType.isResolved()) {

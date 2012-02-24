@@ -49,6 +49,10 @@ public class TimeStampType extends SizedType implements DatabaseTypeVisitable {
         withLocalTimeZone = true;
     }
 
+    @Override
+    public boolean isTimeStampType() {
+        return true;
+    }
     public void accept(DatabaseTypeVisitor visitor) {
 		visitor.visit(this);
 	}

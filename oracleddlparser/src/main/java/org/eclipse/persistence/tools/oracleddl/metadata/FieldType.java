@@ -15,7 +15,7 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
+public class FieldType extends DatabaseTypeTestableBase implements CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String fieldName;
     protected DatabaseType dataType;
@@ -84,6 +84,79 @@ public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
 		setDataType(enclosedType);
 	}
 
+    public String shortName() {
+        return toString();
+    }
+
+    public boolean isFieldType() {
+        return true;
+    }
+
+    //for the following DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosed dataType
+
+    public boolean isObjectTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isObjectTableType();
+    }
+
+    public boolean isObjectType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isObjectType();
+    }
+
+    public boolean isPLSQLCollectionType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLCollectionType();
+    }
+
+    public boolean isPLSQLCursorType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLCursorType();
+    }
+
+    public boolean isPLSQLRecordType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLRecordType();
+    }
+
+    public boolean isPLSQLSubType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isPLSQLSubType();
+    }
+
+    public boolean isTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isTableType();
+    }
+
+    public boolean isDbTableType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isDbTableType();
+    }
+
+    public boolean isVArrayType() {
+        if (dataType == null) {
+            return false;
+        }
+        return dataType.isVArrayType();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(fieldName);
@@ -98,10 +171,6 @@ public class FieldType implements CompositeDatabaseType, DatabaseTypeVisitable {
             sb.append(" (NOT NULL)");
         }
         return sb.toString();
-    }
-
-    public String shortName() {
-        return toString();
     }
 
 	public void accept(DatabaseTypeVisitor visitor) {

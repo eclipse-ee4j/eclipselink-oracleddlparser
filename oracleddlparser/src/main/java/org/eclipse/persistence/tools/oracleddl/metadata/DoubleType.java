@@ -33,6 +33,11 @@ public class DoubleType extends PrecisionType implements DatabaseTypeVisitable {
     }
 
 	@Override
+    public boolean isDoubleType() {
+        return true;
+    }
+
+    @Override
 	public long getDefaultPrecision() {
 		return DEFAULT_PRECISON;
 	}

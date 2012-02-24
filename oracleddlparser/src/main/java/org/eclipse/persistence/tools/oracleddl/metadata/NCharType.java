@@ -17,15 +17,20 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 public class NCharType extends CharType {
 
 	public static final String TYPENAME = "NCHAR";
-	
+
     public NCharType() {
         super(TYPENAME, DEFAULT_SIZE);
     }
     public NCharType(long size) {
         super(TYPENAME, size);
     }
-    
+
 	@Override
+    public boolean isNCharType() {
+        return true;
+    }
+
+    @Override
 	public long getDefaultSize() {
 		return DEFAULT_SIZE;
 	}

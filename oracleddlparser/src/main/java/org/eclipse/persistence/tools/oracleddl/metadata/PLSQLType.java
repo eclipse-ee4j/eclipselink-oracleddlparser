@@ -12,10 +12,12 @@
  ******************************************************************************/
 package org.eclipse.persistence.tools.oracleddl.metadata;
 
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
+
 public abstract class PLSQLType extends CompositeDatabaseTypeBase implements CompositeDatabaseType {
 
     protected PLSQLPackageType parentType;
-    
+
     public PLSQLType(String typeName) {
         super(typeName);
     }
@@ -25,6 +27,19 @@ public abstract class PLSQLType extends CompositeDatabaseTypeBase implements Com
     }
     public void setParentType(PLSQLPackageType parentType) {
         this.parentType = parentType;
+    }
+
+    @Override
+    public void accept(DatabaseTypeVisitor visitor) {
+    }
+
+    @Override
+    public void addCompositeType(DatabaseType enclosedType) {
+    }
+
+    @Override
+    public boolean isPLSQLType() {
+        return true;
     }
 
 }

@@ -47,6 +47,11 @@ public class ObjectType extends CompositeDatabaseTypeBase implements CompositeDa
         return true;
     }
 
+    @Override
+    public boolean isObjectType() {
+        return true;
+    }
+
     public void accept(DatabaseTypeVisitor visitor) {
         visitor.visit(this);
     }
