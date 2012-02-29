@@ -667,7 +667,7 @@ public class DatabaseTypeBuilder {
         try {
             pStmt = conn.prepareStatement(GET_OBJECT_TYPE_STMT);
             pStmt.setString(1, schemaPattern);
-            pStmt.setString(2, typeName);
+            pStmt.setString(2, typeName.toUpperCase());
             boolean worked = pStmt.execute();
             if (worked) {
                 rs = pStmt.getResultSet();

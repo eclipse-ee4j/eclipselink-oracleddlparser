@@ -20,6 +20,7 @@ import java.util.List;
 //JUnit4 imports
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -273,7 +274,8 @@ public class TypeResolutionTestSuite {
 
     }
 
-    @Test
+    //@Test
+    @Ignore
     public void testUnresolvedTypeResolution() throws ParseException {
         assertEquals("incorrect procedure name", DDLRESOLVTEST_PACKAGE , ddlresolvtestPackage.getPackageName());
         UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
@@ -282,7 +284,8 @@ public class TypeResolutionTestSuite {
             0, visitor.getUnresolvedTypes().size());
     }
 
-    @Test
+    //@Test
+    @Ignore
     public void testSame_DDLRESOLVTEST_TABLE2_ROWTYPE() {
         FunctionType func1 = (FunctionType)ddlresolvtestPackage.getProcedures().get(0);
         DatabaseType tesmanfunc17ReturnType = func1.getReturnArgument().getEnclosedType();
@@ -291,7 +294,8 @@ public class TypeResolutionTestSuite {
         assertSame(tesmanfunc17ReturnType, tesmanproc17OutArgType);
     }
 
-    @Test
+    //@Test
+    @Ignore
     public void testSame_DDLRESOLVTEST_TABLE3_ROWTYPE() {
         ProcedureType proc3 = ddlresolvtestPackage.getProcedures().get(2);
         List<ArgumentType> proc3Args = proc3.getArguments();
@@ -308,7 +312,8 @@ public class TypeResolutionTestSuite {
         assertSame(empRecType, empRecType2);
     }
 
-    @Test
+    //@Test
+    @Ignore
     public void testSame_EMPdotEMPNO_TYPE() {
         PLSQLRecordType empRecType = (PLSQLRecordType)ddlresolvtestPackage.getTypes().get(0);
         DatabaseType empDotEnamePcentTYPE1 = empRecType.getFields().get(1).getEnclosedType();
@@ -317,7 +322,8 @@ public class TypeResolutionTestSuite {
         assertSame(empDotEnamePcentTYPE1, empDotEnamePcentTYPE2);
     }
 
-    @Test
+    //@Test
+    @Ignore
     public void testPackageRefersToGlobalTypes() {
         FunctionType echoRegionProc = (FunctionType)ddlresolvtestPackage.getProcedures().get(5);
         ArgumentType aRegion = echoRegionProc.getArguments().get(0);
@@ -344,7 +350,8 @@ public class TypeResolutionTestSuite {
             0, visitor.getUnresolvedTypes().size());
     }
 
-    @Test
+    //@Test
+    @Ignore
     public void testTableTypeRefersToGlobalTypes() {
         boolean worked = true;
         String msg = null;
@@ -363,7 +370,8 @@ public class TypeResolutionTestSuite {
             0, visitor.getUnresolvedTypes().size());
     }
 
-    @Test
+    //@Test
+    @Ignore
     public void testPLSQLRecordTypeRefersToDifferentPackage() {
         boolean worked = true;
         String msg = null;
