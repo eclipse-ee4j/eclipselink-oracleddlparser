@@ -1030,12 +1030,14 @@ DatabaseType typeSpec():
               tType.setEnclosedType(uType);
               uType.setOwningType(tType);
               dataType = tType;
+              localTypes.put(spec, dataType);
           }
           else if (isROWTYPEType) {
               ROWTYPEType rType = new ROWTYPEType(s);
               rType.setEnclosedType(uType);
               uType.setOwningType(rType);
               dataType = rType;
+              localTypes.put(spec, dataType);
           }
           else {
               dataType = uType;

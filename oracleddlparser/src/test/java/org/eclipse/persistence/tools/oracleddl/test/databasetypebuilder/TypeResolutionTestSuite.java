@@ -284,8 +284,7 @@ public class TypeResolutionTestSuite {
             0, visitor.getUnresolvedTypes().size());
     }
 
-    //@Test
-    @Ignore
+    @Test
     public void testSame_DDLRESOLVTEST_TABLE2_ROWTYPE() {
         FunctionType func1 = (FunctionType)ddlresolvtestPackage.getProcedures().get(0);
         DatabaseType tesmanfunc17ReturnType = func1.getReturnArgument().getEnclosedType();
@@ -294,8 +293,7 @@ public class TypeResolutionTestSuite {
         assertSame(tesmanfunc17ReturnType, tesmanproc17OutArgType);
     }
 
-    //@Test
-    @Ignore
+    @Test
     public void testSame_DDLRESOLVTEST_TABLE3_ROWTYPE() {
         ProcedureType proc3 = ddlresolvtestPackage.getProcedures().get(2);
         List<ArgumentType> proc3Args = proc3.getArguments();
@@ -312,8 +310,7 @@ public class TypeResolutionTestSuite {
         assertSame(empRecType, empRecType2);
     }
 
-    //@Test
-    @Ignore
+    @Test
     public void testSame_EMPdotEMPNO_TYPE() {
         PLSQLRecordType empRecType = (PLSQLRecordType)ddlresolvtestPackage.getTypes().get(0);
         DatabaseType empDotEnamePcentTYPE1 = empRecType.getFields().get(1).getEnclosedType();
@@ -322,8 +319,7 @@ public class TypeResolutionTestSuite {
         assertSame(empDotEnamePcentTYPE1, empDotEnamePcentTYPE2);
     }
 
-    //@Test
-    @Ignore
+    @Test
     public void testPackageRefersToGlobalTypes() {
         FunctionType echoRegionProc = (FunctionType)ddlresolvtestPackage.getProcedures().get(5);
         ArgumentType aRegion = echoRegionProc.getArguments().get(0);

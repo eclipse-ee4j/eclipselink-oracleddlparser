@@ -22,16 +22,24 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 
 //DDL imports
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
 //testing imports
+import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
+import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.visit.UnresolvedTypesVisitor;
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_CREATE_KEY;
 import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.DATABASE_DDL_DEBUG_KEY;
@@ -139,6 +147,52 @@ public class AnchoredTypesResolutionTestSuite {
             cursorType.isResolved());
         assertSame(ANCHORED_TYPE2_NAME + " is supposed to be identical to " +
             ANCHORED_TYPE3_NAME + "'s return type", plsqlType2, cursorType.getEnclosedType());
+
+        // check for any remaining unresolved types
+        UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
+	    visitor.visit(plsqlPackageType);
+	    assertEquals(ANCHORED_TYPES_TEST4_PACKAGE + " should not have any unresolved types",
+	        0, visitor.getUnresolvedTypes().size());
+	    
+	    // check TableTypes to ensure a single instance
+	    TableType tt1 = getTableType(cursorType);
+	    TableType tt2 = getTableType(plsqlPackageType.getCursors().get(1));
+	    TableType tt3 = getTableType(plsqlPackageType.getLocalVariables().get(0));
+	    TableType tt4 = getTableType(plsqlType2);
+	    
+	    assertEquals("Expected types ["+cursorType+"] and ["+plsqlPackageType.getCursors().get(1)+"] " +
+	    		"to have the same TableType instance", tt1, tt2);
+	    assertEquals("Expected types ["+plsqlPackageType.getCursors().get(1)+"] and ["+plsqlPackageType.getLocalVariables().get(0)+"] " +
+	    		"to have the same TableType instance", tt2, tt3);
+	    assertEquals("Expected types ["+plsqlPackageType.getLocalVariables().get(0)+"] and ["+plsqlType2+"] " +
+	    		"to have the same TableType instance", tt3, tt4);
     }
 
+    /**
+     * Iterates to/returns the last enclosedType.  
+     * Tests for non null and isTableType.
+     */
+	protected TableType getTableType(CompositeDatabaseType owningType) {
+	    DatabaseType enclosedType = null;
+		try {
+		    boolean done = false;
+		    while (!done) {
+		    	if (owningType.getEnclosedType() != null) {
+		    		enclosedType = owningType.getEnclosedType();
+		    		assertTrue("Expected composite enclosedType, but was [" +owningType.getTypeName()+ "]", enclosedType.isComposite());
+		    		owningType = (CompositeDatabaseType) enclosedType;
+		    	} else {
+		    		done = true;
+		    	}
+		    }
+		    assertNotNull(enclosedType);
+		    assertTrue("Expected TableType instance but was [" + enclosedType.getClass().getName() + "]", enclosedType.isTableType());
+		} catch (Exception x) {
+			fail("An unexpected exception occurred attempting to retrieve TableType from type [" + owningType.getTypeName() + "].  Exception message: " + x.getMessage());
+		}
+	    return (TableType) enclosedType;
+	}
 }
+
+
+
