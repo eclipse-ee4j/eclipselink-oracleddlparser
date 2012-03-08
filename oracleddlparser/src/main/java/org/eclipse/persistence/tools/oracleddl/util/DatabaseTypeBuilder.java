@@ -75,9 +75,9 @@ public class DatabaseTypeBuilder {
     public static final String DBMS_METADATA_GET_DDL_STMT_STMT2 =
         "REGEXP_LIKE(OWNER,?) AND";
     public static final String DBMS_METADATA_GET_DDL_STMT_STMT3 =
-        " OBJECT_TYPE = ? AND";
+        " AO.STATUS = 'VALID' AND AO.OBJECT_TYPE = ? AND";
     public static final String DBMS_METADATA_GET_DDL_STMT_SUFFIX =
-        " OBJECT_NAME LIKE ?";
+        " AO.OBJECT_NAME LIKE ?";
     //OBJECT_TYPE codes from ALL_OBJECTS view - we are only interested in top-level types:
     public static final int OBJECT_TYPE_UNKNOWN_CODE = -1;
     public static final String ALL_OBJECTS_OBJECT_TYPE_FIELD = "OBJECT_TYPE";
