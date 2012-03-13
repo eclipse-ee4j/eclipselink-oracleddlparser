@@ -275,4 +275,30 @@ public class TableDDLTestSuite {
         }
         assertTrue("timestamp table did not parse:\n" + message, worked);
     }
+
+    static final String CONSTRAINTs_TABLE = "CONSTRAINT_TABLE (" +
+            "\nEMPLOYEE_ID NUMBER(6) NOT NULL," +
+            "\nSALARY NUMBER(8,2)," +
+            "\nEMAIL VARCHAR2(25) CONSTRAINT \"EMP_EMAIL_NN\" NOT NULL ENABLE," +
+            "\nCONSTRAINT \"EMP_EMP_ID_PK\" PRIMARY KEY (EMPLOYEE_ID) ENABLE,\n" +
+            "\nCONSTRAINT \"EMP_EMAIL_UK\" UNIQUE (EMAIL) ENABLE," +
+            "\nCONSTRAINT \"EMP_SALARY_MIN\" CHECK (SALARY > 0) ENABLE" + 
+        ");";
+    
+    @Test
+    public void testAdditionalTableConstrainst() {
+        parser.ReInit(new StringReader(CREATE_TABLE_PREFIX + CONSTRAINTs_TABLE));
+        boolean worked = true;
+        String message = "";
+        @SuppressWarnings("unused")
+        TableType tableType = null;
+        try {
+            tableType = parser.parseTable();
+        }
+        catch (ParseException pe) {
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("constraints table did not parse:\n" + message, worked);
+    }
 }

@@ -20,6 +20,7 @@ options {
                                
                                
                      
+      FORCE_LA_CHECK = true;
 }
 
 PARSER_BEGIN(DDLParser)
@@ -124,19 +125,20 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*
     }
     public DatabaseTypesRepository getTypesRepository() {
         return typesRepository;
-    }     
+    } 
+    
+    protected String removeQuotes(String quotedString) {
+        return quotedString.substring(1, quotedString.length() - 1);
+    }      
 }
 
 PARSER_END(DDLParser)
 
 // white-space
 SKIP: {
-  " "
-| "\t"
-| "\n"
-| "\r"
-| "\f"
+      " " | "\t" | "\n" | "\r" | "\f"
 }
+
 // comments
 SKIP: {
     <COMMENT_LINE: "--" (~["\n","\r"])* ("\n"|"\r"|"\r\n") >
@@ -145,297 +147,302 @@ SKIP:{
     <COMMENT_BLOCK: "/*" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/">
 }
 
-// PLSQL reserved keywords (prefix with K_ to avoid naming conflicts) - NB: incomplete list
-TOKEN [IGNORE_CASE]: {  
-          <K_A: "A">
-        | <K_ADD: "ADD">
-        | <K_ALTER: "ALTER">
-        | <K_ARRAY: "ARRAY">
-        | <K_AS: "AS">
-        | <K_AUTHID: "AUTHID">
-        | <K_AUTOMATIC: "AUTOMATIC">
-        | <K_AUTONOMOUS_TRANSACTION: "AUTONOMOUS_TRANSACTION">
-        | <K_BEGIN: "BEGIN">
-        | <K_BFILE: "BFILE">
-        | <K_BINARY_DOUBLE: "BINARY_DOUBLE">
-        | <K_BINARY_FLOAT: "BINARY_FLOAT">
-        | <K_BINARY_INTEGER: "BINARY_INTEGER">
-        | <K_BLOB: "BLOB">
-        | <K_BODY: "BODY">
-        | <K_BOOLEAN: "BOOLEAN">
-        | <K_BUILTIN: "BUILTIN">
-        | <K_BULK: "BULK">
-        | <K_BY: "BY">
-        | <K_BYTE: "BYTE">
-        | <K_CHAR: "CHAR">
-        | <K_CHARACTER: "CHARACTER">
-        | <K_CHARSET: "%CHARSET">
-        | <K_CLOB: "CLOB">
-        | <K_CLOSE: "CLOSE">
-        | <K_COLLECT: "COLLECT">
-        | <K_COMMIT: "COMMIT">
-        | <K_CONSTANT: "CONSTANT">
-        | <K_CONSTRAINT: "CONSTRAINT">
-        | <K_COUNT: "COUNT">
-        | <K_CREATE: "CREATE">
-        | <K_CROSS: "CROSS">
-        | <K_CUBE: "CUBE">
-        | <K_CURRENT_OF: "CURRENT_OF">
-        | <K_CURRENT_USER: "CURRENT_USER">
-        | <K_CURSOR: "CURSOR">
-        | <K_DATE: "DATE">
-        | <K_DAY: "DAY">
-        | <K_DBTIMEZONE: "DBTIMEZONE">
-        | <K_DEC: "DEC">
-        | <K_DECIMAL: "DECIMAL">
-        | <K_DECREMENT: "DECREMENT">
-        | <K_DEFAULT: "DEFAULT">
-        | <K_DEFINER: "DEFINER">
-        | <K_DELETE: "DELETE">
-        | <K_DETERMINISTIC: "DETERMINISTIC">
-        | <K_DIMENSION: "DIMENSION">
-        | <K_DOUBLE: "DOUBLE">
-        | <K_ELSIF: "ELSIF">
-        | <K_EMPTY: "EMPTY">
-        | <K_ENABLE: "ENABLE">
-        | <K_END: "END">
-        | <K_EQUALS_PATH: "EQUALS_PATH">
-        | <K_ESCAPE: "ESCAPE">
-        | <K_EXCEPTION: "EXCEPTION">
-        | <K_EXCEPTION_INIT: "EXCEPTION_INIT">
-        | <K_EXIT: "EXIT">
-        | <K_FALSE: "FALSE">
-        | <K_FINAL: "FINAL">
-        | <K_FIPSFLAG: "FIPSFLAG">
-        | <K_FIRST: "FIRST">
-        | <K_FLOAT: "FLOAT">
-        | <K_FORCE: "FORCE">
-        | <K_FULL: "FULL">
-        | <K_FUNCTION: "FUNCTION">
-        | <K_GLOBAL: "GLOBAL">
-        | <K_GROUPING: "GROUPING">
-        | <K_IGNORE: "IGNORE">
-        | <K_IN: "IN">
-        | <K_INCREMENT: "INCREMENT">
-        | <K_INDEX: "INDEX">
-        | <K_INFINITE: "INFINITE">
-        | <K_INLINE: "INLINE">
-        | <K_INNER: "INNER">
-        | <K_INSTANTIABLE: "INSTANTIABLE">
-        | <K_INT: "INT">
-        | <K_INTEGER: "INTEGER">
-        | <K_INTERFACE: "INTERFACE">
-        | <K_INTERVAL: "INTERVAL">
-        | <K_IS: "IS">
-        | <K_ITERATE: "ITERATE">
-        | <K_JOIN: "JOIN">
-        | <K_KEY: "KEY">
-        | <K_KEEP: "KEEP">
-        | <K_LAST: "LAST">
-        | <K_LEFT: "LEFT">
-        | <K_LIKE2: "LIKE2">
-        | <K_LIKE4: "LIKE4">
-        | <K_LIKEC: "LIKEC">
-        | <K_LOCAL: "LOCAL">
-        | <K_LONG: "LONG">
-        | <K_LOOP: "LOOP">
-        | <K_MAIN: "MAIN">
-        | <K_MEASURES: "MEASURES">
-        | <K_MEMBER: "MEMBER">
-        | <K_MLSLABEL: "MLSLABEL">
-        | <K_MODEL: "MODEL">
-        | <K_MONTH: "MONTH">
-        | <K_NAN: "NAN">
-        | <K_NATIONAL: "NATIONAL">
-        | <K_NATURAL: "NATURAL">
-        | <K_NAV: "NAV">
-        | <K_NCHAR: "NCHAR">
-        | <K_NCLOB: "NCLOB">
-        | <K_NEW_NAMES: "NEW_NAMES">
-        | <K_NO: "'NO'">
-        | <K_NOCOMPRESS: "NOCOMPRESS">
-        | <K_NOCOPY: "NOCOPY">
-        | <K_NOCYCLE: "NOCYCLE">
-        | <K_NOT: "NOT">
-        | <K_NULL: "NULL">
-        | <K_NULLS: "NULLS">
-        | <K_NUMBER: "NUMBER">
-        | <K_NUMERIC: "NUMERIC">
-        | <K_NVARCHAR2: "NVARCHAR2">
-        | <K_NVARCHAR: "NVARCHAR">
-        | <K_OBJECT: "OBJECT">
-        | <K_OF: "OF">
-        | <K_OID: "OID">
-        | <K_ON: "ON">
-        | <K_ONLY: "ONLY">
-        | <K_OPEN: "OPEN">
-        | <K_OR: "OR">
-        | <K_ORGANIZATION: "ORGANIZATION">
-        | <K_OUT: "OUT">
-        | <K_OUTER: "OUTER">
-        | <K_OVERFLOW: "OVERFLOW">
-        | <K_PACKAGE: "PACKAGE">
-        | <K_PARALLEL_ENABLE: "PARALLEL_ENABLE">
-        | <K_PARTITION: "PARTITION">
-        | <K_PIPELINED: "PIPELINED">
-        | <K_PLS_INTEGER: "PLS_INTEGER">
-        | <K_POSITIVE: "POSITIVE">
-        | <K_PRAGMA: "PRAGMA">
-        | <K_PRECISION: "PRECISION">
-        | <K_PRESENT: "PRESENT">
-        | <K_PRESERVE: "PRESERVE">
-        | <K_PRIMARY: "PRIMARY">
-        | <K_PROCEDURE: "PROCEDURE">
-        | <K_RAISE: "RAISE">
-        | <K_RANGE: "RANGE">
-        | <K_RAW: "RAW">
-        | <K_READ: "READ">
-        | <K_REAL: "REAL">
-        | <K_RECORD: "RECORD">
-        | <K_REF: "REF">
-        | <K_REFERENCE: "REFERENCE">
-        | <K_REGEXP_LIKE: "REGEXP_LIKE">
-        | <K_REPLACE: "REPLACE">
-        | <K_RESTRICT_REFERENCES: "RESTRICT_REFERENCES">
-        | <K_RESULT_CACHE: "RESULT_CACHE">
-        | <K_RETURN: "RETURN">
-        | <K_RETURNING: "RETURNING">
-        | <K_REVERSE: "REVERSE">
-        | <K_RIGHT: "RIGHT">
-        | <K_RNDS: "RNDS">
-        | <K_RNPS: "RNPS">
-        | <K_ROLLBACK: "ROLLBACK">
-        | <K_ROLLUP: "ROLLUP">
-        | <K_ROWID: "ROWID">
-        | <K_ROWS: "ROWS">
-        | <K_ROWTYPE: "%ROWTYPE">
-        | <K_RULES: "RULES">
-        | <K_SECOND: "SECOND">
-        | <K_SEQUENTIAL: "SEQUENTIAL">
-        | <K_SERIALLY_REUSABLE: "SERIALLY_REUSABLE">
-        | <K_SESSIONTIMEZONE: "SESSIONTIMEZONE">
-        | <K_SET: "SET">
-        | <K_SETS: "SETS">
-        | <K_SIBLINGS: "SIBLINGS">
-        | <K_SIGNTYPE: "SIGNTYPE">
-        | <K_SINGLE: "SINGLE">
-        | <K_SIMPLE_INTEGER: "SIMPLE_INTEGER">
-        | <K_SIMPLE_DOUBLE: "SIMPLE_DOUBLE">
-        | <K_SIMPLE_FLOAT: "SIMPLE_FLOAT">
-        | <K_SMALLINT: "SMALLINT">
-        | <K_SOME: "SOME">
-        | <K_STRING: "STRING">
-        | <K_SUBMUlookISET: "SUBMUlookISET">
-        | <K_SUBTYPE: "SUBTYPE">
-        | <K_SYS_REFCURSOR: "SYS_REFCURSOR">
-        | <K_TABLE: "TABLE">
-        | <K_TEMPORARY: "TEMPORARY">
-        | <K_THE: "THE">
-        | <K_TIME: "TIME">
-        | <K_TIMESTAMP: "TIMESTAMP">
-        | <K_TO: "TO">
-        | <K_TRANSACTION: "TRANSACTION">
-        | <K_TRUE: "TRUE">
-        | <K_TRUST: "TRUST">
-        | <K_TYPE: "TYPE">
-        | <K_TYPE2: "%TYPE">
-        | <K_UNDER_PATH: "UNDER_PATH">
-        | <K_UNTIL: "UNTIL">
-        | <K_UPDATED: "UPDATED">
-        | <K_UPSERT: "UPSERT">
-        | <K_UROWID: "UROWID">
-        | <K_USING: "USING">
-        | <K_VARCHAR2: "VARCHAR2">
-        | <K_VARCHAR: "VARCHAR">
-        | <K_VARRAY: "VARRAY">
-        | <K_VARYING: "VARYING">
-        | <K_WITH: "WITH">
-        | <K_WHILE: "WHILE">
-        | <K_WNDS: "WNDS">
-        | <K_WNPS: "WNPS">
-        | <K_WORK: "WORK">
-        | <K_YEAR: "YEAR">
-        | <K_YES: "'YES'">
-        | <K_ZONE: "ZONE">
-}
+// token classes
 
 // separators and operators (prefix with O_ to avoid naming conflicts)
 TOKEN: {
-          <O_ASSIGN: ":=">
-        | <O_ASTERISK: "*">
-        | <O_ATSIGN: "@">
-        | <O_CLOSEPAREN: ")">
-        | <O_CONCAT: "||">
-        | <O_COLON: ":">
-        | <O_COMMA: ",">
-        | <O_DOT: ".">
-        | <O_DOUBLEDOT: "..">
-        | <O_DOLLAR: "$">
-        | <O_PERCENT: "%">
-        | <O_EQUAL: "=">
-        | <O_GREATER: ">">
-        | <O_GREATEREQUAL: ">=">
-        | <O_JOINPLUS: "(+)">
-        | <O_LESS: "<">
-        | <O_LESSEQUAL: "<=">
-        | <O_MINUS: "-">
-        | <O_NOTEQUAL2: "<>">
-        | <O_NOTEQUAL: "!=">
-        | <O_OPENPAREN: "(">
-        | <O_PLUS: "+">
-        | <O_POUND: "#">
-        | <O_QUESTIONMARK: "?">
-        | <O_SEMICOLON: ";">
-        | <O_SLASH: "/">
-        | <O_TILDE: "~">
+      <O_ASSIGN: ":=">
+    | <O_ASTERISK: "*">
+    | <O_ATSIGN: "@">
+    | <O_CLOSEPAREN: ")">
+    | <O_CONCAT: "||">
+    | <O_COLON: ":">
+    | <O_COMMA: ",">
+    | <O_DOT: ".">
+    | <O_DOUBLEDOT: "..">
+    | <O_DOLLAR: "$">
+    | <O_PERCENT: "%">
+    | <O_EQUAL: "=">
+    | <O_GREATER: ">">
+    | <O_GREATEREQUAL: ">=">
+    | <O_JOINPLUS: "(+)">
+    | <O_LESS: "<">
+    | <O_LESSEQUAL: "<=">
+    | <O_MINUS: "-">
+    | <O_NOTEQUAL2: "<>">
+    | <O_NOTEQUAL: "!=">
+    | <O_OPENPAREN: "(">
+    | <O_PLUS: "+">
+    | <O_POUND: "#">
+    | <O_QUESTIONMARK: "?">
+    | <O_SEMICOLON: ";">
+    | <O_SLASH: "/">
+    | <O_TILDE: "~">
 }
 
 // numeric literals
 TOKEN : {
-    <S_NUMBER: <FLOAT>
-        | <FLOAT> ( ["e","E"] ([ "-","+"])? <FLOAT> )?
-      >
-    | <#FLOAT: <INTEGER>
-            | <INTEGER> ( "." <INTEGER> )?
-            | "." <INTEGER>
-      >
+      <S_NUMBER: <FLOAT> | <FLOAT> ( ["e","E"] ([ "-","+"])? <FLOAT> )? >
+    | <#FLOAT: <INTEGER> | <INTEGER> ( "." <INTEGER> )? | "." <INTEGER> >
     | <#INTEGER: ( <DIGIT> )+ >
     | <#DIGIT: ["0" - "9"] >
+}
+
+//reserved words and keywords literals
+/*
+PLSQL reserved words (prefix with R_ ) and keyword (prefix with K_)
+http://docs.oracle.com/cd/E11882_01/appdev.112/e25519/fundamentals.htm#CBJGBIGI
+"You cannot use reserved words as ordinary user-defined identifiers. 
+You can use keywords as ordinary user-defined identifiers, but it is not recommended."
+*/
+
+TOKEN [IGNORE_CASE]: {  
+      <K_A: "A">
+    | <K_ADD: "ADD">
+    | <K_ALTER: "ALTER">
+    | <K_ARRAY: "ARRAY">
+    | <K_AS: "AS">
+    | <K_AUTHID: "AUTHID">
+    | <K_AUTOMATIC: "AUTOMATIC">
+    | <K_AUTONOMOUS_TRANSACTION: "AUTONOMOUS_TRANSACTION">
+    | <K_BEGIN: "BEGIN">
+    | <K_BFILE: "BFILE">
+    | <K_BINARY_DOUBLE: "BINARY_DOUBLE">
+    | <K_BINARY_FLOAT: "BINARY_FLOAT">
+    | <K_BINARY_INTEGER: "BINARY_INTEGER">
+    | <K_BLOB: "BLOB">
+    | <K_BODY: "BODY">
+    | <K_BOOLEAN: "BOOLEAN">
+    | <K_BUILTIN: "BUILTIN">
+    | <K_BULK: "BULK">
+    | <K_BY: "BY">
+    | <K_BYTE: "BYTE">
+    | <K_CHAR: "CHAR">
+    | <K_CHARACTER: "CHARACTER">
+    | <K_CHARSET: "%CHARSET">
+    | <K_CHECK: "CHECK">
+    | <K_CLOB: "CLOB">
+    | <K_CLOSE: "CLOSE">
+    | <K_COLLECT: "COLLECT">
+    | <K_COMMIT: "COMMIT">
+    | <K_CONSTANT: "CONSTANT">
+    | <K_CONSTRAINT: "CONSTRAINT">
+    | <K_COUNT: "COUNT">
+    | <K_CREATE: "CREATE">
+    | <K_CROSS: "CROSS">
+    | <K_CUBE: "CUBE">
+    | <K_CURRENT_OF: "CURRENT_OF">
+    | <K_CURRENT_USER: "CURRENT_USER">
+    | <K_CURSOR: "CURSOR">
+    | <K_DATE: "DATE">
+    | <K_DAY: "DAY">
+    | <K_DBTIMEZONE: "DBTIMEZONE">
+    | <K_DEC: "DEC">
+    | <K_DECIMAL: "DECIMAL">
+    | <K_DECREMENT: "DECREMENT">
+    | <K_DEFAULT: "DEFAULT">
+    | <K_DEFINER: "DEFINER">
+    | <K_DELETE: "DELETE">
+    | <K_DETERMINISTIC: "DETERMINISTIC">
+    | <K_DIMENSION: "DIMENSION">
+    | <K_DOUBLE: "DOUBLE">
+    | <K_ELSIF: "ELSIF">
+    | <K_EMPTY: "EMPTY">
+    | <K_ENABLE: "ENABLE">
+    | <K_END: "END">
+    | <K_EQUALS_PATH: "EQUALS_PATH">
+    | <K_ESCAPE: "ESCAPE">
+    | <K_EXCEPTION: "EXCEPTION">
+    | <K_EXCEPTION_INIT: "EXCEPTION_INIT">
+    | <K_EXIT: "EXIT">
+    | <K_FALSE: "FALSE">
+    | <K_FINAL: "FINAL">
+    | <K_FIPSFLAG: "FIPSFLAG">
+    | <K_FIRST: "FIRST">
+    | <K_FLOAT: "FLOAT">
+    | <K_FORCE: "FORCE">
+    | <K_FULL: "FULL">
+    | <K_FUNCTION: "FUNCTION">
+    | <K_GLOBAL: "GLOBAL">
+    | <K_GROUPING: "GROUPING">
+    | <K_IGNORE: "IGNORE">
+    | <K_IN: "IN">
+    | <K_INCREMENT: "INCREMENT">
+    | <K_INDEX: "INDEX">
+    | <K_INFINITE: "INFINITE">
+    | <K_INLINE: "INLINE">
+    | <K_INNER: "INNER">
+    | <K_INSTANTIABLE: "INSTANTIABLE">
+    | <K_INT: "INT">
+    | <K_INTEGER: "INTEGER">
+    | <K_INTERFACE: "INTERFACE">
+    | <K_INTERVAL: "INTERVAL">
+    | <K_IS: "IS">
+    | <K_ITERATE: "ITERATE">
+    | <K_JOIN: "JOIN">
+    | <K_KEY: "KEY">
+    | <K_KEEP: "KEEP">
+    | <K_LAST: "LAST">
+    | <K_LEFT: "LEFT">
+    | <K_LIKE2: "LIKE2">
+    | <K_LIKE4: "LIKE4">
+    | <K_LIKEC: "LIKEC">
+    | <K_LOCAL: "LOCAL">
+    | <K_LONG: "LONG">
+    | <K_LOOP: "LOOP">
+    | <K_MAIN: "MAIN">
+    | <K_MEASURES: "MEASURES">
+    | <K_MEMBER: "MEMBER">
+    | <K_MLSLABEL: "MLSLABEL">
+    | <K_MODEL: "MODEL">
+    | <K_MONTH: "MONTH">
+    | <K_NAN: "NAN">
+    | <K_NATIONAL: "NATIONAL">
+    | <K_NATURAL: "NATURAL">
+    | <K_NAV: "NAV">
+    | <K_NCHAR: "NCHAR">
+    | <K_NCLOB: "NCLOB">
+    | <K_NEW_NAMES: "NEW_NAMES">
+    | <K_NO: "'NO'">
+    | <K_NOCOMPRESS: "NOCOMPRESS">
+    | <K_NOCOPY: "NOCOPY">
+    | <K_NOCYCLE: "NOCYCLE">
+    | <K_NOT: "NOT">
+    | <K_NULL: "NULL">
+    | <K_NULLS: "NULLS">
+    | <K_NUMBER: "NUMBER">
+    | <K_NUMERIC: "NUMERIC">
+    | <K_NVARCHAR2: "NVARCHAR2">
+    | <K_NVARCHAR: "NVARCHAR">
+    | <K_OBJECT: "OBJECT">
+    | <K_OF: "OF">
+    | <K_OID: "OID">
+    | <K_ON: "ON">
+    | <K_ONLY: "ONLY">
+    | <K_OPEN: "OPEN">
+    | <K_OR: "OR">
+    | <K_ORGANIZATION: "ORGANIZATION">
+    | <K_OUT: "OUT">
+    | <K_OUTER: "OUTER">
+    | <K_OVERFLOW: "OVERFLOW">
+    | <K_PACKAGE: "PACKAGE">
+    | <K_PARALLEL_ENABLE: "PARALLEL_ENABLE">
+    | <K_PARTITION: "PARTITION">
+    | <K_PIPELINED: "PIPELINED">
+    | <K_PLS_INTEGER: "PLS_INTEGER">
+    | <K_POSITIVE: "POSITIVE">
+    | <K_PRAGMA: "PRAGMA">
+    | <K_PRECISION: "PRECISION">
+    | <K_PRESENT: "PRESENT">
+    | <K_PRESERVE: "PRESERVE">
+    | <K_PRIMARY: "PRIMARY">
+    | <K_PROCEDURE: "PROCEDURE">
+    | <K_RAISE: "RAISE">
+    | <K_RANGE: "RANGE">
+    | <K_RAW: "RAW">
+    | <K_READ: "READ">
+    | <K_REAL: "REAL">
+    | <K_RECORD: "RECORD">
+    | <K_REF: "REF">
+    | <K_REFERENCE: "REFERENCE">
+    | <K_REGEXP_LIKE: "REGEXP_LIKE">
+    | <K_REPLACE: "REPLACE">
+    | <K_RESTRICT_REFERENCES: "RESTRICT_REFERENCES">
+    | <K_RESULT_CACHE: "RESULT_CACHE">
+    | <K_RETURN: "RETURN">
+    | <K_RETURNING: "RETURNING">
+    | <K_REVERSE: "REVERSE">
+    | <K_RIGHT: "RIGHT">
+    | <K_RNDS: "RNDS">
+    | <K_RNPS: "RNPS">
+    | <K_ROLLBACK: "ROLLBACK">
+    | <K_ROLLUP: "ROLLUP">
+    | <K_ROWID: "ROWID">
+    | <K_ROWS: "ROWS">
+    | <K_ROWTYPE: "%ROWTYPE">
+    | <K_RULES: "RULES">
+    | <K_SECOND: "SECOND">
+    | <K_SEQUENTIAL: "SEQUENTIAL">
+    | <K_SERIALLY_REUSABLE: "SERIALLY_REUSABLE">
+    | <K_SESSIONTIMEZONE: "SESSIONTIMEZONE">
+    | <K_SET: "SET">
+    | <K_SETS: "SETS">
+    | <K_SIBLINGS: "SIBLINGS">
+    | <K_SIGNTYPE: "SIGNTYPE">
+    | <K_SINGLE: "SINGLE">
+    | <K_SIMPLE_INTEGER: "SIMPLE_INTEGER">
+    | <K_SIMPLE_DOUBLE: "SIMPLE_DOUBLE">
+    | <K_SIMPLE_FLOAT: "SIMPLE_FLOAT">
+    | <K_SMALLINT: "SMALLINT">
+    | <K_SOME: "SOME">
+    | <K_STRING: "STRING">
+    | <K_SUBMUlookISET: "SUBMUlookISET">
+    | <K_SUBTYPE: "SUBTYPE">
+    | <K_SYS_REFCURSOR: "SYS_REFCURSOR">
+    | <K_TABLE: "TABLE">
+    | <K_TEMPORARY: "TEMPORARY">
+    | <K_THE: "THE">
+    | <K_TIME: "TIME">
+    | <K_TIMESTAMP: "TIMESTAMP">
+    | <K_TO: "TO">
+    | <K_TRANSACTION: "TRANSACTION">
+    | <K_TRUE: "TRUE">
+    | <K_TRUST: "TRUST">
+    | <K_TYPE: "TYPE">
+    | <K_TYPE2: "%TYPE">
+    | <K_UNDER_PATH: "UNDER_PATH">
+    | <K_UNIQUE: "UNIQUE">
+    | <K_UNTIL: "UNTIL">
+    | <K_UPDATED: "UPDATED">
+    | <K_UPSERT: "UPSERT">
+    | <K_UROWID: "UROWID">
+    | <K_USING: "USING">
+    | <K_VARCHAR2: "VARCHAR2">
+    | <K_VARCHAR: "VARCHAR">
+    | <K_VARRAY: "VARRAY">
+    | <K_VARYING: "VARYING">
+    | <K_WITH: "WITH">
+    | <K_WHILE: "WHILE">
+    | <K_WNDS: "WNDS">
+    | <K_WNPS: "WNPS">
+    | <K_WORK: "WORK">
+    | <K_YEAR: "YEAR">
+    | <K_YES: "'YES'">
+    | <K_ZONE: "ZONE">
 }
 
 // identifiers
 TOKEN:
 {
-    <S_IDENTIFIER: (<LETTER>)+ (<DIGIT> | <LETTER> | <SPECIAL_CHARS>)* >
-  | <#LETTER: ["a"-"z", "A"-"Z"] >
-  | <#SPECIAL_CHARS: "$" | "_" | "#" | "@" >
-  | <S_BIND: ":" ( <S_NUMBER> | <S_IDENTIFIER> ("." <S_IDENTIFIER>)?) >
-  | <S_CHAR_LITERAL: "'" (~["'"])* "'" ("'" (~["'"])* "'")*>
-  | <S_QUOTED_IDENTIFIER: "\"" (~["\n","\r","\""])* "\"" >
+      <S_IDENTIFIER: (<LETTER>)+ (<DIGIT> | <LETTER> | <SPECIAL_CHARS>)* >
+    | <#LETTER: ["a"-"z", "A"-"Z"] >
+    | <#SPECIAL_CHARS: "$" | "_" | "#" | "@" >
+    | <S_BIND: ":" ( <S_NUMBER> | <S_IDENTIFIER> ("." <S_IDENTIFIER>)?) >
+    | <S_CHAR_LITERAL: "'" (~["'"])* "'" ("'" (~["'"])* "'")*>
+    | <S_QUOTED_IDENTIFIER: "\"" (~["\n","\r","\""])* "\"" >
 }
 
 // stripped-down version of PLSQL grammar: only parses package/top-level DDL specifications
 
 // PLSQLPackage at 'top-level'
 PLSQLPackageType parsePLSQLPackage():
-{String schema = null;
+{PLSQLPackageType packageType = new PLSQLPackageType();
+ String schema = null;
  String packageName = null;
- PLSQLPackageType packageType = new PLSQLPackageType();
  }
 {
     <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_PACKAGE>
-        [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] packageName=OracleObjectName()
+      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] packageName=OracleObjectName()
         {
           if (schema != null) {
             packageType.setSchema(schema);
           }
           packageType.setPackageName(packageName);
         }
-        [ <K_AUTHID> [ <K_CURRENT_USER> | <K_DEFINER> ] ]
-        [ <K_AS> | <K_IS> ]
+        [ invokerRights() ] as()
          ( packageDeclaration(packageType) )*
-     <K_END> [ OracleObjectName() ] <O_SEMICOLON>
-     <EOF>
+    <K_END> [ OracleObjectName() ] <O_SEMICOLON>
+    <EOF>
     {
       typesRepository.setDatabaseType(packageName, packageType);
       return packageType;
@@ -448,15 +455,15 @@ ProcedureType parseTopLevelProcedure():
  String schema = null;
  String procedureName = null;}
 {
-  <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_PROCEDURE>
-    [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] procedureName=OracleObjectName()
-       {
-           procedureType = new ProcedureType(procedureName);
+    <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_PROCEDURE>
+      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] procedureName=OracleObjectName()
+        {
+          procedureType = new ProcedureType(procedureName);
 	      if (schema != null) {
 	          procedureType.setSchema(schema);
 	      }       }
-    [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ] [ <K_AS> | <K_IS> ]
-        skipToEnd()
+    [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ] as()
+    skipToEnd()
     {
       typesRepository.setDatabaseType(procedureName, procedureType);
       return procedureType;
@@ -470,15 +477,15 @@ FunctionType parseTopLevelFunction():
  String functionName = null;
  ArgumentType returnType = null;}
 {
-  <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_FUNCTION>
-    [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
-	  {
+    <K_CREATE> [ orReplace() ] <K_FUNCTION>
+      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
+	    {
 	      functionType = new FunctionType(functionName);
           if (schema != null) {
               functionType.setSchema(schema);
           }	  }
-    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] returnType=functionReturnSpec() [ <K_AS> | <K_IS> ]
-        skipToEnd()
+    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] returnType=functionReturnSpec() as()
+    skipToEnd()
     {
       functionType.setReturnArgument(returnType);
       typesRepository.setDatabaseType(functionName, functionType);
@@ -488,24 +495,22 @@ FunctionType parseTopLevelFunction():
 
 // table at 'top-level'
 TableType parseTable():
-{
-TableType tableType = null;
-String schema = null;
-String tableName = null;
-Token iot = null;
+{TableType tableType = null;
+ String schema = null;
+ String tableName = null;
+ Token iot = null;
 }
 {
     <K_CREATE> [ <K_GLOBAL> <K_TEMPORARY> ] <K_TABLE> 
-        [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] tableName=OracleObjectName()
+      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] tableName=OracleObjectName()
         {
-            tableType = new TableType(tableName);
-		    if (schema != null) {
-		         tableType.setSchema(schema);
-		    }        }
+          tableType = new TableType(tableName);
+		  if (schema != null) {
+		       tableType.setSchema(schema);
+		  }        }
         <O_OPENPAREN> columnDeclarations(tableType) <O_CLOSEPAREN>
          [ <K_ORGANIZATION> ] [ iot=<K_INDEX> ] [ <K_NOCOMPRESS> ] [ <K_OVERFLOW> ]
          [ <K_ON> <K_COMMIT > [<K_DELETE> | <K_PRESERVE> ] <K_ROWS> ] <O_SEMICOLON>
-        
      <EOF>
      {
          if (iot != null) {
@@ -519,7 +524,7 @@ Token iot = null;
 // type at 'top-level'
 CompositeDatabaseType parseType():
 {CompositeDatabaseType databaseType = null;
-DatabaseType enclosedType = null;
+ DatabaseType enclosedType = null;
  String schema = null;
  String typeName = null;
  Token vsize = null;
@@ -527,10 +532,9 @@ DatabaseType enclosedType = null;
  boolean nestedTable = false;
 }
 {
-    <K_CREATE> [ <K_OR> <K_REPLACE> ] <K_TYPE>
+    <K_CREATE> [ orReplace() ] <K_TYPE>
       [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] typeName=OracleObjectName()
-        [ <K_FORCE> ] [ <K_OID> <S_CHAR_LITERAL> ] [ <K_AUTHID> [ <K_CURRENT_USER> | <K_DEFINER> ] ]
-        ( <K_AS> | <K_IS> )
+        [ <K_FORCE> ] [ <K_OID> <S_CHAR_LITERAL> ] [ invokerRights() ] as()
         [ <K_OBJECT> <O_OPENPAREN>
             {
                 databaseType = new ObjectType(typeName);
@@ -563,13 +567,13 @@ DatabaseType enclosedType = null;
     }
 }
 
-void columnDeclarations(CompositeDatabaseType enclosingType)      :
+void columnDeclarations(CompositeDatabaseType enclosingType):
 {}
 {
     columnDeclaration(enclosingType) [ <O_COMMA> columnDeclarations(enclosingType) ]    
 }
 
-void columnDeclaration(CompositeDatabaseType enclosingType)      :
+void columnDeclaration(CompositeDatabaseType enclosingType):
 {String s = null;
  String pk = null;
  boolean notNull = false;
@@ -591,10 +595,13 @@ void columnDeclaration(CompositeDatabaseType enclosingType)      :
 			       ((ObjectType)enclosingType).addField(column);
 			   }
 		   }         }
-         columnType=columnTypeSpec(enclosingType) [ <K_NOT> <K_NULL> <K_ENABLE> {notNull = true;} ]
+         columnType=columnTypeSpec(enclosingType) [ <K_NOT> <K_NULL> [ <K_ENABLE> ] {notNull = true;} ]
        | LOOKAHEAD(2)
-         [ <K_CONSTRAINT> ] [ OracleObjectName() ] <K_PRIMARY> <K_KEY>
-             <O_OPENPAREN>  pkList((TableType)enclosingType) <O_CLOSEPAREN> <K_ENABLE>
+         [ <K_CONSTRAINT> ] [ OracleObjectName() ]
+           (
+               <K_PRIMARY> <K_KEY> <O_OPENPAREN>  pkList((TableType)enclosingType) <O_CLOSEPAREN> 
+             | <K_CHECK> <O_OPENPAREN> skipToClosingParen() <O_CLOSEPAREN> 
+             | <K_UNIQUE> <O_OPENPAREN> uniqList() <O_CLOSEPAREN>            ) <K_ENABLE>
     )
     {
       if (column != null) {
@@ -617,7 +624,7 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
     (
       dt=datatype()
     | s=columnSpec() [ <O_OPENPAREN> t=<S_NUMBER> <O_CLOSEPAREN> ]
-    )
+    ) [ <K_CONSTRAINT> <S_QUOTED_IDENTIFIER> ]
     {
       if (s != null) {
           for (String typeName : localTypes.keySet()) {
@@ -641,14 +648,19 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
     }
 }
 
-void pkList(TableType tableType)      :
+void uniqList():
+{}
+{
+    OracleObjectName() ( <O_COMMA> OracleObjectName() )*
+}
+
+void pkList(TableType tableType):
 {}
 {
     pk(tableType) ( <O_COMMA> pk(tableType) )*
 }
 
-
-void pk(TableType tableType)      :
+void pk(TableType tableType):
 {
 String s = null;
 }
@@ -664,7 +676,7 @@ String s = null;
        }    }
 }
 
-void packageDeclaration(PLSQLPackageType packageType)      :
+void packageDeclaration(PLSQLPackageType packageType) :
 {}
 {
     LOOKAHEAD(2) variableDeclaration(packageType)
@@ -688,7 +700,7 @@ void variableDeclaration(PLSQLPackageType packageType):
         variable.setEnclosedType(varType);
         packageType.addLocalVariable(variable);    }}
 
-void variableDefaultAssignment()      :
+void variableDefaultAssignment():
 {}
 {
     ( <O_ASSIGN> | <K_DEFAULT> ) skipToSemiColon()
@@ -1050,7 +1062,7 @@ DatabaseType typeSpec():
       return dataType;    }
 }
 
-String columnSpec()      :
+String columnSpec():
 {String s1 = null;
  String s2 = null;
  String s3 = null;}
@@ -1070,34 +1082,34 @@ String columnSpec()      :
     }
 }
 
-String tableSpec()      :
+String tableSpec():
 {}
 {
     OracleObjectName() [ <O_DOT> OracleObjectName() [ <O_ATSIGN> <S_IDENTIFIER> ] ]
     {return token.image;}
 }
 
-String typeName()      :
+String typeName():
 {}
 {
     OracleObjectName() [ <O_DOT> OracleObjectName() ]
     {return token.image;}
 }
 
-void typeOrSubTypeDeclaration(PLSQLPackageType packageType)      :
+void typeOrSubTypeDeclaration(PLSQLPackageType packageType) :
 {String s = null;}
 {
       typeDeclaration(packageType)
     | subtypeDeclaration(packageType)
 }
 
-void typeDeclaration(PLSQLPackageType packageType)      :
+void typeDeclaration(PLSQLPackageType packageType) :
 {String s = null;}
 {
     <K_TYPE> s=typeName() <K_IS> aTypeDeclaration(packageType, s) <O_SEMICOLON>
 }
 
-void aTypeDeclaration(PLSQLPackageType packageType, String typeName)      :
+void aTypeDeclaration(PLSQLPackageType packageType, String typeName) :
 {}
 {
     recordDeclaration(packageType, typeName)
@@ -1106,7 +1118,7 @@ void aTypeDeclaration(PLSQLPackageType packageType, String typeName)      :
     | refCursorDeclaration(packageType, typeName)
 }
 
-void recordDeclaration(PLSQLPackageType packageType, String typeName)      :
+void recordDeclaration(PLSQLPackageType packageType, String typeName) :
 {
   PLSQLRecordType plsqlRecordType = new PLSQLRecordType(typeName);
   plsqlRecordType.setParentType(packageType);
@@ -1120,7 +1132,7 @@ void recordDeclaration(PLSQLPackageType packageType, String typeName)      :
     }
 }
 
-void fieldDeclarations(PLSQLRecordType plsqlRecordType)      :
+void fieldDeclarations(PLSQLRecordType plsqlRecordType) :
 {}
 {
     fieldDeclaration(plsqlRecordType) [ <O_COMMA> fieldDeclarations(plsqlRecordType) ]
@@ -1143,13 +1155,13 @@ void fieldDeclaration(PLSQLRecordType plsqlRecordType):
       }    }
 }
 
-void fieldDefaultAssignment()      :
+void fieldDefaultAssignment():
 {}
 {
     ( <O_ASSIGN> | <K_DEFAULT> ) skipToNextArg()
 }
 
-void subtypeDeclaration(PLSQLPackageType packageType)      :
+void subtypeDeclaration(PLSQLPackageType packageType) :
 {String subtypeName;
 DatabaseType subtype;
 Token notNull = null;
@@ -1177,7 +1189,7 @@ Token rangeEnd = null;}
     }
 }
 
-void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName)      :
+void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) :
 {
   PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
   plsqlTable.setParentType(packageType);
@@ -1195,7 +1207,7 @@ void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName)      :
     }
 }
 
-void plsqlTableIndexByDeclaration(PLSQLCollectionType plsqlTable)      :
+void plsqlTableIndexByDeclaration(PLSQLCollectionType plsqlTable) :
 {
   DatabaseType indexType = null;
   Token precision = null;
@@ -1235,14 +1247,14 @@ void plsqlTableIndexByDeclaration(PLSQLCollectionType plsqlTable)      :
     }
 }
 
-void varrayDeclaration(PLSQLPackageType packageType)      :
+void varrayDeclaration(PLSQLPackageType packageType) :
 {}
 {
     ( <K_VARRAY> | <K_VARYING> <K_ARRAY> ) <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
         <K_OF> datatype() [ <K_NOT> <K_NULL> ]
 }
 
-void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName)      :
+void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName) :
 {PLSQLCursorType cursorType = null;}
 {
     <K_REF> <K_CURSOR>
@@ -1254,7 +1266,7 @@ void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName)  
       [ refCursorTypeSpec(cursorType, packageType) ]
 }
 
-void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType)      :
+void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType) :
 {String s = null;
  String spec = null;
  boolean isTYPEType = false;
@@ -1325,7 +1337,7 @@ void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType)
 	  }    }
 }
 
-void cursorDeclaration(PLSQLPackageType packageType)      :
+void cursorDeclaration(PLSQLPackageType packageType) :
 {Token t = null;}
 {
     <K_CURSOR> t=<S_IDENTIFIER>
@@ -1333,7 +1345,7 @@ void cursorDeclaration(PLSQLPackageType packageType)      :
 }
 
 // Procedure Specification
-void procedureSpec(PLSQLPackageType packageType)      :
+void procedureSpec(PLSQLPackageType packageType) :
 {Token t = null;
  ProcedureType procedureType = null;
 }
@@ -1348,14 +1360,14 @@ void procedureSpec(PLSQLPackageType packageType)      :
     }
 }
 
-void argumentList(ProcedureType procedureType)      :
+void argumentList(ProcedureType procedureType) :
 {}
 {
    argument(procedureType) ( <O_COMMA> argument(procedureType) )*
 }
 
 // Function Specification
-void functionSpec(PLSQLPackageType packageType)      :
+void functionSpec(PLSQLPackageType packageType) :
 {Token t = null;
  FunctionType functionType = null;
  ArgumentType returnDataType = null;
@@ -1389,7 +1401,7 @@ ArgumentType functionReturnSpec():
     }
 }
 
-void argument(ProcedureType procedureType)      :
+void argument(ProcedureType procedureType) :
 {Token t = null;
  ArgumentType argumentType = null;
  DatabaseType argumentDataType = null;
@@ -1418,14 +1430,6 @@ void argument(ProcedureType procedureType)      :
     }
 }
 
-String direction()      :
-{}
-{
-    LOOKAHEAD(2) <K_IN> <K_OUT> { return "IN OUT"; }
-    | <K_IN> { return "IN"; }
-    | <K_OUT>  { return "OUT"; }
-}
-
 boolean argumentDefaultAssignment():
 {}
 {
@@ -1435,13 +1439,13 @@ boolean argumentDefaultAssignment():
     }
 }
 
-void exceptionDeclaration(PLSQLPackageType packageType)      :
+void exceptionDeclaration(PLSQLPackageType packageType) :
 {}
 {
     <S_IDENTIFIER> <K_EXCEPTION> <O_SEMICOLON>
 }
 
-void pragmaDeclaration(PLSQLPackageType packageType)      :
+void pragmaDeclaration(PLSQLPackageType packageType) :
 {}
 {    <K_PRAGMA>
     [ <K_AUTONOMOUS_TRANSACTION>
@@ -1454,19 +1458,48 @@ void pragmaDeclaration(PLSQLPackageType packageType)      :
     <O_SEMICOLON>
 }
 
-String OracleObjectName()      :
-{}
+void orReplace():
 {
-    <S_IDENTIFIER>
-    {return token.image;}
-  | <S_QUOTED_IDENTIFIER>
+}
+{
+    <K_OR> <K_REPLACE>
+}
+
+void invokerRights():
+{
+}
+{
+    <K_AUTHID> (<K_CURRENT_USER> | <K_DEFINER>)
+}
+
+void as():
+{
+}
+{
+    <K_AS> | <K_IS>
+}
+
+String direction():
+{String dir = "";
+}
+{
+    (
+        <K_IN> {dir = "IN";} [ <K_OUT> {dir += " OUT";} ]
+      | <K_OUT> {dir = "OUT";}
+    )
     {
-      String s = token.image;
-      return s.substring(1, s.length() - 1); // strip-off quotes
+      return dir;
     }
 }
 
-void skipToSemiColon()      :
+String OracleObjectName():
+{}
+{
+      <S_IDENTIFIER> {return token.image;}
+    | <S_QUOTED_IDENTIFIER> { return removeQuotes(token.image);}
+}
+
+void skipToSemiColon():
 {}
 {
     {
@@ -1478,7 +1511,19 @@ void skipToSemiColon()      :
     }
 }
 
-void skipToNextArg()      :
+void skipToClosingParen():
+{}
+{
+    {
+        Token t = getNextToken();
+        while (t.kind != O_CLOSEPAREN) {
+            t = getNextToken();
+        }
+        token_source.input_stream.backup(1);
+    }
+}
+
+void skipToNextArg():
 {}
 {
     {
@@ -1490,7 +1535,7 @@ void skipToNextArg()      :
     }
 }
 
-void skipToEnd()      :
+void skipToEnd():
 {}
 {
     {

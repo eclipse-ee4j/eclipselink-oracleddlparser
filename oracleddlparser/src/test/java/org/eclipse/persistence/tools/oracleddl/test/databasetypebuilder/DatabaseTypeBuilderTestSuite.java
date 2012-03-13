@@ -31,6 +31,7 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConne
 @RunWith(Suite.class)
 @SuiteClasses({
     AnchoredTypesResolutionTestSuite.class,
+    ConstraintsTableDDLTestSuite.class,
     MixedCaseObjectTableTypeTestSuite.class,
     IOTTableDDLTestSuite.class,
     ProcedureDDLTestSuite.class,
