@@ -11,4 +11,4 @@ public interface DDLParserTreeConstants
     "void",
   };
 }
-/* JavaCC - OriginalChecksum=ff721d13e20dfc97bde0c0e42bb97d94 (do not edit this line) */
+/* JavaCC - OriginalChecksum=46585a43045182b363c9163878500a1a (do not edit this line) */

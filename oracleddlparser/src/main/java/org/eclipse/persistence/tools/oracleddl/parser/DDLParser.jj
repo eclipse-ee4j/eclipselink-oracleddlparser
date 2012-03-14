@@ -287,7 +287,7 @@ TOKEN [IGNORE_CASE]: {
     | <R_WITH: "WITH">
     | <R_YES: "'YES'">
     
-    //keywords - not a complete list, just was is sufficient for this parser
+    //keywords - not a complete list, just what is sufficient for this parser
     | <K_ARRAY: "ARRAY">
     | <K_AUTHID: "AUTHID">
     | <K_AUTONOMOUS_TRANSACTION: "AUTONOMOUS_TRANSACTION">
@@ -407,13 +407,20 @@ TOKEN:
 // PLSQLPackage at 'top-level'
 PLSQLPackageType parsePLSQLPackage():
 {PLSQLPackageType packageType = new PLSQLPackageType();
+ String dottedName = null;
  String schema = null;
  String packageName = null;
  }
 {
     <R_CREATE> [ orReplace() ] <K_PACKAGE>
-      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] packageName=OracleObjectName()
+      dottedName=OracleObjectNamePossiblyDotted()
         {
+          packageName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              packageName = dottedName.substring(idx+1, dottedName.length());
+          }
           if (schema != null) {
             packageType.setSchema(schema);
           }
@@ -432,12 +439,19 @@ PLSQLPackageType parsePLSQLPackage():
 // procedure at 'top-level'
 ProcedureType parseTopLevelProcedure():
 {ProcedureType procedureType = null;
+ String dottedName = null;
  String schema = null;
  String procedureName = null;}
 {
     <R_CREATE> [ orReplace() ] <R_PROCEDURE>
-      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] procedureName=OracleObjectName()
+      dottedName=OracleObjectNamePossiblyDotted()
         {
+          procedureName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              procedureName = dottedName.substring(idx+1, dottedName.length());
+          }
           procedureType = new ProcedureType(procedureName);
 	      if (schema != null) {
 	          procedureType.setSchema(schema);
@@ -453,13 +467,20 @@ ProcedureType parseTopLevelProcedure():
 // function at 'top-level'
 FunctionType parseTopLevelFunction():
 {FunctionType functionType = null;
+ String dottedName = null;
  String schema = null;
  String functionName = null;
  ArgumentType returnType = null;}
 {
     <R_CREATE> [ orReplace() ] <R_FUNCTION>
-      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] functionName=OracleObjectName()
+      dottedName=OracleObjectNamePossiblyDotted()
 	    {
+          functionName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              functionName = dottedName.substring(idx+1, dottedName.length());
+          }
 	      functionType = new FunctionType(functionName);
           if (schema != null) {
               functionType.setSchema(schema);
@@ -476,21 +497,28 @@ FunctionType parseTopLevelFunction():
 // table at 'top-level'
 TableType parseTable():
 {TableType tableType = null;
+ String dottedName = null;
  String schema = null;
  String tableName = null;
  Token iot = null;
 }
 {
     <R_CREATE> [ <K_GLOBAL> <K_TEMPORARY> ] <R_TABLE> 
-      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] tableName=OracleObjectName()
+      dottedName=OracleObjectNamePossiblyDotted()
         {
+          tableName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              tableName = dottedName.substring(idx+1, dottedName.length());
+          }
           tableType = new TableType(tableName);
 		  if (schema != null) {
 		       tableType.setSchema(schema);
 		  }        }
         <O_OPENPAREN> columnDeclarations(tableType) <O_CLOSEPAREN>
          [ <K_ORGANIZATION> ] [ iot=<R_INDEX> ] [ <R_NOCOMPRESS> ] [ <K_OVERFLOW> ]
-         [ <R_ON> <K_COMMIT > [<K_DELETE> | <K_PRESERVE> ] <K_ROWS> ] <O_SEMICOLON>
+         [ onCommit() ] <O_SEMICOLON>
      <EOF>
      {
          if (iot != null) {
@@ -505,6 +533,7 @@ TableType parseTable():
 CompositeDatabaseType parseType():
 {CompositeDatabaseType databaseType = null;
  DatabaseType enclosedType = null;
+ String dottedName = null;
  String schema = null;
  String typeName = null;
  Token vsize = null;
@@ -513,7 +542,13 @@ CompositeDatabaseType parseType():
 }
 {
     <R_CREATE> [ orReplace() ] <R_TYPE>
-      [LOOKAHEAD(2) schema=OracleObjectName() <O_DOT> ] typeName=OracleObjectName()
+      dottedName=OracleObjectNamePossiblyDotted()        {
+          typeName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              typeName = dottedName.substring(idx+1, dottedName.length());
+          }        }
         [ <K_FORCE> ] [ <K_OID> <S_CHAR_LITERAL> ] [ invokerRights() ] as()
         [ <K_OBJECT> <O_OPENPAREN>
             {
@@ -561,7 +596,8 @@ void columnDeclaration(CompositeDatabaseType enclosingType):
  FieldType column = null;
 }
 {
-    (  LOOKAHEAD(2)       s=OracleObjectName()
+    (    
+         s=OracleObjectName()
          {
            column = new FieldType(s);
 		   if (enclosingType != null) {
@@ -576,12 +612,12 @@ void columnDeclaration(CompositeDatabaseType enclosingType):
 			   }
 		   }         }
          columnType=columnTypeSpec(enclosingType) [ <R_NOT> <R_NULL> [ <K_ENABLE> ] {notNull = true;} ]
-       | LOOKAHEAD(2)
+      |  
          [ <K_CONSTRAINT> ] [ OracleObjectName() ]
-           (
-               <K_PRIMARY> <K_KEY> <O_OPENPAREN>  pkList((TableType)enclosingType) <O_CLOSEPAREN> 
-             | <R_CHECK> <O_OPENPAREN> skipToClosingParen() <O_CLOSEPAREN> 
-             | <R_UNIQUE> <O_OPENPAREN> uniqList() <O_CLOSEPAREN>            ) <K_ENABLE>
+         (
+             <K_PRIMARY> <K_KEY> <O_OPENPAREN>  pkList((TableType)enclosingType) <O_CLOSEPAREN> 
+           | <R_CHECK> <O_OPENPAREN> skipToClosingParen() <O_CLOSEPAREN> 
+           | <R_UNIQUE> <O_OPENPAREN> uniqList() <O_CLOSEPAREN>          ) <K_ENABLE>
     )
     {
       if (column != null) {
@@ -659,13 +695,14 @@ String s = null;
 void packageDeclaration(PLSQLPackageType packageType) :
 {}
 {
-    LOOKAHEAD(2) variableDeclaration(packageType)
+      LOOKAHEAD(2)
+      variableDeclaration(packageType)
     | typeOrSubTypeDeclaration(packageType)
     | cursorDeclaration(packageType)
     | procedureSpec(packageType)
     | functionSpec(packageType)
-    | exceptionDeclaration(packageType)
-    | pragmaDeclaration(packageType)
+    | exceptionDeclaration()
+    | pragmaDeclaration()
 }
 
 void variableDeclaration(PLSQLPackageType packageType):
@@ -782,31 +819,34 @@ DatabaseType datatype():
 	    }
     | <K_BOOLEAN> { return BOOLEAN_TYPE;}
     | <K_DATE> { return DATE_TYPE;}
-    | LOOKAHEAD(2) <K_INTERVAL> <K_DAY> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ] <R_TO> <K_SECOND> [ <O_OPENPAREN> scale=<S_NUMBER> <O_CLOSEPAREN> ]
-	    {
-	        if (precision == null) {
-                dt = new IntervalDayToSecond();
-            }
-            else {
-                pl = Long.decode(precision.image);
-                if (scale == null) {
-                    dt = new IntervalDayToSecond(pl);
+    | <K_INTERVAL>
+         (
+             <K_DAY> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ] <R_TO> <K_SECOND> [ <O_OPENPAREN> scale=<S_NUMBER> <O_CLOSEPAREN> ]
+             {
+                if (precision == null) {
+	                dt = new IntervalDayToSecond();
+	            }
+	            else {
+	                pl = Long.decode(precision.image);
+	                if (scale == null) {
+	                    dt = new IntervalDayToSecond(pl);
+	                }
+	                else {
+	                    sl = Long.decode(scale.image);
+	                    dt = new IntervalDayToSecond(pl, sl);
+	                }
+	            }
+                return dt;             }
+           | <K_YEAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <R_TO> <K_MONTH>
+             {
+                if (precision == null) {
+                    dt = new IntervalYearToMonth();
                 }
                 else {
-                    sl = Long.decode(scale.image);
-                    dt = new IntervalDayToSecond(pl, sl);
+                    pl = Long.decode(precision.image);
+                    dt = new IntervalYearToMonth(pl);
                 }
-            }
-            return dt;	    }
-    | <K_INTERVAL> <K_YEAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <R_TO> <K_MONTH>	    {
-            if (precision == null) {
-                dt = new IntervalYearToMonth();
-            }
-            else {
-                pl = Long.decode(precision.image);
-                dt = new IntervalYearToMonth(pl);
-            }
-            return dt;	    }
+                return dt;                              }         )
     | <K_TIME> { return TIME_TYPE;}
     | <K_TIMESTAMP> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
         [ <R_WITH> [ withLocalTimeZone=<K_LOCAL> ] withTimeZone=<K_TIME> <K_ZONE> ]
@@ -858,7 +898,7 @@ DatabaseType datatype():
           }        }
     | <K_DOUBLE> <K_PRECISION> { return new DoubleType();}
     | <K_CHAR> [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
-        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]        {
+        [ <K_CHARACTER> <K_SET> <S_IDENTIFIER> [ <K_CHARSET> ] ]        {
           if (t == null) {
               if (precision == null) {
                   return new CharType();
@@ -877,7 +917,7 @@ DatabaseType datatype():
                   return new VarChar2Type(pl);
               }          }        }
     | <K_VARCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
-        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
+       [ <K_CHARACTER> <K_SET> <S_IDENTIFIER> [ <K_CHARSET> ] ]
         {
           if (precision == null) {
               return new VarCharType();
@@ -888,7 +928,7 @@ DatabaseType datatype():
           }
         }
     | <K_VARCHAR2> [ <K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
-        [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ]
+        [ <K_CHARACTER> <K_SET> <S_IDENTIFIER> [ <K_CHARSET> ] ]
         {
             if (precision == null) {
                 return new VarChar2Type();
@@ -980,7 +1020,7 @@ DatabaseType datatype():
               }
           }
         }
-    | <K_CLOB> [ LOOKAHEAD(2) <K_CHARACTER> <K_SET> [ LOOKAHEAD(2) <S_IDENTIFIER> | columnSpec() <K_CHARSET> ] ] { return new ClobType();}
+    | <K_CLOB> [ <K_CHARACTER> <K_SET> <S_IDENTIFIER> [ <K_CHARSET> ] ] { return new ClobType();}
 }
 
 DatabaseType typeSpec():
@@ -1248,29 +1288,27 @@ void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName) :
 
 void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType) :
 {String s = null;
- String spec = null;
+ Token spec = null;
  boolean isTYPEType = false;
  boolean isROWTYPEType = false;
  DatabaseType localType = null;
 }
 {
-    <K_RETURN> [LOOKAHEAD(3) spec=columnSpec() [ <R_ANCHORED_TYPE>
-        {
-          isTYPEType = true;
-          s = spec + tokenImage[R_ANCHORED_TYPE].substring(1, tokenImage[R_ANCHORED_TYPE].length() - 1);
-        }
+    <K_RETURN> spec=<S_IDENTIFIER>
+      [
+          <R_ANCHORED_TYPE>            {
+	          isTYPEType = true;
+	          s = spec.image + removeQuotes(tokenImage[R_ANCHORED_TYPE]);            }
+        | <R_ANCHORED_ROWTYPE>
+            {
+              isROWTYPEType = true;
+              s = spec.image + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
+            }
       ]
-    | LOOKAHEAD(3) spec=tableSpec() [ <R_ANCHORED_ROWTYPE>
-        {
-          isROWTYPEType = true;
-          s = spec + tokenImage[R_ANCHORED_ROWTYPE].substring(1, tokenImage[R_ANCHORED_ROWTYPE].length() - 1);
-        }
-      ]
-    ]
     {
       //check local variables first
 	  for (FieldType varField : packageType.getLocalVariables()) {
-	      if (spec.equals(varField.getFieldName())) {
+	      if (spec.image.equals(varField.getFieldName())) {
               if (isTYPEType) {
                   TYPEType tType = new TYPEType(s);
                   UnresolvedType uType = new UnresolvedType(s);
@@ -1292,9 +1330,9 @@ void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType)
 	      }
 	  }
       if (localType == null) {
-          localType = localTypes.get(spec);
+          localType = localTypes.get(spec.image);
           if (localType == null) {
-	          UnresolvedType uType = new UnresolvedType(spec);
+	          UnresolvedType uType = new UnresolvedType(spec.image);
 	          if (isTYPEType) {
 	              TYPEType tType = new TYPEType(s);
 	              tType.setEnclosedType(uType);
@@ -1418,13 +1456,13 @@ boolean argumentDefaultAssignment():
     }
 }
 
-void exceptionDeclaration(PLSQLPackageType packageType) :
+void exceptionDeclaration() :
 {}
 {
     <S_IDENTIFIER> <R_EXCEPTION> <O_SEMICOLON>
 }
 
-void pragmaDeclaration(PLSQLPackageType packageType) :
+void pragmaDeclaration() :
 {}
 {    <K_PRAGMA>
     [ <K_AUTONOMOUS_TRANSACTION>
@@ -1458,6 +1496,13 @@ void as():
     <R_AS> | <R_IS>
 }
 
+void onCommit():
+{
+}
+{
+    ( <R_ON> <K_COMMIT> ( <K_DELETE> | <K_PRESERVE> ) <K_ROWS> )
+}
+
 String direction():
 {String dir = "";
 }
@@ -1476,6 +1521,20 @@ String OracleObjectName():
 {
       <S_IDENTIFIER> {return token.image;}
     | <S_QUOTED_IDENTIFIER> { return removeQuotes(token.image);}
+}
+
+String OracleObjectNamePossiblyDotted():
+{String possiblyDottedName = "";
+ String afterDot = null;
+}
+{
+    possiblyDottedName=OracleObjectName() [ <O_DOT> afterDot=OracleObjectName() ]
+    {
+      if (afterDot != null) {
+          possiblyDottedName += "." + afterDot;
+      }
+      return possiblyDottedName;
+    }
 }
 
 void skipToSemiColon():
