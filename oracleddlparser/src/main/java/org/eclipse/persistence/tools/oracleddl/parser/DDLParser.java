@@ -111,11 +111,10 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  PLSQLPackageType packageType = new PLSQLPackageType();
  String schema = null;
  String packageName = null;
-    jj_consume_token(K_CREATE);
+    jj_consume_token(R_CREATE);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_OR:
-      jj_consume_token(K_OR);
-      jj_consume_token(K_REPLACE);
+    case R_OR:
+      orReplace();
       break;
     default:
       ;
@@ -143,12 +142,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_CURSOR:
-      case K_FUNCTION:
+      case R_CURSOR:
+      case R_FUNCTION:
+      case R_PROCEDURE:
+      case R_SUBTYPE:
+      case R_TYPE:
       case K_PRAGMA:
-      case K_PROCEDURE:
-      case K_SUBTYPE:
-      case K_TYPE:
       case S_IDENTIFIER:
         ;
         break;
@@ -157,7 +156,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       }
       packageDeclaration(packageType);
     }
-    jj_consume_token(K_END);
+    jj_consume_token(R_END);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case S_IDENTIFIER:
     case S_QUOTED_IDENTIFIER:
@@ -178,16 +177,15 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  ProcedureType procedureType = null;
  String schema = null;
  String procedureName = null;
-    jj_consume_token(K_CREATE);
+    jj_consume_token(R_CREATE);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_OR:
-      jj_consume_token(K_OR);
-      jj_consume_token(K_REPLACE);
+    case R_OR:
+      orReplace();
       break;
     default:
       ;
     }
-    jj_consume_token(K_PROCEDURE);
+    jj_consume_token(R_PROCEDURE);
     if (jj_2_2(2)) {
       schema = OracleObjectName();
       jj_consume_token(O_DOT);
@@ -221,15 +219,15 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  String schema = null;
  String functionName = null;
  ArgumentType returnType = null;
-    jj_consume_token(K_CREATE);
+    jj_consume_token(R_CREATE);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_OR:
+    case R_OR:
       orReplace();
       break;
     default:
       ;
     }
-    jj_consume_token(K_FUNCTION);
+    jj_consume_token(R_FUNCTION);
     if (jj_2_3(2)) {
       schema = OracleObjectName();
       jj_consume_token(O_DOT);
@@ -265,7 +263,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  String schema = null;
  String tableName = null;
  Token iot = null;
-    jj_consume_token(K_CREATE);
+    jj_consume_token(R_CREATE);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_GLOBAL:
       jj_consume_token(K_GLOBAL);
@@ -274,7 +272,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     default:
       ;
     }
-    jj_consume_token(K_TABLE);
+    jj_consume_token(R_TABLE);
     if (jj_2_4(2)) {
       schema = OracleObjectName();
       jj_consume_token(O_DOT);
@@ -297,15 +295,15 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_INDEX:
-      iot = jj_consume_token(K_INDEX);
+    case R_INDEX:
+      iot = jj_consume_token(R_INDEX);
       break;
     default:
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_NOCOMPRESS:
-      jj_consume_token(K_NOCOMPRESS);
+    case R_NOCOMPRESS:
+      jj_consume_token(R_NOCOMPRESS);
       break;
     default:
       ;
@@ -318,8 +316,8 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_ON:
-      jj_consume_token(K_ON);
+    case R_ON:
+      jj_consume_token(R_ON);
       jj_consume_token(K_COMMIT);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_DELETE:
@@ -363,15 +361,15 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  Token vsize = null;
  boolean varray = false;
  boolean nestedTable = false;
-    jj_consume_token(K_CREATE);
+    jj_consume_token(R_CREATE);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_OR:
+    case R_OR:
       orReplace();
       break;
     default:
       ;
     }
-    jj_consume_token(K_TYPE);
+    jj_consume_token(R_TYPE);
     if (jj_2_5(2)) {
       schema = OracleObjectName();
       jj_consume_token(O_DOT);
@@ -403,8 +401,8 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     }
     as();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case R_TABLE:
     case K_OBJECT:
-    case K_TABLE:
     case K_VARRAY:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_OBJECT:
@@ -422,7 +420,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         jj_consume_token(O_OPENPAREN);
         vsize = jj_consume_token(S_NUMBER);
         jj_consume_token(O_CLOSEPAREN);
-        jj_consume_token(K_OF);
+        jj_consume_token(R_OF);
                 databaseType = new VArrayType(typeName);
                 if (schema != null) {
                     ((VArrayType)databaseType).setSchema(schema);
@@ -433,9 +431,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
                 }
         enclosedType = columnTypeSpec(databaseType);
         break;
-      case K_TABLE:
-        jj_consume_token(K_TABLE);
-        jj_consume_token(K_OF);
+      case R_TABLE:
+        jj_consume_token(R_TABLE);
+        jj_consume_token(R_OF);
                 databaseType = new ObjectTableType(typeName);
                 if (schema != null) {
                     ((ObjectTableType)databaseType).setSchema(schema);
@@ -451,12 +449,12 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case R_NOT:
     case K_FINAL:
     case K_INSTANTIABLE:
-    case K_NOT:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_NOT:
-        jj_consume_token(K_NOT);
+      case R_NOT:
+        jj_consume_token(R_NOT);
         break;
       default:
         ;
@@ -526,9 +524,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
                    }
       columnType = columnTypeSpec(enclosingType);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_NOT:
-        jj_consume_token(K_NOT);
-        jj_consume_token(K_NULL);
+      case R_NOT:
+        jj_consume_token(R_NOT);
+        jj_consume_token(R_NULL);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case K_ENABLE:
           jj_consume_token(K_ENABLE);
@@ -565,14 +563,14 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         pkList((TableType)enclosingType);
         jj_consume_token(O_CLOSEPAREN);
         break;
-      case K_CHECK:
-        jj_consume_token(K_CHECK);
+      case R_CHECK:
+        jj_consume_token(R_CHECK);
         jj_consume_token(O_OPENPAREN);
         skipToClosingParen();
         jj_consume_token(O_CLOSEPAREN);
         break;
-      case K_UNIQUE:
-        jj_consume_token(K_UNIQUE);
+      case R_UNIQUE:
+        jj_consume_token(R_UNIQUE);
         jj_consume_token(O_OPENPAREN);
         uniqList();
         jj_consume_token(O_CLOSEPAREN);
@@ -635,9 +633,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     case K_REAL:
     case K_ROWID:
     case K_SIGNTYPE:
-    case K_SIMPLE_INTEGER:
     case K_SIMPLE_DOUBLE:
     case K_SIMPLE_FLOAT:
+    case K_SIMPLE_INTEGER:
     case K_SMALLINT:
     case K_SYS_REFCURSOR:
     case K_TIME:
@@ -743,17 +741,17 @@ String s = null;
       variableDeclaration(packageType);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_SUBTYPE:
-      case K_TYPE:
+      case R_SUBTYPE:
+      case R_TYPE:
         typeOrSubTypeDeclaration(packageType);
         break;
-      case K_CURSOR:
+      case R_CURSOR:
         cursorDeclaration(packageType);
         break;
-      case K_PROCEDURE:
+      case R_PROCEDURE:
         procedureSpec(packageType);
         break;
-      case K_FUNCTION:
+      case R_FUNCTION:
         functionSpec(packageType);
         break;
       case S_IDENTIFIER:
@@ -782,16 +780,16 @@ String s = null;
     }
     varType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_NOT:
-      jj_consume_token(K_NOT);
-      jj_consume_token(K_NULL);
+    case R_NOT:
+      jj_consume_token(R_NOT);
+      jj_consume_token(R_NULL);
       break;
     default:
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_ASSIGN:
-    case K_DEFAULT:
+    case R_DEFAULT:
       variableDefaultAssignment();
       break;
     default:
@@ -808,8 +806,8 @@ String s = null;
     case O_ASSIGN:
       jj_consume_token(O_ASSIGN);
       break;
-    case K_DEFAULT:
-      jj_consume_token(K_DEFAULT);
+    case R_DEFAULT:
+      jj_consume_token(R_DEFAULT);
       break;
     default:
       jj_consume_token(-1);
@@ -1037,7 +1035,7 @@ String s = null;
         default:
           ;
         }
-        jj_consume_token(K_TO);
+        jj_consume_token(R_TO);
         jj_consume_token(K_SECOND);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case O_OPENPAREN:
@@ -1076,7 +1074,7 @@ String s = null;
           default:
             ;
           }
-          jj_consume_token(K_TO);
+          jj_consume_token(R_TO);
           jj_consume_token(K_MONTH);
             if (precision == null) {
                 dt = new IntervalYearToMonth();
@@ -1103,8 +1101,8 @@ String s = null;
             ;
           }
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case K_WITH:
-            jj_consume_token(K_WITH);
+          case R_WITH:
+            jj_consume_token(R_WITH);
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
             case K_LOCAL:
               withLocalTimeZone = jj_consume_token(K_LOCAL);
@@ -1701,9 +1699,9 @@ String s = null;
     case K_REAL:
     case K_ROWID:
     case K_SIGNTYPE:
-    case K_SIMPLE_INTEGER:
     case K_SIMPLE_DOUBLE:
     case K_SIMPLE_FLOAT:
+    case K_SIMPLE_INTEGER:
     case K_SMALLINT:
     case K_SYS_REFCURSOR:
     case K_TIME:
@@ -1718,23 +1716,23 @@ String s = null;
       spec = columnSpec();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case O_OPENPAREN:
-      case K_ROWTYPE:
-      case K_TYPE2:
+      case R_ANCHORED_ROWTYPE:
+      case R_ANCHORED_TYPE:
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case O_OPENPAREN:
           jj_consume_token(O_OPENPAREN);
           jj_consume_token(S_NUMBER);
           jj_consume_token(O_CLOSEPAREN);
           break;
-        case K_TYPE2:
-          jj_consume_token(K_TYPE2);
+        case R_ANCHORED_TYPE:
+          jj_consume_token(R_ANCHORED_TYPE);
              isTYPEType=true;
-             s = spec + tokenImage[K_TYPE2].substring(1, tokenImage[K_TYPE2].length() - 1);
+             s = spec + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
           break;
-        case K_ROWTYPE:
-          jj_consume_token(K_ROWTYPE);
+        case R_ANCHORED_ROWTYPE:
+          jj_consume_token(R_ANCHORED_ROWTYPE);
              isROWTYPEType =true;
-             s = spec + tokenImage[K_ROWTYPE].substring(1, tokenImage[K_ROWTYPE].length() - 1);
+             s = spec + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
           break;
         default:
           jj_consume_token(-1);
@@ -1854,10 +1852,10 @@ String s = null;
   final public void typeOrSubTypeDeclaration(PLSQLPackageType packageType) throws ParseException {
  String s = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_TYPE:
+    case R_TYPE:
       typeDeclaration(packageType);
       break;
-    case K_SUBTYPE:
+    case R_SUBTYPE:
       subtypeDeclaration(packageType);
       break;
     default:
@@ -1868,9 +1866,9 @@ String s = null;
 
   final public void typeDeclaration(PLSQLPackageType packageType) throws ParseException {
  String s = null;
-    jj_consume_token(K_TYPE);
+    jj_consume_token(R_TYPE);
     s = typeName();
-    jj_consume_token(K_IS);
+    jj_consume_token(R_IS);
     aTypeDeclaration(packageType, s);
     jj_consume_token(O_SEMICOLON);
   }
@@ -1880,7 +1878,7 @@ String s = null;
     case K_RECORD:
       recordDeclaration(packageType, typeName);
       break;
-    case K_TABLE:
+    case R_TABLE:
       plsqlTableDeclaration(packageType, typeName);
       break;
     case K_VARRAY:
@@ -1926,16 +1924,16 @@ String s = null;
     s = typeName();
     dataType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_NOT:
-      jj_consume_token(K_NOT);
-      jj_consume_token(K_NULL);
+    case R_NOT:
+      jj_consume_token(R_NOT);
+      jj_consume_token(R_NULL);
       break;
     default:
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_ASSIGN:
-    case K_DEFAULT:
+    case R_DEFAULT:
       fieldDefaultAssignment();
       break;
     default:
@@ -1954,8 +1952,8 @@ String s = null;
     case O_ASSIGN:
       jj_consume_token(O_ASSIGN);
       break;
-    case K_DEFAULT:
-      jj_consume_token(K_DEFAULT);
+    case R_DEFAULT:
+      jj_consume_token(R_DEFAULT);
       break;
     default:
       jj_consume_token(-1);
@@ -1970,9 +1968,9 @@ DatabaseType subtype;
 Token notNull = null;
 Token rangeStart = null;
 Token rangeEnd = null;
-    jj_consume_token(K_SUBTYPE);
+    jj_consume_token(R_SUBTYPE);
     subtypeName = OracleObjectName();
-    jj_consume_token(K_IS);
+    jj_consume_token(R_IS);
     subtype = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case K_RANGE:
@@ -1985,9 +1983,9 @@ Token rangeEnd = null;
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_NOT:
-      jj_consume_token(K_NOT);
-      notNull = jj_consume_token(K_NULL);
+    case R_NOT:
+      jj_consume_token(R_NOT);
+      notNull = jj_consume_token(R_NULL);
       break;
     default:
       ;
@@ -2016,21 +2014,21 @@ Token rangeEnd = null;
   PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
   plsqlTable.setParentType(packageType);
   DatabaseType nestedType;
-    jj_consume_token(K_TABLE);
-    jj_consume_token(K_OF);
+    jj_consume_token(R_TABLE);
+    jj_consume_token(R_OF);
     nestedType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_NOT:
-      jj_consume_token(K_NOT);
-      jj_consume_token(K_NULL);
+    case R_NOT:
+      jj_consume_token(R_NOT);
+      jj_consume_token(R_NULL);
       break;
     default:
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_INDEX:
-      jj_consume_token(K_INDEX);
-      jj_consume_token(K_BY);
+    case R_INDEX:
+      jj_consume_token(R_INDEX);
+      jj_consume_token(R_BY);
       plsqlTableIndexByDeclaration(plsqlTable);
       break;
     default:
@@ -2112,12 +2110,12 @@ Token rangeEnd = null;
     jj_consume_token(O_OPENPAREN);
     jj_consume_token(S_NUMBER);
     jj_consume_token(O_CLOSEPAREN);
-    jj_consume_token(K_OF);
+    jj_consume_token(R_OF);
     datatype();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_NOT:
-      jj_consume_token(K_NOT);
-      jj_consume_token(K_NULL);
+    case R_NOT:
+      jj_consume_token(R_NOT);
+      jj_consume_token(R_NULL);
       break;
     default:
       ;
@@ -2127,7 +2125,7 @@ Token rangeEnd = null;
   final public void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName) throws ParseException {
  PLSQLCursorType cursorType = null;
     jj_consume_token(K_REF);
-    jj_consume_token(K_CURSOR);
+    jj_consume_token(R_CURSOR);
         cursorType = new PLSQLCursorType(cursorTypeName);
         packageType.addCursor(cursorType);
         localTypes.put(cursorTypeName, cursorType);
@@ -2153,10 +2151,10 @@ Token rangeEnd = null;
       if (jj_2_18(3)) {
         spec = columnSpec();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_TYPE2:
-          jj_consume_token(K_TYPE2);
+        case R_ANCHORED_TYPE:
+          jj_consume_token(R_ANCHORED_TYPE);
           isTYPEType = true;
-          s = spec + tokenImage[K_TYPE2].substring(1, tokenImage[K_TYPE2].length() - 1);
+          s = spec + tokenImage[R_ANCHORED_TYPE].substring(1, tokenImage[R_ANCHORED_TYPE].length() - 1);
           break;
         default:
           ;
@@ -2164,10 +2162,10 @@ Token rangeEnd = null;
       } else if (jj_2_19(3)) {
         spec = tableSpec();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_ROWTYPE:
-          jj_consume_token(K_ROWTYPE);
+        case R_ANCHORED_ROWTYPE:
+          jj_consume_token(R_ANCHORED_ROWTYPE);
           isROWTYPEType = true;
-          s = spec + tokenImage[K_ROWTYPE].substring(1, tokenImage[K_ROWTYPE].length() - 1);
+          s = spec + tokenImage[R_ANCHORED_ROWTYPE].substring(1, tokenImage[R_ANCHORED_ROWTYPE].length() - 1);
           break;
         default:
           ;
@@ -2233,7 +2231,7 @@ Token rangeEnd = null;
 
   final public void cursorDeclaration(PLSQLPackageType packageType) throws ParseException {
  Token t = null;
-    jj_consume_token(K_CURSOR);
+    jj_consume_token(R_CURSOR);
     t = jj_consume_token(S_IDENTIFIER);
     jj_consume_token(O_SEMICOLON);
   }
@@ -2242,7 +2240,7 @@ Token rangeEnd = null;
   final public void procedureSpec(PLSQLPackageType packageType) throws ParseException {
  Token t = null;
  ProcedureType procedureType = null;
-    jj_consume_token(K_PROCEDURE);
+    jj_consume_token(R_PROCEDURE);
     t = jj_consume_token(S_IDENTIFIER);
             procedureType = new ProcedureType(t.image);
             procedureType.setCatalogName(packageType.getPackageName());
@@ -2281,7 +2279,7 @@ Token rangeEnd = null;
  Token t = null;
  FunctionType functionType = null;
  ArgumentType returnDataType = null;
-    jj_consume_token(K_FUNCTION);
+    jj_consume_token(R_FUNCTION);
     t = jj_consume_token(S_IDENTIFIER);
             functionType = new FunctionType(t.image);
             functionType.setCatalogName(packageType.getPackageName());
@@ -2350,7 +2348,7 @@ Token rangeEnd = null;
  boolean defaultAssignment = false;
     t = jj_consume_token(S_IDENTIFIER);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_IN:
+    case R_IN:
     case K_OUT:
       direction = direction();
       break;
@@ -2367,7 +2365,7 @@ Token rangeEnd = null;
     argumentDataType = typeSpec();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_ASSIGN:
-    case K_DEFAULT:
+    case R_DEFAULT:
       defaultAssignment = argumentDefaultAssignment();
       break;
     default:
@@ -2398,8 +2396,8 @@ Token rangeEnd = null;
     case O_ASSIGN:
       jj_consume_token(O_ASSIGN);
       break;
-    case K_DEFAULT:
-      jj_consume_token(K_DEFAULT);
+    case R_DEFAULT:
+      jj_consume_token(R_DEFAULT);
       break;
     default:
       jj_consume_token(-1);
@@ -2412,7 +2410,7 @@ Token rangeEnd = null;
 
   final public void exceptionDeclaration(PLSQLPackageType packageType) throws ParseException {
     jj_consume_token(S_IDENTIFIER);
-    jj_consume_token(K_EXCEPTION);
+    jj_consume_token(R_EXCEPTION);
     jj_consume_token(O_SEMICOLON);
   }
 
@@ -2445,14 +2443,14 @@ Token rangeEnd = null;
         jj_consume_token(S_IDENTIFIER);
         jj_consume_token(O_COMMA);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_NO:
-        case K_YES:
+        case R_NO:
+        case R_YES:
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case K_YES:
-            jj_consume_token(K_YES);
+          case R_YES:
+            jj_consume_token(R_YES);
             break;
-          case K_NO:
-            jj_consume_token(K_NO);
+          case R_NO:
+            jj_consume_token(R_NO);
             break;
           default:
             jj_consume_token(-1);
@@ -2468,14 +2466,14 @@ Token rangeEnd = null;
         jj_consume_token(K_RESTRICT_REFERENCES);
         jj_consume_token(O_OPENPAREN);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_DEFAULT:
+        case R_DEFAULT:
         case S_IDENTIFIER:
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case S_IDENTIFIER:
             jj_consume_token(S_IDENTIFIER);
             break;
-          case K_DEFAULT:
-            jj_consume_token(K_DEFAULT);
+          case R_DEFAULT:
+            jj_consume_token(R_DEFAULT);
             break;
           default:
             jj_consume_token(-1);
@@ -2540,7 +2538,7 @@ Token rangeEnd = null;
   }
 
   final public void orReplace() throws ParseException {
-    jj_consume_token(K_OR);
+    jj_consume_token(R_OR);
     jj_consume_token(K_REPLACE);
   }
 
@@ -2561,11 +2559,11 @@ Token rangeEnd = null;
 
   final public void as() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_AS:
-      jj_consume_token(K_AS);
+    case R_AS:
+      jj_consume_token(R_AS);
       break;
-    case K_IS:
-      jj_consume_token(K_IS);
+    case R_IS:
+      jj_consume_token(R_IS);
       break;
     default:
       jj_consume_token(-1);
@@ -2576,8 +2574,8 @@ Token rangeEnd = null;
   final public String direction() throws ParseException {
  String dir = "";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_IN:
-      jj_consume_token(K_IN);
+    case R_IN:
+      jj_consume_token(R_IN);
                 dir = "IN";
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_OUT:
@@ -2763,6 +2761,30 @@ Token rangeEnd = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
+  private boolean jj_3R_62() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_scan_token(O_DOT)) return true;
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_18() {
+    if (jj_3R_14()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_15()) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3_14() {
     if (jj_scan_token(K_CHARACTER)) return true;
     if (jj_scan_token(K_SET)) return true;
@@ -2810,13 +2832,13 @@ Token rangeEnd = null;
   private boolean jj_3R_34() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(152)) {
+    if (jj_scan_token(174)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(153)) {
+    if (jj_scan_token(175)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(80)) {
+    if (jj_scan_token(148)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(79)) return true;
+    if (jj_scan_token(147)) return true;
     }
     }
     }
@@ -3039,7 +3061,7 @@ Token rangeEnd = null;
     if (jj_scan_token(S_IDENTIFIER)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(67)) jj_scanpos = xsp;
+    if (jj_scan_token(142)) jj_scanpos = xsp;
     if (jj_3R_22()) return true;
     return false;
   }
@@ -3236,13 +3258,13 @@ Token rangeEnd = null;
   }
 
   private boolean jj_3R_12() {
-    if (jj_scan_token(K_UNIQUE)) return true;
+    if (jj_scan_token(R_UNIQUE)) return true;
     if (jj_scan_token(O_OPENPAREN)) return true;
     return false;
   }
 
   private boolean jj_3R_11() {
-    if (jj_scan_token(K_CHECK)) return true;
+    if (jj_scan_token(R_CHECK)) return true;
     if (jj_scan_token(O_OPENPAREN)) return true;
     return false;
   }
@@ -3261,7 +3283,7 @@ Token rangeEnd = null;
   private boolean jj_3_7() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(68)) jj_scanpos = xsp;
+    if (jj_scan_token(143)) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_3R_9()) jj_scanpos = xsp;
     xsp = jj_scanpos;
@@ -3285,6 +3307,11 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3R_15() {
+    if (jj_scan_token(R_ANCHORED_TYPE)) return true;
+    return false;
+  }
+
   private boolean jj_3R_18() {
     if (jj_scan_token(S_IDENTIFIER)) return true;
     return false;
@@ -3300,18 +3327,13 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_15() {
-    if (jj_scan_token(K_TYPE2)) return true;
-    return false;
-  }
-
   private boolean jj_3R_35() {
     if (jj_scan_token(K_LONG)) return true;
     return false;
   }
 
   private boolean jj_3R_17() {
-    if (jj_scan_token(K_ROWTYPE)) return true;
+    if (jj_scan_token(R_ANCHORED_ROWTYPE)) return true;
     return false;
   }
 
@@ -3328,30 +3350,6 @@ Token rangeEnd = null;
   private boolean jj_3_6() {
     if (jj_3R_7()) return true;
     if (jj_3R_8()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_62() {
-    if (jj_scan_token(K_CHARACTER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24() {
-    if (jj_scan_token(O_DOT)) return true;
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3_18() {
-    if (jj_3R_14()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_15()) jj_scanpos = xsp;
     return false;
   }
 
