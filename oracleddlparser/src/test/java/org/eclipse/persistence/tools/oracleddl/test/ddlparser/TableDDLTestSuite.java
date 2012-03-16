@@ -301,4 +301,30 @@ public class TableDDLTestSuite {
         }
         assertTrue("constraints table did not parse:\n" + message, worked);
     }
+
+    static final String TABLE_W_KEYWORDS = "KEYWORD_TABLE";
+    static final String CREATE_TABLE_W_KEYWORDS =
+        CREATE_TABLE_PREFIX + TABLE_W_KEYWORDS + " ( " + 
+            "\nID NUMBER(10,0) NOT NULL ENABLE," +
+            "\nTIMESTAMP TIMESTAMP (6)," +
+            "\nRAW_RESULT BLOB," +
+            "\nANALYSIS_ID NUMBER(10,0)" +
+        ");";
+    @Test
+    public void testKeywordTable() {
+        parser.ReInit(new StringReader(CREATE_TABLE_W_KEYWORDS));
+        boolean worked = true;
+        String message = "";
+        TableType tableType = null;
+        try {
+            tableType = parser.parseTable();
+        }
+        catch (ParseException pe) {
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("keyword table did not parse:\n" + message, worked);
+        assertEquals("incorrect table name for " + TABLE_W_KEYWORDS,
+            TABLE_W_KEYWORDS, tableType.getTableName());
+    }
 }

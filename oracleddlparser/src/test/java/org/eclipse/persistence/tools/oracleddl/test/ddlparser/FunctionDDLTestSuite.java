@@ -113,85 +113,33 @@ public class FunctionDDLTestSuite {
             arg1.getDirection() == IN);
     }
 
-/*
-    static final String PROCEDURE_W_SYS_REFCURSOR = "GETALL";
-    static final String SYS_REF_OUT_ARG = "SIMPL";
-    static final String CREATE_PROCEDURE_W_SYS_REFCURSOR =
-        CREATE_FUNCTION_PREFIX + PROCEDURE_W_SYS_REFCURSOR +
-            " ( " + SYS_REF_OUT_ARG + " OUT SYS_REFCURSOR) AS " +
+    static final String FUNCTION_W_KEYWORDS = "KEYWORDSF";
+    static final String IN_ARG1 = "OPERATOR";
+    static final String IN_ARG2 = "ARRAY";
+    static final String CREATE_FUNCTION_W_KEYWORDS =
+        CREATE_FUNCTION_PREFIX + FUNCTION_W_KEYWORDS +
+            " ( " + IN_ARG1 + " IN VARCHAR2, " +
+                    IN_ARG2 + " IN DATE" +
+            ") return Integer AS " +
         "BEGIN " +
-          "OPEN SIMPL FOR SELECT * FROM simplesp;" +
+            "return 1;" +
         "END";
     @Test
-    public void testProcedure_With_Sys_Refcursor() {
-        parser.ReInit(new StringReader(CREATE_PROCEDURE_W_SYS_REFCURSOR));
+    public void testFunction_With_Keyword() {
+        parser.ReInit(new StringReader(CREATE_FUNCTION_W_KEYWORDS));
         boolean worked = true;
         String message = "";
-        ProcedureType procedureType = null;
+        FunctionType functionType = null;
         try {
-            procedureType = parser.parseTopLevelProcedure();
+            functionType = parser.parseTopLevelFunction();
         }
         catch (ParseException pe) {
             message = pe.getMessage();
             worked = false;
         }
-        assertTrue("procedure with SYS_REFCURSOR did not parse:\n" + message, worked);
-        UnresolvedTypesVisitor l = new UnresolvedTypesVisitor();
-        l.visit(procedureType);
-        assertTrue("procedure with SYS_REFCURSOR should not contain any unresolved datatypes",
-            l.getUnresolvedTypes().isEmpty());
-        assertEquals("procedure with SYS_REFCURSOR wrong name", procedureType.getProcedureName(),
-            PROCEDURE_W_SYS_REFCURSOR);
-        assertTrue("procedure with SYS_REFCURSOR should have 1 argument",
-            procedureType.getArguments().size() == 1);
-        ArgumentType arg1 = procedureType.getArguments().get(0);
-        assertEquals("procedure with SYS_REFCURSOR - arg1 wrong name", arg1.getArgumentName(),
-            SYS_REF_OUT_ARG);
-        DatabaseType arg1Type = arg1.getDataType();
-        assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
-            SYS_REFCURSOR_TYPE.getTypeName(), arg1Type.getTypeName());
-        assertTrue("incorrect direction for " + arg1.getArgumentName(),
-            arg1.getDirection() == OUT);
+        assertTrue("function with keywords did not parse:\n" + message, worked);
+        assertEquals("incorrect function name " + FUNCTION_W_KEYWORDS,
+            FUNCTION_W_KEYWORDS, functionType.getProcedureName());
     }
 
-    static final String PROCEDURE_W_INOUT_ARG = "INOUTARGSP";
-    static final String INOUT_ARG = "X";
-    static final String CREATE_PROCEDURE_W_INOUT_ARG =
-        CREATE_FUNCTION_PREFIX + PROCEDURE_W_INOUT_ARG +
-            " ( " + INOUT_ARG + " IN OUT NUMERIC) AS " +
-        "BEGIN " +
-            "null;" +
-        "END";
-    @Test
-    public void testProcedure_With_InOut_Arg() {
-        parser.ReInit(new StringReader(CREATE_PROCEDURE_W_INOUT_ARG));
-        boolean worked = true;
-        String message = "";
-        ProcedureType procedureType = null;
-        try {
-            procedureType = parser.parseTopLevelProcedure();
-        }
-        catch (ParseException pe) {
-            message = pe.getMessage();
-            worked = false;
-        }
-        assertTrue("procedure with INOUT arg did not parse:\n" + message, worked);
-        UnresolvedTypesVisitor l = new UnresolvedTypesVisitor();
-        l.visit(procedureType);
-        assertTrue("procedure with INOUT arg should not contain any unresolved datatypes",
-            l.getUnresolvedTypes().isEmpty());
-        assertEquals("procedure with INOUT arg wrong name", procedureType.getProcedureName(),
-            PROCEDURE_W_INOUT_ARG);
-        assertTrue("procedure with INOUT arg should have 1 argument",
-            procedureType.getArguments().size() == 1);
-        ArgumentType arg1 = procedureType.getArguments().get(0);
-        assertEquals("procedure with INOUT arg - arg1 wrong name", arg1.getArgumentName(),
-            INOUT_ARG);
-        DatabaseType arg1Type = arg1.getDataType();
-        assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
-            new NumericType().getTypeName(), arg1Type.getTypeName());
-        assertTrue("incorrect direction for " + arg1.getArgumentName(),
-            arg1.getDirection() == INOUT);
-    }
-*/
 }

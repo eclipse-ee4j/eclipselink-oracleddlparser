@@ -475,4 +475,24 @@ public class PackageDDLTestSuite {
         assertEquals("package with deeply nested types type3 field2 has wrong type",
             PACKAGE_WDEEPLY_NESTED_TYPE3_FIELD3_TYPE, fields.get(2).getTypeName());
     }
+
+    static final String PACKAGE_W_KEYWORDS = "ZONE";
+    static final String CREATE_PACKAGE_W_KEYWORDS =
+        CREATE_PACKAGE_PREFIX + PACKAGE_W_KEYWORDS + " AS " +
+            "\nTYPE YEAR IS TABLE OF VARCHAR2(111) INDEX BY BINARY_INTEGER;" +
+        "END " + PACKAGE_W_KEYWORDS + ";";
+    @Test
+    public void testPackage_With_Keyword() {
+        parser.ReInit(new StringReader(CREATE_PACKAGE_W_KEYWORDS));
+        boolean worked = true;
+        @SuppressWarnings("unused") PLSQLPackageType packageType = null;
+        try {
+            packageType = parser.parsePLSQLPackage();
+        }
+        catch (ParseException pe) {
+            worked = false;
+        }
+        assertTrue("package with keywords should parse", worked);
+        assertEquals(PACKAGE_W_KEYWORDS, packageType.getPackageName());
+    }
 }

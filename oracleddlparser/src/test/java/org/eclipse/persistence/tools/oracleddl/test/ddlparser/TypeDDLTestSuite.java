@@ -236,4 +236,32 @@ public class TypeDDLTestSuite {
             TWUT_FIELD4_TYPE, field4.getEnclosedType().toString());
     }
 
+    static final String TYPE_W_KEYWORDS = "KEYWORD_TYPE";
+    static final String TWKW_FIELD1_NAME = "OID";
+    static final String TWKW_FIELD1_TYPE = "VARCHAR2(50)";
+    static final String TWKW_FIELD2_NAME = "CODE";
+    static final String TWKW_FIELD2_TYPE = "VARCHAR2 (2)";
+    static final String CREATE_TYPE_WITH_KEYWORD =
+        CREATE_TYPE_PREFIX + TYPE_W_KEYWORDS + " IS OBJECT (" +
+            "\n" + TWKW_FIELD1_NAME + " " + TWKW_FIELD1_TYPE + "," +
+            "\n" + TWKW_FIELD2_NAME + " " + TWKW_FIELD2_TYPE + 
+        "\n);";
+    @Test
+    public void testKeywordType() {
+        parser.ReInit(new StringReader(CREATE_TYPE_WITH_KEYWORD));
+        boolean worked = true;
+        String message = "";
+        ObjectType typeWithKeyword = null;
+        try {
+            typeWithKeyword = (ObjectType)parser.parseType();
+        }
+        catch (ParseException pe) {
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("type with keyword did not parse:\n" + message, worked);
+        assertEquals("incorrect type name " + TYPE_W_KEYWORDS,
+            TYPE_W_KEYWORDS, typeWithKeyword.getTypeName());
+    }
+
 }

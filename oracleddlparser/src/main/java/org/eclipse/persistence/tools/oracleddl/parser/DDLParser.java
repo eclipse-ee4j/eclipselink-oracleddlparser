@@ -104,6 +104,281 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
         return quotedString.substring(1, quotedString.length() - 1);
     }
 
+  final public String keywords() throws ParseException {
+ Token t = null;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_ARRAY:
+      t = jj_consume_token(K_ARRAY);
+      break;
+    case K_AUTHID:
+      t = jj_consume_token(K_AUTHID);
+      break;
+    case K_BFILE:
+      t = jj_consume_token(K_BFILE);
+      break;
+    case K_BINARY_DOUBLE:
+      t = jj_consume_token(K_BINARY_DOUBLE);
+      break;
+    case K_BINARY_FLOAT:
+      t = jj_consume_token(K_BINARY_FLOAT);
+      break;
+    case K_BINARY_INTEGER:
+      t = jj_consume_token(K_BINARY_INTEGER);
+      break;
+    case K_BLOB:
+      t = jj_consume_token(K_BLOB);
+      break;
+    case K_BOOLEAN:
+      t = jj_consume_token(K_BOOLEAN);
+      break;
+    case K_BYTE:
+      t = jj_consume_token(K_BYTE);
+      break;
+    case K_CHAR:
+      t = jj_consume_token(K_CHAR);
+      break;
+    case K_CHARACTER:
+      t = jj_consume_token(K_CHARACTER);
+      break;
+    case K_CLOB:
+      t = jj_consume_token(K_CLOB);
+      break;
+    case K_COMMIT:
+      t = jj_consume_token(K_COMMIT);
+      break;
+    case K_CONSTANT:
+      t = jj_consume_token(K_CONSTANT);
+      break;
+    case K_CURRENT_USER:
+      t = jj_consume_token(K_CURRENT_USER);
+      break;
+    case K_DATE:
+      t = jj_consume_token(K_DATE);
+      break;
+    case K_DAY:
+      t = jj_consume_token(K_DAY);
+      break;
+    case K_DEC:
+      t = jj_consume_token(K_DEC);
+      break;
+    case K_DECIMAL:
+      t = jj_consume_token(K_DECIMAL);
+      break;
+    case K_DEFINER:
+      t = jj_consume_token(K_DEFINER);
+      break;
+    case K_DELETE:
+      t = jj_consume_token(K_DELETE);
+      break;
+    case K_DETERMINISTIC:
+      t = jj_consume_token(K_DETERMINISTIC);
+      break;
+    case K_DOUBLE:
+      t = jj_consume_token(K_DOUBLE);
+      break;
+    case K_ENABLE:
+      t = jj_consume_token(K_ENABLE);
+      break;
+    case K_FINAL:
+      t = jj_consume_token(K_FINAL);
+      break;
+    case K_FLOAT:
+      t = jj_consume_token(K_FLOAT);
+      break;
+    case K_FORCE:
+      t = jj_consume_token(K_FORCE);
+      break;
+    case K_GLOBAL:
+      t = jj_consume_token(K_GLOBAL);
+      break;
+    case K_INSTANTIABLE:
+      t = jj_consume_token(K_INSTANTIABLE);
+      break;
+    case K_INT:
+      t = jj_consume_token(K_INT);
+      break;
+    case K_INTEGER:
+      t = jj_consume_token(K_INTEGER);
+      break;
+    case K_INTERVAL:
+      t = jj_consume_token(K_INTERVAL);
+      break;
+    case K_KEY:
+      t = jj_consume_token(K_KEY);
+      break;
+    case K_LOCAL:
+      t = jj_consume_token(K_LOCAL);
+      break;
+    case K_LONG:
+      t = jj_consume_token(K_LONG);
+      break;
+    case K_MLSLABEL:
+      t = jj_consume_token(K_MLSLABEL);
+      break;
+    case K_MONTH:
+      t = jj_consume_token(K_MONTH);
+      break;
+    case K_NATIONAL:
+      t = jj_consume_token(K_NATIONAL);
+      break;
+    case K_NATURAL:
+      t = jj_consume_token(K_NATURAL);
+      break;
+    case K_NCHAR:
+      t = jj_consume_token(K_NCHAR);
+      break;
+    case K_NCLOB:
+      t = jj_consume_token(K_NCLOB);
+      break;
+    case K_NOCOPY:
+      t = jj_consume_token(K_NOCOPY);
+      break;
+    case K_NUMBER:
+      t = jj_consume_token(K_NUMBER);
+      break;
+    case K_NUMERIC:
+      t = jj_consume_token(K_NUMERIC);
+      break;
+    case K_NVARCHAR2:
+      t = jj_consume_token(K_NVARCHAR2);
+      break;
+    case K_NVARCHAR:
+      t = jj_consume_token(K_NVARCHAR);
+      break;
+    case K_OBJECT:
+      t = jj_consume_token(K_OBJECT);
+      break;
+    case K_OID:
+      t = jj_consume_token(K_OID);
+      break;
+    case K_ORGANIZATION:
+      t = jj_consume_token(K_ORGANIZATION);
+      break;
+    case K_OUT:
+      t = jj_consume_token(K_OUT);
+      break;
+    case K_OVERFLOW:
+      t = jj_consume_token(K_OVERFLOW);
+      break;
+    case K_PACKAGE:
+      t = jj_consume_token(K_PACKAGE);
+      break;
+    case K_PARALLEL_ENABLE:
+      t = jj_consume_token(K_PARALLEL_ENABLE);
+      break;
+    case K_PIPELINED:
+      t = jj_consume_token(K_PIPELINED);
+      break;
+    case K_PLS_INTEGER:
+      t = jj_consume_token(K_PLS_INTEGER);
+      break;
+    case K_POSITIVE:
+      t = jj_consume_token(K_POSITIVE);
+      break;
+    case K_PRAGMA:
+      t = jj_consume_token(K_PRAGMA);
+      break;
+    case K_PRECISION:
+      t = jj_consume_token(K_PRECISION);
+      break;
+    case K_PRESERVE:
+      t = jj_consume_token(K_PRESERVE);
+      break;
+    case K_RANGE:
+      t = jj_consume_token(K_RANGE);
+      break;
+    case K_RAW:
+      t = jj_consume_token(K_RAW);
+      break;
+    case K_REAL:
+      t = jj_consume_token(K_REAL);
+      break;
+    case K_RECORD:
+      t = jj_consume_token(K_RECORD);
+      break;
+    case K_REF:
+      t = jj_consume_token(K_REF);
+      break;
+    case K_REPLACE:
+      t = jj_consume_token(K_REPLACE);
+      break;
+    case K_RESULT_CACHE:
+      t = jj_consume_token(K_RESULT_CACHE);
+      break;
+    case K_RETURN:
+      t = jj_consume_token(K_RETURN);
+      break;
+    case K_ROWID:
+      t = jj_consume_token(K_ROWID);
+      break;
+    case K_ROWS:
+      t = jj_consume_token(K_ROWS);
+      break;
+    case K_SECOND:
+      t = jj_consume_token(K_SECOND);
+      break;
+    case K_SET:
+      t = jj_consume_token(K_SET);
+      break;
+    case K_SIGNTYPE:
+      t = jj_consume_token(K_SIGNTYPE);
+      break;
+    case K_SIMPLE_DOUBLE:
+      t = jj_consume_token(K_SIMPLE_DOUBLE);
+      break;
+    case K_SIMPLE_FLOAT:
+      t = jj_consume_token(K_SIMPLE_FLOAT);
+      break;
+    case K_SIMPLE_INTEGER:
+      t = jj_consume_token(K_SIMPLE_INTEGER);
+      break;
+    case K_SMALLINT:
+      t = jj_consume_token(K_SMALLINT);
+      break;
+    case K_STRING:
+      t = jj_consume_token(K_STRING);
+      break;
+    case K_SYS_REFCURSOR:
+      t = jj_consume_token(K_SYS_REFCURSOR);
+      break;
+    case K_TEMPORARY:
+      t = jj_consume_token(K_TEMPORARY);
+      break;
+    case K_TIME:
+      t = jj_consume_token(K_TIME);
+      break;
+    case K_TIMESTAMP:
+      t = jj_consume_token(K_TIMESTAMP);
+      break;
+    case K_UROWID:
+      t = jj_consume_token(K_UROWID);
+      break;
+    case K_VARCHAR2:
+      t = jj_consume_token(K_VARCHAR2);
+      break;
+    case K_VARCHAR:
+      t = jj_consume_token(K_VARCHAR);
+      break;
+    case K_VARRAY:
+      t = jj_consume_token(K_VARRAY);
+      break;
+    case K_VARYING:
+      t = jj_consume_token(K_VARYING);
+      break;
+    case K_YEAR:
+      t = jj_consume_token(K_YEAR);
+      break;
+    case K_ZONE:
+      t = jj_consume_token(K_ZONE);
+      break;
+    default:
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+      {if (true) return t.image;}
+    throw new Error("Missing return statement in function");
+  }
+
 // stripped-down version of PLSQL grammar: only parses package/top-level DDL specifications
 
 // PLSQLPackage at 'top-level'
@@ -148,8 +423,96 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       case R_PROCEDURE:
       case R_SUBTYPE:
       case R_TYPE:
+      case K_ARRAY:
+      case K_AUTHID:
+      case K_BFILE:
+      case K_BINARY_DOUBLE:
+      case K_BINARY_FLOAT:
+      case K_BINARY_INTEGER:
+      case K_BLOB:
+      case K_BOOLEAN:
+      case K_BYTE:
+      case K_CHAR:
+      case K_CHARACTER:
+      case K_CLOB:
+      case K_COMMIT:
+      case K_CONSTANT:
+      case K_CURRENT_USER:
+      case K_DATE:
+      case K_DAY:
+      case K_DEC:
+      case K_DECIMAL:
+      case K_DEFINER:
+      case K_DELETE:
+      case K_DETERMINISTIC:
+      case K_DOUBLE:
+      case K_ENABLE:
+      case K_FINAL:
+      case K_FLOAT:
+      case K_FORCE:
+      case K_GLOBAL:
+      case K_INSTANTIABLE:
+      case K_INT:
+      case K_INTEGER:
+      case K_INTERVAL:
+      case K_KEY:
+      case K_LOCAL:
+      case K_LONG:
+      case K_MLSLABEL:
+      case K_MONTH:
+      case K_NATIONAL:
+      case K_NATURAL:
+      case K_NCHAR:
+      case K_NCLOB:
+      case K_NOCOPY:
+      case K_NUMBER:
+      case K_NUMERIC:
+      case K_NVARCHAR2:
+      case K_NVARCHAR:
+      case K_OBJECT:
+      case K_OID:
+      case K_ORGANIZATION:
+      case K_OUT:
+      case K_OVERFLOW:
+      case K_PACKAGE:
+      case K_PARALLEL_ENABLE:
+      case K_PIPELINED:
+      case K_PLS_INTEGER:
+      case K_POSITIVE:
       case K_PRAGMA:
+      case K_PRECISION:
+      case K_PRESERVE:
+      case K_RANGE:
+      case K_RAW:
+      case K_REAL:
+      case K_RECORD:
+      case K_REF:
+      case K_REPLACE:
+      case K_RESULT_CACHE:
+      case K_RETURN:
+      case K_ROWID:
+      case K_ROWS:
+      case K_SECOND:
+      case K_SET:
+      case K_SIGNTYPE:
+      case K_SIMPLE_DOUBLE:
+      case K_SIMPLE_FLOAT:
+      case K_SIMPLE_INTEGER:
+      case K_SMALLINT:
+      case K_STRING:
+      case K_SYS_REFCURSOR:
+      case K_TEMPORARY:
+      case K_TIME:
+      case K_TIMESTAMP:
+      case K_UROWID:
+      case K_VARCHAR2:
+      case K_VARCHAR:
+      case K_VARRAY:
+      case K_VARYING:
+      case K_YEAR:
+      case K_ZONE:
       case S_IDENTIFIER:
+      case S_QUOTED_IDENTIFIER:
         ;
         break;
       default:
@@ -158,16 +521,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
       packageDeclaration(packageType);
     }
     jj_consume_token(R_END);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case S_IDENTIFIER:
-    case S_QUOTED_IDENTIFIER:
-      OracleObjectName();
-      break;
-    default:
-      ;
-    }
-    jj_consume_token(O_SEMICOLON);
-    jj_consume_token(0);
+    skipToEnd();
       typesRepository.setDatabaseType(packageName, packageType);
       {if (true) return packageType;}
     throw new Error("Missing return statement in function");
@@ -476,7 +830,111 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
   }
 
   final public void columnDeclarations(CompositeDatabaseType enclosingType) throws ParseException {
-    columnDeclaration(enclosingType);
+    if (jj_2_1(2)) {
+      columnDeclaration(enclosingType);
+    } else {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case R_CHECK:
+      case R_CONSTRAINT:
+      case R_PRIMARY:
+      case R_UNIQUE:
+      case K_ARRAY:
+      case K_AUTHID:
+      case K_BFILE:
+      case K_BINARY_DOUBLE:
+      case K_BINARY_FLOAT:
+      case K_BINARY_INTEGER:
+      case K_BLOB:
+      case K_BOOLEAN:
+      case K_BYTE:
+      case K_CHAR:
+      case K_CHARACTER:
+      case K_CLOB:
+      case K_COMMIT:
+      case K_CONSTANT:
+      case K_CURRENT_USER:
+      case K_DATE:
+      case K_DAY:
+      case K_DEC:
+      case K_DECIMAL:
+      case K_DEFINER:
+      case K_DELETE:
+      case K_DETERMINISTIC:
+      case K_DOUBLE:
+      case K_ENABLE:
+      case K_FINAL:
+      case K_FLOAT:
+      case K_FORCE:
+      case K_GLOBAL:
+      case K_INSTANTIABLE:
+      case K_INT:
+      case K_INTEGER:
+      case K_INTERVAL:
+      case K_KEY:
+      case K_LOCAL:
+      case K_LONG:
+      case K_MLSLABEL:
+      case K_MONTH:
+      case K_NATIONAL:
+      case K_NATURAL:
+      case K_NCHAR:
+      case K_NCLOB:
+      case K_NOCOPY:
+      case K_NUMBER:
+      case K_NUMERIC:
+      case K_NVARCHAR2:
+      case K_NVARCHAR:
+      case K_OBJECT:
+      case K_OID:
+      case K_ORGANIZATION:
+      case K_OUT:
+      case K_OVERFLOW:
+      case K_PACKAGE:
+      case K_PARALLEL_ENABLE:
+      case K_PIPELINED:
+      case K_PLS_INTEGER:
+      case K_POSITIVE:
+      case K_PRAGMA:
+      case K_PRECISION:
+      case K_PRESERVE:
+      case K_RANGE:
+      case K_RAW:
+      case K_REAL:
+      case K_RECORD:
+      case K_REF:
+      case K_REPLACE:
+      case K_RESULT_CACHE:
+      case K_RETURN:
+      case K_ROWID:
+      case K_ROWS:
+      case K_SECOND:
+      case K_SET:
+      case K_SIGNTYPE:
+      case K_SIMPLE_DOUBLE:
+      case K_SIMPLE_FLOAT:
+      case K_SIMPLE_INTEGER:
+      case K_SMALLINT:
+      case K_STRING:
+      case K_SYS_REFCURSOR:
+      case K_TEMPORARY:
+      case K_TIME:
+      case K_TIMESTAMP:
+      case K_UROWID:
+      case K_VARCHAR2:
+      case K_VARCHAR:
+      case K_VARRAY:
+      case K_VARYING:
+      case K_YEAR:
+      case K_ZONE:
+      case S_IDENTIFIER:
+      case S_QUOTED_IDENTIFIER:
+        constraintDeclaration(enclosingType);
+        break;
+      default:
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case O_COMMA:
       jj_consume_token(O_COMMA);
@@ -493,170 +951,292 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
  boolean notNull = false;
  DatabaseType columnType = null;
  FieldType column = null;
+    s = OracleObjectName();
+    columnType = columnTypeSpec(enclosingType);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case S_IDENTIFIER:
-    case S_QUOTED_IDENTIFIER:
-      s = OracleObjectName();
-           column = new FieldType(s);
-                   if (enclosingType != null) {
-                       if (enclosingType.isPLSQLRecordType()) {
-                               ((PLSQLRecordType)enclosingType).addField(column);
-                       }
-                           else if (enclosingType.isTableType()) {
-                               ((TableType)enclosingType).addColumn(column);
-                           }
-                           else if (enclosingType.isObjectType()) {
-                               ((ObjectType)enclosingType).addField(column);
-                           }
-                   }
-      columnType = columnTypeSpec(enclosingType);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case R_NOT:
-        jj_consume_token(R_NOT);
-        jj_consume_token(R_NULL);
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_ENABLE:
-          jj_consume_token(K_ENABLE);
-          break;
-        default:
-          ;
-        }
-                                                                                     notNull = true;
-        break;
-      default:
-        ;
-      }
-      break;
-    case R_CHECK:
-    case R_UNIQUE:
-    case K_CONSTRAINT:
-    case K_PRIMARY:
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_CONSTRAINT:
-        jj_consume_token(K_CONSTRAINT);
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case S_IDENTIFIER:
-      case S_QUOTED_IDENTIFIER:
-        OracleObjectName();
-        break;
-      default:
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_PRIMARY:
-        jj_consume_token(K_PRIMARY);
-        jj_consume_token(K_KEY);
-        jj_consume_token(O_OPENPAREN);
-        pkList((TableType)enclosingType);
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      case R_CHECK:
-        jj_consume_token(R_CHECK);
-        jj_consume_token(O_OPENPAREN);
-        skipToClosingParen();
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      case R_UNIQUE:
-        jj_consume_token(R_UNIQUE);
-        jj_consume_token(O_OPENPAREN);
-        uniqList();
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      default:
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-      jj_consume_token(K_ENABLE);
+    case R_NOT:
+      notNull = notNull();
       break;
     default:
-      jj_consume_token(-1);
-      throw new ParseException();
+      ;
     }
-      if (column != null) {
-              column.setEnclosedType(columnType);
-              if (columnType instanceof UnresolvedType) {
-                  ((UnresolvedType)columnType).setOwningType(column);
+          column = new FieldType(s);
+          if (enclosingType != null) {
+              if (enclosingType.isPLSQLRecordType()) {
+                  ((PLSQLRecordType)enclosingType).addField(column);
               }
-              if (notNull) {
-                  column.setNotNull();
+              else if (enclosingType.isTableType()) {
+                  ((TableType)enclosingType).addColumn(column);
               }
+              else if (enclosingType.isObjectType()) {
+                  ((ObjectType)enclosingType).addField(column);
+              }
+          }
+          column.setEnclosedType(columnType);
+          if (columnType instanceof UnresolvedType) {
+              ((UnresolvedType)columnType).setOwningType(column);
+          }
+          if (notNull) {
+              column.setNotNull();
           }
   }
 
-  final public DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType) throws ParseException {
+  final public void constraintDeclaration(CompositeDatabaseType enclosingType) throws ParseException {
  String s = null;
- Token t = null;
- DatabaseType dt = null;
+ String pk = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case R_CONSTRAINT:
+      jj_consume_token(R_CONSTRAINT);
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_ARRAY:
+    case K_AUTHID:
     case K_BFILE:
     case K_BINARY_DOUBLE:
     case K_BINARY_FLOAT:
     case K_BINARY_INTEGER:
     case K_BLOB:
     case K_BOOLEAN:
+    case K_BYTE:
     case K_CHAR:
     case K_CHARACTER:
     case K_CLOB:
+    case K_COMMIT:
+    case K_CONSTANT:
+    case K_CURRENT_USER:
     case K_DATE:
+    case K_DAY:
     case K_DEC:
     case K_DECIMAL:
+    case K_DEFINER:
+    case K_DELETE:
+    case K_DETERMINISTIC:
     case K_DOUBLE:
+    case K_ENABLE:
+    case K_FINAL:
     case K_FLOAT:
+    case K_FORCE:
+    case K_GLOBAL:
+    case K_INSTANTIABLE:
     case K_INT:
     case K_INTEGER:
     case K_INTERVAL:
+    case K_KEY:
+    case K_LOCAL:
     case K_LONG:
     case K_MLSLABEL:
+    case K_MONTH:
     case K_NATIONAL:
     case K_NATURAL:
     case K_NCHAR:
     case K_NCLOB:
+    case K_NOCOPY:
     case K_NUMBER:
     case K_NUMERIC:
     case K_NVARCHAR2:
     case K_NVARCHAR:
+    case K_OBJECT:
+    case K_OID:
+    case K_ORGANIZATION:
+    case K_OUT:
+    case K_OVERFLOW:
+    case K_PACKAGE:
+    case K_PARALLEL_ENABLE:
+    case K_PIPELINED:
     case K_PLS_INTEGER:
     case K_POSITIVE:
+    case K_PRAGMA:
+    case K_PRECISION:
+    case K_PRESERVE:
+    case K_RANGE:
     case K_RAW:
     case K_REAL:
+    case K_RECORD:
+    case K_REF:
+    case K_REPLACE:
+    case K_RESULT_CACHE:
+    case K_RETURN:
     case K_ROWID:
+    case K_ROWS:
+    case K_SECOND:
+    case K_SET:
     case K_SIGNTYPE:
     case K_SIMPLE_DOUBLE:
     case K_SIMPLE_FLOAT:
     case K_SIMPLE_INTEGER:
     case K_SMALLINT:
+    case K_STRING:
     case K_SYS_REFCURSOR:
+    case K_TEMPORARY:
     case K_TIME:
     case K_TIMESTAMP:
     case K_UROWID:
     case K_VARCHAR2:
     case K_VARCHAR:
-      dt = datatype();
-      break;
+    case K_VARRAY:
+    case K_VARYING:
+    case K_YEAR:
+    case K_ZONE:
     case S_IDENTIFIER:
     case S_QUOTED_IDENTIFIER:
-      s = columnSpec();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case O_OPENPAREN:
-        jj_consume_token(O_OPENPAREN);
-        t = jj_consume_token(S_NUMBER);
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      default:
-        ;
-      }
+      OracleObjectName();
+      break;
+    default:
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case R_PRIMARY:
+      jj_consume_token(R_PRIMARY);
+      jj_consume_token(K_KEY);
+      jj_consume_token(O_OPENPAREN);
+      pkList((TableType)enclosingType);
+      jj_consume_token(O_CLOSEPAREN);
+      break;
+    case R_CHECK:
+      jj_consume_token(R_CHECK);
+      jj_consume_token(O_OPENPAREN);
+      skipToClosingParen();
+      jj_consume_token(O_CLOSEPAREN);
+      break;
+    case R_UNIQUE:
+      jj_consume_token(R_UNIQUE);
+      jj_consume_token(O_OPENPAREN);
+      uniqList();
+      jj_consume_token(O_CLOSEPAREN);
       break;
     default:
       jj_consume_token(-1);
       throw new ParseException();
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_CONSTRAINT:
-      jj_consume_token(K_CONSTRAINT);
+    case K_ENABLE:
+      jj_consume_token(K_ENABLE);
+      break;
+    default:
+      ;
+    }
+  }
+
+  final public DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType) throws ParseException {
+ String s = null;
+ Token t = null;
+ DatabaseType dt = null;
+    if (jj_2_2(2)) {
+      dt = datatype();
+    } else {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case K_ARRAY:
+      case K_AUTHID:
+      case K_BFILE:
+      case K_BINARY_DOUBLE:
+      case K_BINARY_FLOAT:
+      case K_BINARY_INTEGER:
+      case K_BLOB:
+      case K_BOOLEAN:
+      case K_BYTE:
+      case K_CHAR:
+      case K_CHARACTER:
+      case K_CLOB:
+      case K_COMMIT:
+      case K_CONSTANT:
+      case K_CURRENT_USER:
+      case K_DATE:
+      case K_DAY:
+      case K_DEC:
+      case K_DECIMAL:
+      case K_DEFINER:
+      case K_DELETE:
+      case K_DETERMINISTIC:
+      case K_DOUBLE:
+      case K_ENABLE:
+      case K_FINAL:
+      case K_FLOAT:
+      case K_FORCE:
+      case K_GLOBAL:
+      case K_INSTANTIABLE:
+      case K_INT:
+      case K_INTEGER:
+      case K_INTERVAL:
+      case K_KEY:
+      case K_LOCAL:
+      case K_LONG:
+      case K_MLSLABEL:
+      case K_MONTH:
+      case K_NATIONAL:
+      case K_NATURAL:
+      case K_NCHAR:
+      case K_NCLOB:
+      case K_NOCOPY:
+      case K_NUMBER:
+      case K_NUMERIC:
+      case K_NVARCHAR2:
+      case K_NVARCHAR:
+      case K_OBJECT:
+      case K_OID:
+      case K_ORGANIZATION:
+      case K_OUT:
+      case K_OVERFLOW:
+      case K_PACKAGE:
+      case K_PARALLEL_ENABLE:
+      case K_PIPELINED:
+      case K_PLS_INTEGER:
+      case K_POSITIVE:
+      case K_PRAGMA:
+      case K_PRECISION:
+      case K_PRESERVE:
+      case K_RANGE:
+      case K_RAW:
+      case K_REAL:
+      case K_RECORD:
+      case K_REF:
+      case K_REPLACE:
+      case K_RESULT_CACHE:
+      case K_RETURN:
+      case K_ROWID:
+      case K_ROWS:
+      case K_SECOND:
+      case K_SET:
+      case K_SIGNTYPE:
+      case K_SIMPLE_DOUBLE:
+      case K_SIMPLE_FLOAT:
+      case K_SIMPLE_INTEGER:
+      case K_SMALLINT:
+      case K_STRING:
+      case K_SYS_REFCURSOR:
+      case K_TEMPORARY:
+      case K_TIME:
+      case K_TIMESTAMP:
+      case K_UROWID:
+      case K_VARCHAR2:
+      case K_VARCHAR:
+      case K_VARRAY:
+      case K_VARYING:
+      case K_YEAR:
+      case K_ZONE:
+      case S_IDENTIFIER:
+      case S_QUOTED_IDENTIFIER:
+        s = columnSpec();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case O_OPENPAREN:
+          jj_consume_token(O_OPENPAREN);
+          t = jj_consume_token(S_NUMBER);
+          jj_consume_token(O_CLOSEPAREN);
+          break;
+        default:
+          ;
+        }
+        break;
+      default:
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case R_CONSTRAINT:
+      jj_consume_token(R_CONSTRAINT);
       jj_consume_token(S_QUOTED_IDENTIFIER);
       break;
     default:
@@ -729,66 +1309,164 @@ String s = null;
   }
 
   final public void packageDeclaration(PLSQLPackageType packageType) throws ParseException {
-    if (jj_2_1(2)) {
-      variableDeclaration(packageType);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case R_SUBTYPE:
+    case R_TYPE:
+      typeOrSubTypeDeclaration(packageType);
+      break;
+    case R_CURSOR:
+      cursorDeclaration(packageType);
+      break;
+    case R_PROCEDURE:
+      procedureSpec(packageType);
+      break;
+    case R_FUNCTION:
+      functionSpec(packageType);
+      break;
+    default:
+      if (jj_2_3(2)) {
+        variableDeclaration(packageType);
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case K_PRAGMA:
+          pragmaDeclaration();
+          break;
+        default:
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      }
+    }
+  }
+
+  final public void variableDeclaration(PLSQLPackageType packageType) throws ParseException {
+ String varName = null;
+ DatabaseType varType=null;
+    varName = OracleObjectName();
+    if (jj_2_5(2)) {
+      jj_consume_token(R_EXCEPTION);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case R_SUBTYPE:
-      case R_TYPE:
-        typeOrSubTypeDeclaration(packageType);
-        break;
-      case R_CURSOR:
-        cursorDeclaration(packageType);
-        break;
-      case R_PROCEDURE:
-        procedureSpec(packageType);
-        break;
-      case R_FUNCTION:
-        functionSpec(packageType);
-        break;
-      case S_IDENTIFIER:
-        exceptionDeclaration();
-        break;
+      case K_ARRAY:
+      case K_AUTHID:
+      case K_BFILE:
+      case K_BINARY_DOUBLE:
+      case K_BINARY_FLOAT:
+      case K_BINARY_INTEGER:
+      case K_BLOB:
+      case K_BOOLEAN:
+      case K_BYTE:
+      case K_CHAR:
+      case K_CHARACTER:
+      case K_CLOB:
+      case K_COMMIT:
+      case K_CONSTANT:
+      case K_CURRENT_USER:
+      case K_DATE:
+      case K_DAY:
+      case K_DEC:
+      case K_DECIMAL:
+      case K_DEFINER:
+      case K_DELETE:
+      case K_DETERMINISTIC:
+      case K_DOUBLE:
+      case K_ENABLE:
+      case K_FINAL:
+      case K_FLOAT:
+      case K_FORCE:
+      case K_GLOBAL:
+      case K_INSTANTIABLE:
+      case K_INT:
+      case K_INTEGER:
+      case K_INTERVAL:
+      case K_KEY:
+      case K_LOCAL:
+      case K_LONG:
+      case K_MLSLABEL:
+      case K_MONTH:
+      case K_NATIONAL:
+      case K_NATURAL:
+      case K_NCHAR:
+      case K_NCLOB:
+      case K_NOCOPY:
+      case K_NUMBER:
+      case K_NUMERIC:
+      case K_NVARCHAR2:
+      case K_NVARCHAR:
+      case K_OBJECT:
+      case K_OID:
+      case K_ORGANIZATION:
+      case K_OUT:
+      case K_OVERFLOW:
+      case K_PACKAGE:
+      case K_PARALLEL_ENABLE:
+      case K_PIPELINED:
+      case K_PLS_INTEGER:
+      case K_POSITIVE:
       case K_PRAGMA:
-        pragmaDeclaration();
+      case K_PRECISION:
+      case K_PRESERVE:
+      case K_RANGE:
+      case K_RAW:
+      case K_REAL:
+      case K_RECORD:
+      case K_REF:
+      case K_REPLACE:
+      case K_RESULT_CACHE:
+      case K_RETURN:
+      case K_ROWID:
+      case K_ROWS:
+      case K_SECOND:
+      case K_SET:
+      case K_SIGNTYPE:
+      case K_SIMPLE_DOUBLE:
+      case K_SIMPLE_FLOAT:
+      case K_SIMPLE_INTEGER:
+      case K_SMALLINT:
+      case K_STRING:
+      case K_SYS_REFCURSOR:
+      case K_TEMPORARY:
+      case K_TIME:
+      case K_TIMESTAMP:
+      case K_UROWID:
+      case K_VARCHAR2:
+      case K_VARCHAR:
+      case K_VARRAY:
+      case K_VARYING:
+      case K_YEAR:
+      case K_ZONE:
+      case S_IDENTIFIER:
+      case S_QUOTED_IDENTIFIER:
+        if (jj_2_4(2)) {
+          jj_consume_token(K_CONSTANT);
+        } else {
+          ;
+        }
+        varType = typeSpec();
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case R_NOT:
+          jj_consume_token(R_NOT);
+          jj_consume_token(R_NULL);
+          break;
+        default:
+          ;
+        }
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case O_ASSIGN:
+        case R_DEFAULT:
+          variableDefaultAssignment();
+          break;
+        default:
+          ;
+        }
         break;
       default:
         jj_consume_token(-1);
         throw new ParseException();
       }
     }
-  }
-
-  final public void variableDeclaration(PLSQLPackageType packageType) throws ParseException {
- Token varName = null;
- DatabaseType varType;
-    varName = jj_consume_token(S_IDENTIFIER);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_CONSTANT:
-      jj_consume_token(K_CONSTANT);
-      break;
-    default:
-      ;
-    }
-    varType = typeSpec();
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case R_NOT:
-      jj_consume_token(R_NOT);
-      jj_consume_token(R_NULL);
-      break;
-    default:
-      ;
-    }
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case O_ASSIGN:
-    case R_DEFAULT:
-      variableDefaultAssignment();
-      break;
-    default:
-      ;
-    }
     jj_consume_token(O_SEMICOLON);
-        FieldType variable = new FieldType(varName.image);
+        FieldType variable = new FieldType(varName);
         variable.setEnclosedType(varType);
         packageType.addLocalVariable(variable);
   }
@@ -1269,8 +1947,8 @@ String s = null;
         jj_consume_token(K_SET);
         jj_consume_token(S_IDENTIFIER);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_CHARSET:
-          jj_consume_token(K_CHARSET);
+        case R_CHARSET:
+          jj_consume_token(R_CHARSET);
           break;
         default:
           ;
@@ -1341,8 +2019,8 @@ String s = null;
         jj_consume_token(K_SET);
         jj_consume_token(S_IDENTIFIER);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_CHARSET:
-          jj_consume_token(K_CHARSET);
+        case R_CHARSET:
+          jj_consume_token(R_CHARSET);
           break;
         default:
           ;
@@ -1401,8 +2079,8 @@ String s = null;
         jj_consume_token(K_SET);
         jj_consume_token(S_IDENTIFIER);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_CHARSET:
-          jj_consume_token(K_CHARSET);
+        case R_CHARSET:
+          jj_consume_token(R_CHARSET);
           break;
         default:
           ;
@@ -1590,8 +2268,8 @@ String s = null;
         jj_consume_token(K_SET);
         jj_consume_token(S_IDENTIFIER);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case K_CHARSET:
-          jj_consume_token(K_CHARSET);
+        case R_CHARSET:
+          jj_consume_token(R_CHARSET);
           break;
         default:
           ;
@@ -1615,87 +2293,134 @@ String s = null;
  DatabaseType dataType = null;
  String spec = null;
  String s = null;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_BFILE:
-    case K_BINARY_DOUBLE:
-    case K_BINARY_FLOAT:
-    case K_BINARY_INTEGER:
-    case K_BLOB:
-    case K_BOOLEAN:
-    case K_CHAR:
-    case K_CHARACTER:
-    case K_CLOB:
-    case K_DATE:
-    case K_DEC:
-    case K_DECIMAL:
-    case K_DOUBLE:
-    case K_FLOAT:
-    case K_INT:
-    case K_INTEGER:
-    case K_INTERVAL:
-    case K_LONG:
-    case K_MLSLABEL:
-    case K_NATIONAL:
-    case K_NATURAL:
-    case K_NCHAR:
-    case K_NCLOB:
-    case K_NUMBER:
-    case K_NUMERIC:
-    case K_NVARCHAR2:
-    case K_NVARCHAR:
-    case K_PLS_INTEGER:
-    case K_POSITIVE:
-    case K_RAW:
-    case K_REAL:
-    case K_ROWID:
-    case K_SIGNTYPE:
-    case K_SIMPLE_DOUBLE:
-    case K_SIMPLE_FLOAT:
-    case K_SIMPLE_INTEGER:
-    case K_SMALLINT:
-    case K_SYS_REFCURSOR:
-    case K_TIME:
-    case K_TIMESTAMP:
-    case K_UROWID:
-    case K_VARCHAR2:
-    case K_VARCHAR:
+    if (jj_2_6(3)) {
       dataType = datatype();
-      break;
-    case S_IDENTIFIER:
-    case S_QUOTED_IDENTIFIER:
-      spec = columnSpec();
+    } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case O_OPENPAREN:
-      case R_ANCHORED_ROWTYPE:
-      case R_ANCHORED_TYPE:
+      case K_ARRAY:
+      case K_AUTHID:
+      case K_BFILE:
+      case K_BINARY_DOUBLE:
+      case K_BINARY_FLOAT:
+      case K_BINARY_INTEGER:
+      case K_BLOB:
+      case K_BOOLEAN:
+      case K_BYTE:
+      case K_CHAR:
+      case K_CHARACTER:
+      case K_CLOB:
+      case K_COMMIT:
+      case K_CONSTANT:
+      case K_CURRENT_USER:
+      case K_DATE:
+      case K_DAY:
+      case K_DEC:
+      case K_DECIMAL:
+      case K_DEFINER:
+      case K_DELETE:
+      case K_DETERMINISTIC:
+      case K_DOUBLE:
+      case K_ENABLE:
+      case K_FINAL:
+      case K_FLOAT:
+      case K_FORCE:
+      case K_GLOBAL:
+      case K_INSTANTIABLE:
+      case K_INT:
+      case K_INTEGER:
+      case K_INTERVAL:
+      case K_KEY:
+      case K_LOCAL:
+      case K_LONG:
+      case K_MLSLABEL:
+      case K_MONTH:
+      case K_NATIONAL:
+      case K_NATURAL:
+      case K_NCHAR:
+      case K_NCLOB:
+      case K_NOCOPY:
+      case K_NUMBER:
+      case K_NUMERIC:
+      case K_NVARCHAR2:
+      case K_NVARCHAR:
+      case K_OBJECT:
+      case K_OID:
+      case K_ORGANIZATION:
+      case K_OUT:
+      case K_OVERFLOW:
+      case K_PACKAGE:
+      case K_PARALLEL_ENABLE:
+      case K_PIPELINED:
+      case K_PLS_INTEGER:
+      case K_POSITIVE:
+      case K_PRAGMA:
+      case K_PRECISION:
+      case K_PRESERVE:
+      case K_RANGE:
+      case K_RAW:
+      case K_REAL:
+      case K_RECORD:
+      case K_REF:
+      case K_REPLACE:
+      case K_RESULT_CACHE:
+      case K_RETURN:
+      case K_ROWID:
+      case K_ROWS:
+      case K_SECOND:
+      case K_SET:
+      case K_SIGNTYPE:
+      case K_SIMPLE_DOUBLE:
+      case K_SIMPLE_FLOAT:
+      case K_SIMPLE_INTEGER:
+      case K_SMALLINT:
+      case K_STRING:
+      case K_SYS_REFCURSOR:
+      case K_TEMPORARY:
+      case K_TIME:
+      case K_TIMESTAMP:
+      case K_UROWID:
+      case K_VARCHAR2:
+      case K_VARCHAR:
+      case K_VARRAY:
+      case K_VARYING:
+      case K_YEAR:
+      case K_ZONE:
+      case S_IDENTIFIER:
+      case S_QUOTED_IDENTIFIER:
+        spec = columnSpec();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case O_OPENPAREN:
-          jj_consume_token(O_OPENPAREN);
-          jj_consume_token(S_NUMBER);
-          jj_consume_token(O_CLOSEPAREN);
-          break;
-        case R_ANCHORED_TYPE:
-          jj_consume_token(R_ANCHORED_TYPE);
-             isTYPEType=true;
-             s = spec + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
-          break;
         case R_ANCHORED_ROWTYPE:
-          jj_consume_token(R_ANCHORED_ROWTYPE);
-             isROWTYPEType =true;
-             s = spec + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
+        case R_ANCHORED_TYPE:
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case O_OPENPAREN:
+            jj_consume_token(O_OPENPAREN);
+            jj_consume_token(S_NUMBER);
+            jj_consume_token(O_CLOSEPAREN);
+            break;
+          case R_ANCHORED_TYPE:
+            jj_consume_token(R_ANCHORED_TYPE);
+              isTYPEType=true;
+              s = spec + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
+            break;
+          case R_ANCHORED_ROWTYPE:
+            jj_consume_token(R_ANCHORED_ROWTYPE);
+              isROWTYPEType =true;
+              s = spec + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
+            break;
+          default:
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
           break;
         default:
-          jj_consume_token(-1);
-          throw new ParseException();
+          ;
         }
         break;
       default:
-        ;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-      break;
-    default:
-      jj_consume_token(-1);
-      throw new ParseException();
     }
       if (dataType == null && localTypes != null) {
           for (String typeName : localTypes.keySet()) {
@@ -2090,12 +2815,12 @@ Token rangeEnd = null;
 
   final public void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType) throws ParseException {
  String s = null;
- Token spec = null;
+ String spec = null;
  boolean isTYPEType = false;
  boolean isROWTYPEType = false;
  DatabaseType localType = null;
     jj_consume_token(K_RETURN);
-    spec = jj_consume_token(S_IDENTIFIER);
+    spec = OracleObjectName();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case R_ANCHORED_ROWTYPE:
     case R_ANCHORED_TYPE:
@@ -2103,12 +2828,12 @@ Token rangeEnd = null;
       case R_ANCHORED_TYPE:
         jj_consume_token(R_ANCHORED_TYPE);
                   isTYPEType = true;
-                  s = spec.image + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
+                  s = spec + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
         break;
       case R_ANCHORED_ROWTYPE:
         jj_consume_token(R_ANCHORED_ROWTYPE);
               isROWTYPEType = true;
-              s = spec.image + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
+              s = spec + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
         break;
       default:
         jj_consume_token(-1);
@@ -2120,7 +2845,7 @@ Token rangeEnd = null;
     }
       //check local variables first
           for (FieldType varField : packageType.getLocalVariables()) {
-              if (spec.image.equals(varField.getFieldName())) {
+              if (spec.equals(varField.getFieldName())) {
               if (isTYPEType) {
                   TYPEType tType = new TYPEType(s);
                   UnresolvedType uType = new UnresolvedType(s);
@@ -2143,9 +2868,9 @@ Token rangeEnd = null;
               }
           }
       if (localType == null) {
-          localType = localTypes.get(spec.image);
+          localType = localTypes.get(spec);
           if (localType == null) {
-                  UnresolvedType uType = new UnresolvedType(spec.image);
+                  UnresolvedType uType = new UnresolvedType(spec);
                   if (isTYPEType) {
                       TYPEType tType = new TYPEType(s);
                       tType.setEnclosedType(uType);
@@ -2165,24 +2890,23 @@ Token rangeEnd = null;
               }
               else {
                   cursorType.setEnclosedType(localType);
-              }
+             }
           }
   }
 
   final public void cursorDeclaration(PLSQLPackageType packageType) throws ParseException {
  Token t = null;
     jj_consume_token(R_CURSOR);
-    t = jj_consume_token(S_IDENTIFIER);
-    jj_consume_token(O_SEMICOLON);
+    skipToSemiColon();
   }
 
 // Procedure Specification
   final public void procedureSpec(PLSQLPackageType packageType) throws ParseException {
- Token t = null;
+ String procedureName= null;
  ProcedureType procedureType = null;
     jj_consume_token(R_PROCEDURE);
-    t = jj_consume_token(S_IDENTIFIER);
-            procedureType = new ProcedureType(t.image);
+    procedureName = OracleObjectName();
+            procedureType = new ProcedureType(procedureName);
             procedureType.setCatalogName(packageType.getPackageName());
             procedureType.setSchema(packageType.getSchema());
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -2216,12 +2940,12 @@ Token rangeEnd = null;
 
 // Function Specification
   final public void functionSpec(PLSQLPackageType packageType) throws ParseException {
- Token t = null;
+ String functionName= null;
  FunctionType functionType = null;
  ArgumentType returnDataType = null;
     jj_consume_token(R_FUNCTION);
-    t = jj_consume_token(S_IDENTIFIER);
-            functionType = new FunctionType(t.image);
+    functionName = OracleObjectName();
+            functionType = new FunctionType(functionName);
             functionType.setCatalogName(packageType.getPackageName());
             functionType.setSchema(packageType.getSchema());
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -2280,26 +3004,21 @@ Token rangeEnd = null;
   }
 
   final public void argument(ProcedureType procedureType) throws ParseException {
- Token t = null;
+ String s = null;
  ArgumentType argumentType = null;
  DatabaseType argumentDataType = null;
  ArgumentTypeDirection argDirection = ArgumentTypeDirection.IN; // by default, arguments are IN
  String direction = null;
  boolean defaultAssignment = false;
-    t = jj_consume_token(S_IDENTIFIER);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case R_IN:
-    case K_OUT:
+    s = OracleObjectName();
+    if (jj_2_7(2)) {
       direction = direction();
-      break;
-    default:
+    } else {
       ;
     }
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_NOCOPY:
+    if (jj_2_8(2)) {
       jj_consume_token(K_NOCOPY);
-      break;
-    default:
+    } else {
       ;
     }
     argumentDataType = typeSpec();
@@ -2311,7 +3030,7 @@ Token rangeEnd = null;
     default:
       ;
     }
-      argumentType = new ArgumentType(t.image);
+      argumentType = new ArgumentType(s);
       argumentType.setEnclosedType(argumentDataType);
       if (argumentDataType instanceof UnresolvedType) {
           ((UnresolvedType)argumentDataType).setOwningType(argumentType);
@@ -2356,125 +3075,7 @@ Token rangeEnd = null;
 
   final public void pragmaDeclaration() throws ParseException {
     jj_consume_token(K_PRAGMA);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case K_AUTONOMOUS_TRANSACTION:
-    case K_EXCEPTION_INIT:
-    case K_INLINE:
-    case K_RESTRICT_REFERENCES:
-    case K_SERIALLY_REUSABLE:
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case K_AUTONOMOUS_TRANSACTION:
-        jj_consume_token(K_AUTONOMOUS_TRANSACTION);
-        break;
-      case K_EXCEPTION_INIT:
-        jj_consume_token(K_EXCEPTION_INIT);
-        jj_consume_token(O_OPENPAREN);
-        jj_consume_token(S_IDENTIFIER);
-        jj_consume_token(O_COMMA);
-        jj_consume_token(S_NUMBER);
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      case K_SERIALLY_REUSABLE:
-        jj_consume_token(K_SERIALLY_REUSABLE);
-        break;
-      case K_INLINE:
-        jj_consume_token(K_INLINE);
-        jj_consume_token(O_OPENPAREN);
-        jj_consume_token(S_IDENTIFIER);
-        jj_consume_token(O_COMMA);
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case R_NO:
-        case R_YES:
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case R_YES:
-            jj_consume_token(R_YES);
-            break;
-          case R_NO:
-            jj_consume_token(R_NO);
-            break;
-          default:
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
-          break;
-        default:
-          ;
-        }
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      case K_RESTRICT_REFERENCES:
-        jj_consume_token(K_RESTRICT_REFERENCES);
-        jj_consume_token(O_OPENPAREN);
-        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case R_DEFAULT:
-        case S_IDENTIFIER:
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case S_IDENTIFIER:
-            jj_consume_token(S_IDENTIFIER);
-            break;
-          case R_DEFAULT:
-            jj_consume_token(R_DEFAULT);
-            break;
-          default:
-            jj_consume_token(-1);
-            throw new ParseException();
-          }
-          break;
-        default:
-          ;
-        }
-        label_6:
-        while (true) {
-          jj_consume_token(O_COMMA);
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case K_RNDS:
-          case K_RNPS:
-          case K_TRUST:
-          case K_WNDS:
-          case K_WNPS:
-            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-            case K_RNDS:
-              jj_consume_token(K_RNDS);
-              break;
-            case K_WNDS:
-              jj_consume_token(K_WNDS);
-              break;
-            case K_RNPS:
-              jj_consume_token(K_RNPS);
-              break;
-            case K_WNPS:
-              jj_consume_token(K_WNPS);
-              break;
-            case K_TRUST:
-              jj_consume_token(K_TRUST);
-              break;
-            default:
-              jj_consume_token(-1);
-              throw new ParseException();
-            }
-            break;
-          default:
-            ;
-          }
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case O_COMMA:
-            ;
-            break;
-          default:
-            break label_6;
-          }
-        }
-        jj_consume_token(O_CLOSEPAREN);
-        break;
-      default:
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-      break;
-    default:
-      ;
-    }
-    jj_consume_token(O_SEMICOLON);
+    skipToSemiColon();
   }
 
   final public void orReplace() throws ParseException {
@@ -2528,46 +3129,65 @@ Token rangeEnd = null;
     jj_consume_token(K_ROWS);
   }
 
+  final public boolean notNull() throws ParseException {
+    jj_consume_token(R_NOT);
+    jj_consume_token(R_NULL);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case K_ENABLE:
+      jj_consume_token(K_ENABLE);
+      break;
+    default:
+      ;
+    }
+      {if (true) return true;}
+    throw new Error("Missing return statement in function");
+  }
+
   final public String direction() throws ParseException {
  String dir = "";
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case R_IN:
+    if (jj_2_10(2)) {
       jj_consume_token(R_IN);
                 dir = "IN";
+      if (jj_2_9(2)) {
+        jj_consume_token(K_OUT);
+                                                     dir += " OUT";
+      } else {
+        ;
+      }
+    } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case K_OUT:
         jj_consume_token(K_OUT);
-                                        dir += " OUT";
+                 dir = "OUT";
         break;
       default:
-        ;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-      break;
-    case K_OUT:
-      jj_consume_token(K_OUT);
-                 dir = "OUT";
-      break;
-    default:
-      jj_consume_token(-1);
-      throw new ParseException();
     }
       {if (true) return dir;}
     throw new Error("Missing return statement in function");
   }
 
   final public String OracleObjectName() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case S_IDENTIFIER:
-      jj_consume_token(S_IDENTIFIER);
+ String keyword=null;
+    if (jj_2_11(2)) {
+      keyword = keywords();
+                          {if (true) return keyword;}
+    } else {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case S_IDENTIFIER:
+        jj_consume_token(S_IDENTIFIER);
                       {if (true) return token.image;}
-      break;
-    case S_QUOTED_IDENTIFIER:
-      jj_consume_token(S_QUOTED_IDENTIFIER);
+        break;
+      case S_QUOTED_IDENTIFIER:
+        jj_consume_token(S_QUOTED_IDENTIFIER);
                               {if (true) return removeQuotes(token.image);}
-      break;
-    default:
-      jj_consume_token(-1);
-      throw new ParseException();
+        break;
+      default:
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
     }
     throw new Error("Missing return statement in function");
   }
@@ -2629,6 +3249,398 @@ Token rangeEnd = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
+  private boolean jj_2_2(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_2(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_3(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_3(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_4(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_4(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_5(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_5(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_6(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_6(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_7(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_7(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_8(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_8(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_9(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_9(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_10(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_10(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_2_11(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_11(); }
+    catch(LookaheadSuccess ls) { return true; }
+  }
+
+  private boolean jj_3R_76() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_61() {
+    if (jj_scan_token(K_DAY)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_84()) jj_scanpos = xsp;
+    if (jj_scan_token(R_TO)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_51() {
+    if (jj_scan_token(K_NATIONAL)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(138)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(137)) return true;
+    }
+    xsp = jj_scanpos;
+    if (jj_scan_token(213)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_79()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_57() {
+    if (jj_3R_80()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_scan_token(K_INTERVAL)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_61()) {
+    jj_scanpos = xsp;
+    if (jj_3R_62()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_75() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23() {
+    if (jj_scan_token(K_DATE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_22() {
+    if (jj_scan_token(K_BOOLEAN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_60() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_50() {
+    if (jj_scan_token(K_NVARCHAR2)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_76()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_12() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) {
+    jj_scanpos = xsp;
+    if (jj_3R_57()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_74() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_59() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_83() {
+    if (jj_scan_token(O_COMMA)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21() {
+    if (jj_scan_token(K_RAW)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_60()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_49() {
+    if (jj_scan_token(K_NVARCHAR)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_75()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_56() {
+    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_55() {
+    if (jj_scan_token(S_IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_11()) {
+    jj_scanpos = xsp;
+    if (jj_3R_55()) {
+    jj_scanpos = xsp;
+    if (jj_3R_56()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_73() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_54() {
+    if (jj_scan_token(K_OUT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_10() {
+    if (jj_scan_token(R_IN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_9()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_scan_token(K_LONG)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(188)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_59()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_9() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_54()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_48() {
+    if (jj_scan_token(K_NCHAR)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(213)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_74()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_71() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    if (jj_3R_11()) return true;
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_69() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_47() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(213)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_73()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_82() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(9)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(35)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_72() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_46() {
+    if (jj_scan_token(K_VARCHAR2)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(213)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_71()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_72()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_67() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_70() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_58() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_82()) jj_scanpos = xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_83()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_scan_token(O_CLOSEPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_45() {
+    if (jj_scan_token(K_VARCHAR)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(213)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_69()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_70()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(170)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(171)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(146)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(145)) return true;
+    }
+    }
+    }
+    xsp = jj_scanpos;
+    if (jj_3R_58()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_18() {
+    if (jj_scan_token(K_SIGNTYPE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(K_POSITIVE)) return true;
+    return false;
+  }
+
   private boolean jj_3R_16() {
     if (jj_scan_token(K_NATURAL)) return true;
     return false;
@@ -2644,12 +3656,12 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_24() {
-    if (jj_scan_token(K_INTERVAL)) return true;
+  private boolean jj_3R_13() {
+    if (jj_scan_token(K_BINARY_INTEGER)) return true;
     return false;
   }
 
-  private boolean jj_3R_11() {
+  private boolean jj_3R_7() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_13()) {
@@ -2773,78 +3785,79 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(K_BINARY_INTEGER)) return true;
+  private boolean jj_3R_80() {
+    if (jj_3R_11()) return true;
     return false;
   }
 
-  private boolean jj_3R_23() {
-    if (jj_scan_token(K_DATE)) return true;
+  private boolean jj_3R_68() {
+    if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
-  private boolean jj_3R_22() {
-    if (jj_scan_token(K_BOOLEAN)) return true;
+  private boolean jj_3_7() {
+    if (jj_3R_9()) return true;
     return false;
   }
 
-  private boolean jj_3R_12() {
-    if (jj_3R_53()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_50() {
-    if (jj_scan_token(K_NVARCHAR2)) return true;
+  private boolean jj_3R_66() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
     return false;
   }
 
   private boolean jj_3R_44() {
     if (jj_scan_token(K_CHAR)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(213)) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_67()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_68()) jj_scanpos = xsp;
     return false;
   }
 
   private boolean jj_3R_43() {
     if (jj_scan_token(K_DOUBLE)) return true;
+    if (jj_scan_token(K_PRECISION)) return true;
     return false;
   }
 
-  private boolean jj_3R_21() {
-    if (jj_scan_token(K_RAW)) return true;
+  private boolean jj_3_4() {
+    if (jj_scan_token(K_CONSTANT)) return true;
     return false;
   }
 
-  private boolean jj_3R_49() {
-    if (jj_scan_token(K_NVARCHAR)) return true;
+  private boolean jj_3R_42() {
+    if (jj_scan_token(K_UROWID)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_66()) jj_scanpos = xsp;
     return false;
   }
 
-  private boolean jj_3R_55() {
-    if (jj_scan_token(S_QUOTED_IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_54() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
+  private boolean jj_3_8() {
+    if (jj_scan_token(K_NOCOPY)) return true;
     return false;
   }
 
   private boolean jj_3R_53() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_54()) {
-    jj_scanpos = xsp;
-    if (jj_3R_55()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_42() {
-    if (jj_scan_token(K_UROWID)) return true;
+    if (jj_3_4()) jj_scanpos = xsp;
+    if (jj_3R_78()) return true;
     return false;
   }
 
   private boolean jj_3R_41() {
     if (jj_scan_token(K_ROWID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_scan_token(R_EXCEPTION)) return true;
     return false;
   }
 
@@ -2878,17 +3891,13 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_7() {
-    if (jj_scan_token(S_IDENTIFIER)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(142)) jj_scanpos = xsp;
-    if (jj_3R_8()) return true;
+  private boolean jj_3R_34() {
+    if (jj_scan_token(K_SIMPLE_INTEGER)) return true;
     return false;
   }
 
-  private boolean jj_3R_34() {
-    if (jj_scan_token(K_SIMPLE_INTEGER)) return true;
+  private boolean jj_3R_79() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
     return false;
   }
 
@@ -2897,8 +3906,25 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3R_8() {
+    if (jj_3R_11()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_5()) {
+    jj_scanpos = xsp;
+    if (jj_3R_53()) return true;
+    }
+    return false;
+  }
+
   private boolean jj_3R_32() {
     if (jj_scan_token(K_MLSLABEL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_65() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
     return false;
   }
 
@@ -2907,23 +3933,16 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_20() {
-    if (jj_scan_token(K_LONG)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_48() {
-    if (jj_scan_token(K_NCHAR)) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_7()) return true;
+  private boolean jj_3_3() {
+    if (jj_3R_8()) return true;
     return false;
   }
 
   private boolean jj_3R_30() {
     if (jj_scan_token(K_FLOAT)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_65()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2942,33 +3961,59 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_10() {
-    if (jj_3R_12()) return true;
+  private boolean jj_3R_63() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    if (jj_scan_token(S_NUMBER)) return true;
     return false;
   }
 
-  private boolean jj_3R_9() {
-    if (jj_3R_11()) return true;
+  private boolean jj_3R_81() {
+    if (jj_3R_80()) return true;
     return false;
   }
 
-  private boolean jj_3R_47() {
+  private boolean jj_3_6() {
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_85() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_77() {
     if (jj_scan_token(K_CHARACTER)) return true;
+    if (jj_scan_token(K_SET)) return true;
     return false;
   }
 
-  private boolean jj_3R_8() {
+  private boolean jj_3R_64() {
+    if (jj_scan_token(R_WITH)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_9()) {
+    if (jj_scan_token(161)) jj_scanpos = xsp;
+    if (jj_scan_token(K_TIME)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_78() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_6()) {
     jj_scanpos = xsp;
-    if (jj_3R_10()) return true;
+    if (jj_3R_81()) return true;
     }
     return false;
   }
 
   private boolean jj_3R_26() {
     if (jj_scan_token(K_TIMESTAMP)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_63()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_64()) jj_scanpos = xsp;
     return false;
   }
 
@@ -2977,49 +4022,293 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3R_52() {
-    if (jj_scan_token(K_CLOB)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_46() {
-    if (jj_scan_token(K_VARCHAR2)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_45() {
-    if (jj_scan_token(K_VARCHAR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_19() {
+  private boolean jj_3R_62() {
+    if (jj_scan_token(K_YEAR)) return true;
     Token xsp;
     xsp = jj_scanpos;
+    if (jj_3R_85()) jj_scanpos = xsp;
+    if (jj_scan_token(R_TO)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_52() {
+    if (jj_scan_token(K_CLOB)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_77()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_10() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(128)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(129)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(130)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(131)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(132)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(133)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(134)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(135)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(136)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(137)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(138)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(139)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(140)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(141)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(142)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(143)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(144)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(145)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(146)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(147)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(148)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(149)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(150)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(151)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(152)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(153)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(154)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(155)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(156)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(157)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(158)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(159)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(160)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(161)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(162)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(163)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(164)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(165)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(166)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(167)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(168)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(169)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(170)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(171)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(172)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(173)) {
+    jj_scanpos = xsp;
     if (jj_scan_token(174)) {
     jj_scanpos = xsp;
     if (jj_scan_token(175)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(148)) {
+    if (jj_scan_token(176)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(147)) return true;
+    if (jj_scan_token(177)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(178)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(179)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(180)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(181)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(182)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(183)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(184)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(185)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(186)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(187)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(188)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(189)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(190)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(191)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(192)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(193)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(194)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(195)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(196)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(197)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(198)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(199)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(200)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(201)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(202)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(203)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(204)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(205)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(206)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(207)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(208)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(209)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(210)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(211)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(212)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(213)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(214)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(215)) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
     }
     }
     }
     return false;
   }
 
-  private boolean jj_3R_18() {
-    if (jj_scan_token(K_SIGNTYPE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_51() {
-    if (jj_scan_token(K_NATIONAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_17() {
-    if (jj_scan_token(K_POSITIVE)) return true;
+  private boolean jj_3R_84() {
+    if (jj_scan_token(O_OPENPAREN)) return true;
     return false;
   }
 

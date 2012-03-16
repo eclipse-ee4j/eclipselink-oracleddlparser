@@ -278,4 +278,33 @@ public class ProcedureDDLTestSuite {
             arg1.getDirection() == INOUT);
     }
 
+    static final String PROCEDURE_W_KEYWORDS = "KEYWORDSP";
+    static final String IN_ARG1 = "OPERATOR";
+    static final String IN_ARG2 = "TIMESTAMP";
+    static final String CREATE_PROCEDURE_W_KEYWORDS =
+        CREATE_PROCEDURE_PREFIX + PROCEDURE_W_KEYWORDS +
+            " ( " + IN_ARG1 + " IN VARCHAR2, " +
+                    IN_ARG2 + " IN DATE" +
+            ") AS " +
+        "BEGIN " +
+            "null;" +
+        "END";
+    @Test
+    public void testProcedure_With_Keyword() {
+        parser.ReInit(new StringReader(CREATE_PROCEDURE_W_KEYWORDS));
+        boolean worked = true;
+        String message = "";
+        ProcedureType procedureType = null;
+        try {
+            procedureType = parser.parseTopLevelProcedure();
+        }
+        catch (ParseException pe) {
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("procedure with keywords did not parse:\n" + message, worked);
+        assertEquals("incorrect procedure name " + PROCEDURE_W_KEYWORDS,
+            PROCEDURE_W_KEYWORDS, procedureType.getProcedureName());
+    }
+
 }
