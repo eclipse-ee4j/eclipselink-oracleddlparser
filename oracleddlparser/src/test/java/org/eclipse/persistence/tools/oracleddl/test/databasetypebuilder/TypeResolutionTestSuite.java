@@ -20,7 +20,7 @@ import java.util.List;
 //JUnit4 imports
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
+//import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -274,8 +274,7 @@ public class TypeResolutionTestSuite {
 
     }
 
-    //@Test
-    @Ignore
+    @Test
     public void testUnresolvedTypeResolution() throws ParseException {
         assertEquals("incorrect procedure name", DDLRESOLVTEST_PACKAGE , ddlresolvtestPackage.getPackageName());
         UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
@@ -346,8 +345,7 @@ public class TypeResolutionTestSuite {
             0, visitor.getUnresolvedTypes().size());
     }
 
-    //@Test
-    @Ignore
+    @Test
     public void testTableTypeRefersToGlobalTypes() {
         boolean worked = true;
         String msg = null;
@@ -366,8 +364,7 @@ public class TypeResolutionTestSuite {
             0, visitor.getUnresolvedTypes().size());
     }
 
-    //@Test
-    @Ignore
+    @Test
     public void testPLSQLRecordTypeRefersToDifferentPackage() {
         boolean worked = true;
         String msg = null;

@@ -729,6 +729,14 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
     ) [ <R_CONSTRAINT> <S_QUOTED_IDENTIFIER> ]
     {
       if (s != null) {
+          if (s.contains(".")) {
+              int dotIdx = s.indexOf(".");
+              String namePart1 = s.substring(0, dotIdx);
+              String namePart2 = s.substring(dotIdx+1, s.length());
+              if (enclosingType.isTableType()) {
+                 if (((TableType)enclosingType).getSchema().equals(namePart1)) {
+                     s = namePart2;                 }
+              }          }
           for (String typeName : localTypes.keySet()) {
               if (typeName.equals(s)) {
                   dt = localTypes.get(s);

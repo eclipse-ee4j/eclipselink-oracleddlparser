@@ -504,7 +504,8 @@ public class DatabaseTypeBuilder {
     	List<String> percentNameList = new ArrayList<String>();
     	List<String> nonPercentNameList = new ArrayList<String>();
         for (UnresolvedType uType : unresolvedTypes) {
-        	if (uType.getTypeName().contains(PERCENT)) {
+            CompositeDatabaseType owningType = uType.getOwningType();
+        	if (owningType != null && (owningType.isTYPEType() || owningType.isROWTYPEType())) {
         		if (!percentNameList.contains(uType.getTypeName())) {
         			percentNameList.add(uType.getTypeName());
         		}
@@ -573,17 +574,21 @@ public class DatabaseTypeBuilder {
 				if (owningType.isROWTYPEType()) {
 	                ROWTYPEType rType = (ROWTYPEType)owningType;
 	                String tableName = rType.getTypeName();
+	                if (tableName.contains(ROWTYPE_MACRO)) {
+	                    int idx = tableName.indexOf(ROWTYPE_MACRO);
+	                    tableName = tableName.substring(0,idx);
+	                }
 	                resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(tableName);
 	                if (resolvedType == null) {
 	                    TableType tableType = null;
-	                    List<TableType> tables = buildTables(conn, null, tableName, false);
+	                    List<TableType> tables = buildTables(conn, schemaPattern, tableName, false);
 	                    if (tables != null && tables.size() > 0) {
 	                        tableType = tables.get(0);
 	                        typesRepository.setDatabaseType(tableType.getTableName(), tableType);
 	                        rType.setEnclosedType(tableType);
-	                        uType.getOwningType().setEnclosedType(rType);
 	                        typesRepository.setDatabaseType(rType.getTypeName(), rType);
 	                    }
+                        resolvedType = tableType;
 	                    // always a chance that tableType has some unresolved column type
 	                    if (tableType != null && !tableType.isResolved()) {
 	                        UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
