@@ -3052,8 +3052,8 @@ Token rangeEnd = null;
           else if ("IN OUT".equals(direction)) {
               argDirection = ArgumentTypeDirection.INOUT;
           }
-          argumentType.setDirection(argDirection);
       }
+      argumentType.setDirection(argDirection);
       if (defaultAssignment) {
           argumentType.setOptional();
       }

@@ -1529,8 +1529,8 @@ void argument(ProcedureType procedureType) :
               argDirection = ArgumentTypeDirection.OUT;
           }
           else if ("IN OUT".equals(direction)) {
-              argDirection = ArgumentTypeDirection.INOUT;          }
-          argumentType.setDirection(argDirection);      }      if (defaultAssignment) {
+              argDirection = ArgumentTypeDirection.INOUT;          }      }
+      argumentType.setDirection(argDirection);      if (defaultAssignment) {
           argumentType.setOptional();      }
       procedureType.addArgument(argumentType);
     }
