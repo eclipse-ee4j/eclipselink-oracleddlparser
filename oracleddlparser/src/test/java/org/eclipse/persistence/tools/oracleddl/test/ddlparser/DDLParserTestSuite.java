@@ -27,6 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
     FunctionDDLTestSuite.class,
     ProcedureDDLTestSuite.class,
     PackageDDLTestSuite.class,
+    StronglyTypedCursorDDLTestSuite.class,
     TableDDLTestSuite.class,
     TypeDDLTestSuite.class
 })

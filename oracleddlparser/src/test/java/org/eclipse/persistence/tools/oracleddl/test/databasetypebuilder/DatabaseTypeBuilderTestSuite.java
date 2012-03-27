@@ -34,6 +34,7 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.buildConne
     ConstraintsTableDDLTestSuite.class,
     MixedCaseObjectTableTypeTestSuite.class,
     IOTTableDDLTestSuite.class,
+    PackagewStronglyTypedCursorDDLTestSuite.class,
     ProcedureDDLTestSuite.class,
     TableDDLTestSuite.class,
     TransformsTestSuite.class,
