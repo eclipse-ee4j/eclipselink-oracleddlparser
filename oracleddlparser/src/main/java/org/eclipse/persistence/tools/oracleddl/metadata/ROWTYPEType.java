@@ -25,9 +25,6 @@ public class ROWTYPEType extends CompositeDatabaseTypeWithEnclosedType implement
     }
 
     public String getTypeName() {
-        if (isResolved()) {
-            return enclosedType.getTypeName();
-        }
         return typeName;
     }
     
