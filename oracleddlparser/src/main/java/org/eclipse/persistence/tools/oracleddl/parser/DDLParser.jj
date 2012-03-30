@@ -809,7 +809,10 @@ void variableDeclaration(PLSQLPackageType packageType):
     {
         FieldType variable = new FieldType(varName);
         variable.setEnclosedType(varType);
-        packageType.addLocalVariable(variable);    }}
+        packageType.addLocalVariable(variable);
+        if (varType.isROWTYPEType()) {
+            ((ROWTYPEType)varType).setPackageType(packageType);
+        }    }}
 
 void variableDefaultAssignment():
 {}
@@ -1223,12 +1226,51 @@ void typeDeclaration(PLSQLPackageType packageType) :
 }
 
 void aTypeDeclaration(PLSQLPackageType packageType, String typeName) :
-{}
+{String spec = null;
+ String anchoredTypeName = null;
+ boolean isTYPEType = false;
+ boolean isROWTYPEType = false;
+}
 {
-    recordDeclaration(packageType, typeName)
+      LOOKAHEAD(2)
+      recordDeclaration(packageType, typeName)
     | plsqlTableDeclaration(packageType, typeName)
-    | varrayDeclaration(packageType)
-    | refCursorDeclaration(packageType, typeName)
+    | LOOKAHEAD(2) varrayDeclaration(packageType)
+    | LOOKAHEAD(2) refCursorDeclaration(packageType, typeName)
+    | LOOKAHEAD(2)
+      spec=columnSpec()
+      (
+        <R_ANCHORED_TYPE>
+          {
+            isTYPEType=true;
+            anchoredTypeName = spec + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
+          }
+        |
+        <R_ANCHORED_ROWTYPE>
+          {
+            isROWTYPEType =true;
+            anchoredTypeName = spec + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
+          }      )
+      {
+         DatabaseType dataType = null;
+         UnresolvedType uType = new UnresolvedType(anchoredTypeName);
+         if (isTYPEType) {
+             TYPEType tType = new TYPEType(anchoredTypeName);
+             tType.setEnclosedType(uType);
+             uType.setOwningType(tType);
+             dataType = tType;
+         }
+         else if (isROWTYPEType) {
+             ROWTYPEType rType = new ROWTYPEType(anchoredTypeName);
+             rType.setEnclosedType(uType);
+             rType.setPackageType(packageType);
+             uType.setOwningType(rType);
+             dataType = rType;
+         }
+         PLSQLType newType = new PLSQLType(typeName);
+         newType.setEnclosedType(dataType);
+         packageType.addType(newType);
+         localTypes.put(typeName, newType);      }
 }
 
 void recordDeclaration(PLSQLPackageType packageType, String typeName) :
@@ -1289,6 +1331,9 @@ Token rangeEnd = null;}
       newPLSQLSubType.setEnclosedType(subtype);
       if (subtype instanceof UnresolvedType) {
           ((UnresolvedType)subtype).setOwningType(newPLSQLSubType);      }
+      if (subtype.isROWTYPEType()) {
+         ((ROWTYPEType)subtype).setPackageType(packageType);
+      }
       packageType.addType(newPLSQLSubType);
       if (notNull != null) {
           newPLSQLSubType.setNotNull(true);      }
@@ -1400,52 +1445,54 @@ void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType)
       ]
     {
       //check local variables first
-          for (FieldType varField : packageType.getLocalVariables()) {
-              if (spec.equals(varField.getFieldName())) {
-              if (isTYPEType) {
-                  TYPEType tType = new TYPEType(s);
-                  UnresolvedType uType = new UnresolvedType(s);
-                  tType.setEnclosedType(uType);
-                  uType.setOwningType(tType);
-                  localType = tType;
-              }
-              else if (isROWTYPEType) {
-                  ROWTYPEType rType = new ROWTYPEType(s);
-                  UnresolvedType uType = new UnresolvedType(s);
-                  rType.setEnclosedType(uType);
-                  uType.setOwningType(rType);
-                  localType = rType;
-              }
-              else {
-                  localType = varField.getEnclosedType();              }
-              cursorType.setEnclosedType(localType);
-                  break;
-              }
+      for (FieldType varField : packageType.getLocalVariables()) {
+          if (spec.equals(varField.getFieldName())) {
+	          if (isTYPEType) {
+	              TYPEType tType = new TYPEType(s);
+	              UnresolvedType uType = new UnresolvedType(s);
+	              tType.setEnclosedType(uType);
+	              uType.setOwningType(tType);
+	              localType = tType;
+	          }
+	          else if (isROWTYPEType) {
+	              ROWTYPEType rType = new ROWTYPEType(s);
+	              rType.setPackageType(packageType);
+	              UnresolvedType uType = new UnresolvedType(s);
+	              rType.setEnclosedType(uType);
+	              uType.setOwningType(rType);
+	              localType = rType;
+	          }
+	          else {
+	              localType = varField.getEnclosedType();	          }
+	          cursorType.setEnclosedType(localType);
+              break;
           }
+      }
       if (localType == null) {
           localType = localTypes.get(spec);
           if (localType == null) {
-                  UnresolvedType uType = new UnresolvedType(spec);
-                  if (isTYPEType) {
-                      TYPEType tType = new TYPEType(s);
-                      tType.setEnclosedType(uType);
-                      uType.setOwningType(tType);
-                      cursorType.setEnclosedType(tType);
-                  }
-                  else if (isROWTYPEType) {
-                      ROWTYPEType rType = new ROWTYPEType(s);
-                      rType.setEnclosedType(uType);
-                      uType.setOwningType(rType);
-                      cursorType.setEnclosedType(rType);
-                  }
-                  else {
-                      uType.setOwningType(cursorType);
-                      cursorType.setEnclosedType(uType);
-                  }
+              UnresolvedType uType = new UnresolvedType(spec);
+              if (isTYPEType) {
+                  TYPEType tType = new TYPEType(s);
+                  tType.setEnclosedType(uType);
+                  uType.setOwningType(tType);
+                  cursorType.setEnclosedType(tType);
+              }
+              else if (isROWTYPEType) {
+                  ROWTYPEType rType = new ROWTYPEType(s);
+                  rType.setEnclosedType(uType);
+                  rType.setPackageType(packageType);
+                  uType.setOwningType(rType);
+                  cursorType.setEnclosedType(rType);
               }
               else {
-                  cursorType.setEnclosedType(localType);             }
-          }    }
+                  uType.setOwningType(cursorType);
+                  cursorType.setEnclosedType(uType);
+              }
+          }
+          else {
+              cursorType.setEnclosedType(localType);         }
+      }    }
 }
 
 void cursorDeclaration(PLSQLPackageType packageType) :
@@ -1467,6 +1514,12 @@ void procedureSpec(PLSQLPackageType packageType) :
         [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ]
     <O_SEMICOLON>
     {      packageType.addProcedure(procedureType);
+      for (ArgumentType argumentType : procedureType.getArguments()) {
+          DatabaseType databaseType = argumentType.getEnclosedType();
+          if (databaseType.isROWTYPEType()) {
+              ((ROWTYPEType)databaseType).setPackageType(packageType);
+          }
+      }
     }
 }
 
@@ -1496,6 +1549,15 @@ void functionSpec(PLSQLPackageType packageType) :
     {
       functionType.setReturnArgument(returnDataType);
       packageType.addProcedure(functionType);
+      for (ArgumentType argumentType : functionType.getArguments()) {
+          DatabaseType databaseType = argumentType.getEnclosedType();
+          if (databaseType.isROWTYPEType()) {
+              ((ROWTYPEType)databaseType).setPackageType(packageType);
+          }
+      }
+      if (returnDataType.getEnclosedType().isROWTYPEType()) {
+          ((ROWTYPEType)returnDataType.getEnclosedType()).setPackageType(packageType);
+      }
     }
 }
 

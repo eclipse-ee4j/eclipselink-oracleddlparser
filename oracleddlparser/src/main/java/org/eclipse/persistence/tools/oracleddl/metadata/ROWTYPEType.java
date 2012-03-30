@@ -18,6 +18,8 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 
 public class ROWTYPEType extends CompositeDatabaseTypeWithEnclosedType implements CompositeDatabaseType, DatabaseTypeVisitable {
 
+    protected PLSQLPackageType packageType;
+    
     public ROWTYPEType(String typeName) {
         super(typeName);
     }
@@ -27,6 +29,13 @@ public class ROWTYPEType extends CompositeDatabaseTypeWithEnclosedType implement
             return enclosedType.getTypeName();
         }
         return typeName;
+    }
+    
+    public PLSQLPackageType getPackageType() {
+        return packageType;
+    }
+    public void setPackageType(PLSQLPackageType packageType) {
+        this.packageType = packageType;
     }
 
     public boolean isResolved() {
@@ -65,7 +74,7 @@ public class ROWTYPEType extends CompositeDatabaseTypeWithEnclosedType implement
         return sb.toString();
     }
 
-	public void accept(DatabaseTypeVisitor visitor) {
-		visitor.visit(this);
-	}
+    public void accept(DatabaseTypeVisitor visitor) {
+        visitor.visit(this);
+    }
 }
