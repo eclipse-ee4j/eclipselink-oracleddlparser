@@ -206,7 +206,7 @@ public class PackagewStronglyTypedCursorDDLTestSuite {
         assertNotNull(enclosedType2);
         assertTrue(enclosedType2.isROWTYPEType());
         ROWTYPEType rowType = (ROWTYPEType)enclosedType2;
-        assertEquals("incorrect cursor %ROWTYPE name", "TABLE STRC_TABLE", rowType.getTypeName());
+        assertEquals("incorrect cursor %ROWTYPE name", STRONGLY_TYPED_REF_CURSOR_TABLE + "%ROWTYPE", rowType.getTypeName());
         DatabaseType enclosedType3 = rowType.getEnclosedType();
         assertTrue(enclosedType3.isTableType());
         TableType tableType = (TableType)enclosedType3;
