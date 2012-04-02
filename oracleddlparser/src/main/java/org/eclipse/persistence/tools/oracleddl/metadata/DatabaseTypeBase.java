@@ -23,8 +23,11 @@ public abstract class DatabaseTypeBase extends DatabaseTypeTestableBase implemen
 	public String getTypeName() {
 		return typeName;
 	}
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
 
-	public boolean isResolved() {
+    public boolean isResolved() {
 		return true;
 	}
 

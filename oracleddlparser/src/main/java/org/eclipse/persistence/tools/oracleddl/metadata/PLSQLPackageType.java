@@ -43,9 +43,12 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
     public String getPackageName() {
         return packageName;
     }
-
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+    //actually setting packageName
+    public void setTypeName(String typeName) {
+        setPackageName(typeName);
     }
 
     /**

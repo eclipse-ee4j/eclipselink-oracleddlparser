@@ -17,6 +17,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 public interface DatabaseType extends DatabaseTypeScalarTestable, DatabaseTypeCompositeTestable {
 
     public String getTypeName();
+    public void setTypeName(String typeName);
 
     public boolean isResolved();
 

@@ -24,6 +24,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     AnchoredTypesTestSuite.class,
     CaseSensitivePackageTestSuite.class,
+    ExtraSchemaNameDDLTestSuite.class,
     FunctionDDLTestSuite.class,
     ProcedureDDLTestSuite.class,
     PackageDDLTestSuite.class,

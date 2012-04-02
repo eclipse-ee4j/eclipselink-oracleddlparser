@@ -26,6 +26,7 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
     protected String procedureName;
     protected String schema;
     protected int overload; // Oracle support overloading - which number is this procedure
+    protected PLSQLPackageType parentType =  null; //procedure can be TOPLEVEL or in a package
     protected List<ArgumentType> arguments = new ArrayList<ArgumentType>();
 
     public ProcedureType(String procedureName) {
@@ -42,6 +43,9 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
     }
 
     public String getSchema() {
+        if (parentType != null && schema == null) {
+            schema = parentType.getSchema();
+        }
         return schema;
     }
     public void setSchema(String schema) {
@@ -60,6 +64,13 @@ public class ProcedureType extends CompositeDatabaseTypeBase implements Composit
     }
     public void setOverload(int overload) {
         this.overload = overload;
+    }
+
+    public PLSQLPackageType getParentType() {
+        return parentType;
+    }
+    public void setParentType(PLSQLPackageType parentType) {
+        this.parentType = parentType;
     }
 
     public DatabaseType getEnclosedType() {

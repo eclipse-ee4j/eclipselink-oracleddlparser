@@ -29,6 +29,10 @@ public class FieldType extends DatabaseTypeTestableBase implements CompositeData
     public String getFieldName() {
         return fieldName;
     }
+    //actually setting fieldName
+    public void setTypeName(String typeName) {
+        this.fieldName = typeName;
+    }
 
     public DatabaseType getEnclosedType() {
         return enclosedType;

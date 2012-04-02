@@ -113,6 +113,7 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*
 /*@egen*/
 
     protected Map<String, DatabaseType> localTypes = new HashMap<String, DatabaseType>();
+    protected List<String> schemaPatterns = null;
 
     protected DatabaseTypesRepository typesRepository = new DatabaseTypesRepository();
 
@@ -126,6 +127,9 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*
     public DatabaseTypesRepository getTypesRepository() {
         return typesRepository;
     }
+
+    public void setSchemaPatterns(List<String> schemaPatterns) {
+        this.schemaPatterns = schemaPatterns;    }
 
     protected String removeQuotes(String quotedString) {
         return quotedString.substring(1, quotedString.length() - 1);
@@ -570,7 +574,7 @@ FunctionType parseTopLevelFunction():
           if (schema != null) {
               functionType.setSchema(schema);
           }      }
-    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] returnType=functionReturnSpec() as()
+    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] returnType=functionReturnSpec(functionType) as()
     skipToEnd()
     {
       functionType.setReturnArgument(returnType);
@@ -1510,7 +1514,8 @@ void procedureSpec(PLSQLPackageType packageType) :
     <R_PROCEDURE> procedureName=OracleObjectName()         {
             procedureType = new ProcedureType(procedureName);
             procedureType.setCatalogName(packageType.getPackageName());
-            procedureType.setSchema(packageType.getSchema());        }
+            procedureType.setSchema(packageType.getSchema());
+            procedureType.setParentType(packageType);        }
         [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ]
     <O_SEMICOLON>
     {      packageType.addProcedure(procedureType);
@@ -1541,9 +1546,10 @@ void functionSpec(PLSQLPackageType packageType) :
             functionType = new FunctionType(functionName);
             functionType.setCatalogName(packageType.getPackageName());
             functionType.setSchema(packageType.getSchema());
+            functionType.setParentType(packageType);
         }
         [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ]
-        returnDataType = functionReturnSpec()
+        returnDataType = functionReturnSpec(functionType)
         [ <K_DETERMINISTIC> | <K_PIPELINED> | <K_PARALLEL_ENABLE> | <K_RESULT_CACHE> ]
     <O_SEMICOLON>
     {
@@ -1561,12 +1567,29 @@ void functionSpec(PLSQLPackageType packageType) :
     }
 }
 
-ArgumentType functionReturnSpec():
+ArgumentType functionReturnSpec(FunctionType functionType):
 {DatabaseType dataType = null;}{    (<K_RETURN> dataType=typeSpec())
     {
       ArgumentType returnType = new ArgumentType(null);
       returnType.setDirection(ArgumentTypeDirection.RETURN);
-      returnType.setEnclosedType(dataType);
+      if (dataType.getTypeName().contains(".")) {
+          String dataTypeName = dataType.getTypeName();
+          int dotIdx = dataTypeName.indexOf(".");
+          String namePart1 = dataTypeName.substring(0, dotIdx);
+          String namePart2 = dataTypeName.substring(dotIdx+1, dataTypeName.length());
+          if (namePart1.equals(functionType.getSchema())) {
+              dataType.setTypeName(namePart2);
+          }
+          else if (schemaPatterns != null) {
+              for (String possibleSchemaName : schemaPatterns) {
+                  if (namePart1.equals(possibleSchemaName)) {
+                      dataType.setTypeName(namePart2);
+                      break;
+                  }
+              }
+          }
+      }
+      returnType.setEnclosedType(dataType);   
       if (dataType instanceof UnresolvedType) {
           ((UnresolvedType)dataType).setOwningType(returnType);      }
       return returnType;
@@ -1585,6 +1608,20 @@ void argument(ProcedureType procedureType) :
     s=OracleObjectName() [ LOOKAHEAD(2) (direction=direction()) ]
         [  LOOKAHEAD(2) <K_NOCOPY> ] argumentDataType=typeSpec() [ defaultAssignment=argumentDefaultAssignment() ]
     {
+      if (argumentDataType.getTypeName().contains(".")) {
+          String argumentDataTypeName = argumentDataType.getTypeName();
+          int dotIdx = argumentDataTypeName.indexOf(".");
+          String namePart1 = argumentDataTypeName.substring(0, dotIdx);
+          String namePart2 = argumentDataTypeName.substring(dotIdx+1, argumentDataTypeName.length());
+          if (namePart1.equals(procedureType.getSchema())) {
+              argumentDataType.setTypeName(namePart2);          }
+          else if (schemaPatterns != null) {
+              for (String possibleSchemaName : schemaPatterns) {
+                  if (namePart1.equals(possibleSchemaName)) {
+                      argumentDataType.setTypeName(namePart2);
+                      break;
+                  }              }
+          }      }
       argumentType = new ArgumentType(s);
       argumentType.setEnclosedType(argumentDataType);
       if (argumentDataType instanceof UnresolvedType) {

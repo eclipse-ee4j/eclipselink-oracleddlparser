@@ -31,6 +31,10 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
     public String getArgumentName() {
         return argumentName;
     }
+    //actually setting argumentName
+    public void setTypeName(String typeName) {
+        this.argumentName = typeName;
+    }
 
     public DatabaseType getEnclosedType() {
         return enclosedType;

@@ -153,7 +153,7 @@ public class DatabaseTypeBuilder {
                 distinctDDLs.addAll(ddls);
                 tableTypes = new ArrayList<TableType>();
                 for (String ddl : distinctDDLs) {
-                    DDLParser parser = newDDLParser(ddl);
+                    DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     TableType tableType = parser.parseTable();
                     if (tableType != null) {
                         tableTypes.add(tableType);
@@ -204,7 +204,7 @@ public class DatabaseTypeBuilder {
                 distinctDDLs.addAll(ddls);
                 packageTypes = new ArrayList<PLSQLPackageType>();
                 for (String ddl : distinctDDLs) {
-                    DDLParser parser = newDDLParser(ddl);
+                    DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     PLSQLPackageType packageType = parser.parsePLSQLPackage();
                     if (packageType != null) {
                         packageTypes.add(packageType);
@@ -255,7 +255,7 @@ public class DatabaseTypeBuilder {
                 distinctDDLs.addAll(ddls);
                 procedureTypes = new ArrayList<ProcedureType>();
                 for (String ddl : distinctDDLs) {
-                    DDLParser parser = newDDLParser(ddl);
+                    DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     ProcedureType procedureType = parser.parseTopLevelProcedure();
                     if (procedureType != null) {
                         procedureTypes.add(procedureType);
@@ -306,7 +306,7 @@ public class DatabaseTypeBuilder {
                 distinctDDLs.addAll(ddls);
                 functionsTypes = new ArrayList<FunctionType>();
                 for (String ddl : distinctDDLs) {
-                    DDLParser parser = newDDLParser(ddl);
+                    DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     FunctionType functionType = parser.parseTopLevelFunction();
                     if (functionType != null) {
                         functionsTypes.add(functionType);
@@ -357,7 +357,7 @@ public class DatabaseTypeBuilder {
                 distinctDDLs.addAll(ddls);
                 databaseTypes = new ArrayList<CompositeDatabaseType>();
                 for (String ddl : distinctDDLs) {
-                    DDLParser parser = newDDLParser(ddl);
+                    DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     CompositeDatabaseType databaseType = parser.parseType();
                     if (databaseType != null) {
                         databaseTypes.add(databaseType);
@@ -421,9 +421,10 @@ public class DatabaseTypeBuilder {
         return sb.toString();
     }
 
-    protected DDLParser newDDLParser(String ddl) {
+    protected DDLParser newDDLParser(String ddl, List<String> schemaPatterns) {
         DDLParser parser = new DDLParser(new StringReader(ddl));
         parser.setTypesRepository(new DatabaseTypesRepository());
+        parser.setSchemaPatterns(schemaPatterns);
         return parser;
     }
 

@@ -53,6 +53,9 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
     public String getTypeName() {
         return typeName;
     }
+    public void setTypeName(String typeName) {
+        //no-op: cant change name of enums
+    }
 
     public boolean isComposite() {
         return false;
