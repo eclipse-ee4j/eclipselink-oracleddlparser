@@ -15,7 +15,8 @@ package org.eclipse.persistence.tools.oracleddl.metadata;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitable;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisitor;
 
-public class FieldType extends DatabaseTypeTestableBase implements CompositeDatabaseType, DatabaseTypeVisitable {
+public class FieldType extends DatabaseTypeTestableBase implements Cloneable,
+    CompositeDatabaseType, DatabaseTypeVisitable {
 
     protected String fieldName;
     protected DatabaseType enclosedType;
@@ -155,6 +156,17 @@ public class FieldType extends DatabaseTypeTestableBase implements CompositeData
             return false;
         }
         return enclosedType.isVArrayType();
+    }
+    
+    @Override
+    public FieldType clone() {
+        try {
+            return (FieldType)super.clone();
+        }
+        catch (CloneNotSupportedException e){
+            return null;
+        
+        }
     }
 
     @Override

@@ -235,4 +235,9 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
         return false;
     }
 
+    @Override
+    public String toString() {
+        return typeName;
+    }
+
 }
