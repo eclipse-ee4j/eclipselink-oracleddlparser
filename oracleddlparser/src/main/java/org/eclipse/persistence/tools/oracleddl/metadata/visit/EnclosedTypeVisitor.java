@@ -36,29 +36,40 @@ public class EnclosedTypeVisitor extends BaseDatabaseTypeVisitor {
 
     protected List<CompositeDatabaseType> cTypes = new ArrayList<CompositeDatabaseType>();
 
+    /**
+     * Returns the list of types that were processed during visits
+     */
     public List<CompositeDatabaseType> getCompositeDatabaseTypes() {
         return cTypes;
     }
 
+    @Override
     public void endVisit(TableType databaseType) {
     	addType(databaseType);
     }
+    @Override
     public void endVisit(ObjectTableType databaseType) {
     	addType(databaseType);
     }
+    @Override
     public void endVisit(ObjectType databaseType) {
     	addType(databaseType);
     }
+    @Override
     public void endVisit(VArrayType databaseType) {
     	addType(databaseType);
     }
+    @Override
     public void endVisit(PLSQLCollectionType databaseType) {
     	addType(databaseType);
     }
+    @Override
     public void endVisit(PLSQLRecordType databaseType) {
     	addType(databaseType);
     }
+    @Override
     public void endVisit(ArgumentType databaseType) {
+    	// sometimes we get here with an ArgumentType instance - use the enclosed type in non-null
     	if (databaseType.getEnclosedType() != null && databaseType.getEnclosedType().isComposite()) {
     		addType((CompositeDatabaseType) databaseType.getEnclosedType());
     	}
