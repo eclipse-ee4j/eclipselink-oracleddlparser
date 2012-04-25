@@ -70,7 +70,7 @@ public class EnclosedTypeVisitor extends BaseDatabaseTypeVisitor {
     @Override
     public void endVisit(ArgumentType databaseType) {
     	// sometimes we get here with an ArgumentType instance - use the enclosed type in non-null
-    	if (databaseType.getEnclosedType() != null && databaseType.getEnclosedType().isComposite()) {
+    	if (databaseType.getEnclosedType() != null && databaseType.getEnclosedType().isComposite() && !databaseType.getEnclosedType().isROWTYPEType()) {
     		addType((CompositeDatabaseType) databaseType.getEnclosedType());
     	}
     }
