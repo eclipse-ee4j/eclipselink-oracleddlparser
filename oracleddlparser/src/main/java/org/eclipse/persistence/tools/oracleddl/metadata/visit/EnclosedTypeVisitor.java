@@ -19,9 +19,11 @@ import java.util.List;
 //DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
+import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.VArrayType;
@@ -68,9 +70,16 @@ public class EnclosedTypeVisitor extends BaseDatabaseTypeVisitor {
     	addType(databaseType);
     }
     @Override
+    public void visit(PLSQLCursorType databaseType) {
+    	addType(databaseType);
+    }
+    @Override
     public void endVisit(ArgumentType databaseType) {
-    	// sometimes we get here with an ArgumentType instance - use the enclosed type in non-null
-    	if (databaseType.getEnclosedType() != null && databaseType.getEnclosedType().isComposite() && !databaseType.getEnclosedType().isROWTYPEType()) {
+    	// sometimes we get here with an ArgumentType instance - use the enclosed type if non-null
+    	if (databaseType.getEnclosedType() != null 
+    			&& databaseType.getEnclosedType().isComposite() 
+    			&& !databaseType.getEnclosedType().isROWTYPEType()
+    			&& !databaseType.getEnclosedType().isPLSQLCursorType()) {
     		addType((CompositeDatabaseType) databaseType.getEnclosedType());
     	}
     }
