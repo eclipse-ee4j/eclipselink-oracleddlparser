@@ -736,7 +736,21 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
               if (enclosingType.isTableType()) {
                  if (((TableType)enclosingType).getSchema().equals(namePart1)) {
                      s = namePart2;                 }
-              }          }
+              } else if (enclosingType.isObjectTableType()) {
+                 if (((ObjectTableType)enclosingType).getSchema().equals(namePart1)) {
+                     s = namePart2;
+                 }
+              } else if (enclosingType.isObjectType()) {                 if (((ObjectType)enclosingType).getSchema().equals(namePart1)) {
+                     s = namePart2;                 }
+              } else if (enclosingType.isPLSQLType()) {
+                 if (((PLSQLType)enclosingType).getParentType().getSchema().equals(namePart1)) {
+                     s = namePart2;
+                 }
+              } else if (enclosingType.isVArrayType()) {
+                 if (((VArrayType)enclosingType).getSchema().equals(namePart1)) {
+                     s = namePart2;
+                 }
+              }           }
           for (String typeName : localTypes.keySet()) {
               if (typeName.equals(s)) {
                   dt = localTypes.get(s);
