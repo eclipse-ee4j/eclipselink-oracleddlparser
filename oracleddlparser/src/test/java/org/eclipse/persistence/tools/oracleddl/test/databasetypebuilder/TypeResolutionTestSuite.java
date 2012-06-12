@@ -53,6 +53,18 @@ import static org.eclipse.persistence.tools.oracleddl.test.TestHelper.runDdl;
 
 public class TypeResolutionTestSuite {
 
+    static final String CREATE_DDLRESOLVTEST_EMP_TABLE =
+        "CREATE TABLE DDLRESOLVTEST_EMP (" +
+            "\nEMPNO NUMERIC(4)," +
+            "\nENAME VARCHAR(10)," +
+            "\nJOB VARCHAR(9)," +
+            "\nMGR NUMERIC(4)," +
+            "\nHIREDATE DATE," +
+            "\nSAL DECIMAL(7,2)," +
+            "\nCOMM NUMERIC(7,2)," +
+            "\nDEPTNO NUMERIC(2)," +
+            "\nPRIMARY KEY (EMPNO)" +
+        "\n)";
     static final String CREATE_DDLRESOLVTEST_TYPE1 =
         "CREATE OR REPLACE TYPE DDLRESOLVTEST_TYPE1 AS OBJECT (" +
         	"\n\tACCT\tNUMBER," +
@@ -110,20 +122,20 @@ public class TypeResolutionTestSuite {
     static final String CREATE_DDLRESOLVTEST_PACKAGE =
         "CREATE OR REPLACE PACKAGE " + DDLRESOLVTEST_PACKAGE + " AS" +
             "\n\tTYPE EMPREC IS RECORD ( " +
-                "\n\tEMPNO EMP.EMPNO%TYPE," +
-                "\n\tENAME EMP.ENAME%TYPE," +
-                "\n\tJOB EMP.JOB%TYPE," +
-                "\n\tMGR EMP.MGR%TYPE," +
-                "\n\tHIREDATE EMP.HIREDATE%TYPE," +
-                "\n\tSAL EMP.SAL%TYPE," +
-                "\n\tCOMM EMP.COMM%TYPE," +
-                "\n\tDEPTNO EMP.DEPTNO%TYPE" +
+                "\n\tEMPNO DDLRESOLVTEST_EMP.EMPNO%TYPE," +
+                "\n\tENAME DDLRESOLVTEST_EMP.ENAME%TYPE," +
+                "\n\tJOB DDLRESOLVTEST_EMP.JOB%TYPE," +
+                "\n\tMGR DDLRESOLVTEST_EMP.MGR%TYPE," +
+                "\n\tHIREDATE DDLRESOLVTEST_EMP.HIREDATE%TYPE," +
+                "\n\tSAL DDLRESOLVTEST_EMP.SAL%TYPE," +
+                "\n\tCOMM DDLRESOLVTEST_EMP.COMM%TYPE," +
+                "\n\tDEPTNO DDLRESOLVTEST_EMP.DEPTNO%TYPE" +
             "\n\t);" +
             "\n\tFUNCTION DDLRESOLVTESTFUNC17(PARAM1 IN INTEGER) RETURN DDLRESOLVTEST_TABLE2%ROWTYPE;" +
             "\n\tPROCEDURE DDLRESOLVTESTPROC17(PARAM1 IN INTEGER, REC OUT DDLRESOLVTEST_TABLE2%ROWTYPE);" +
             "\n\tPROCEDURE DDLRESOLVTESTPROC17b(OLDREC IN DDLRESOLVTEST_TABLE3%ROWTYPE, NEWREC OUT DDLRESOLVTEST_TABLE3%ROWTYPE);" +
             "\n\tPROCEDURE EMP_TEST(E1 IN EMPREC, NAME IN VARCHAR2);" +
-            "\n\tPROCEDURE EMP_TEST2(NAME IN EMP.ENAME%TYPE);" +
+            "\n\tPROCEDURE EMP_TEST2(NAME IN DDLRESOLVTEST_EMP.ENAME%TYPE);" +
             "\n\tFUNCTION ECHOREGION(AREGION IN DDLRESOLVTEST_REGION) RETURN DDLRESOLVTEST_REGION;" +
             "\n\tFUNCTION ECHOEMPADDRESS(ANEMPADDRESS IN DDLRESOLVTEST_EMP_ADDRESS) RETURN DDLRESOLVTEST_EMP_ADDRESS;" +
             "\n\tFUNCTION ECHOEMPOBJECT(ANEMPOBJECT IN DDLRESOLVTEST_EMP_OBJECT) RETURN DDLRESOLVTEST_EMP_OBJECT;" +
@@ -140,20 +152,20 @@ public class TypeResolutionTestSuite {
                     "\n\tEXIT WHEN C_EMP%NOTFOUND;" +
                 "\n\tEND LOOP;" +
                 "\n\tRETURN L_DATA1;" +
-            "\n\tEND;" +
+            "\n\tEND DDLRESOLVTESTFUNC17;" +
             "\n\tPROCEDURE DDLRESOLVTESTPROC17( PARAM1 IN INTEGER, REC OUT DDLRESOLVTEST_TABLE2%ROWTYPE) AS" +
             "\n\tBEGIN" +
                 "\n\tREC := DDLRESOLVTESTFUNC17(PARAM1);" +
-            "\n\tEND;" +
+            "\n\tEND DDLRESOLVTESTPROC17;" +
             "\n\tPROCEDURE DDLRESOLVTESTPROC17b(OLDREC IN DDLRESOLVTEST_TABLE3%ROWTYPE, NEWREC OUT DDLRESOLVTEST_TABLE3%ROWTYPE) AS" +
             "\n\tBEGIN" +
                 "\n\tNEWREC := OLDREC;" +
-            "\n\tEND;" +
+            "\n\tEND DDLRESOLVTESTPROC17b;" +
             "\n\tPROCEDURE EMP_TEST(E1 IN EMPREC, NAME IN VARCHAR2) AS" +
             "\n\tBEGIN" +
                 "\n\tnull;" +
             "\n\tEND EMP_TEST;" +
-            "\n\tPROCEDURE EMP_TEST2(NAME IN EMP.ENAME%TYPE) AS" +
+            "\n\tPROCEDURE EMP_TEST2(NAME IN DDLRESOLVTEST_EMP.ENAME%TYPE) AS" +
             "\n\tBEGIN" +
                 "\n\tnull;" +
             "\n\tEND EMP_TEST2;" +
@@ -193,6 +205,7 @@ public class TypeResolutionTestSuite {
     static final String DROP_DDLRESOLVTEST_TABLE3 = "DROP TABLE DDLRESOLVTEST_TABLE3";
     static final String DROP_DDLRESOLVTEST_TABLE2 = "DROP TABLE DDLRESOLVTEST_TABLE2";
     static final String DROP_DDLRESOLVTEST_TABLE1 = "DROP TABLE DDLRESOLVTEST_TABLE1";
+    static final String DROP_DDLRESOLVTEST_EMP_TABLE = "DROP TABLE DDLRESOLVTEST_EMP";
     static final String DROP_DDLRESOLVTEST_TYPE3 = "DROP TYPE DDLRESOLVTEST_TYPE3";
     static final String DROP_DDLRESOLVTEST_TYPE2 = "DROP TYPE DDLRESOLVTEST_TYPE2";
     static final String DROP_DDLRESOLVTEST_TYPE1 = "DROP TYPE DDLRESOLVTEST_TYPE1";
@@ -227,6 +240,7 @@ public class TypeResolutionTestSuite {
             ddlDebug = true;
         }
         if (ddlCreate) {
+            runDdl(conn, CREATE_DDLRESOLVTEST_EMP_TABLE, ddlDebug);
             runDdl(conn, CREATE_DDLRESOLVTEST_TYPE1, ddlDebug);
             runDdl(conn, CREATE_DDLRESOLVTEST_TYPE2, ddlDebug);
             runDdl(conn, CREATE_DDLRESOLVTEST_TYPE3, ddlDebug);
@@ -267,6 +281,7 @@ public class TypeResolutionTestSuite {
             runDdl(conn, DROP_DDLRESOLVTEST_TABLE3, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TABLE2, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TABLE1, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_EMP_TABLE, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TYPE3, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TYPE2, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TYPE1, ddlDebug);
