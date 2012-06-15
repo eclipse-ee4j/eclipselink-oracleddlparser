@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 //metadata imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
