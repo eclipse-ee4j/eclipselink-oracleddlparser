@@ -38,8 +38,10 @@ import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
 import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
@@ -99,7 +101,7 @@ public class DatabaseTypeBuilder {
             ", '" + OBJECT_TYPE_TABLE + "', " + OBJECT_TYPE_TABLE_CODE +
             ", '" + OBJECT_TYPE_TYPE + "', " + OBJECT_TYPE_TYPE_CODE +
             "," + OBJECT_TYPE_UNKNOWN_CODE + ") AS OBJECT_TYPE FROM ALL_OBJECTS AO WHERE " +
-            	"(STATUS = 'VALID' AND OWNER LIKE ? AND OBJECT_NAME = ?)";
+                "(STATUS = 'VALID' AND OWNER LIKE ? AND OBJECT_NAME = ?)";
 
     static DBMSMetadataSessionTransforms TRANSFORMS_FACTORY;
     static {
@@ -212,8 +214,8 @@ public class DatabaseTypeBuilder {
                             UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
                             unresolvedTypesVisitor.visit(packageType);
                             if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                                resolvedTypes(conn, packageType.getSchema(), parser,
-                                    unresolvedTypesVisitor.getUnresolvedTypes(), packageType);
+                                resolvedTypes(conn, packageType.getSchema(), parser, 
+                                        unresolvedTypesVisitor.getUnresolvedTypes(), packageType, packageTypes);
                             }
                         }
                     }
@@ -498,23 +500,35 @@ public class DatabaseTypeBuilder {
         return ddls;
     }
 
+    /**
+     * Attempt to resolve any types that the DDLParser could not resolve.
+     *  
+     */
+    protected void resolvedTypes(Connection conn, String schemaPattern, DDLParser parser, List<UnresolvedType> unresolvedTypes, DatabaseType databaseType) throws ParseException {
+        resolvedTypes(conn, schemaPattern, parser, unresolvedTypes, databaseType, null);
+    }
+    
+    /**
+     * Attempt to resolve any types that the DDLParser could not resolve.
+     *  
+     */
     protected void resolvedTypes(Connection conn, String schemaPattern, DDLParser parser,
-        List<UnresolvedType> unresolvedTypes, DatabaseType databaseType) throws ParseException {
+        List<UnresolvedType> unresolvedTypes, DatabaseType databaseType, List<PLSQLPackageType> processedPackages) throws ParseException {
         
         // need to process non '%' named items 1st such that we can resolve the '%' ones later
-    	List<String> percentNameList = new ArrayList<String>();
-    	List<String> nonPercentNameList = new ArrayList<String>();
+        List<String> percentNameList = new ArrayList<String>();
+        List<String> nonPercentNameList = new ArrayList<String>();
         for (UnresolvedType uType : unresolvedTypes) {
             CompositeDatabaseType owningType = uType.getOwningType();
-        	if (owningType != null && (owningType.isTYPEType() || owningType.isROWTYPEType())) {
-        		if (!percentNameList.contains(uType.getTypeName())) {
-        			percentNameList.add(uType.getTypeName());
-        		}
-        	} else {
-        		if (!nonPercentNameList.contains(uType.getTypeName())) {
-        			nonPercentNameList.add(uType.getTypeName());
-        		}
-        	}
+            if (owningType != null && (owningType.isTYPEType() || owningType.isROWTYPEType())) {
+                if (!percentNameList.contains(uType.getTypeName())) {
+                    percentNameList.add(uType.getTypeName());
+                }
+            } else {
+                if (!nonPercentNameList.contains(uType.getTypeName())) {
+                    nonPercentNameList.add(uType.getTypeName());
+                }
+            }
         }
         // sort so dotted entries are last
         Collections.sort(percentNameList);
@@ -523,22 +537,22 @@ public class DatabaseTypeBuilder {
         Collections.reverse(percentNameList);
         Collections.reverse(nonPercentNameList);
         // iterate over the collections and add unresolved types based on type name
-    	List<UnresolvedType> percentList = new ArrayList<UnresolvedType>();
+        List<UnresolvedType> percentList = new ArrayList<UnresolvedType>();
         for (String tname : percentNameList) {
             for (UnresolvedType uType : unresolvedTypes) {
-            	if (uType.getTypeName().equals(tname)) {
-            		percentList.add(uType);
-            		break;
-            	}
+                if (uType.getTypeName().equals(tname)) {
+                    percentList.add(uType);
+                    break;
+                }
             }
         }
-    	List<UnresolvedType> nonPercentList = new ArrayList<UnresolvedType>();
+        List<UnresolvedType> nonPercentList = new ArrayList<UnresolvedType>();
         for (String tname : nonPercentNameList) {
             for (UnresolvedType uType : unresolvedTypes) {
-            	if (uType.getTypeName().equals(tname)) {
-            		nonPercentList.add(uType);
-            		break;
-            	}
+                if (uType.getTypeName().equals(tname)) {
+                    nonPercentList.add(uType);
+                    break;
+                }
             }
         }
         Stack<UnresolvedType> stac = new Stack<UnresolvedType>();
@@ -547,12 +561,12 @@ public class DatabaseTypeBuilder {
             if (!stac.contains(uPercentType)) {
                 stac.push(uPercentType);
             }
-    	}
-    	for (UnresolvedType uNonPercentType : nonPercentList) {
+        }
+        for (UnresolvedType uNonPercentType : nonPercentList) {
             if (!stac.contains(uNonPercentType)) {
                 stac.push(uNonPercentType);
             }
-    	}
+        }
 
         boolean done = false;
         DatabaseTypesRepository typesRepository = parser.getTypesRepository();
@@ -564,131 +578,147 @@ public class DatabaseTypeBuilder {
             int dotIdx = typeName.indexOf('.');
             String typeName1 = typeName;
             String typeName2 = null;
+            // handle dotted scenario, i.e. "PackageName.TypeName" or "SchemaName.TypeName"
             if (dotIdx != -1) {
                 typeName1 = typeName.substring(0, dotIdx);
                 typeName2 = typeName.substring(dotIdx+1, typeName.length());
             }
             
             // check type repository first
-			resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(typeName);
-			if (resolvedType == null) {
-				if (owningType.isROWTYPEType()) {
-	                ROWTYPEType rType = (ROWTYPEType)owningType;
-	                String tableName = rType.getTypeName();
-	                if (tableName.contains(ROWTYPE_MACRO)) {
-	                    int idx = tableName.indexOf(ROWTYPE_MACRO);
-	                    tableName = tableName.substring(0,idx);
-	                }
-	                resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(tableName);
-	                if (resolvedType == null) {
-	                    TableType tableType = null;
-	                    List<TableType> tables = buildTables(conn, schemaPattern, tableName, false);
-	                    if (tables != null && tables.size() > 0) {
-	                        tableType = tables.get(0);
-	                        typesRepository.setDatabaseType(tableType.getTableName(), tableType);
-	                        rType.setEnclosedType(tableType);
-	                        typesRepository.setDatabaseType(rType.getTypeName(), rType);
-	                    }
+            resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(typeName);
+            if (resolvedType == null) {
+                if (owningType.isROWTYPEType()) {
+                    ROWTYPEType rType = (ROWTYPEType)owningType;
+                    String tableName = rType.getTypeName();
+                    if (tableName.contains(ROWTYPE_MACRO)) {
+                        int idx = tableName.indexOf(ROWTYPE_MACRO);
+                        tableName = tableName.substring(0,idx);
+                    }
+                    resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(tableName);
+                    if (resolvedType == null) {
+                        TableType tableType = null;
+                        List<TableType> tables = buildTables(conn, schemaPattern, tableName, false);
+                        if (tables != null && tables.size() > 0) {
+                            tableType = tables.get(0);
+                            typesRepository.setDatabaseType(tableType.getTableName(), tableType);
+                            rType.setEnclosedType(tableType);
+                            typesRepository.setDatabaseType(rType.getTypeName(), rType);
+                        }
                         resolvedType = tableType;
-	                    // always a chance that tableType has some unresolved column type
-	                    if (tableType != null && !tableType.isResolved()) {
-	                        UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-	                        unresolvedTypesVisitor.visit(tableType);
-	                        for (UnresolvedType u2Type : unresolvedTypesVisitor.getUnresolvedTypes()) {
-	                            if (!stac.contains(u2Type)) {
-	                                stac.push(u2Type);
-	                            }
-	                        }
-	                    }
-	                    else {
-	                        //TODO - table is in a different schema?
-	                    }
-	                }
-	                else {
-	                    uType.getOwningType().setEnclosedType(resolvedType);
-	                }
-	            }
-	            else if (owningType.isTYPEType()) {
-	                TYPEType tType = (TYPEType)owningType;
-	                DatabaseType foundType = findField(typeName1, databaseType);
-	                if (foundType != null) {
-	                	if (typeName2 != null) {
-	                		foundType = findField(typeName2, foundType);
-	                	}
-	                	if (foundType != null) {
-		                    tType.setEnclosedType(foundType);
-		                    //TODO - figure out TYPEType's that go 'into' a  local variable
-		                    resolvedType = (CompositeDatabaseType)foundType;
-	                	}
-	                }
-	            }
-	            if (resolvedType == null) {
-	                int objectTypeCode = getObjectType(conn, schemaPattern, typeName1);
-	                switch (objectTypeCode) {
-	                    case OBJECT_TYPE_FUNCTION_CODE :
-	                        List<FunctionType> functions = buildFunctions(conn, schemaPattern,
-	                            typeName1, false);
-	                        if (functions != null && functions.size() > 0) {
-	                            resolvedType = functions.get(0); // only care about first one
-	                        }
-	                        break;
-	                    case OBJECT_TYPE_PACKAGE_CODE :
-	                        List<PLSQLPackageType> packages = buildPackages(conn, schemaPattern,
-	                            typeName1, false);
-	                        if (packages != null && packages.size() > 0) {
-	                            resolvedType = packages.get(0); // only care about first one
-	                        }
-	                        break;
-	                    case OBJECT_TYPE_PROCEDURE_CODE :
-	                        List<ProcedureType> procedures = buildProcedures(conn, schemaPattern,
-	                            typeName1, false);
-	                        if (procedures != null && procedures.size() > 0) {
-	                            resolvedType = procedures.get(0); // only care about first one
-	                        }
-	                        break;
-	                    case OBJECT_TYPE_TABLE_CODE :
-	                        List<TableType> tables = buildTables(conn, schemaPattern,
-	                            typeName1, false);
-	                        if (tables != null && tables.size() > 0) {
-	                            TableType tableType = tables.get(0); // only care about first one
-	                            resolvedType = tableType;
-	                            if (typeName2 != null) {
-	                                DatabaseType foundType = findField(typeName2, resolvedType);
-	                                if (foundType != null) {
-	                                    resolvedType = (CompositeDatabaseType)foundType;
-	                                }
-	                            }
-	                            // always a chance that tableType has some unresolved column type
-	                            if (!tableType.isResolved()) {
-	                                UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-	                                unresolvedTypesVisitor.visit(tableType);
-	                                for (UnresolvedType u2Type : unresolvedTypesVisitor.getUnresolvedTypes()) {
-	                                    if (!stac.contains(u2Type)) {
-	                                        stac.push(u2Type);
-	                                    }
-	                                }
-	                            }
-	                        }
-	                        break;
-	                    case OBJECT_TYPE_TYPE_CODE :
-	                        List<CompositeDatabaseType> types = buildTypes(conn, schemaPattern,
-	                            typeName1, false);
-	                        if (types != null && types.size() > 0) {
-	                            resolvedType = types.get(0); // only care about first one
-	                            if (typeName2 != null) {
-	                                DatabaseType foundType = findField(typeName2, resolvedType);
-	                                if (foundType != null) {
-	                                    resolvedType = (CompositeDatabaseType)foundType;
-	                                }
-	                            }
-	                        }
-	                        break;
-	                    case OBJECT_TYPE_UNKNOWN_CODE :
-	                    default :
-	                        break;
-	                }
-	            }
-			}
+                        // always a chance that tableType has some unresolved column type
+                        if (tableType != null && !tableType.isResolved()) {
+                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                            unresolvedTypesVisitor.visit(tableType);
+                            for (UnresolvedType u2Type : unresolvedTypesVisitor.getUnresolvedTypes()) {
+                                if (!stac.contains(u2Type)) {
+                                    stac.push(u2Type);
+                                }
+                            }
+                        } else {
+                            // may be dealing with a table from a different schema
+                        }
+                    } else {
+                        uType.getOwningType().setEnclosedType(resolvedType);
+                    }
+                } else if (owningType.isTYPEType()) {
+                    TYPEType tType = (TYPEType)owningType;
+                    DatabaseType foundType = findField(typeName1, databaseType);
+                    if (foundType != null) {
+                        if (typeName2 != null) {
+                            foundType = findField(typeName2, foundType);
+                        }
+                        if (foundType != null) {
+                            tType.setEnclosedType(foundType);
+                            // may need to handle TYPEType's that go 'into' a  local variable
+                            resolvedType = (CompositeDatabaseType)foundType;
+                        }
+                    }
+                }
+                if (resolvedType == null) {
+                    int objectTypeCode = getObjectType(conn, schemaPattern, typeName1);
+                    switch (objectTypeCode) {
+                        case OBJECT_TYPE_FUNCTION_CODE :
+                            List<FunctionType> functions = buildFunctions(conn, schemaPattern, typeName1, false);
+                            if (functions != null && functions.size() > 0) {
+                                resolvedType = functions.get(0); // only care about first one
+                            }
+                            break;
+                        case OBJECT_TYPE_PACKAGE_CODE :
+                            PLSQLPackageType plsqlPkg = null;
+                            // we may have already processed this package
+                            if (processedPackages != null) {
+                                for (PLSQLPackageType pkg : processedPackages) {
+                                    if (pkg.getPackageName().equals(typeName1)) {
+                                        plsqlPkg = pkg;
+                                    }
+                                }
+                            }
+                            if (plsqlPkg == null) {
+                                List<PLSQLPackageType> packages = buildPackages(conn, schemaPattern, typeName1, false);
+                                if (packages != null && packages.size() > 0) {
+                                    plsqlPkg = packages.get(0);  // only care about first one
+                                    processedPackages.add(plsqlPkg);
+                                }
+                            }
+                            if (plsqlPkg != null) {
+                                // we may have a dotted scenario, i.e. 'PackageName.TypeName'
+                                if (typeName2 == null) {
+                                    resolvedType = plsqlPkg;
+                                } else {
+                                    DatabaseType dbType = findField(typeName2, plsqlPkg);
+                                    if (dbType != null && dbType.isComposite()) {
+                                        resolvedType = (CompositeDatabaseType) dbType;
+                                    }
+                                }
+                            }
+                            break;
+                        case OBJECT_TYPE_PROCEDURE_CODE :
+                            List<ProcedureType> procedures = buildProcedures(conn, schemaPattern, typeName1, false);
+                            if (procedures != null && procedures.size() > 0) {
+                                resolvedType = procedures.get(0); // only care about first one
+                            }
+                            break;
+                        case OBJECT_TYPE_TABLE_CODE :
+                            List<TableType> tables = buildTables(conn, schemaPattern, typeName1, false);
+                            if (tables != null && tables.size() > 0) {
+                                TableType tableType = tables.get(0); // only care about first one
+                                resolvedType = tableType;
+                                if (typeName2 != null) {
+                                    DatabaseType foundType = findField(typeName2, resolvedType);
+                                    if (foundType != null) {
+                                        resolvedType = (CompositeDatabaseType)foundType;
+                                    }
+                                }
+                                // always a chance that tableType has some unresolved column type
+                                if (!tableType.isResolved()) {
+                                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                                    unresolvedTypesVisitor.visit(tableType);
+                                    for (UnresolvedType u2Type : unresolvedTypesVisitor.getUnresolvedTypes()) {
+                                        if (!stac.contains(u2Type)) {
+                                            stac.push(u2Type);
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case OBJECT_TYPE_TYPE_CODE :
+                            List<CompositeDatabaseType> types = buildTypes(conn, schemaPattern, typeName1, false);
+                            if (types != null && types.size() > 0) {
+                                resolvedType = types.get(0); // only care about first one
+                                if (typeName2 != null) {
+                                    DatabaseType foundType = findField(typeName2, resolvedType);
+                                    if (foundType != null) {
+                                        resolvedType = (CompositeDatabaseType)foundType;
+                                    }
+                                }
+                            }
+                            break;
+                        case OBJECT_TYPE_UNKNOWN_CODE :
+                        default :
+                            break;
+                    }
+                }
+            }
             if (resolvedType != null) {
                 if (owningType.isPLSQLRecordType() && !(resolvedType.isFieldType())) {
                     PLSQLRecordType recordType = (PLSQLRecordType)owningType;
@@ -700,19 +730,18 @@ public class DatabaseTypeBuilder {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     owningType.setEnclosedType(resolvedType);
                 }
                 typesRepository.setDatabaseType(resolvedType.getTypeName(), resolvedType);
                 
                 // update any other types in the unresolved list that reference the resolved type
                 for (UnresolvedType unresolvedType : unresolvedTypes) {
-                	if (unresolvedType.getTypeName().equals(typeName)) {
-                		if (unresolvedType.getOwningType().getEnclosedType() instanceof UnresolvedType) {
-                			unresolvedType.getOwningType().setEnclosedType(resolvedType);
-                		}
-                	}
+                    if (unresolvedType.getTypeName().equals(typeName)) {
+                        if (unresolvedType.getOwningType().getEnclosedType() instanceof UnresolvedType) {
+                            unresolvedType.getOwningType().setEnclosedType(resolvedType);
+                        }
+                    }
                 }
                 
                 // always a chance that resolvedType refers to something that is un-resolved
@@ -725,7 +754,7 @@ public class DatabaseTypeBuilder {
                         }
                     }
                 }
-			}
+            }
 
             if (stac.isEmpty()) {
                 done = true;
@@ -733,6 +762,19 @@ public class DatabaseTypeBuilder {
         }
     }
 
+    /**
+     * Attempt to determine the database type (Function, Package, Table, etc.) for a 
+     * given a Schema and Type name.
+     * 
+     * Types are translated to integer values as follows:
+     * <ul>
+     * <li>FUNCTION = 1</li>
+     * <li>PACKAGE = 2</li>
+     * <li>PROCEDURE = 3</li>
+     * <li>TABLE = 4</li>
+     * <li>TYPE = 5</li>
+     * </ul>
+     */
     protected int getObjectType(Connection conn, String schema,  String typeName) {
         int objectType = -1;
         String schemaPattern = schema == null ? PERCENT : schema;
@@ -750,24 +792,21 @@ public class DatabaseTypeBuilder {
                     objectType = rs.getInt(ALL_OBJECTS_OBJECT_TYPE_FIELD);
                 }
             }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            // ignore
         }
         finally {
             if (rs != null) {
                 try {
                     rs.close();
-                }
-                catch (SQLException e) {
+                } catch (SQLException e) {
                     // ignore
                 }
             }
             if (pStmt != null) {
                 try {
                     pStmt.close();
-                }
-                catch (SQLException e) {
+                } catch (SQLException e) {
                     // ignore
                 }
             }
@@ -831,20 +870,22 @@ public class DatabaseTypeBuilder {
             TOPLEVEL.equals(schemaPattern) || PERCENT.equals(schemaPattern));
     }
 
+    /**
+     * Attempt to find a field matching 'fieldName' in a given DatabaseType.
+     * 
+     */
     static DatabaseType findField(String fieldName, DatabaseType targetType) {
         // remove '%' from field name
         int pctIdx = fieldName.indexOf(PERCENT);
         if (pctIdx != -1) {
-        	fieldName = fieldName.substring(0, pctIdx);
+            fieldName = fieldName.substring(0, pctIdx);
         }
 
-        DatabaseType foundType = null;
         if (targetType.isPLSQLRecordType()) {
             PLSQLRecordType plsqlRecordType = (PLSQLRecordType)targetType;
             for (FieldType fieldType : plsqlRecordType.getFields()) {
                 if (fieldType.getFieldName().equals(fieldName)) {
-                    foundType = fieldType;
-                    break;
+                    return fieldType;
                 }
             }
         }
@@ -852,8 +893,7 @@ public class DatabaseTypeBuilder {
             TableType tableType = (TableType)targetType;
             for (FieldType columnType : tableType.getColumns()) {
                 if (columnType.getFieldName().equals(fieldName)) {
-                    foundType = columnType;
-                    break;
+                    return columnType;
                 }
             }
         }
@@ -861,38 +901,55 @@ public class DatabaseTypeBuilder {
             ObjectType objectType = (ObjectType)targetType;
             for (FieldType fieldType : objectType.getFields()) {
                 if (fieldType.getFieldName().equals(fieldName)) {
-                    foundType = fieldType;
-                    break;
+                    return fieldType;
                 }
             }
         }
         else if (targetType instanceof PLSQLPackageType) {
-        	PLSQLPackageType packageType = (PLSQLPackageType) targetType;
-        	// check local variables
-        	for (FieldType fieldType : packageType.getLocalVariables()) {
-                if (fieldType.getFieldName().equals(fieldName)) {
-                    foundType = fieldType;
-                    break;
+            PLSQLPackageType packageType = (PLSQLPackageType) targetType;
+            // check cursors
+            for (PLSQLCursorType cursorType : packageType.getCursors()) {
+                if (cursorType.getCursorName().equals(fieldName)) {
+                    return cursorType;
                 }
-        	}
+                
+            }
+            // check types
+            for (PLSQLType plsqlType : packageType.getTypes()) {
+                if (plsqlType.getTypeName().equals(fieldName)) {
+                    return plsqlType;
+                }
+            }
+            // check procedures
+            for (ProcedureType procType : packageType.getProcedures()) {
+                if (procType.getProcedureName().equals(fieldName)) {
+                    return procType; 
+                }
+            }
+            // check local variables
+            for (FieldType fieldType : packageType.getLocalVariables()) {
+                if (fieldType.getFieldName().equals(fieldName)) {
+                    return fieldType;
+                }
+            }
         }
         // we may be dealing with a Field type, and need to navigate to the last enclosed type
         else if (targetType.isFieldType()) {
-        	FieldType fldType = (FieldType) targetType;
-    		DatabaseType eType = fldType.getEnclosedType();
-    		if (eType.isComposite()) {
-    			CompositeDatabaseType cType = (CompositeDatabaseType) eType;
-    			while (cType.getEnclosedType() != null) {
-    				eType = cType.getEnclosedType();
-    				if (eType.isComposite()) {
-    					cType = (CompositeDatabaseType) eType;
-    				} else {
-    					break;
-    				}
-    			}
-    		}
-    		foundType = findField(fieldName, eType);
+            FieldType fldType = (FieldType) targetType;
+            DatabaseType eType = fldType.getEnclosedType();
+            if (eType.isComposite()) {
+                CompositeDatabaseType cType = (CompositeDatabaseType) eType;
+                while (cType.getEnclosedType() != null) {
+                    eType = cType.getEnclosedType();
+                    if (eType.isComposite()) {
+                        cType = (CompositeDatabaseType) eType;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return findField(fieldName, eType);
         }
-        return foundType;
+        return null;
     }
 }
