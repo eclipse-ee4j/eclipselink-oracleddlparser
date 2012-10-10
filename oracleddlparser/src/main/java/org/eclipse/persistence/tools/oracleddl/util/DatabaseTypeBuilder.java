@@ -66,6 +66,7 @@ public class DatabaseTypeBuilder {
     public static final String TOPLEVEL = "TOPLEVEL";
     public static final String ROWTYPE_MACRO = PERCENT + "ROWTYPE";
     public static final String TYPE_MACRO = PERCENT + "TYPE";
+    public static final String DOT = ".";
     public static final String TRANSFORM_PREFIX =
         "DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'";
     public static final String DBMS_METADATA_GET_DDL_STMT_PREFIX =
@@ -575,15 +576,22 @@ public class DatabaseTypeBuilder {
             UnresolvedType uType = stac.pop();
             String typeName = uType.getTypeName();
             CompositeDatabaseType owningType = uType.getOwningType();
-            int dotIdx = typeName.indexOf('.');
+            int dotIdx = typeName.indexOf(DOT);
             String typeName1 = typeName;
             String typeName2 = null;
             // handle dotted scenario, i.e. "PackageName.TypeName" or "SchemaName.TypeName"
             if (dotIdx != -1) {
                 typeName1 = typeName.substring(0, dotIdx);
                 typeName2 = typeName.substring(dotIdx+1, typeName.length());
+
+                // handle second dotted scenario, i.e. "SchemaName.TableName.ColumnName"
+                dotIdx = typeName2.indexOf(DOT);
+                if (dotIdx != -1) {
+                    String tmpStr = typeName2;
+                    typeName1 = tmpStr.substring(0, dotIdx);
+                    typeName2 = tmpStr.substring(dotIdx+1, tmpStr.length());
+                }
             }
-            
             // check type repository first
             resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(typeName);
             if (resolvedType == null) {
