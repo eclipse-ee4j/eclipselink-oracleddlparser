@@ -53,7 +53,7 @@ import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 
 public class DatabaseTypeBuilder {
-
+   
     //misc. string constants
     public static final String BEGIN = "BEGIN";
     public static final String END = "END";
@@ -900,7 +900,7 @@ public class DatabaseTypeBuilder {
         else if (targetType.isTableType()) {
             TableType tableType = (TableType)targetType;
             for (FieldType columnType : tableType.getColumns()) {
-                if (columnType.getFieldName().equals(fieldName)) {
+                if (columnType.getFieldName().equalsIgnoreCase(fieldName)) {
                     return columnType;
                 }
             }
