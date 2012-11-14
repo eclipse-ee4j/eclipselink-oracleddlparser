@@ -42,6 +42,7 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
     SMALLINT_TYPE("SMALLINT"),
     TIME_TYPE("TIME"), //not a native Oracle datatype (only used for JDBC conversion)
     NULL_TYPE("NULL"),
+    XMLTYPE_TYPE("XMLTYPE"),
     ;
 
     private final String typeName;
@@ -232,6 +233,10 @@ public enum ScalarDatabaseTypeEnum implements ScalarDatabaseType, DatabaseTypeVi
     }
 
     public boolean isFunctionType() {
+        return false;
+    }
+
+    public boolean isXMLTYPEType() {
         return false;
     }
 

@@ -308,6 +308,7 @@ TOKEN [IGNORE_CASE]: {
     | <K_CLOB: "CLOB">
     | <K_COMMIT: "COMMIT">
     | <K_CONSTANT: "CONSTANT">
+    | <K_CONSTRUCTOR: "CONSTRUCTOR">
     | <K_CURRENT_USER: "CURRENT_USER">
     | <K_DATE :"DATE">
     | <K_DAY: "DAY">
@@ -359,11 +360,13 @@ TOKEN [IGNORE_CASE]: {
     | <K_RECORD: "RECORD">
     | <K_REF: "REF">
     | <K_REPLACE: "REPLACE">
+    | <K_RESULT: "RESULT">
     | <K_RESULT_CACHE: "RESULT_CACHE">
     | <K_RETURN: "RETURN">
     | <K_ROWID:"ROWID">
     | <K_ROWS: "ROWS">
     | <K_SECOND: "SECOND">
+    | <K_SELF: "SELF">
     | <K_SET: "SET">
     | <K_SIGNTYPE: "SIGNTYPE">
     | <K_SIMPLE_DOUBLE:"SIMPLE_DOUBLE">
@@ -402,6 +405,7 @@ String keywords():
       | t=<K_CLOB>
       | t=<K_COMMIT>      
       | t=<K_CONSTANT>
+      | t=<K_CONSTRUCTOR>
       | t=<K_CURRENT_USER>
       | t=<K_DATE>
       | t=<K_DAY>
@@ -453,11 +457,13 @@ String keywords():
       | t=<K_RECORD>
       | t=<K_REF>
       | t=<K_REPLACE>
+      | t=<K_RESULT>
       | t=<K_RESULT_CACHE>
       | t=<K_RETURN>
       | t=<K_ROWID>
       | t=<K_ROWS>
       | t=<K_SECOND>
+      | t=<K_SELF>
       | t=<K_SET>
       | t=<K_SIGNTYPE>
       | t=<K_SIMPLE_DOUBLE>
@@ -645,7 +651,7 @@ CompositeDatabaseType parseType():
                 databaseType = new ObjectType(typeName);
                 if (schema != null) {
                     ((ObjectType)databaseType).setSchema(schema);                }
-            } columnDeclarations(databaseType) <O_CLOSEPAREN>
+            } columnDeclarations(databaseType) constructorDeclaration() <O_CLOSEPAREN>
           | <K_VARRAY> <O_OPENPAREN> vsize=<S_NUMBER> <O_CLOSEPAREN> <R_OF>
             {                databaseType = new VArrayType(typeName);
                 if (schema != null) {
@@ -675,7 +681,7 @@ CompositeDatabaseType parseType():
 void columnDeclarations(CompositeDatabaseType enclosingType):
 {}
 {
-    (LOOKAHEAD(2) columnDeclaration(enclosingType) | constraintDeclaration(enclosingType) )
+    (LOOKAHEAD(2) constructor() | columnDeclaration(enclosingType) | constraintDeclaration(enclosingType) )
     [ <O_COMMA> columnDeclarations(enclosingType) ]
 }
 
@@ -770,6 +776,12 @@ DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
       }
       return dt;
     }
+}
+
+void constructorDeclaration():
+{}
+{
+  [ <K_CONSTRUCTOR> skipToReturn() <K_SELF><R_AS><K_RESULT> ]
 }
 
 void uniqList():
@@ -1800,5 +1812,24 @@ void skipToEnd():
           t = getNextToken();
       }
   }
+}
 
+void skipToReturn():
+{}
+{
+    {
+        Token t = getNextToken();
+        while (t.kind != K_RETURN) {
+                t = getNextToken();
+        }
+    }
+}
+
+void constructor():
+{    Token t = token;
+}
+{    < K_CONSTRUCTOR >
+    {      
+    token = t;
+  }
 }

@@ -296,165 +296,171 @@ public interface DDLParserConstants {
   /** RegularExpression Id. */
   int K_CONSTANT = 141;
   /** RegularExpression Id. */
-  int K_CURRENT_USER = 142;
+  int K_CONSTRUCTOR = 142;
   /** RegularExpression Id. */
-  int K_DATE = 143;
+  int K_CURRENT_USER = 143;
   /** RegularExpression Id. */
-  int K_DAY = 144;
+  int K_DATE = 144;
   /** RegularExpression Id. */
-  int K_DEC = 145;
+  int K_DAY = 145;
   /** RegularExpression Id. */
-  int K_DECIMAL = 146;
+  int K_DEC = 146;
   /** RegularExpression Id. */
-  int K_DEFINER = 147;
+  int K_DECIMAL = 147;
   /** RegularExpression Id. */
-  int K_DELETE = 148;
+  int K_DEFINER = 148;
   /** RegularExpression Id. */
-  int K_DETERMINISTIC = 149;
+  int K_DELETE = 149;
   /** RegularExpression Id. */
-  int K_DOUBLE = 150;
+  int K_DETERMINISTIC = 150;
   /** RegularExpression Id. */
-  int K_ENABLE = 151;
+  int K_DOUBLE = 151;
   /** RegularExpression Id. */
-  int K_FINAL = 152;
+  int K_ENABLE = 152;
   /** RegularExpression Id. */
-  int K_FLOAT = 153;
+  int K_FINAL = 153;
   /** RegularExpression Id. */
-  int K_FORCE = 154;
+  int K_FLOAT = 154;
   /** RegularExpression Id. */
-  int K_GLOBAL = 155;
+  int K_FORCE = 155;
   /** RegularExpression Id. */
-  int K_INSTANTIABLE = 156;
+  int K_GLOBAL = 156;
   /** RegularExpression Id. */
-  int K_INT = 157;
+  int K_INSTANTIABLE = 157;
   /** RegularExpression Id. */
-  int K_INTEGER = 158;
+  int K_INT = 158;
   /** RegularExpression Id. */
-  int K_INTERVAL = 159;
+  int K_INTEGER = 159;
   /** RegularExpression Id. */
-  int K_KEY = 160;
+  int K_INTERVAL = 160;
   /** RegularExpression Id. */
-  int K_LOCAL = 161;
+  int K_KEY = 161;
   /** RegularExpression Id. */
-  int K_LONG = 162;
+  int K_LOCAL = 162;
   /** RegularExpression Id. */
-  int K_MLSLABEL = 163;
+  int K_LONG = 163;
   /** RegularExpression Id. */
-  int K_MONTH = 164;
+  int K_MLSLABEL = 164;
   /** RegularExpression Id. */
-  int K_NATIONAL = 165;
+  int K_MONTH = 165;
   /** RegularExpression Id. */
-  int K_NATURAL = 166;
+  int K_NATIONAL = 166;
   /** RegularExpression Id. */
-  int K_NCHAR = 167;
+  int K_NATURAL = 167;
   /** RegularExpression Id. */
-  int K_NCLOB = 168;
+  int K_NCHAR = 168;
   /** RegularExpression Id. */
-  int K_NOCOPY = 169;
+  int K_NCLOB = 169;
   /** RegularExpression Id. */
-  int K_NUMBER = 170;
+  int K_NOCOPY = 170;
   /** RegularExpression Id. */
-  int K_NUMERIC = 171;
+  int K_NUMBER = 171;
   /** RegularExpression Id. */
-  int K_NVARCHAR2 = 172;
+  int K_NUMERIC = 172;
   /** RegularExpression Id. */
-  int K_NVARCHAR = 173;
+  int K_NVARCHAR2 = 173;
   /** RegularExpression Id. */
-  int K_OBJECT = 174;
+  int K_NVARCHAR = 174;
   /** RegularExpression Id. */
-  int K_OID = 175;
+  int K_OBJECT = 175;
   /** RegularExpression Id. */
-  int K_ORGANIZATION = 176;
+  int K_OID = 176;
   /** RegularExpression Id. */
-  int K_OUT = 177;
+  int K_ORGANIZATION = 177;
   /** RegularExpression Id. */
-  int K_OVERFLOW = 178;
+  int K_OUT = 178;
   /** RegularExpression Id. */
-  int K_PACKAGE = 179;
+  int K_OVERFLOW = 179;
   /** RegularExpression Id. */
-  int K_PARALLEL_ENABLE = 180;
+  int K_PACKAGE = 180;
   /** RegularExpression Id. */
-  int K_PIPELINED = 181;
+  int K_PARALLEL_ENABLE = 181;
   /** RegularExpression Id. */
-  int K_PLS_INTEGER = 182;
+  int K_PIPELINED = 182;
   /** RegularExpression Id. */
-  int K_POSITIVE = 183;
+  int K_PLS_INTEGER = 183;
   /** RegularExpression Id. */
-  int K_PRAGMA = 184;
+  int K_POSITIVE = 184;
   /** RegularExpression Id. */
-  int K_PRECISION = 185;
+  int K_PRAGMA = 185;
   /** RegularExpression Id. */
-  int K_PRESERVE = 186;
+  int K_PRECISION = 186;
   /** RegularExpression Id. */
-  int K_RANGE = 187;
+  int K_PRESERVE = 187;
   /** RegularExpression Id. */
-  int K_RAW = 188;
+  int K_RANGE = 188;
   /** RegularExpression Id. */
-  int K_REAL = 189;
+  int K_RAW = 189;
   /** RegularExpression Id. */
-  int K_RECORD = 190;
+  int K_REAL = 190;
   /** RegularExpression Id. */
-  int K_REF = 191;
+  int K_RECORD = 191;
   /** RegularExpression Id. */
-  int K_REPLACE = 192;
+  int K_REF = 192;
   /** RegularExpression Id. */
-  int K_RESULT_CACHE = 193;
+  int K_REPLACE = 193;
   /** RegularExpression Id. */
-  int K_RETURN = 194;
+  int K_RESULT = 194;
   /** RegularExpression Id. */
-  int K_ROWID = 195;
+  int K_RESULT_CACHE = 195;
   /** RegularExpression Id. */
-  int K_ROWS = 196;
+  int K_RETURN = 196;
   /** RegularExpression Id. */
-  int K_SECOND = 197;
+  int K_ROWID = 197;
   /** RegularExpression Id. */
-  int K_SET = 198;
+  int K_ROWS = 198;
   /** RegularExpression Id. */
-  int K_SIGNTYPE = 199;
+  int K_SECOND = 199;
   /** RegularExpression Id. */
-  int K_SIMPLE_DOUBLE = 200;
+  int K_SELF = 200;
   /** RegularExpression Id. */
-  int K_SIMPLE_FLOAT = 201;
+  int K_SET = 201;
   /** RegularExpression Id. */
-  int K_SIMPLE_INTEGER = 202;
+  int K_SIGNTYPE = 202;
   /** RegularExpression Id. */
-  int K_SMALLINT = 203;
+  int K_SIMPLE_DOUBLE = 203;
   /** RegularExpression Id. */
-  int K_STRING = 204;
+  int K_SIMPLE_FLOAT = 204;
   /** RegularExpression Id. */
-  int K_SYS_REFCURSOR = 205;
+  int K_SIMPLE_INTEGER = 205;
   /** RegularExpression Id. */
-  int K_TEMPORARY = 206;
+  int K_SMALLINT = 206;
   /** RegularExpression Id. */
-  int K_TIME = 207;
+  int K_STRING = 207;
   /** RegularExpression Id. */
-  int K_TIMESTAMP = 208;
+  int K_SYS_REFCURSOR = 208;
   /** RegularExpression Id. */
-  int K_UROWID = 209;
+  int K_TEMPORARY = 209;
   /** RegularExpression Id. */
-  int K_VARCHAR2 = 210;
+  int K_TIME = 210;
   /** RegularExpression Id. */
-  int K_VARCHAR = 211;
+  int K_TIMESTAMP = 211;
   /** RegularExpression Id. */
-  int K_VARRAY = 212;
+  int K_UROWID = 212;
   /** RegularExpression Id. */
-  int K_VARYING = 213;
+  int K_VARCHAR2 = 213;
   /** RegularExpression Id. */
-  int K_YEAR = 214;
+  int K_VARCHAR = 214;
   /** RegularExpression Id. */
-  int K_ZONE = 215;
+  int K_VARRAY = 215;
   /** RegularExpression Id. */
-  int S_IDENTIFIER = 216;
+  int K_VARYING = 216;
   /** RegularExpression Id. */
-  int LETTER = 217;
+  int K_YEAR = 217;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 218;
+  int K_ZONE = 218;
   /** RegularExpression Id. */
-  int S_BIND = 219;
+  int S_IDENTIFIER = 219;
   /** RegularExpression Id. */
-  int S_CHAR_LITERAL = 220;
+  int LETTER = 220;
   /** RegularExpression Id. */
-  int S_QUOTED_IDENTIFIER = 221;
+  int SPECIAL_CHARS = 221;
+  /** RegularExpression Id. */
+  int S_BIND = 222;
+  /** RegularExpression Id. */
+  int S_CHAR_LITERAL = 223;
+  /** RegularExpression Id. */
+  int S_QUOTED_IDENTIFIER = 224;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -603,6 +609,7 @@ public interface DDLParserConstants {
     "\"CLOB\"",
     "\"COMMIT\"",
     "\"CONSTANT\"",
+    "\"CONSTRUCTOR\"",
     "\"CURRENT_USER\"",
     "\"DATE\"",
     "\"DAY\"",
@@ -654,11 +661,13 @@ public interface DDLParserConstants {
     "\"RECORD\"",
     "\"REF\"",
     "\"REPLACE\"",
+    "\"RESULT\"",
     "\"RESULT_CACHE\"",
     "\"RETURN\"",
     "\"ROWID\"",
     "\"ROWS\"",
     "\"SECOND\"",
+    "\"SELF\"",
     "\"SET\"",
     "\"SIGNTYPE\"",
     "\"SIMPLE_DOUBLE\"",
