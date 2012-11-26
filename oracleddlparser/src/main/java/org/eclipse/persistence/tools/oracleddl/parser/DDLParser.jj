@@ -107,6 +107,7 @@ import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTyp
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SYS_REFCURSOR_TYPE;
 import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIME_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.XMLTYPE_TYPE;
 
 public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
   protected JJTDDLParserState jjtree = new JJTDDLParserState();
@@ -383,6 +384,8 @@ TOKEN [IGNORE_CASE]: {
     | <K_VARCHAR: "VARCHAR">
     | <K_VARRAY: "VARRAY">
     | <K_VARYING: "VARYING">
+    | <K_XMLTYPE: "XMLTYPE">
+    | <K_SYSXMLTYPE: "SYS.XMLTYPE">
     | <K_YEAR: "YEAR">
     | <K_ZONE: "ZONE">
 }
@@ -480,6 +483,8 @@ String keywords():
       | t=<K_VARCHAR>
       | t=<K_VARRAY>
       | t=<K_VARYING>
+      | t=<K_XMLTYPE>
+      | t=<K_SYSXMLTYPE>
       | t=<K_YEAR>
       | t=<K_ZONE>      
     )
@@ -941,6 +946,8 @@ DatabaseType datatype():
             return dt;
             }
     | <K_BOOLEAN> { return BOOLEAN_TYPE;}
+    | <K_XMLTYPE> { return XMLTYPE_TYPE;}
+    | <K_SYSXMLTYPE> { return XMLTYPE_TYPE;}
     | <K_DATE> { return DATE_TYPE;}
     | <K_INTERVAL>
          (

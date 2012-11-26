@@ -446,21 +446,25 @@ public interface DDLParserConstants {
   /** RegularExpression Id. */
   int K_VARYING = 216;
   /** RegularExpression Id. */
-  int K_YEAR = 217;
+  int K_XMLTYPE = 217;
   /** RegularExpression Id. */
-  int K_ZONE = 218;
+  int K_SYSXMLTYPE = 218;
   /** RegularExpression Id. */
-  int S_IDENTIFIER = 219;
+  int K_YEAR = 219;
   /** RegularExpression Id. */
-  int LETTER = 220;
+  int K_ZONE = 220;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 221;
+  int S_IDENTIFIER = 221;
   /** RegularExpression Id. */
-  int S_BIND = 222;
+  int LETTER = 222;
   /** RegularExpression Id. */
-  int S_CHAR_LITERAL = 223;
+  int SPECIAL_CHARS = 223;
   /** RegularExpression Id. */
-  int S_QUOTED_IDENTIFIER = 224;
+  int S_BIND = 224;
+  /** RegularExpression Id. */
+  int S_CHAR_LITERAL = 225;
+  /** RegularExpression Id. */
+  int S_QUOTED_IDENTIFIER = 226;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -684,6 +688,8 @@ public interface DDLParserConstants {
     "\"VARCHAR\"",
     "\"VARRAY\"",
     "\"VARYING\"",
+    "\"XMLTYPE\"",
+    "\"SYS.XMLTYPE\"",
     "\"YEAR\"",
     "\"ZONE\"",
     "<S_IDENTIFIER>",
