@@ -1460,6 +1460,7 @@ void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName) :
     <K_REF> <R_CURSOR>
       {
         cursorType = new PLSQLCursorType(cursorTypeName);
+        cursorType.setParentType(packageType);
         packageType.addCursor(cursorType);
         localTypes.put(cursorTypeName, cursorType);
       }

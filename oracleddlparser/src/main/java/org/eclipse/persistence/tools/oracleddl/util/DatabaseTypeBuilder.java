@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -206,20 +207,24 @@ public class DatabaseTypeBuilder {
                 TreeSet<String> distinctDDLs = new TreeSet<String>();
                 distinctDDLs.addAll(ddls);
                 packageTypes = new ArrayList<PLSQLPackageType>();
+                Map<PLSQLPackageType, DDLParser> parserMap = new HashMap<PLSQLPackageType, DDLParser>();
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     PLSQLPackageType packageType = parser.parsePLSQLPackage();
                     if (packageType != null) {
                         packageTypes.add(packageType);
-                        if (resolveTypes) {
-                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                            unresolvedTypesVisitor.visit(packageType);
-                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                                resolvedTypes(conn, packageType.getSchema(), parser, 
-                                        unresolvedTypesVisitor.getUnresolvedTypes(), packageType, packageTypes);
-                            }
-                        }
+                        parserMap.put(packageType, parser);
                     }
+                }
+                if (!parserMap.isEmpty() && resolveTypes) {
+                	for (PLSQLPackageType packageType : parserMap.keySet()) {
+                		DDLParser parser = parserMap.get(packageType);
+	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+	                    unresolvedTypesVisitor.visit(packageType);
+	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+	                        resolvedTypes(conn, packageType.getSchema(), parser, unresolvedTypesVisitor.getUnresolvedTypes(), packageType, packageTypes);
+	                    }
+                	}
                 }
             }
         }
@@ -515,7 +520,6 @@ public class DatabaseTypeBuilder {
      */
     protected void resolvedTypes(Connection conn, String schemaPattern, DDLParser parser,
         List<UnresolvedType> unresolvedTypes, DatabaseType databaseType, List<PLSQLPackageType> processedPackages) throws ParseException {
-        
         // need to process non '%' named items 1st such that we can resolve the '%' ones later
         List<String> percentNameList = new ArrayList<String>();
         List<String> nonPercentNameList = new ArrayList<String>();
@@ -658,6 +662,7 @@ public class DatabaseTypeBuilder {
                                 for (PLSQLPackageType pkg : processedPackages) {
                                     if (pkg.getPackageName().equals(typeName1)) {
                                         plsqlPkg = pkg;
+                                        break;
                                     }
                                 }
                             }

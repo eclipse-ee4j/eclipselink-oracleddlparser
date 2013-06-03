@@ -19,6 +19,7 @@ public class PLSQLCursorType extends CompositeDatabaseTypeWithEnclosedType imple
 
     static final String REF_CURSOR = "REF CURSOR";
     protected String cursorName;
+    protected PLSQLPackageType parentType;
 
     public PLSQLCursorType(String cursorName) {
 		super(null);
@@ -41,7 +42,15 @@ public class PLSQLCursorType extends CompositeDatabaseTypeWithEnclosedType imple
 		return enclosedType == null;
 	}
 
-	public boolean isResolved() {
+    public PLSQLPackageType getParentType() {
+        return parentType;
+    }
+    
+    public void setParentType(PLSQLPackageType parentType) {
+        this.parentType = parentType;
+    }
+    
+    public boolean isResolved() {
         // if the dataType is unresolved, then this PLSQLCursor is a weakly-typed REF CURSOR
 		if (enclosedType == null) {
 			return false;
