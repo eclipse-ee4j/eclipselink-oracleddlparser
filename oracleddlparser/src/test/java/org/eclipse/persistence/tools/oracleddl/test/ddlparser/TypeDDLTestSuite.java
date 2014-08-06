@@ -263,5 +263,29 @@ public class TypeDDLTestSuite {
         assertEquals("incorrect type name " + TYPE_W_KEYWORDS,
             TYPE_W_KEYWORDS, typeWithKeyword.getTypeName());
     }
+    
+    static final String TYPE_NAME = "CUSTOM_CONS_TYPE";
+    static final String CREATE_TYPE_WITH_MULTIPLE_CONSTRUCTORS = CREATE_TYPE_PREFIX + TYPE_NAME + " AS OBJECT(" +
+            "\n    status varchar2(5)," +
+            "\n    orauser varchar2(40)," +
+            "\n    comments varchar2(1000)," +
+            "\nconstructor function " + TYPE_NAME + "(i_status in boolean, i_orauser in varchar2, i_comments in varchar2) return self as result," +
+            "\nconstructor function " + TYPE_NAME + "(i_status in varchar2, i_comments in varchar2) return self as result," +
+            "\nconstructor function " + TYPE_NAME + "(i_status in varchar2) return self as result)";
+    @Test
+    public void testTypeWithMultipleConstructors() {
+        parser.ReInit(new StringReader(CREATE_TYPE_WITH_MULTIPLE_CONSTRUCTORS));
+        boolean worked = true;
+        String message = "";
+        ObjectType typeWithMultipleConstructors = null;
+        try {
+            typeWithMultipleConstructors = (ObjectType)parser.parseType();
+        } catch (ParseException pe) {
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("type with multiple constructors did not parse:\n" + message, worked);
+        assertEquals("incorrect type name " + TYPE_NAME, TYPE_NAME, typeWithMultipleConstructors.getTypeName());
+    }
 
 }

@@ -1341,6 +1341,14 @@ public class DDLParser/*@bgen(jjtree)*/implements DDLParserTreeConstants, DDLPar
     default:
       ;
     }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case O_COMMA:
+      jj_consume_token(O_COMMA);
+      constructorDeclaration();
+      break;
+    default:
+      ;
+    }
   }
 
   final public void uniqList() throws ParseException {
@@ -3552,19 +3560,14 @@ Token rangeEnd = null;
     catch(LookaheadSuccess ls) { return true; }
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(R_ANCHORED_TYPE)) return true;
+  private boolean jj_3R_61() {
+    if (jj_scan_token(K_VARYING)) return true;
+    if (jj_scan_token(K_ARRAY)) return true;
     return false;
   }
 
   private boolean jj_3_2() {
     if (jj_3R_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_61() {
-    if (jj_scan_token(K_VARYING)) return true;
-    if (jj_scan_token(K_ARRAY)) return true;
     return false;
   }
 
@@ -3584,6 +3587,11 @@ Token rangeEnd = null;
     return false;
   }
 
+  private boolean jj_3_8() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
   private boolean jj_3R_24() {
     if (jj_scan_token(K_LONG)) return true;
     Token xsp;
@@ -3591,11 +3599,6 @@ Token rangeEnd = null;
     if (jj_scan_token(189)) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_3R_65()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_3R_10()) return true;
     return false;
   }
 
@@ -3741,11 +3744,6 @@ Token rangeEnd = null;
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
   private boolean jj_3R_22() {
     if (jj_scan_token(K_SIGNTYPE)) return true;
     return false;
@@ -3756,6 +3754,11 @@ Token rangeEnd = null;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_62()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_6()) return true;
     return false;
   }
 
@@ -4640,6 +4643,11 @@ Token rangeEnd = null;
 
   private boolean jj_3_12() {
     if (jj_scan_token(K_NOCOPY)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    if (jj_scan_token(R_ANCHORED_TYPE)) return true;
     return false;
   }
 

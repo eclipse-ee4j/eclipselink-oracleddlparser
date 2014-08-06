@@ -787,6 +787,7 @@ void constructorDeclaration():
 {}
 {
   [ <K_CONSTRUCTOR> skipToReturn() <K_SELF><R_AS><K_RESULT> ]
+  [ <O_COMMA> constructorDeclaration() ]
 }
 
 void uniqList():

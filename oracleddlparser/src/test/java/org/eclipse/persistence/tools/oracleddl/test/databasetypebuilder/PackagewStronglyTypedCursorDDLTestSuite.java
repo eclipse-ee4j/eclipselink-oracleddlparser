@@ -142,7 +142,11 @@ public class PackagewStronglyTypedCursorDDLTestSuite {
         String msg = null;
         try {
             String schema = System.getProperty(DATABASE_USERNAME_KEY, DEFAULT_DATABASE_USERNAME);
-            packageType = dtBuilder.buildPackages(conn, schema, STRONGLY_TYPED_REF_CURSOR_TEST_PACKAGE).get(0);
+            List<PLSQLPackageType> packages = dtBuilder.buildPackages(conn, schema, STRONGLY_TYPED_REF_CURSOR_TEST_PACKAGE);
+            packageType = packages.get(0);
+            List<ProcedureType> procedures = packageType.getProcedures();
+            assertTrue(procedures.size() == 1);
+            procType = procedures.get(0);
         }
         catch (Exception e) {
             worked = false;
