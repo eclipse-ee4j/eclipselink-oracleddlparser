@@ -21,5 +21,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.persistence.tools.oracleddl.test.AllTests"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.persistence.oracleddlparser"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Ddb.user=${db.oracle.user} -Ddb.pwd=${db.oracle.pwd} -Ddb.url=${db.oracle.url} -Ddb.platform=${db.oracle.platform} -Ddb.driver=${db.oracle.driver} -Ddb.ddl.create=${db.ddl.create} -Ddb.ddl.drop=${db.ddl.drop} -Ddb.ddl.debug=${db.ddl.debug}"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Ddb.user=${db.oracle.user} -Ddb.pwd=${db.oracle.pwd} -Ddb.url=${db.oracle.url} -Ddb.driver=${db.oracle.driver} -Ddb.ddl.create=${db.ddl.create} -Ddb.ddl.drop=${db.ddl.drop} -Ddb.ddl.debug=${db.ddl.debug}"/>
 </launchConfiguration>

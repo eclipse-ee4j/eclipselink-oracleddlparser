@@ -18,14 +18,13 @@
     <properties>
         <!-- TOOL Properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tycho.version>0.15.0</tycho.version>
-        <junit4-version>4.8.1</junit4-version>
+        <tycho.version>0.21.0</tycho.version>
+        <junit4-version>4.8.2</junit4-version>
         <!-- PROJECT Properties -->
         <release.version>1.0.0</release.version>
         <!-- maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format> Seems it must be in settings.xml -->
         <build.qualifier>v${maven.build.timestamp}</build.qualifier>
         <forceContextQualifier>${build.qualifier}</forceContextQualifier>
-        <src>./src/main/java,./src/test/java</src>
     </properties>
 
     <organization>
@@ -36,6 +35,12 @@
     <build>
         <defaultGoal>verify</defaultGoal>
         <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <extensions>true</extensions>
+            </plugin>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-compiler-plugin</artifactId>
@@ -49,15 +54,6 @@
                     <!-- compilerArgument>-err:warning_tokens_separated_by_comma - convert exactly the listed warnings to errors  </compilerArgument -->
                     <!-- compilerArgument>-err:+warning_tokens_separated_by_comma - convert additional warnings to errors</compilerArgument -->
                     <!-- compilerArgument>-err:-warning_tokens_separated_by_comma - remove specific warnings from being converted to errors </compilerArgument -->
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>tycho-maven-plugin</artifactId>
-                <version>${tycho.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <resolver>p2</resolver>
                 </configuration>
             </plugin>
             <plugin>
@@ -119,23 +115,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-p2-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-p2-metadata</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>p2-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <finalName>${project.artifactId}_${release.version}.${build.qualifier}</finalName>
     </build>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>tycho-0.15.0-staged</id>
-            <url>https://oss.sonatype.org/content/repositories/orgeclipsetycho-255/</url>
-        </pluginRepository>
-        <!-- pluginRepository>
-            <id>tycho-public</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </pluginRepository -->
-        <pluginRepository>
-            <id>maven-eclipse</id>
-            <url>http://repo1.maven.org</url>
-        </pluginRepository>
-    </pluginRepositories>
-
 </project>

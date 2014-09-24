@@ -19,25 +19,42 @@
       <maven-surefire-plugin.version>2.11</maven-surefire-plugin.version>
       <maven-surefire-report-plugin.version>2.11</maven-surefire-report-plugin.version>
       <jxr-maven-plugin.version>2.3</jxr-maven-plugin.version>
+      <!-- tests related properties -->
+      <db.oracle.url>jdbc:oracle:thin:@localhost:1521:ORCL</db.oracle.url>
+      <db.oracle.user>scott</db.oracle.user>
+      <db.oracle.pwd>tiger</db.oracle.pwd>
+      <db.oracle.driver>oracle.jdbc.OracleDriver</db.oracle.driver>
+      <db.ddl.create>false</db.ddl.create>
+      <db.ddl.drop>false</db.ddl.drop>
+      <db.ddl.debug>false</db.ddl.debug>
+      <!-- enable debugger on port 5005 -->
+      <test.debug>false</test.debug>
     </properties>
 
     <dependencies>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.8.2</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.oracle</groupId>
-        <artifactId>ojdbc6</artifactId>
-        <version>11.2.0</version>
+        <version>${junit4-version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
 
     <build>
       <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>javacc-maven-plugin</artifactId>
+          <version>2.6</version>
+          <executions>
+            <execution>
+              <id>jjtree-javacc</id>
+              <goals>
+                <goal>jjtree-javacc</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -53,13 +70,13 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.5.1</version>
           <executions>
-            <execution>
-			  <id>test</id>
-			  <phase>test</phase>
-			  <goals>
-				<goal>testCompile</goal>
-			  </goals>
-            </execution>
+              <execution>
+                  <id>test</id>
+                  <phase>test</phase>
+                  <goals>
+                      <goal>testCompile</goal>
+                  </goals>
+              </execution>
           </executions>
         </plugin>
         <plugin>
@@ -75,7 +92,6 @@
                    <db.user>${db.oracle.user}</db.user>
                    <db.pwd>${db.oracle.pwd}</db.pwd>
                    <db.url>${db.oracle.url}</db.url>
-                   <db.platform>${db.oracle.platform}</db.platform>
                    <db.driver>${db.oracle.driver}</db.driver>
                    <db.ddl.create>${db.ddl.create}</db.ddl.create>
                    <db.ddl.drop>${db.ddl.drop}</db.ddl.drop>
@@ -86,6 +102,7 @@
                   <includes>
                       <include>**/AllTests.java</include>
                   </includes>
+                  <debugForkedProcess>${test.debug}</debugForkedProcess>
               </configuration>
               <goals>
                 <goal>test</goal>
@@ -107,35 +124,12 @@
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.6</version>
-          <executions>
-            <execution>
-              <id>inject-resources-into-src-bundles</id>
-              <phase>package</phase>
-              <configuration>
-                <target>
-                  <zip file="target/${project.artifactId}.source_${release.version}.${build.qualifier}.jar" duplicate="preserve">
-                    <zipgroupfileset dir="target">
-                      <include name="${project.artifactId}_${release.version}.${build.qualifier}-sources.jar"/>
-                    </zipgroupfileset>
-                    <fileset dir="src/main/resources" includes="**"/>
-                  </zip>
-                </target>
-              </configuration>
-              <goals>
-                <goal>run</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </build>
 
     <reporting>
       <plugins>
-	    <plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jxr-plugin</artifactId>
           <version>${jxr-maven-plugin.version}</version>
@@ -155,4 +149,39 @@
       </plugins>
     </reporting>
 
+    <profiles>
+        <profile>
+            <id>system-jdbc-driver</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/../../extension.lib.external/ojdbc6.jar</exists>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc6</artifactId>
+                    <version>11.2.0</version>
+                    <scope>system</scope>
+                    <systemPath>${basedir}/../../extension.lib.external/ojdbc6.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>repo-jdbc-driver</id>
+            <activation>
+                <file>
+                    <missing>${basedir}/../../extension.lib.external/ojdbc6.jar</missing>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc6</artifactId>
+                    <version>11.2.0</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

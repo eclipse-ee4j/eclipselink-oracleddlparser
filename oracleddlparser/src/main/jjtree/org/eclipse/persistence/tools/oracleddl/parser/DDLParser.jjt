@@ -1,0 +1,1915 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2014 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
+ * which accompanies this distribution.
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *     Mike Norman - June 10 2011, created DDL parser package
+ ******************************************************************************/
+options {
+      STATIC = false;
+      SUPPORT_CLASS_VISIBILITY_PUBLIC = true;
+      ERROR_REPORTING = false;
+      JAVA_UNICODE_ESCAPE = true;
+      UNICODE_INPUT = true;
+      NODE_USES_PARSER = false;
+      NODE_DEFAULT_VOID = true;
+      VISITOR = true;
+      FORCE_LA_CHECK = true;
+}
+
+PARSER_BEGIN(DDLParser)
+/*******************************************************************************
+ * Copyright (c) 2011, 2014 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
+ * which accompanies this distribution.
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *     Mike Norman - June 10 2011, created DDL parser package
+ ******************************************************************************/
+package org.eclipse.persistence.tools.oracleddl.parser;
+
+//javase imports
+import java.io.InputStream;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+//metadata imports
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentTypeDirection;
+import org.eclipse.persistence.tools.oracleddl.metadata.BlobType;
+import org.eclipse.persistence.tools.oracleddl.metadata.CharType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ClobType;
+import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
+import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
+import org.eclipse.persistence.tools.oracleddl.metadata.DecimalType;
+import org.eclipse.persistence.tools.oracleddl.metadata.DoubleType;
+import org.eclipse.persistence.tools.oracleddl.metadata.FieldType;
+import org.eclipse.persistence.tools.oracleddl.metadata.FloatType;
+import org.eclipse.persistence.tools.oracleddl.metadata.FunctionType;
+import org.eclipse.persistence.tools.oracleddl.metadata.IntervalDayToSecond;
+import org.eclipse.persistence.tools.oracleddl.metadata.IntervalYearToMonth;
+import org.eclipse.persistence.tools.oracleddl.metadata.LongType;
+import org.eclipse.persistence.tools.oracleddl.metadata.LongRawType;
+import org.eclipse.persistence.tools.oracleddl.metadata.NCharType;
+import org.eclipse.persistence.tools.oracleddl.metadata.NClobType;
+import org.eclipse.persistence.tools.oracleddl.metadata.NumericType;
+import org.eclipse.persistence.tools.oracleddl.metadata.NVarChar2Type;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCursorType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLPackageType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLType;
+import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLSubType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
+import org.eclipse.persistence.tools.oracleddl.metadata.RawType;
+import org.eclipse.persistence.tools.oracleddl.metadata.RealType;
+import org.eclipse.persistence.tools.oracleddl.metadata.ROWTYPEType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TimeStampType;
+import org.eclipse.persistence.tools.oracleddl.metadata.TYPEType;
+import org.eclipse.persistence.tools.oracleddl.metadata.URowIdType;
+import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedSizedType;
+import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
+import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
+import org.eclipse.persistence.tools.oracleddl.metadata.VarChar2Type;
+import org.eclipse.persistence.tools.oracleddl.metadata.VArrayType;
+import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypesRepository;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.BFILE_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.BINARY_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.BINARY_FLOAT_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.BINARY_DOUBLE_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.BOOLEAN_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.DATE_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.INTEGER_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.MLSLABEL_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.NATURAL_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.PLS_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.POSITIVE_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.ROWID_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIGN_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_INTEGER_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_DOUBLE_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SIMPLE_FLOAT_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SMALLINT_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.SYS_REFCURSOR_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.TIME_TYPE;
+import static org.eclipse.persistence.tools.oracleddl.metadata.ScalarDatabaseTypeEnum.XMLTYPE_TYPE;
+
+public class DDLParser {
+
+    protected Map<String, DatabaseType> localTypes = new HashMap<String, DatabaseType>();
+    protected List<String> schemaPatterns = null;
+
+    protected DatabaseTypesRepository typesRepository = new DatabaseTypesRepository();
+
+    public DDLParser() {
+        super();
+    }
+
+    public void setTypesRepository(DatabaseTypesRepository typesRepository) {
+        this.typesRepository = typesRepository;
+    }
+    public DatabaseTypesRepository getTypesRepository() {
+        return typesRepository;
+    }
+
+    public void setSchemaPatterns(List<String> schemaPatterns) {
+        this.schemaPatterns = schemaPatterns;
+    }
+
+    protected String removeQuotes(String quotedString) {
+        return quotedString.substring(1, quotedString.length() - 1);
+    }
+}
+
+PARSER_END(DDLParser)
+
+// white-space
+SKIP: {
+      " " | "\t" | "\n" | "\r" | "\f"
+}
+
+// comments
+SKIP: {
+    <COMMENT_LINE: "--" (~["\n","\r"])* ("\n"|"\r"|"\r\n") >
+}
+SKIP:{
+    <COMMENT_BLOCK: "/*" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/">
+}
+
+// token classes
+
+// separators and operators (prefix with O_ to avoid naming conflicts)
+TOKEN: {
+      <O_ASSIGN: ":=">
+    | <O_ASTERISK: "*">
+    | <O_ATSIGN: "@">
+    | <O_CLOSEPAREN: ")">
+    | <O_CONCAT: "||">
+    | <O_COLON: ":">
+    | <O_COMMA: ",">
+    | <O_DOT: ".">
+    | <O_DOUBLEDOT: "..">
+    | <O_DOLLAR: "$">
+    | <O_PERCENT: "%">
+    | <O_EQUAL: "=">
+    | <O_GREATER: ">">
+    | <O_GREATEREQUAL: ">=">
+    | <O_JOINPLUS: "(+)">
+    | <O_LESS: "<">
+    | <O_LESSEQUAL: "<=">
+    | <O_MINUS: "-">
+    | <O_NOTEQUAL2: "<>">
+    | <O_NOTEQUAL: "!=">
+    | <O_OPENPAREN: "(">
+    | <O_PLUS: "+">
+    | <O_POUND: "#">
+    | <O_QUESTIONMARK: "?">
+    | <O_SEMICOLON: ";">
+    | <O_SLASH: "/">
+    | <O_TILDE: "~">
+}
+
+// numeric literals
+TOKEN : {
+      <S_NUMBER: <FLOAT> | <FLOAT> ( ["e","E"] ([ "-","+"])? <FLOAT> )? >
+    | <#FLOAT: <INTEGER> | <INTEGER> ( "." <INTEGER> )? | "." <INTEGER> >
+    | <#INTEGER: ( <DIGIT> )+ >
+    | <#DIGIT: ["0" - "9"] >
+}
+
+//reserved words and keywords literals
+/*
+PLSQL reserved words (prefix with R_ ) and keyword (prefix with K_)
+http://docs.oracle.com/cd/E11882_01/appdev.112/e25519/fundamentals.htm#CBJGBIGI
+"You cannot use reserved words as ordinary user-defined identifiers.
+You can use keywords as ordinary user-defined identifiers, but it is not recommended."
+*/
+
+TOKEN [IGNORE_CASE]: {
+    //reserved words
+      <R_ALL: "ALL">
+    | <R_ALTER: "ALTER">
+    | <R_ANCHORED_ROWTYPE: "%ROWTYPE">
+    | <R_ANCHORED_TYPE: "%TYPE">
+    | <R_AND: "AND">
+    | <R_AS: "AS">
+    | <R_ASC: "ASC">
+    | <R_AT: "AT">
+    | <R_BEGIN: "BEGIN">
+    | <R_BETWEEN: "BETWEEN">
+    | <R_BY: "BY">
+    | <R_CASE: "CASE">
+    | <R_CHARSET: "%CHARSET"> 
+    | <R_CHECK: "CHECK">
+    | <R_CLUSTERS: "CLUSTERS">
+    | <R_CLUSTER: "CLUSTER">
+    | <R_COLAUTH: "COLAUTH">
+    | <R_COLUMNS: "COLUMNS">
+    | <R_COMPRESS: "COMPRESS">
+    | <R_CONNECT: "CONNECT">
+    | <R_CONSTRAINT: "CONSTRAINT">
+    | <R_CRASH: "CRASH">
+    | <R_CREATE: "CREATE">
+    | <R_CURSOR: "CURSOR">
+    | <R_DECLARE: "DECLARE">
+    | <R_DEFAULT: "DEFAULT">
+    | <R_DESC: "DESC">
+    | <R_DISTINCT: "DISTINCT">
+    | <R_DROP: "DROP">
+    | <R_ELSE: "ELSE">
+    | <R_END: "END">
+    | <R_EXCEPTION: "EXCEPTION">
+    | <R_EXCLUSIVE: "EXCLUSIVE">
+    | <R_FETCH: "FETCH">
+    | <R_FOR: "FOR">
+    | <R_FROM: "FROM">
+    | <R_FUNCTION: "FUNCTION">
+    | <R_GOTO: "GOTO">
+    | <R_GRANT: "GRANT">
+    | <R_GROUP: "GROUP">
+    | <R_HAVING: "HAVING">
+    | <R_IDENTIFIED: "IDENTIFIED">
+    | <R_IF: "IF">
+    | <R_IN: "IN">
+    | <R_INDEX: "INDEX">
+    | <R_INDEXES: "INDEXES">
+    | <R_INSERT: "INSERT">
+    | <R_INTERSECT: "INTERSECT">
+    | <R_INTO: "INTO">
+    | <R_IS: "IS">
+    | <R_LIKE: "LIKE">
+    | <R_LOCK: "LOCK">
+    | <R_MINUS: "MINUS">
+    | <R_MODE: "MODE">
+    | <R_NOCOMPRESS: "NOCOMPRESS">
+    | <R_NOT: "NOT">
+    | <R_NOWAIT: "NOWAIT">
+    | <R_NULL: "NULL">
+    | <R_OF: "OF">
+    | <R_ON: "ON">
+    | <R_OPTION: "OPTION">
+    | <R_OR: "OR">
+    | <R_ORDER: "ORDER">
+    | <R_OVERLAPS: "OVERLAPS">
+    | <R_PRIMARY: "PRIMARY">
+    | <R_PROCEDURE: "PROCEDURE">
+    | <R_PUBLIC: "PUBLIC">
+    | <R_RESOURCE: "RESOURCE">
+    | <R_REVOKE: "REVOLE">
+    | <R_SELECT: "SELECT">
+    | <R_SHARE: "SHARE">
+    | <R_SIZE: "SIZE">
+    | <R_SQL: "SQL">
+    | <R_START: "START">
+    | <R_SUBTYPE: "SUBTYPE">
+    | <R_TABAUTH: "TABAUTH">
+    | <R_TABLE: "TABLE">
+    | <R_THEN: "THEN">
+    | <R_TO: "TO">
+    | <R_TYPE: "TYPE">
+    | <R_UNION: "UNION">
+    | <R_UNIQUE: "UNIQUE">
+    | <R_UPDATE: "UPDATE">
+    | <R_VALUES: "VALUES">
+    | <R_VIEW: "VIEW">
+    | <R_VIEWS: "VIEWS">
+    | <R_WHEN: "WHEN">
+    | <R_WHERE: "WHERE">
+    | <R_WITH: "WITH">
+
+    //keywords - not a complete list, just what is sufficient for this parser
+    | <K_ARRAY: "ARRAY">
+    | <K_AUTHID: "AUTHID">
+    | <K_BFILE: "BFILE">
+    | <K_BINARY_DOUBLE: "BINARY_DOUBLE">
+    | <K_BINARY_FLOAT: "BINARY_FLOAT">
+    | <K_BINARY_INTEGER: "BINARY_INTEGER">
+    | <K_BLOB: "BLOB">
+    | <K_BOOLEAN: "BOOLEAN">
+    | <K_BYTE: "BYTE">
+    | <K_CHAR: "CHAR">
+    | <K_CHARACTER: "CHARACTER">
+    | <K_CLOB: "CLOB">
+    | <K_COMMIT: "COMMIT">
+    | <K_CONSTANT: "CONSTANT">
+    | <K_CONSTRUCTOR: "CONSTRUCTOR">
+    | <K_CURRENT_USER: "CURRENT_USER">
+    | <K_DATE :"DATE">
+    | <K_DAY: "DAY">
+    | <K_DEC: "DEC">
+    | <K_DECIMAL: "DECIMAL">
+    | <K_DEFINER: "DEFINER">
+    | <K_DELETE: "DELETE">
+    | <K_DETERMINISTIC: "DETERMINISTIC">
+    | <K_DOUBLE: "DOUBLE">
+    | <K_ENABLE: "ENABLE">
+    | <K_FINAL: "FINAL">
+    | <K_FLOAT: "FLOAT">
+    | <K_FORCE: "FORCE">
+    | <K_GLOBAL: "GLOBAL">
+    | <K_INSTANTIABLE: "INSTANTIABLE">
+    | <K_INT: "INT">
+    | <K_INTEGER: "INTEGER">
+    | <K_INTERVAL: "INTERVAL">
+    | <K_KEY: "KEY">
+    | <K_LOCAL: "LOCAL">
+    | <K_LONG: "LONG">
+    | <K_MLSLABEL: "MLSLABEL">
+    | <K_MONTH: "MONTH">
+    | <K_NATIONAL: "NATIONAL">
+    | <K_NATURAL: "NATURAL">
+    | <K_NCHAR: "NCHAR">
+    | <K_NCLOB: "NCLOB">
+    | <K_NOCOPY: "NOCOPY">
+    | <K_NUMBER: "NUMBER">
+    | <K_NUMERIC: "NUMERIC">
+    | <K_NVARCHAR2: "NVARCHAR2">
+    | <K_NVARCHAR: "NVARCHAR">
+    | <K_OBJECT: "OBJECT">
+    | <K_OID: "OID">
+    | <K_ORGANIZATION: "ORGANIZATION">
+    | <K_OUT: "OUT">
+    | <K_OVERFLOW: "OVERFLOW">
+    | <K_PACKAGE: "PACKAGE">
+    | <K_PARALLEL_ENABLE: "PARALLEL_ENABLE">
+    | <K_PIPELINED: "PIPELINED">
+    | <K_PLS_INTEGER:"PLS_INTEGER">
+    | <K_POSITIVE: "POSITIVE">
+    | <K_PRAGMA: "PRAGMA">
+    | <K_PRECISION:"PRECISION">
+    | <K_PRESERVE: "PRESERVE">
+    | <K_RANGE: "RANGE">
+    | <K_RAW: "RAW">
+    | <K_REAL:"REAL">
+    | <K_RECORD: "RECORD">
+    | <K_REF: "REF">
+    | <K_REPLACE: "REPLACE">
+    | <K_RESULT: "RESULT">
+    | <K_RESULT_CACHE: "RESULT_CACHE">
+    | <K_RETURN: "RETURN">
+    | <K_ROWID:"ROWID">
+    | <K_ROWS: "ROWS">
+    | <K_SECOND: "SECOND">
+    | <K_SELF: "SELF">
+    | <K_SET: "SET">
+    | <K_SIGNTYPE: "SIGNTYPE">
+    | <K_SIMPLE_DOUBLE:"SIMPLE_DOUBLE">
+    | <K_SIMPLE_FLOAT:"SIMPLE_FLOAT">
+    | <K_SIMPLE_INTEGER:"SIMPLE_INTEGER">
+    | <K_SMALLINT:"SMALLINT">
+    | <K_STRING: "STRING">
+    | <K_SYS_REFCURSOR:"SYS_REFCURSOR">
+    | <K_TEMPORARY: "TEMPORARY">
+    | <K_TIME: "TIME">
+    | <K_TIMESTAMP: "TIMESTAMP">
+    | <K_UROWID:"UROWID">
+    | <K_VARCHAR2: "VARCHAR2">
+    | <K_VARCHAR: "VARCHAR">
+    | <K_VARRAY: "VARRAY">
+    | <K_VARYING: "VARYING">
+    | <K_XMLTYPE: "XMLTYPE">
+    | <K_SYSXMLTYPE: "SYS.XMLTYPE">
+    | <K_YEAR: "YEAR">
+    | <K_ZONE: "ZONE">
+}
+
+String keywords():
+{Token t = null;}
+{
+    (
+        t=<K_ARRAY>
+      | t=<K_AUTHID>
+      | t=<K_BFILE>
+      | t=<K_BINARY_DOUBLE>
+      | t=<K_BINARY_FLOAT>
+      | t=<K_BINARY_INTEGER>
+      | t=<K_BLOB>
+      | t=<K_BOOLEAN>
+      | t=<K_BYTE>
+      | t=<K_CHAR>
+      | t=<K_CHARACTER>
+      | t=<K_CLOB>
+      | t=<K_COMMIT>      
+      | t=<K_CONSTANT>
+      | t=<K_CONSTRUCTOR>
+      | t=<K_CURRENT_USER>
+      | t=<K_DATE>
+      | t=<K_DAY>
+      | t=<K_DEC>
+      | t=<K_DECIMAL>
+      | t=<K_DEFINER>
+      | t=<K_DELETE>
+      | t=<K_DETERMINISTIC>
+      | t=<K_DOUBLE>
+      | t=<K_ENABLE>
+      | t=<K_FINAL>
+      | t=<K_FLOAT>
+      | t=<K_FORCE>
+      | t=<K_GLOBAL>
+      | t=<K_INSTANTIABLE>
+      | t=<K_INT>
+      | t=<K_INTEGER>
+      | t=<K_INTERVAL>
+      | t=<K_KEY>
+      | t=<K_LOCAL>
+      | t=<K_LONG>
+      | t=<K_MLSLABEL>
+      | t=<K_MONTH>
+      | t=<K_NATIONAL>
+      | t=<K_NATURAL>
+      | t=<K_NCHAR>
+      | t=<K_NCLOB>
+      | t=<K_NOCOPY>
+      | t=<K_NUMBER>
+      | t=<K_NUMERIC>
+      | t=<K_NVARCHAR2>
+      | t=<K_NVARCHAR>
+      | t=<K_OBJECT>
+      | t=<K_OID>
+      | t=<K_ORGANIZATION>
+      | t=<K_OUT>
+      | t=<K_OVERFLOW>
+      | t=<K_PACKAGE>
+      | t=<K_PARALLEL_ENABLE>
+      | t=<K_PIPELINED>
+      | t=<K_PLS_INTEGER>
+      | t=<K_POSITIVE>
+      | t=<K_PRAGMA>
+      | t=<K_PRECISION>
+      | t=<K_PRESERVE>
+      | t=<K_RANGE>
+      | t=<K_RAW>
+      | t=<K_REAL>
+      | t=<K_RECORD>
+      | t=<K_REF>
+      | t=<K_REPLACE>
+      | t=<K_RESULT>
+      | t=<K_RESULT_CACHE>
+      | t=<K_RETURN>
+      | t=<K_ROWID>
+      | t=<K_ROWS>
+      | t=<K_SECOND>
+      | t=<K_SELF>
+      | t=<K_SET>
+      | t=<K_SIGNTYPE>
+      | t=<K_SIMPLE_DOUBLE>
+      | t=<K_SIMPLE_FLOAT>
+      | t=<K_SIMPLE_INTEGER>
+      | t=<K_SMALLINT>
+      | t=<K_STRING>
+      | t=<K_SYS_REFCURSOR>
+      | t=<K_TEMPORARY>
+      | t=<K_TIME>
+      | t=<K_TIMESTAMP>
+      | t=<K_UROWID>
+      | t=<K_VARCHAR2>
+      | t=<K_VARCHAR>
+      | t=<K_VARRAY>
+      | t=<K_VARYING>
+      | t=<K_XMLTYPE>
+      | t=<K_SYSXMLTYPE>
+      | t=<K_YEAR>
+      | t=<K_ZONE>      
+    )
+    {
+      return t.image;
+    }
+}
+
+// identifiers
+TOKEN:
+{
+      <S_IDENTIFIER: (<LETTER>)+ (<DIGIT> | <LETTER> | <SPECIAL_CHARS>)* >
+    | <#LETTER: ["a"-"z", "A"-"Z"] >
+    | <#SPECIAL_CHARS: "$" | "_" | "#" | "@" >
+    | <S_BIND: ":" ( <S_NUMBER> | <S_IDENTIFIER> ("." <S_IDENTIFIER>)?) >
+    | <S_CHAR_LITERAL: "'" (~["'"])* "'" ("'" (~["'"])* "'")*>
+    | <S_QUOTED_IDENTIFIER: "\"" (~["\n","\r","\""])* "\"" >
+}
+
+// stripped-down version of PLSQL grammar: only parses package/top-level DDL specifications
+
+// PLSQLPackage at 'top-level'
+PLSQLPackageType parsePLSQLPackage():
+{PLSQLPackageType packageType = new PLSQLPackageType();
+ String dottedName = null;
+ String schema = null;
+ String packageName = null;
+ }
+{
+    <R_CREATE> [ orReplace() ] <K_PACKAGE>
+      dottedName=OracleObjectNamePossiblyDotted()
+        {
+          packageName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              packageName = dottedName.substring(idx+1, dottedName.length());
+          }
+          if (schema != null) {
+            packageType.setSchema(schema);
+          }
+          packageType.setPackageName(packageName);
+        }
+        [ invokerRights() ] as()
+         ( packageDeclaration(packageType) )*
+    <R_END> skipToEnd()
+    {
+      typesRepository.setDatabaseType(packageName, packageType);
+      return packageType;
+    }
+}
+
+// procedure at 'top-level'
+ProcedureType parseTopLevelProcedure():
+{ProcedureType procedureType = null;
+ String dottedName = null;
+ String schema = null;
+ String procedureName = null;}
+{
+    <R_CREATE> [ orReplace() ] <R_PROCEDURE>
+      dottedName=OracleObjectNamePossiblyDotted()
+        {
+          procedureName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              procedureName = dottedName.substring(idx+1, dottedName.length());
+          }
+          procedureType = new ProcedureType(procedureName);
+              if (schema != null) {
+                  procedureType.setSchema(schema);
+              }
+       }
+    [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ] as()
+    skipToEnd()
+    {
+      typesRepository.setDatabaseType(procedureName, procedureType);
+      return procedureType;
+    }
+}
+
+// function at 'top-level'
+FunctionType parseTopLevelFunction():
+{FunctionType functionType = null;
+ String dottedName = null;
+ String schema = null;
+ String functionName = null;
+ ArgumentType returnType = null;}
+{
+    <R_CREATE> [ orReplace() ] <R_FUNCTION>
+      dottedName=OracleObjectNamePossiblyDotted()
+            {
+          functionName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              functionName = dottedName.substring(idx+1, dottedName.length());
+          }
+              functionType = new FunctionType(functionName);
+          if (schema != null) {
+              functionType.setSchema(schema);
+          }
+      }
+    [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ] returnType=functionReturnSpec(functionType) as()
+    skipToEnd()
+    {
+      functionType.setReturnArgument(returnType);
+      typesRepository.setDatabaseType(functionName, functionType);
+      return functionType;
+    }
+}
+
+// table at 'top-level'
+TableType parseTable():
+{TableType tableType = null;
+ String dottedName = null;
+ String schema = null;
+ String tableName = null;
+ Token iot = null;
+}
+{
+    <R_CREATE> [ <K_GLOBAL> <K_TEMPORARY> ] <R_TABLE>
+      dottedName=OracleObjectNamePossiblyDotted()
+        {
+          tableName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              tableName = dottedName.substring(idx+1, dottedName.length());
+          }
+          tableType = new TableType(tableName);
+                  if (schema != null) {
+                       tableType.setSchema(schema);
+                  }
+        }
+        <O_OPENPAREN> columnDeclarations(tableType) <O_CLOSEPAREN>
+         [ <K_ORGANIZATION> ] [ iot=<R_INDEX> ] [ <R_NOCOMPRESS> ] [ <K_OVERFLOW> ]
+         [ onCommit() ] <O_SEMICOLON>
+     <EOF>
+     {
+         if (iot != null) {
+             tableType.setIOT(true);
+         }
+         typesRepository.setDatabaseType(tableName, tableType);
+         return tableType;
+     }
+}
+
+// type at 'top-level'
+CompositeDatabaseType parseType():
+{CompositeDatabaseType databaseType = null;
+ DatabaseType enclosedType = null;
+ String dottedName = null;
+ String schema = null;
+ String typeName = null;
+ Token vsize = null;
+ boolean varray = false;
+ boolean nestedTable = false;
+}
+{
+    <R_CREATE> [ orReplace() ] <R_TYPE>
+      dottedName=OracleObjectNamePossiblyDotted()
+        {
+          typeName = dottedName;
+          if (dottedName.contains(".")) {
+              int idx = dottedName.indexOf(".");
+              schema = dottedName.substring(0, idx);
+              typeName = dottedName.substring(idx+1, dottedName.length());
+          }
+        }
+        [ <K_FORCE> ] [ <K_OID> <S_CHAR_LITERAL> ] [ invokerRights() ] as()
+        [ <K_OBJECT> <O_OPENPAREN>
+            {
+                databaseType = new ObjectType(typeName);
+                if (schema != null) {
+                    ((ObjectType)databaseType).setSchema(schema);
+                }
+            } columnDeclarations(databaseType) constructorDeclaration() <O_CLOSEPAREN>
+          | <K_VARRAY> <O_OPENPAREN> vsize=<S_NUMBER> <O_CLOSEPAREN> <R_OF>
+            {
+                databaseType = new VArrayType(typeName);
+                if (schema != null) {
+                    ((VArrayType)databaseType).setSchema(schema);
+                }
+                if (vsize != null) {
+                    Long size = Long.decode(vsize.image);
+                    ((VArrayType)databaseType).setSize(size);
+                }
+            } enclosedType=columnTypeSpec(databaseType)
+          | <R_TABLE> <R_OF>
+           {
+                databaseType = new ObjectTableType(typeName);
+                if (schema != null) {
+                    ((ObjectTableType)databaseType).setSchema(schema);
+                }
+              } enclosedType=columnTypeSpec(databaseType)
+        ]
+     [ [ <R_NOT> ] ( <K_FINAL> | <K_INSTANTIABLE> ) ] [ <O_SEMICOLON> ]
+     <EOF>
+    {
+        if (enclosedType != null) {
+            ((CompositeDatabaseType)databaseType).setEnclosedType(enclosedType);
+        }
+        typesRepository.setDatabaseType(typeName, databaseType);
+        return databaseType;
+    }
+}
+
+void columnDeclarations(CompositeDatabaseType enclosingType):
+{}
+{
+    (LOOKAHEAD(2) constructor() | columnDeclaration(enclosingType) | constraintDeclaration(enclosingType) )
+    [ <O_COMMA> columnDeclarations(enclosingType) ]
+}
+
+void columnDeclaration(CompositeDatabaseType enclosingType):
+{String s = null;
+ String pk = null;
+ boolean notNull = false;
+ DatabaseType columnType = null;
+ FieldType column = null;
+}
+{
+    s=OracleObjectName() columnType=columnTypeSpec(enclosingType) [ notNull=notNull() ]
+        {
+          column = new FieldType(s);
+          if (enclosingType != null) {
+              if (enclosingType.isPLSQLRecordType()) {
+                  ((PLSQLRecordType)enclosingType).addField(column);
+              }
+              else if (enclosingType.isTableType()) {
+                  ((TableType)enclosingType).addColumn(column);
+              }
+              else if (enclosingType.isObjectType()) {
+                  ((ObjectType)enclosingType).addField(column);
+              }
+          }
+          column.setEnclosedType(columnType);
+          if (columnType instanceof UnresolvedType) {
+              ((UnresolvedType)columnType).setOwningType(column);
+          }
+          if (notNull) {
+              column.setNotNull();
+          }
+        }
+}
+
+void constraintDeclaration(CompositeDatabaseType enclosingType):
+{String s = null;
+ String pk = null;
+}
+{
+    [ <R_CONSTRAINT> ] [ OracleObjectName() ]
+      (
+          <R_PRIMARY> <K_KEY> <O_OPENPAREN> pkList((TableType)enclosingType) <O_CLOSEPAREN>
+        | <R_CHECK> <O_OPENPAREN> skipToClosingParen() <O_CLOSEPAREN>
+        | <R_UNIQUE> <O_OPENPAREN> uniqList() <O_CLOSEPAREN> 
+      ) [ <K_ENABLE> ]
+}
+
+DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):
+{String s = null;
+ Token t = null;
+ DatabaseType dt = null;}
+{
+    (
+        LOOKAHEAD(2)
+        dt=datatype()
+      | s=columnSpec() [ <O_OPENPAREN> t=<S_NUMBER> <O_CLOSEPAREN> ]
+    ) [ <R_CONSTRAINT> <S_QUOTED_IDENTIFIER> ]
+    {
+      if (s != null) {
+          if (s.contains(".")) {
+              int dotIdx = s.indexOf(".");
+              String namePart1 = s.substring(0, dotIdx);
+              String namePart2 = s.substring(dotIdx+1, s.length());
+              String schemaName = null;
+              if (enclosingType.isTableType()) {
+                 schemaName = ((TableType)enclosingType).getSchema();
+              } else if (enclosingType.isObjectTableType()) {
+                 schemaName = ((ObjectTableType)enclosingType).getSchema();
+              } else if (enclosingType.isObjectType()) {
+                 schemaName = ((ObjectType)enclosingType).getSchema();
+              } else if (enclosingType.isPLSQLType()) {
+                 schemaName = ((PLSQLType)enclosingType).getParentType().getSchema();
+              } else if (enclosingType.isVArrayType()) {
+                 schemaName = ((VArrayType)enclosingType).getSchema();
+              }
+              if (schemaName != null && schemaName.equals(namePart1)) {
+                  s = namePart2;
+              }
+          }
+          for (String typeName : localTypes.keySet()) {
+              if (typeName.equals(s)) {
+                  dt = localTypes.get(s);
+                  break;
+              }
+          }
+          if (dt == null) {
+              if (t != null) {
+                  Long size = Long.decode(t.image);
+                  dt = new UnresolvedSizedType(s, size);
+              }
+              else {
+                  dt = new UnresolvedType(s);
+              }
+              ((UnresolvedType)dt).setOwningType(enclosingType);
+          }
+      }
+      return dt;
+    }
+}
+
+void constructorDeclaration():
+{}
+{
+  [ <K_CONSTRUCTOR> skipToReturn() <K_SELF><R_AS><K_RESULT> ]
+  [ <O_COMMA> constructorDeclaration() ]
+}
+
+void uniqList():
+{}
+{
+    OracleObjectName() ( <O_COMMA> OracleObjectName() )*
+}
+
+void pkList(TableType tableType):
+{}
+{
+    pk(tableType) ( <O_COMMA> pk(tableType) )*
+}
+
+void pk(TableType tableType):
+{
+String s = null;
+}
+{
+    s=OracleObjectName()
+    {
+       List<FieldType> columns = tableType.getColumns();
+       for (FieldType column : columns) {
+            if (column.getFieldName().equals(s)) {
+                column.setPk();
+                break;
+            }
+       }
+    }
+}
+
+void packageDeclaration(PLSQLPackageType packageType) :
+{}
+{
+      typeOrSubTypeDeclaration(packageType)
+    | cursorDeclaration(packageType)
+    | procedureSpec(packageType)
+    | functionSpec(packageType)
+    | LOOKAHEAD(2) variableDeclaration(packageType)
+    | pragmaDeclaration()
+}
+
+void variableDeclaration(PLSQLPackageType packageType):
+{String varName = null;
+ DatabaseType varType=null;}
+{
+    varName=OracleObjectName()
+      (
+          LOOKAHEAD(2) <R_EXCEPTION>
+        | [ LOOKAHEAD(2) <K_CONSTANT> ] varType=typeSpec() [ <R_NOT> <R_NULL> ] [ variableDefaultAssignment() ]
+      )
+    <O_SEMICOLON>
+    {
+        FieldType variable = new FieldType(varName);
+        variable.setEnclosedType(varType);
+        packageType.addLocalVariable(variable);
+        if (varType.isROWTYPEType()) {
+            ((ROWTYPEType)varType).setPackageType(packageType);
+        }
+    }
+}
+
+void variableDefaultAssignment():
+{}
+{
+    ( <O_ASSIGN> | <R_DEFAULT> ) skipToSemiColon()
+}
+
+DatabaseType datatype():
+{Token t = null;
+ DatabaseType dt = null;
+ Token precision = null;
+ Long sl;
+ Long pl;
+ Token scale = null;
+ Token withTimeZone = null;
+ Token withLocalTimeZone = null;
+}
+{
+    <K_BINARY_INTEGER>  { return BINARY_INTEGER_TYPE;}
+    | <K_BINARY_FLOAT>  { return BINARY_FLOAT_TYPE;}
+    | <K_BINARY_DOUBLE> { return BINARY_DOUBLE_TYPE;}
+    | <K_NATURAL>       { return NATURAL_TYPE;}
+    | <K_POSITIVE>      { return POSITIVE_TYPE;}
+    | <K_SIGNTYPE>      { return SIGN_TYPE;}
+    | ( t=<K_NUMBER>
+        | t=<K_NUMERIC>
+        | t=<K_DECIMAL>
+        | t=<K_DEC>
+      ) [ <O_OPENPAREN> [ precision=<O_ASTERISK > | precision=<S_NUMBER> ] ( <O_COMMA> scale=<S_NUMBER> )* <O_CLOSEPAREN> ]
+        {
+            if (t.kind == K_NUMBER || t.kind == K_NUMERIC) {
+                if (precision != null && precision.image.equals("*")) {
+                    precision = null;
+                }
+                if (precision == null) {
+                    if (scale != null && scale.image.equals("0")) {
+                        dt = INTEGER_TYPE;
+                    }
+                    else {
+                        dt = new NumericType();
+                    }
+                }
+                    else {
+                        pl = Long.decode(precision.image);
+                        if (scale == null) {
+                        dt = new NumericType(pl);
+                    }
+                    else {
+                        sl = Long.decode(scale.image);
+                        dt = new NumericType(pl, sl);
+                        }
+                    }
+                //sometimes need to know difference between NUMERIC and NUMBER
+                if (dt != INTEGER_TYPE && t.kind == K_NUMBER) {
+                    ((NumericType)dt).setNumberSynonym(true);
+                }
+            }
+            else  if (t.kind == K_DECIMAL || t.kind == K_DEC) {
+                if (precision != null && precision.image.equals("*")) {
+                    precision = null;
+                }
+                if (precision == null) {
+                    dt = new DecimalType();
+                }
+                else {
+                    pl = Long.decode(precision.image);
+                    if (scale == null) {
+                        dt = new DecimalType(pl);
+                    }
+                    else {
+                        sl = Long.decode(scale.image);
+                        dt = new DecimalType(pl, sl);
+                    }
+                }
+            }
+            return dt;
+        }
+    | <K_LONG> [ t=<K_RAW> ] [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+         {
+              if (t == null) {
+              if (precision == null) {
+                  dt = new LongType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  dt = new LongType(pl);
+              }
+              }
+              else {
+              if (precision == null) {
+                  dt = new LongRawType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  dt = new LongRawType(pl);
+              }
+            }
+            return dt;
+     }
+    | <K_RAW> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+            if (precision == null) {
+                dt = new RawType();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                dt = new RawType(pl);
+            }
+            return dt;
+            }
+    | <K_BOOLEAN> { return BOOLEAN_TYPE;}
+    | <K_XMLTYPE> { return XMLTYPE_TYPE;}
+    | <K_SYSXMLTYPE> { return XMLTYPE_TYPE;}
+    | <K_DATE> { return DATE_TYPE;}
+    | <K_INTERVAL>
+         (
+             <K_DAY> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ] <R_TO> <K_SECOND> [ <O_OPENPAREN> scale=<S_NUMBER> <O_CLOSEPAREN> ]
+             {
+                if (precision == null) {
+                        dt = new IntervalDayToSecond();
+                    }
+                    else {
+                        pl = Long.decode(precision.image);
+                        if (scale == null) {
+                            dt = new IntervalDayToSecond(pl);
+                        }
+                        else {
+                            sl = Long.decode(scale.image);
+                            dt = new IntervalDayToSecond(pl, sl);
+                        }
+                    }
+                return dt;
+             }
+           | <K_YEAR> [ <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> ] <R_TO> <K_MONTH>
+             {
+                if (precision == null) {
+                    dt = new IntervalYearToMonth();
+                }
+                else {
+                    pl = Long.decode(precision.image);
+                    dt = new IntervalYearToMonth(pl);
+                }
+                return dt;                 
+             }
+         )
+    | <K_TIME> { return TIME_TYPE;}
+    | <K_TIMESTAMP> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        [ <R_WITH> [ withLocalTimeZone=<K_LOCAL> ] withTimeZone=<K_TIME> <K_ZONE> ]
+        {
+          if (precision == null) {
+              dt = new TimeStampType();
+          }
+          else {
+              pl = Long.decode(precision.image);
+              dt = new TimeStampType(pl);
+          }
+          if (withLocalTimeZone !=  null) {
+              ((TimeStampType)dt).setWithLocalTimeZone();
+          }
+          else if (withTimeZone != null) {
+              ((TimeStampType)dt).setWithTimeZone();
+          }
+          return dt;
+        }
+    | <K_INTEGER>  { return INTEGER_TYPE;}
+    | <K_INT>      { return INTEGER_TYPE;}
+    | <K_SMALLINT> { return SMALLINT_TYPE;}
+    | <K_FLOAT> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (precision == null) {
+              return new FloatType();
+          }
+          else {
+              pl = Long.decode(precision.image);
+              FloatType ft = new FloatType(pl);
+              return ft;
+          }
+        }
+    | <K_REAL> { return new RealType();}
+    | <K_MLSLABEL> { return MLSLABEL_TYPE;}
+    | <K_PLS_INTEGER> { return PLS_INTEGER_TYPE;}
+    | <K_SIMPLE_INTEGER> { return SIMPLE_INTEGER_TYPE;}
+    | <K_SIMPLE_FLOAT> { return SIMPLE_FLOAT_TYPE;}
+    | <K_SIMPLE_DOUBLE> { return SIMPLE_DOUBLE_TYPE;}
+    | <K_SYS_REFCURSOR>  { return SYS_REFCURSOR_TYPE;}
+    | <K_BLOB > { return new BlobType();}
+    | <K_NCLOB> { return new NClobType();}
+    | <K_BFILE>  { return BFILE_TYPE;}
+    | <K_ROWID> { return ROWID_TYPE;}
+    | <K_UROWID> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (precision == null) {
+              return new URowIdType();
+          }
+          else {
+              pl = Long.decode(precision.image);
+              return new URowIdType(pl);
+          }
+        }
+    | <K_DOUBLE> <K_PRECISION> { return new DoubleType();}
+    | <K_CHAR> [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
+        [ <K_CHARACTER> <K_SET> <S_IDENTIFIER> [ <R_CHARSET> ] ]
+        {
+          if (t == null) {
+              if (precision == null) {
+                  return new CharType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  return new CharType(pl);
+              }
+          }
+          else {
+              // ANSI syntax for VARCHAR2
+              if (precision == null) {
+                  return new VarChar2Type();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  return new VarChar2Type(pl);
+              }
+          }
+        }
+    | <K_VARCHAR> [ <K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
+       [ <K_CHARACTER> <K_SET> <S_IDENTIFIER> [ <R_CHARSET> ] ]
+        {
+          if (precision == null) {
+              return new VarCharType();
+          }
+          else {
+              pl = Long.decode(precision.image);
+              return new VarCharType(pl);
+          }
+        }
+    | <K_VARCHAR2> [ <K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> [ <K_BYTE> | <K_CHAR> ] <O_CLOSEPAREN> ]
+        [ <K_CHARACTER> <K_SET> <S_IDENTIFIER> [ <R_CHARSET> ] ]
+        {
+            if (precision == null) {
+                return new VarChar2Type();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                return new VarChar2Type(pl);
+            }
+        }
+    | <K_CHARACTER> [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (t == null) {
+              if (precision == null) {
+                  return new CharType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  return new CharType(pl);
+              }
+          }
+          else {
+              // ANSI syntax for VARCHAR
+              if (precision == null) {
+                  return new VarCharType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  return new VarCharType(pl);
+              }
+          }
+        }
+    | <K_NCHAR> [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (t == null) {
+              if (precision == null) {
+                  return new NCharType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  return new NCharType(pl);
+              }
+          }
+          else {
+              // ANSI syntax for NVARCHAR2
+              if (precision == null) {
+                  return new NVarChar2Type();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  return new NVarChar2Type(pl);
+              }
+          }
+        }
+    | <K_NVARCHAR> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+           {
+            if (precision == null) {
+                return new NVarChar2Type();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                return new NVarChar2Type(pl);
+            }
+      }
+    | <K_NVARCHAR2> [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+            if (precision == null) {
+                return new NVarChar2Type();
+            }
+            else {
+                pl = Long.decode(precision.image);
+                return new NVarChar2Type(pl);
+            }
+        }
+    | <K_NATIONAL> ( <K_CHARACTER> | <K_CHAR> ) [ t=<K_VARYING> ] [ <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN> ]
+        {
+          if (t == null) {
+              if (precision == null) {
+                  return new NCharType();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  return new NCharType(pl);
+              }
+          }
+          else {
+              // ANSI syntax for NVARCHAR2
+              if (precision == null) {
+                  return new NVarChar2Type();
+              }
+              else {
+                  pl = Long.decode(precision.image);
+                  return new NVarChar2Type(pl);
+              }
+          }
+        }
+    | <K_CLOB> [ <K_CHARACTER> <K_SET> <S_IDENTIFIER> [ <R_CHARSET> ] ] { return new ClobType();}
+}
+
+DatabaseType typeSpec():
+{boolean isTYPEType = false;
+ boolean isROWTYPEType = false;
+ DatabaseType dataType = null;
+ String spec = null;
+ String s = null;}
+{
+    (   LOOKAHEAD(3)
+        dataType=datatype()
+      | spec=columnSpec()
+        [
+          ( <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN> )
+          |
+          <R_ANCHORED_TYPE>
+            {
+              isTYPEType=true;
+              s = spec + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
+            }
+          |
+          <R_ANCHORED_ROWTYPE>
+            {
+              isROWTYPEType =true;
+              s = spec + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
+            }
+        ]
+    )
+    {
+      if (dataType == null && localTypes != null) {
+          // spec may need schema/catalog stripped off
+          String tName = spec;
+          StringTokenizer stok = new StringTokenizer(spec, ".");
+          while (stok.hasMoreTokens()) {
+              tName = stok.nextToken();
+          }
+          for (String typeName : localTypes.keySet()) {
+              if (typeName.equals(spec)) {
+                  dataType = localTypes.get(spec);
+                  break;
+              } else if (typeName.equals(tName)) {
+                  dataType = localTypes.get(tName);
+                  break;
+              }
+          }
+      }
+      if (dataType == null) {
+          UnresolvedType uType = new UnresolvedType(spec);
+          if (isTYPEType) {
+              TYPEType tType = new TYPEType(s);
+              tType.setEnclosedType(uType);
+              uType.setOwningType(tType);
+              dataType = tType;
+              localTypes.put(spec, dataType);
+          }
+          else if (isROWTYPEType) {
+              ROWTYPEType rType = new ROWTYPEType(s);
+              rType.setEnclosedType(uType);
+              uType.setOwningType(rType);
+              dataType = rType;
+              localTypes.put(spec, dataType);
+          }
+          else {
+              dataType = uType;
+          }
+      }
+      return dataType;
+    }
+}
+
+String columnSpec():
+{String s1 = null;
+ String s2 = null;
+ String s3 = null;}
+{
+    s1=OracleObjectName() [ <O_DOT> s2=OracleObjectName() [ <O_DOT> s3=OracleObjectName() ] ]
+    {
+      StringBuilder sb = new StringBuilder(s1);
+      if (s2 != null) {
+          sb.append('.');
+          sb.append(s2);
+          if (s3 != null) {
+              sb.append('.');
+              sb.append(s3);
+          }
+      }
+      return sb.toString();
+    }
+}
+
+String tableSpec():
+{}
+{
+    OracleObjectName() [ <O_DOT> OracleObjectName() [ <O_ATSIGN> <S_IDENTIFIER> ] ]
+    {return token.image;}
+}
+
+String typeName():
+{}
+{
+    OracleObjectName() [ <O_DOT> OracleObjectName() ]
+    {return token.image;}
+}
+
+void typeOrSubTypeDeclaration(PLSQLPackageType packageType) :
+{String s = null;}
+{
+      typeDeclaration(packageType)
+    | subtypeDeclaration(packageType)
+}
+
+void typeDeclaration(PLSQLPackageType packageType) :
+{String s = null;}
+{
+    <R_TYPE> s=typeName() <R_IS> aTypeDeclaration(packageType, s) <O_SEMICOLON>
+}
+
+void aTypeDeclaration(PLSQLPackageType packageType, String typeName) :
+{String spec = null;
+ String anchoredTypeName = null;
+ boolean isTYPEType = false;
+ boolean isROWTYPEType = false;
+}
+{
+      LOOKAHEAD(2)
+      recordDeclaration(packageType, typeName)
+    | plsqlTableDeclaration(packageType, typeName)
+    | LOOKAHEAD(2) varrayDeclaration(packageType)
+    | LOOKAHEAD(2) refCursorDeclaration(packageType, typeName)
+    | LOOKAHEAD(2)
+      spec=columnSpec()
+      (
+        <R_ANCHORED_TYPE>
+          {
+            isTYPEType=true;
+            anchoredTypeName = spec + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
+          }
+        |
+        <R_ANCHORED_ROWTYPE>
+          {
+            isROWTYPEType =true;
+            anchoredTypeName = spec + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
+          }
+      )
+      {
+         DatabaseType dataType = null;
+         UnresolvedType uType = new UnresolvedType(anchoredTypeName);
+         if (isTYPEType) {
+             TYPEType tType = new TYPEType(anchoredTypeName);
+             tType.setEnclosedType(uType);
+             uType.setOwningType(tType);
+             dataType = tType;
+         }
+         else if (isROWTYPEType) {
+             ROWTYPEType rType = new ROWTYPEType(anchoredTypeName);
+             rType.setEnclosedType(uType);
+             rType.setPackageType(packageType);
+             uType.setOwningType(rType);
+             dataType = rType;
+         }
+         PLSQLType newType = new PLSQLType(typeName);
+         newType.setEnclosedType(dataType);
+         packageType.addType(newType);
+         localTypes.put(typeName, newType);
+      }
+}
+
+void recordDeclaration(PLSQLPackageType packageType, String typeName) :
+{
+  PLSQLRecordType plsqlRecordType = new PLSQLRecordType(typeName);
+  plsqlRecordType.setParentType(packageType);
+}
+{
+    <K_RECORD> <O_OPENPAREN>
+        fieldDeclarations(plsqlRecordType)
+    <O_CLOSEPAREN>
+    {
+      packageType.addType(plsqlRecordType);
+      localTypes.put(typeName, plsqlRecordType);
+    }
+}
+
+void fieldDeclarations(PLSQLRecordType plsqlRecordType) :
+{}
+{
+    fieldDeclaration(plsqlRecordType) [ <O_COMMA> fieldDeclarations(plsqlRecordType) ]
+}
+
+void fieldDeclaration(PLSQLRecordType plsqlRecordType):
+{
+  String s = null;
+  DatabaseType dataType = null;
+  FieldType fieldType = null;
+}
+{
+    s=typeName() dataType=typeSpec() [ <R_NOT> <R_NULL> ] [ fieldDefaultAssignment() ]
+    {
+      fieldType = new FieldType(s);
+      fieldType.setEnclosedType(dataType);
+      plsqlRecordType.addField(fieldType);
+      if (dataType instanceof UnresolvedType) {
+          ((UnresolvedType)dataType).setOwningType(plsqlRecordType);
+      }
+    }
+}
+
+void fieldDefaultAssignment():
+{}
+{
+    ( <O_ASSIGN> | <R_DEFAULT> ) skipToNextArg()
+}
+
+void subtypeDeclaration(PLSQLPackageType packageType) :
+{String subtypeName;
+DatabaseType subtype;
+Token notNull = null;
+Token rangeStart = null;
+Token rangeEnd = null;}
+{
+    <R_SUBTYPE> subtypeName=OracleObjectName() <R_IS> subtype=typeSpec()
+        [ <K_RANGE> rangeStart=<S_NUMBER> <O_DOUBLEDOT> rangeEnd=<S_NUMBER> ]
+        [ <R_NOT> notNull=<R_NULL> ] <O_SEMICOLON>
+    {
+      PLSQLSubType newPLSQLSubType = new PLSQLSubType(subtypeName);
+      newPLSQLSubType.setEnclosedType(subtype);
+      if (subtype instanceof UnresolvedType) {
+          ((UnresolvedType)subtype).setOwningType(newPLSQLSubType);
+      }
+      if (subtype.isROWTYPEType()) {
+         ((ROWTYPEType)subtype).setPackageType(packageType);
+      }
+      packageType.addType(newPLSQLSubType);
+      if (notNull != null) {
+          newPLSQLSubType.setNotNull(true);
+      }
+      if (rangeStart != null) {
+          long rStart = Long.decode(rangeStart.image).longValue();
+          long rEnd = Long.decode(rangeEnd.image).longValue();
+          newPLSQLSubType.setHasRange(true);
+          newPLSQLSubType.setRangeStart(rStart);
+          newPLSQLSubType.setRangeEnd(rEnd);
+      }
+      localTypes.put(subtypeName, newPLSQLSubType);
+    }
+}
+
+void plsqlTableDeclaration(PLSQLPackageType packageType, String typeName) :
+{
+  PLSQLCollectionType plsqlTable = new PLSQLCollectionType(typeName);
+  plsqlTable.setParentType(packageType);
+  DatabaseType nestedType;
+}
+{
+    <R_TABLE> <R_OF> nestedType = typeSpec() [ <R_NOT> <R_NULL> ]
+        [ <R_INDEX> <R_BY> plsqlTableIndexByDeclaration(plsqlTable) ]
+    {
+      if (nestedType instanceof UnresolvedType) {
+        ((UnresolvedType)nestedType).setOwningType(plsqlTable);
+      }
+      plsqlTable.setEnclosedType(nestedType);
+      packageType.addType(plsqlTable);
+      localTypes.put(typeName, plsqlTable);
+    }
+}
+
+void plsqlTableIndexByDeclaration(PLSQLCollectionType plsqlTable) :
+{
+  DatabaseType indexType = null;
+  Token precision = null;
+  Token otherIndexByType = null;
+}
+{
+    ( <K_PLS_INTEGER> {indexType = PLS_INTEGER_TYPE; }
+    | <K_BINARY_INTEGER>  {indexType = BINARY_INTEGER_TYPE; }
+    | <K_VARCHAR2> <O_OPENPAREN> precision=<S_NUMBER> <O_CLOSEPAREN>
+      {
+        if (precision == null) {
+            indexType = new VarChar2Type();
+        }
+        else {
+            Long pl = Long.decode(precision.image);
+            indexType = new VarChar2Type(pl);
+        }
+      }
+    | otherIndexByType=<K_STRING> <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
+      {
+        String indexTypename = otherIndexByType.image;
+        for (String typeName : localTypes.keySet()) {
+            if (typeName.equals(indexTypename)) {
+                indexType = localTypes.get(indexTypename);
+                break;
+            }
+        }
+        //what else can INDEX BY be? Unresolved for now ...
+        if (indexType == null) {
+            indexType = new UnresolvedType(indexTypename);
+            ((UnresolvedType)indexType).setOwningType(plsqlTable);
+        }
+      }
+    )
+    {
+      plsqlTable.setIndexed(true);
+      plsqlTable.setIndexType(indexType);
+    }
+}
+
+void varrayDeclaration(PLSQLPackageType packageType) :
+{}
+{
+    ( <K_VARRAY> | <K_VARYING> <K_ARRAY> ) <O_OPENPAREN> <S_NUMBER> <O_CLOSEPAREN>
+        <R_OF> datatype() [ <R_NOT> <R_NULL> ]
+}
+
+void refCursorDeclaration(PLSQLPackageType packageType, String cursorTypeName) :
+{PLSQLCursorType cursorType = null;}
+{
+    <K_REF> <R_CURSOR>
+      {
+        cursorType = new PLSQLCursorType(cursorTypeName);
+        cursorType.setParentType(packageType);
+        packageType.addCursor(cursorType);
+        localTypes.put(cursorTypeName, cursorType);
+      }
+      [ refCursorTypeSpec(cursorType, packageType) ]
+}
+
+void refCursorTypeSpec(PLSQLCursorType cursorType, PLSQLPackageType packageType) :
+{String s = null;
+ String spec = null;
+ boolean isTYPEType = false;
+ boolean isROWTYPEType = false;
+ DatabaseType localType = null;
+}
+{
+    <K_RETURN> spec=OracleObjectName()
+      [
+          <R_ANCHORED_TYPE>
+            {
+                  isTYPEType = true;
+                  s = spec + removeQuotes(tokenImage[R_ANCHORED_TYPE]);
+            }
+        | <R_ANCHORED_ROWTYPE>
+            {
+              isROWTYPEType = true;
+              s = spec + removeQuotes(tokenImage[R_ANCHORED_ROWTYPE]);
+            }
+      ]
+    {
+      //check local variables first
+      for (FieldType varField : packageType.getLocalVariables()) {
+          if (spec.equals(varField.getFieldName())) {
+	          if (isTYPEType) {
+	              TYPEType tType = new TYPEType(s);
+	              UnresolvedType uType = new UnresolvedType(s);
+	              tType.setEnclosedType(uType);
+	              uType.setOwningType(tType);
+	              localType = tType;
+	          }
+	          else if (isROWTYPEType) {
+	              ROWTYPEType rType = new ROWTYPEType(s);
+	              rType.setPackageType(packageType);
+	              UnresolvedType uType = new UnresolvedType(s);
+	              rType.setEnclosedType(uType);
+	              uType.setOwningType(rType);
+	              localType = rType;
+	          }
+	          else {
+	              localType = varField.getEnclosedType();
+	          }
+	          cursorType.setEnclosedType(localType);
+              break;
+          }
+      }
+      if (localType == null) {
+          localType = localTypes.get(spec);
+          if (localType == null) {
+              UnresolvedType uType = new UnresolvedType(spec);
+              if (isTYPEType) {
+                  TYPEType tType = new TYPEType(s);
+                  tType.setEnclosedType(uType);
+                  uType.setOwningType(tType);
+                  cursorType.setEnclosedType(tType);
+              }
+              else if (isROWTYPEType) {
+                  ROWTYPEType rType = new ROWTYPEType(s);
+                  rType.setEnclosedType(uType);
+                  rType.setPackageType(packageType);
+                  uType.setOwningType(rType);
+                  cursorType.setEnclosedType(rType);
+              }
+              else {
+                  uType.setOwningType(cursorType);
+                  cursorType.setEnclosedType(uType);
+              }
+          }
+          else {
+              cursorType.setEnclosedType(localType);
+         }
+      }
+    }
+}
+
+void cursorDeclaration(PLSQLPackageType packageType) :
+{Token t = null;}
+{
+    <R_CURSOR> skipToSemiColon()
+}
+
+// Procedure Specification
+void procedureSpec(PLSQLPackageType packageType) :
+{String procedureName= null;
+ ProcedureType procedureType = null;
+}
+{
+    <R_PROCEDURE> procedureName=OracleObjectName() 
+        {
+            procedureType = new ProcedureType(procedureName);
+            procedureType.setCatalogName(packageType.getPackageName());
+            procedureType.setSchema(packageType.getSchema());
+            procedureType.setParentType(packageType);
+        }
+        [ <O_OPENPAREN> argumentList(procedureType) <O_CLOSEPAREN> ]
+    <O_SEMICOLON>
+    {
+      packageType.addProcedure(procedureType);
+      for (ArgumentType argumentType : procedureType.getArguments()) {
+          DatabaseType databaseType = argumentType.getEnclosedType();
+          if (databaseType.isROWTYPEType()) {
+              ((ROWTYPEType)databaseType).setPackageType(packageType);
+          }
+      }
+    }
+}
+
+void argumentList(ProcedureType procedureType) :
+{}
+{
+   argument(procedureType) ( <O_COMMA> argument(procedureType) )*
+}
+
+// Function Specification
+void functionSpec(PLSQLPackageType packageType) :
+{String functionName= null;
+ FunctionType functionType = null;
+ ArgumentType returnDataType = null;
+}
+{
+    <R_FUNCTION> functionName=OracleObjectName()
+        {
+            functionType = new FunctionType(functionName);
+            functionType.setCatalogName(packageType.getPackageName());
+            functionType.setSchema(packageType.getSchema());
+            functionType.setParentType(packageType);
+        }
+        [ <O_OPENPAREN> argumentList(functionType) <O_CLOSEPAREN> ]
+        returnDataType = functionReturnSpec(functionType)
+        [ <K_DETERMINISTIC> | <K_PIPELINED> | <K_PARALLEL_ENABLE> | <K_RESULT_CACHE> ]
+    <O_SEMICOLON>
+    {
+      functionType.setReturnArgument(returnDataType);
+      packageType.addProcedure(functionType);
+      for (ArgumentType argumentType : functionType.getArguments()) {
+          DatabaseType databaseType = argumentType.getEnclosedType();
+          if (databaseType.isROWTYPEType()) {
+              ((ROWTYPEType)databaseType).setPackageType(packageType);
+          }
+      }
+      if (returnDataType.getEnclosedType().isROWTYPEType()) {
+          ((ROWTYPEType)returnDataType.getEnclosedType()).setPackageType(packageType);
+      }
+    }
+}
+
+ArgumentType functionReturnSpec(FunctionType functionType):
+{DatabaseType dataType = null;}
+{
+    (<K_RETURN> dataType=typeSpec())
+    {
+      ArgumentType returnType = new ArgumentType(null);
+      returnType.setDirection(ArgumentTypeDirection.RETURN);
+      // may need to strip off schema/catalog name
+      if (dataType.getTypeName().contains(".")) {
+          String dataTypeName = dataType.getTypeName();
+          int dotIdx = dataTypeName.indexOf(".");
+          String namePart1 = dataTypeName.substring(0, dotIdx);
+          String namePart2 = dataTypeName.substring(dotIdx+1, dataTypeName.length());
+          if (namePart1.equals(functionType.getCatalogName()) || namePart1.equals(functionType.getSchema())) {
+              dataType.setTypeName(namePart2);
+          } else if (schemaPatterns != null) {
+              for (String possibleSchemaName : schemaPatterns) {
+                  if (namePart1.equals(possibleSchemaName)) {
+                      dataType.setTypeName(namePart2);
+                      break;
+                  }
+              }
+          }
+      }
+      returnType.setEnclosedType(dataType);   
+      if (dataType instanceof UnresolvedType) {
+          ((UnresolvedType)dataType).setOwningType(returnType);
+      }
+      return returnType;
+    }
+}
+
+void argument(ProcedureType procedureType) :
+{String s = null;
+ ArgumentType argumentType = null;
+ DatabaseType argumentDataType = null;
+ ArgumentTypeDirection argDirection = ArgumentTypeDirection.IN; // by default, arguments are IN
+ String direction = null;
+ boolean defaultAssignment = false;
+}
+{
+    s=OracleObjectName() [ LOOKAHEAD(2) (direction=direction()) ]
+        [  LOOKAHEAD(2) <K_NOCOPY> ] argumentDataType=typeSpec() [ defaultAssignment=argumentDefaultAssignment() ]
+    {
+      // may need to strip off schema/catalog name
+      if (argumentDataType.getTypeName().contains(".")) {
+          String argumentDataTypeName = argumentDataType.getTypeName();
+          int dotIdx = argumentDataTypeName.indexOf(".");
+          String namePart1 = argumentDataTypeName.substring(0, dotIdx);
+          String namePart2 = argumentDataTypeName.substring(dotIdx+1, argumentDataTypeName.length());
+          if (namePart1.equals(procedureType.getCatalogName()) || namePart1.equals(procedureType.getSchema())) {
+              argumentDataType.setTypeName(namePart2);
+          } else if (schemaPatterns != null) {
+              for (String possibleSchemaName : schemaPatterns) {
+                  if (namePart1.equals(possibleSchemaName)) {
+                      argumentDataType.setTypeName(namePart2);
+                      break;
+                  }
+              }
+          }
+      }
+      argumentType = new ArgumentType(s);
+      argumentType.setEnclosedType(argumentDataType);
+      if (argumentDataType instanceof UnresolvedType) {
+          ((UnresolvedType)argumentDataType).setOwningType(argumentType);
+      }
+      if (direction != null) {
+          if ("OUT".equals(direction)) {
+              argDirection = ArgumentTypeDirection.OUT;
+          }
+          else if ("IN OUT".equals(direction)) {
+              argDirection = ArgumentTypeDirection.INOUT;
+          }
+      }
+      argumentType.setDirection(argDirection);
+      if (defaultAssignment) {
+          argumentType.setOptional();
+      }
+      procedureType.addArgument(argumentType);
+    }
+}
+
+boolean argumentDefaultAssignment():
+{}
+{
+    ( <O_ASSIGN> | <R_DEFAULT> ) skipToNextArg()
+    {
+      return true;
+    }
+}
+
+void exceptionDeclaration() :
+{}
+{
+    <S_IDENTIFIER> <R_EXCEPTION> <O_SEMICOLON>
+}
+
+void pragmaDeclaration() :
+{}
+{
+    <K_PRAGMA> skipToSemiColon()
+}
+
+void orReplace():
+{
+}
+{
+    <R_OR> <K_REPLACE>
+}
+
+void invokerRights():
+{
+}
+{
+    <K_AUTHID> (<K_CURRENT_USER> | <K_DEFINER>)
+}
+
+void as():
+{
+}
+{
+    <R_AS> | <R_IS>
+}
+
+void onCommit():
+{
+}
+{
+    ( <R_ON> <K_COMMIT> ( <K_DELETE> | <K_PRESERVE> ) <K_ROWS> )
+}
+
+boolean notNull():
+{
+}
+{
+    <R_NOT> <R_NULL> [ <K_ENABLE> ]
+    {
+      return true;
+    }
+}
+
+String direction():
+{String dir = "";
+}
+{
+    (
+        LOOKAHEAD(2)
+        <R_IN> {dir = "IN";} [ LOOKAHEAD(2) <K_OUT> {dir += " OUT";} ]
+      | <K_OUT> {dir = "OUT";}
+    )
+    {
+      return dir;
+    }
+}
+
+String OracleObjectName():
+{String keyword=null;}
+{
+      LOOKAHEAD(2)
+      keyword=keywords() {return keyword;}
+    | <S_IDENTIFIER> {return token.image;}
+    | <S_QUOTED_IDENTIFIER> { return removeQuotes(token.image);}
+}
+
+String OracleObjectNamePossiblyDotted():
+{String possiblyDottedName = "";
+ String afterDot = null;
+}
+{
+    possiblyDottedName=OracleObjectName() [ <O_DOT> afterDot=OracleObjectName() ]
+    {
+      if (afterDot != null) {
+          possiblyDottedName += "." + afterDot;
+      }
+      return possiblyDottedName;
+    }
+}
+
+void skipToSemiColon():
+{}
+{
+    {
+        Token t = getNextToken();
+        while (t.kind != O_SEMICOLON) {
+                t = getNextToken();
+        }
+        token_source.input_stream.backup(1);
+    }
+}
+
+void skipToClosingParen():
+{}
+{
+    {
+        Token t = getNextToken();
+        while (t.kind != O_CLOSEPAREN) {
+            t = getNextToken();
+        }
+        token_source.input_stream.backup(1);
+    }
+}
+
+void skipToNextArg():
+{}
+{
+    {
+        Token t = getNextToken();
+        while (t.kind != O_COMMA && t.kind != O_CLOSEPAREN) {
+            t = getNextToken();
+        }
+        token_source.input_stream.backup(1);
+    }
+}
+
+void skipToEnd():
+{}
+{
+    {
+      /** skip through all the tokens. */
+      Token t = getNextToken();
+      while (t.kind != EOF) {
+          t = getNextToken();
+      }
+  }
+}
+
+void skipToReturn():
+{}
+{
+    {
+        Token t = getNextToken();
+        while (t.kind != K_RETURN) {
+                t = getNextToken();
+        }
+    }
+}
+
+void constructor():
+{    Token t = token;
+}
+{
+    < K_CONSTRUCTOR >
+    {
+      
+    token = t;
+  }
+}
