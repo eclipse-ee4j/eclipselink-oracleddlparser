@@ -316,6 +316,7 @@ TOKEN [IGNORE_CASE]: {
     | <K_DELETE: "DELETE">
     | <K_DETERMINISTIC: "DETERMINISTIC">
     | <K_DOUBLE: "DOUBLE">
+    | <K_EDITIONABLE: "EDITIONABLE">
     | <K_ENABLE: "ENABLE">
     | <K_FINAL: "FINAL">
     | <K_FLOAT: "FLOAT">
@@ -335,6 +336,7 @@ TOKEN [IGNORE_CASE]: {
     | <K_NCHAR: "NCHAR">
     | <K_NCLOB: "NCLOB">
     | <K_NOCOPY: "NOCOPY">
+    | <K_NONEDITIONABLE: "NONEDITIONABLE">
     | <K_NUMBER: "NUMBER">
     | <K_NUMERIC: "NUMERIC">
     | <K_NVARCHAR2: "NVARCHAR2">
@@ -377,6 +379,7 @@ TOKEN [IGNORE_CASE]: {
     | <K_TIME: "TIME">
     | <K_TIMESTAMP: "TIMESTAMP">
     | <K_UROWID:"UROWID">
+    | <K_USING:"USING">
     | <K_VARCHAR2: "VARCHAR2">
     | <K_VARCHAR: "VARCHAR">
     | <K_VARRAY: "VARRAY">
@@ -415,6 +418,7 @@ String keywords():
       | t=<K_DELETE>
       | t=<K_DETERMINISTIC>
       | t=<K_DOUBLE>
+      | t=<K_EDITIONABLE>
       | t=<K_ENABLE>
       | t=<K_FINAL>
       | t=<K_FLOAT>
@@ -434,6 +438,7 @@ String keywords():
       | t=<K_NCHAR>
       | t=<K_NCLOB>
       | t=<K_NOCOPY>
+      | t=<K_NONEDITIONABLE>
       | t=<K_NUMBER>
       | t=<K_NUMERIC>
       | t=<K_NVARCHAR2>
@@ -476,6 +481,7 @@ String keywords():
       | t=<K_TIME>
       | t=<K_TIMESTAMP>
       | t=<K_UROWID>
+      | t=<K_USING>
       | t=<K_VARCHAR2>
       | t=<K_VARCHAR>
       | t=<K_VARRAY>
@@ -511,7 +517,7 @@ PLSQLPackageType parsePLSQLPackage():
  String packageName = null;
  }
 {
-    <R_CREATE> [ orReplace() ] <K_PACKAGE>
+    <R_CREATE> [ orReplace() ] [ <K_EDITIONABLE> | <K_NONEDITIONABLE> ] <K_PACKAGE>
       dottedName=OracleObjectNamePossiblyDotted()
         {
           packageName = dottedName;
@@ -541,7 +547,7 @@ ProcedureType parseTopLevelProcedure():
  String schema = null;
  String procedureName = null;}
 {
-    <R_CREATE> [ orReplace() ] <R_PROCEDURE>
+    <R_CREATE> [ orReplace() ] [ <K_EDITIONABLE> | <K_NONEDITIONABLE> ] <R_PROCEDURE>
       dottedName=OracleObjectNamePossiblyDotted()
         {
           procedureName = dottedName;
@@ -571,7 +577,7 @@ FunctionType parseTopLevelFunction():
  String functionName = null;
  ArgumentType returnType = null;}
 {
-    <R_CREATE> [ orReplace() ] <R_FUNCTION>
+    <R_CREATE> [ orReplace() ] [ <K_EDITIONABLE> | <K_NONEDITIONABLE> ] <R_FUNCTION>
       dottedName=OracleObjectNamePossiblyDotted()
             {
           functionName = dottedName;
@@ -642,7 +648,7 @@ CompositeDatabaseType parseType():
  boolean nestedTable = false;
 }
 {
-    <R_CREATE> [ orReplace() ] <R_TYPE>
+    <R_CREATE> [ orReplace() ] [ <K_EDITIONABLE> | <K_NONEDITIONABLE> ] <R_TYPE>
       dottedName=OracleObjectNamePossiblyDotted()
         {
           typeName = dottedName;
@@ -739,7 +745,7 @@ void constraintDeclaration(CompositeDatabaseType enclosingType):
           <R_PRIMARY> <K_KEY> <O_OPENPAREN> pkList((TableType)enclosingType) <O_CLOSEPAREN>
         | <R_CHECK> <O_OPENPAREN> skipToClosingParen() <O_CLOSEPAREN>
         | <R_UNIQUE> <O_OPENPAREN> uniqList() <O_CLOSEPAREN> 
-      ) [ <K_ENABLE> ]
+      ) [ <K_USING> <R_INDEX> ] [ <K_ENABLE> ]
 }
 
 DatabaseType columnTypeSpec(CompositeDatabaseType enclosingType):

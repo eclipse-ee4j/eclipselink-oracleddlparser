@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Oracle. All rights reserved.
+ * Copyright (c) 2012, 2014 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -129,11 +129,16 @@ public class AnchoredTypesResolutionTestSuite {
     public void anchoredTypesTest1() {
         boolean worked = true;
         PLSQLPackageType plsqlPackageType = null;
+        String msg = null;
         try {
             plsqlPackageType = dtBuilder.buildPackages(conn, "", ANCHORED_TYPES_TEST4_PACKAGE).get(0);
         }
         catch (Exception e) {
             worked = false;
+            msg = e.getMessage();
+        }
+        if (!worked) {
+            fail(msg);
         }
         assertTrue(ANCHORED_TYPES_TEST4_PACKAGE + " should parse", worked);
         PLSQLType plsqlType1 = plsqlPackageType.getTypes().get(0);
