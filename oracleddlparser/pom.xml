@@ -27,8 +27,6 @@
       <db.ddl.create>false</db.ddl.create>
       <db.ddl.drop>false</db.ddl.drop>
       <db.ddl.debug>false</db.ddl.debug>
-      <!-- enable debugger on port 5005 -->
-      <test.debug>false</test.debug>
     </properties>
 
     <dependencies>
@@ -102,7 +100,8 @@
                   <includes>
                       <include>**/AllTests.java</include>
                   </includes>
-                  <debugForkedProcess>${test.debug}</debugForkedProcess>
+                  <!-- enable debugger on port 5005 -->
+                  <!--<debugForkedProcess>true</debugForkedProcess>-->
               </configuration>
               <goals>
                 <goal>test</goal>

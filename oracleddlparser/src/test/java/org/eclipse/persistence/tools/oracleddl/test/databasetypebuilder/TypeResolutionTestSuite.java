@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2011, 2014 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -82,6 +82,25 @@ public class TypeResolutionTestSuite {
         ")";
     static final String CREATE_DDLRESOLVTEST_TYPE3 =
         "CREATE OR REPLACE TYPE DDLRESOLVTEST_TYPE3 AS VARRAY(2) OF DDLRESOLVTEST_TYPE2";
+    static final String CREATE_DDLRESOLVTEST_TYPE4 =
+        "CREATE OR REPLACE TYPE DDLRESOLVTEST_TYPE4 AS OBJECT (" +
+            "\n\tACCT\tNUMBER," +
+            "\n\tSTATE\tVARCHAR2(30)," +
+            "\nCONSTRUCTOR FUNCTION DDLRESOLVTEST_TYPE4(" +
+            "\n\tACCT\tNUMBER," +
+            "\n\tSTATE\tVARCHAR2) RETURN SELF AS RESULT" +
+        ")";
+    static final String CREATE_DDLRESOLVTEST_TYPE4_BODY =
+        "CREATE OR REPLACE TYPE BODY DDLRESOLVTEST_TYPE4 AS " +
+            "\nCONSTRUCTOR FUNCTION DDLRESOLVTEST_TYPE4(" +
+            "\n\tACCT\tNUMBER," +
+            "\n\tSTATE\tVARCHAR2) RETURN SELF AS RESULT IS" +
+            "\n\tBEGIN" +
+            "\n\t\tSELF.ACCT := ACCT;" +
+            "\n\t\tSELF.STATE   := STATE;" +
+            "\n\t\tRETURN;" +
+            "\n\tEND;" +
+            "\nEND;";
     static final String DDLRESOLVTEST_TABLE1 = "DDLRESOLVTEST_TABLE1";
     static final String CREATE_DDLRESOLVTEST_TABLE1 =
         "CREATE TABLE " + DDLRESOLVTEST_TABLE1 + " (" +
@@ -186,6 +205,7 @@ public class TypeResolutionTestSuite {
     static final String CREATE_OTHER_PACKAGE =
         "CREATE OR REPLACE PACKAGE " + OTHER_PACKAGE + " AS" +
             "\n\tPROCEDURE SOMEPROC(E1 IN " + DDLRESOLVTEST_PACKAGE + "." + "EMPREC);" +
+            "\n\tFUNCTION GET_JOB(p_job_id IN VARCHAR2) RETURN DDLRESOLVTEST_TYPE4;" +
         "\nEND " + OTHER_PACKAGE + ";";
     static final String CREATE_OTHER_PACKAGE_BODY =
         "CREATE OR REPLACE PACKAGE BODY " + OTHER_PACKAGE + " AS" +
@@ -193,6 +213,13 @@ public class TypeResolutionTestSuite {
             "\n\tBEGIN" +
                 "\n\tnull;" +
             "\n\tEND SOMEPROC;" +
+            "\n\tFUNCTION GET_JOB(p_job_id IN VARCHAR2) RETURN DDLRESOLVTEST_TYPE4 IS" +
+            "\n\tresult DDLRESOLVTEST_TYPE4;" +
+            "\n\tACCT\tNUMBER;" +
+            "\n\tSTATE\tVARCHAR2(30);" +
+            "\n\tBEGIN" +
+            "\n\t\tRETURN NULL;" +
+            "\n\tEND GET_JOB;" +
         "\nEND " + OTHER_PACKAGE + ";";
 
     static final String DROP_OTHER_PACKAGE =
@@ -206,6 +233,7 @@ public class TypeResolutionTestSuite {
     static final String DROP_DDLRESOLVTEST_TABLE2 = "DROP TABLE DDLRESOLVTEST_TABLE2";
     static final String DROP_DDLRESOLVTEST_TABLE1 = "DROP TABLE DDLRESOLVTEST_TABLE1";
     static final String DROP_DDLRESOLVTEST_EMP_TABLE = "DROP TABLE DDLRESOLVTEST_EMP";
+    static final String DROP_DDLRESOLVTEST_TYPE4 = "DROP TYPE DDLRESOLVTEST_TYPE4";
     static final String DROP_DDLRESOLVTEST_TYPE3 = "DROP TYPE DDLRESOLVTEST_TYPE3";
     static final String DROP_DDLRESOLVTEST_TYPE2 = "DROP TYPE DDLRESOLVTEST_TYPE2";
     static final String DROP_DDLRESOLVTEST_TYPE1 = "DROP TYPE DDLRESOLVTEST_TYPE1";
@@ -244,6 +272,8 @@ public class TypeResolutionTestSuite {
             runDdl(conn, CREATE_DDLRESOLVTEST_TYPE1, ddlDebug);
             runDdl(conn, CREATE_DDLRESOLVTEST_TYPE2, ddlDebug);
             runDdl(conn, CREATE_DDLRESOLVTEST_TYPE3, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_TYPE4, ddlDebug);
+            runDdl(conn, CREATE_DDLRESOLVTEST_TYPE4_BODY, ddlDebug);
             runDdl(conn, CREATE_DDLRESOLVTEST_TABLE1, ddlDebug);
             runDdl(conn, CREATE_DDLRESOLVTEST_TABLE2, ddlDebug);
             runDdl(conn, CREATE_DDLRESOLVTEST_TABLE3, ddlDebug);
@@ -282,6 +312,7 @@ public class TypeResolutionTestSuite {
             runDdl(conn, DROP_DDLRESOLVTEST_TABLE2, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TABLE1, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_EMP_TABLE, ddlDebug);
+            runDdl(conn, DROP_DDLRESOLVTEST_TYPE4, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TYPE3, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TYPE2, ddlDebug);
             runDdl(conn, DROP_DDLRESOLVTEST_TYPE1, ddlDebug);

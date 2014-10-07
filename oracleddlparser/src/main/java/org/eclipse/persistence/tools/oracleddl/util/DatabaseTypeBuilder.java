@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2011, 2014 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -509,14 +509,29 @@ public class DatabaseTypeBuilder {
     /**
      * Attempt to resolve any types that the DDLParser could not resolve.
      *  
+     * @param conn Database connection
+     * @param schemaPattern Database schemas where to resolve types
+     * @param parser Parser to get types repository from
+     * @param unresolvedTypes List of types to be resolved
+     * @param databaseType Type possibly containing or referring type to be resolved
+     *
+     * @throws org.eclipse.persistence.tools.oracleddl.parser.ParseException if parsing error appears
      */
     protected void resolvedTypes(Connection conn, String schemaPattern, DDLParser parser, List<UnresolvedType> unresolvedTypes, DatabaseType databaseType) throws ParseException {
         resolvedTypes(conn, schemaPattern, parser, unresolvedTypes, databaseType, null);
     }
-    
+
     /**
      * Attempt to resolve any types that the DDLParser could not resolve.
-     *  
+     *
+     * @param conn Database connection
+     * @param schemaPattern Database schemas where to resolve types
+     * @param parser Parser to get types repository from
+     * @param unresolvedTypes List of types to be resolved
+     * @param databaseType Type possibly containing or referring type to be resolved
+     * @param processedPackages List of already processed packages, may be null
+     *
+     * @throws org.eclipse.persistence.tools.oracleddl.parser.ParseException if parsing error appears
      */
     protected void resolvedTypes(Connection conn, String schemaPattern, DDLParser parser,
         List<UnresolvedType> unresolvedTypes, DatabaseType databaseType, List<PLSQLPackageType> processedPackages) throws ParseException {
@@ -787,6 +802,11 @@ public class DatabaseTypeBuilder {
      * <li>TABLE = 4</li>
      * <li>TYPE = 5</li>
      * </ul>
+     *
+     * @param conn Database connection
+     * @param schema Database schema containing type definition
+     * @param typeName Name of the type to resolve database type for
+     * @return Integer value of resolved type
      */
     protected int getObjectType(Connection conn, String schema,  String typeName) {
         int objectType = -1;
@@ -800,8 +820,7 @@ public class DatabaseTypeBuilder {
             boolean worked = pStmt.execute();
             if (worked) {
                 rs = pStmt.getResultSet();
-                boolean b = rs.next();
-                if (b) {
+                while (objectType < 0 && rs.next()) {
                     objectType = rs.getInt(ALL_OBJECTS_OBJECT_TYPE_FIELD);
                 }
             }
