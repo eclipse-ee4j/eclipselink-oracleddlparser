@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2011, 2014 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -53,6 +53,8 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
 
     /**
      * Return the schema name for this package.
+     *
+     * @return the schema name for this package
      */
     public String getSchema() {
         return schema;
@@ -60,6 +62,8 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
 
     /**
      * Set the schema name for this package.
+     *
+     * @param schema the schema name for this package
      */
     public void setSchema(String schema) {
         this.schema = schema;
@@ -102,29 +106,23 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
     }
 
     public void addCursor(PLSQLCursorType cursorType) {
-        if (getCursors() == null) {
-            cursors = new ArrayList<PLSQLCursorType>();
-        }
-        if (!cursors.contains(cursorType)) {
-            cursors.add(cursorType);
+        List<PLSQLCursorType> curs = getCursors();
+        if (!curs.contains(cursorType)) {
+            curs.add(cursorType);
         }
     }
 
-	public void addProcedure(ProcedureType procedureType) {
-        if (getProcedures() == null) {
-            procedures = new ArrayList<ProcedureType>();
-        }
-        if (!procedures.contains(procedureType)) {
-            procedures.add(procedureType);
+    public void addProcedure(ProcedureType procedureType) {
+        List<ProcedureType> proc = getProcedures();
+        if (!proc.contains(procedureType)) {
+            proc.add(procedureType);
         }
     }
 
     public void addLocalVariable(FieldType var) {
-        if (getLocalVariables() == null) {
-            localVariables = new ArrayList<FieldType>();
-        }
-        if (!localVariables.contains(var)) {
-            localVariables.add(var);
+        List<FieldType> vars = getLocalVariables();
+        if (!vars.contains(var)) {
+            vars.add(var);
         }
     }
 
@@ -135,6 +133,7 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
         //no-op
     }
 
+        @Override
 	public boolean isComposite() {
 		return true;
 	}

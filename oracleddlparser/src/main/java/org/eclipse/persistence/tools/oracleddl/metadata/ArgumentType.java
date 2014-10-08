@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2011, 2014 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -58,6 +58,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
 		return enclosedType.isResolved();
 	}
 
+    @Override
 	public boolean isComposite() {
 		if (enclosedType == null) {
 			// by default, an argument is 'simple' until otherwise configured 'composite'
@@ -100,7 +101,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         }
         sb.append(" ");
         if (direction != RETURN) {
-            sb.append(direction.toString());
+            sb.append(direction != null ? direction.toString() : "<NULL>");
             sb.append(" ");
         }
         if (enclosedType == null) {
@@ -114,6 +115,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
 
     //for all DatabaseTypeCompositeTestable 'is-a' tests, delegate to enclosed dataType
 
+    @Override
     public boolean isObjectTableType() {
         if (enclosedType == null) {
             return false;
@@ -121,6 +123,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return enclosedType.isObjectTableType();
     }
 
+    @Override
     public boolean isObjectType() {
         if (enclosedType == null) {
             return false;
@@ -128,6 +131,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return enclosedType.isObjectType();
     }
 
+    @Override
     public boolean isPLSQLCollectionType() {
         if (enclosedType == null) {
             return false;
@@ -135,6 +139,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return enclosedType.isPLSQLCollectionType();
     }
 
+    @Override
     public boolean isPLSQLCursorType() {
         if (enclosedType == null) {
             return false;
@@ -142,6 +147,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return enclosedType.isPLSQLCursorType();
     }
 
+    @Override
     public boolean isPLSQLRecordType() {
         if (enclosedType == null) {
             return false;
@@ -149,6 +155,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return enclosedType.isPLSQLRecordType();
     }
 
+    @Override
     public boolean isPLSQLSubType() {
         if (enclosedType == null) {
             return false;
@@ -156,6 +163,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return enclosedType.isPLSQLSubType();
     }
 
+    @Override
     public boolean isTableType() {
         if (enclosedType == null) {
             return false;
@@ -163,6 +171,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return enclosedType.isTableType();
     }
 
+    @Override
     public boolean isDbTableType() {
         if (enclosedType == null) {
             return false;
@@ -170,6 +179,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
         return enclosedType.isDbTableType();
     }
 
+    @Override
     public boolean isVArrayType() {
         if (enclosedType == null) {
             return false;
@@ -180,25 +190,7 @@ public class ArgumentType extends DatabaseTypeTestableBase implements CompositeD
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (argumentName != null) {
-            sb.append(argumentName);
-        }
-        else {
-            if (direction == RETURN) {
-                sb.append(RETURN);
-            }
-        }
-        sb.append(" ");
-        if (direction != RETURN) {
-            sb.append(direction.toString());
-            sb.append(" ");
-        }
-        if (enclosedType == null) {
-            sb.append("<null/>");
-        }
-        else {
-            sb.append(enclosedType.toString());
-        }
+        sb.append(shortName());
         if (optional) {
             sb.append(" (opt)");
         }

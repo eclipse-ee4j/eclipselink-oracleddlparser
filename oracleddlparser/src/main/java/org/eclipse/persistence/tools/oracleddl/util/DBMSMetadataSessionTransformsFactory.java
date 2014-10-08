@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2011, 2014 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -22,17 +22,20 @@ public class DBMSMetadataSessionTransformsFactory implements DBMSMetadataSession
     public static final String TRANSFORMS = "transforms.properties";
 
     public Properties getTransformProperties() {
-        Properties transformsProperties = null;
-        InputStream is = getClass().getResourceAsStream(TRANSFORMS);
+        InputStream is = DBMSMetadataSessionTransformsFactory.class.getResourceAsStream(TRANSFORMS);
         if (is != null) {
-            transformsProperties = new Properties();
+            Properties transformsProperties = new Properties();
             try {
                 transformsProperties.load(is);
-                is.close();
                 return transformsProperties;
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 // ignore
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    //ignore
+                }
             }
         }
         return null;

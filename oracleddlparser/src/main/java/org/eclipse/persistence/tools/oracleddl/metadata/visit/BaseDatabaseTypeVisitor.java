@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2011, 2014 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -324,7 +324,6 @@ public class BaseDatabaseTypeVisitor implements DatabaseTypeVisitor {
     }
 
     //use reflection to avoid huge if-then-else tree: if (databaseType instanceof xxx)
-    static CompositeDatabaseTypeHandler handler = new CompositeDatabaseTypeHandler();
     static class CompositeDatabaseTypeHandler {
         static Method[] methods = CompositeDatabaseTypeHandler.class.getMethods();
         public static void handle(DatabaseTypeVisitor visitor, Object o) {

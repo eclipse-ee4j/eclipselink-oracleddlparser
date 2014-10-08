@@ -159,15 +159,13 @@ public class DatabaseTypeBuilder {
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     TableType tableType = parser.parseTable();
-                    if (tableType != null) {
-                        tableTypes.add(tableType);
-                        if (resolveTypes) {
-                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                            unresolvedTypesVisitor.visit(tableType);
-                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                                resolvedTypes(conn, tableType.getSchema(), parser,
-                                    unresolvedTypesVisitor.getUnresolvedTypes(), tableType);
-                            }
+                    tableTypes.add(tableType);
+                    if (resolveTypes) {
+                        UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                        unresolvedTypesVisitor.visit(tableType);
+                        if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                            resolvedTypes(conn, tableType.getSchema(), parser,
+                                unresolvedTypesVisitor.getUnresolvedTypes(), tableType);
                         }
                     }
                 }
@@ -211,20 +209,18 @@ public class DatabaseTypeBuilder {
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     PLSQLPackageType packageType = parser.parsePLSQLPackage();
-                    if (packageType != null) {
-                        packageTypes.add(packageType);
-                        parserMap.put(packageType, parser);
-                    }
+                    packageTypes.add(packageType);
+                    parserMap.put(packageType, parser);
                 }
                 if (!parserMap.isEmpty() && resolveTypes) {
-                	for (PLSQLPackageType packageType : parserMap.keySet()) {
-                		DDLParser parser = parserMap.get(packageType);
-	                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-	                    unresolvedTypesVisitor.visit(packageType);
-	                    if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-	                        resolvedTypes(conn, packageType.getSchema(), parser, unresolvedTypesVisitor.getUnresolvedTypes(), packageType, packageTypes);
-	                    }
-                	}
+                    for (Map.Entry<PLSQLPackageType, DDLParser> entry : parserMap.entrySet()) {
+                        PLSQLPackageType packageType = entry.getKey();
+                        UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                        unresolvedTypesVisitor.visit(packageType);
+                        if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                            resolvedTypes(conn, packageType.getSchema(), entry.getValue(), unresolvedTypesVisitor.getUnresolvedTypes(), packageType, packageTypes);
+                        }
+                    }
                 }
             }
         }
@@ -265,15 +261,13 @@ public class DatabaseTypeBuilder {
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     ProcedureType procedureType = parser.parseTopLevelProcedure();
-                    if (procedureType != null) {
-                        procedureTypes.add(procedureType);
-                        if (resolveTypes) {
-                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                            unresolvedTypesVisitor.visit(procedureType);
-                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                                resolvedTypes(conn, procedureType.getSchema(), parser,
-                                    unresolvedTypesVisitor.getUnresolvedTypes(), procedureType);
-                            }
+                    procedureTypes.add(procedureType);
+                    if (resolveTypes) {
+                        UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                        unresolvedTypesVisitor.visit(procedureType);
+                        if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                            resolvedTypes(conn, procedureType.getSchema(), parser,
+                                unresolvedTypesVisitor.getUnresolvedTypes(), procedureType);
                         }
                     }
                 }
@@ -316,15 +310,13 @@ public class DatabaseTypeBuilder {
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     FunctionType functionType = parser.parseTopLevelFunction();
-                    if (functionType != null) {
-                        functionsTypes.add(functionType);
-                        if (resolveTypes) {
-                            UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                            unresolvedTypesVisitor.visit(functionType);
-                            if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                                resolvedTypes(conn, functionType.getSchema(), parser,
-                                    unresolvedTypesVisitor.getUnresolvedTypes(), functionType);
-                            }
+                    functionsTypes.add(functionType);
+                    if (resolveTypes) {
+                        UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                        unresolvedTypesVisitor.visit(functionType);
+                        if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
+                            resolvedTypes(conn, functionType.getSchema(), parser,
+                                unresolvedTypesVisitor.getUnresolvedTypes(), functionType);
                         }
                     }
                 }
@@ -373,7 +365,7 @@ public class DatabaseTypeBuilder {
                             UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
                             unresolvedTypesVisitor.visit(databaseType);
                             if (!unresolvedTypesVisitor.getUnresolvedTypes().isEmpty()) {
-                                String schemaPattern = null;
+                                String schemaPattern = PERCENT;
                                 if (databaseType.isObjectTableType()) {
                                     schemaPattern = ((ObjectTableType)databaseType).getSchema();
                                 }
@@ -382,9 +374,6 @@ public class DatabaseTypeBuilder {
                                 }
                                 else if (databaseType.isVArrayType()) {
                                     schemaPattern = ((VArrayType)databaseType).getSchema();
-                                }
-                                else {
-                                    schemaPattern = PERCENT;
                                 }
                                 resolvedTypes(conn, schemaPattern, parser,
                                     unresolvedTypesVisitor.getUnresolvedTypes(), databaseType);
@@ -457,11 +446,11 @@ public class DatabaseTypeBuilder {
                     String ddl = null;
                     if (clob != null) {
                         Reader is = clob.getCharacterStream();
-                        StringBuffer sb = new StringBuffer();
+                        StringBuilder sb = new StringBuilder();
                         int length = (int)clob.length();
                         if (length > 0) {
                             char[] buffer = new char[length];
-                            // Read stream and append to StringBuffer.
+                            // Read stream and append to StringBuilder.
                             try {
                                 while (is.read(buffer) != -1) {
                                     sb.append(buffer);
@@ -591,11 +580,10 @@ public class DatabaseTypeBuilder {
         boolean done = false;
         DatabaseTypesRepository typesRepository = parser.getTypesRepository();
         while (!done) {
-            CompositeDatabaseType resolvedType = null;
             UnresolvedType uType = stac.pop();
             String typeName = uType.getTypeName();
             CompositeDatabaseType owningType = uType.getOwningType();
-            int dotIdx = typeName.indexOf(DOT);
+            int dotIdx = typeName.indexOf('.');
             String typeName1 = typeName;
             String typeName2 = null;
             // handle dotted scenario, i.e. "PackageName.TypeName" or "SchemaName.TypeName"
@@ -604,7 +592,7 @@ public class DatabaseTypeBuilder {
                 typeName2 = typeName.substring(dotIdx+1, typeName.length());
 
                 // handle second dotted scenario, i.e. "SchemaName.TableName.ColumnName"
-                dotIdx = typeName2.indexOf(DOT);
+                dotIdx = typeName2.indexOf('.');
                 if (dotIdx != -1) {
                     String tmpStr = typeName2;
                     typeName1 = tmpStr.substring(0, dotIdx);
@@ -612,7 +600,7 @@ public class DatabaseTypeBuilder {
                 }
             }
             // check type repository first
-            resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(typeName);
+            CompositeDatabaseType resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(typeName);
             if (resolvedType == null) {
                 if (owningType.isROWTYPEType()) {
                     ROWTYPEType rType = (ROWTYPEType)owningType;
@@ -685,7 +673,9 @@ public class DatabaseTypeBuilder {
                                 List<PLSQLPackageType> packages = buildPackages(conn, schemaPattern, typeName1, false);
                                 if (packages != null && packages.size() > 0) {
                                     plsqlPkg = packages.get(0);  // only care about first one
-                                    processedPackages.add(plsqlPkg);
+                                    if (processedPackages != null) {
+                                        processedPackages.add(plsqlPkg);
+                                    }
                                 }
                             }
                             if (plsqlPkg != null) {
@@ -884,12 +874,12 @@ public class DatabaseTypeBuilder {
            worked = false;
         }
         finally {
-            try {
-                cStmt.close();
-            }
-            catch (SQLException e) {
+            if (cStmt != null)
+                try {
+                    cStmt.close();
+                } catch (SQLException e) {
                 // ignore
-            }
+                }
         }
         if (worked) {
             transformsSet = true;
@@ -908,7 +898,7 @@ public class DatabaseTypeBuilder {
      */
     static DatabaseType findField(String fieldName, DatabaseType targetType) {
         // remove '%' from field name
-        int pctIdx = fieldName.indexOf(PERCENT);
+        int pctIdx = fieldName.indexOf('%');
         if (pctIdx != -1) {
             fieldName = fieldName.substring(0, pctIdx);
         }
