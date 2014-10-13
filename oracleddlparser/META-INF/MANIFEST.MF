@@ -8,7 +8,7 @@ Implementation-Version: 1.0.0.qualifier
 Specification-Vendor: Eclipse.org - EclipseLink Project
 Bundle-Name: Oracle DDL Parser
 Created-By: 1.6.0_21 (Sun Microsystems Inc.)
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 HK2-Bundle-Name: org.eclipse.persistence:org.eclipse.persistence.tools
  .oracleddl
 Implementation-Vendor: Eclipse.org - EclipseLink Project
