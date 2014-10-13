@@ -2,8 +2,3 @@
 *.class
 bin/
 target/
-.settings/org.eclipse.m2e.core.prefs
-oracleddl.feature/.settings/org.eclipse.core.resources.prefs
-oracleddl.parent/.settings/org.eclipse.core.resources.prefs
-oracleddl.repository/.settings/org.eclipse.core.resources.prefs
-oracleddlparser/.settings/org.eclipse.jdt.core.prefs
