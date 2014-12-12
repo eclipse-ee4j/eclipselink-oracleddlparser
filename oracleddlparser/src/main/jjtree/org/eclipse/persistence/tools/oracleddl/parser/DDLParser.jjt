@@ -253,6 +253,7 @@ TOKEN [IGNORE_CASE]: {
     | <R_IS: "IS">
     | <R_LIKE: "LIKE">
     | <R_LOCK: "LOCK">
+    | <R_MEMBER: "MEMBER">
     | <R_MINUS: "MINUS">
     | <R_MODE: "MODE">
     | <R_NOCOMPRESS: "NOCOMPRESS">
@@ -275,6 +276,7 @@ TOKEN [IGNORE_CASE]: {
     | <R_SIZE: "SIZE">
     | <R_SQL: "SQL">
     | <R_START: "START">
+    | <R_STATIC: "STATIC">
     | <R_SUBTYPE: "SUBTYPE">
     | <R_TABAUTH: "TABAUTH">
     | <R_TABLE: "TABLE">
@@ -665,7 +667,7 @@ CompositeDatabaseType parseType():
                 if (schema != null) {
                     ((ObjectType)databaseType).setSchema(schema);
                 }
-            } columnDeclarations(databaseType) constructorDeclaration() <O_CLOSEPAREN>
+            } columnDeclarations(databaseType) constructorDeclaration() memberFunctionOrProcedureDeclaration() <O_CLOSEPAREN>
           | <K_VARRAY> <O_OPENPAREN> vsize=<S_NUMBER> <O_CLOSEPAREN> <R_OF>
             {
                 databaseType = new VArrayType(typeName);
@@ -699,7 +701,7 @@ CompositeDatabaseType parseType():
 void columnDeclarations(CompositeDatabaseType enclosingType):
 {}
 {
-    (LOOKAHEAD(2) constructor() | columnDeclaration(enclosingType) | constraintDeclaration(enclosingType) )
+    (LOOKAHEAD(2) constructor() | columnDeclaration(enclosingType) | constraintDeclaration(enclosingType) | memberFunctionOrProcedure() )
     [ <O_COMMA> columnDeclarations(enclosingType) ]
 }
 
@@ -1641,6 +1643,15 @@ void argumentList(ProcedureType procedureType) :
    argument(procedureType) ( <O_COMMA> argument(procedureType) )*
 }
 
+// Member Function/Procedure Specification - ignore both
+void memberFunctionOrProcedureDeclaration() :
+{}
+{
+    [ <R_STATIC> ] [ <R_MEMBER> ]
+    [ ( <R_PROCEDURE> skipToClosingParen() <O_CLOSEPAREN> | <R_FUNCTION> skipToReturn() datatype() ) ]
+    [ <O_COMMA> memberFunctionOrProcedureDeclaration() ]
+}
+
 // Function Specification
 void functionSpec(PLSQLPackageType packageType) :
 {String functionName= null;
@@ -1920,4 +1931,13 @@ void constructor():
       
     token = t;
   }
+}
+
+void memberFunctionOrProcedure():
+{    Token t = token;
+}
+{
+    [ <R_STATIC> ] <R_MEMBER> ( <R_FUNCTION> | <R_PROCEDURE> ) {
+        token = t;
+    }
 }

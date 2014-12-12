@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2011-2014 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 //DDL imports
@@ -286,6 +287,91 @@ public class TypeDDLTestSuite {
         }
         assertTrue("type with multiple constructors did not parse:\n" + message, worked);
         assertEquals("incorrect type name " + TYPE_NAME, TYPE_NAME, typeWithMultipleConstructors.getTypeName());
+    }
+    
+    static final String MEMBER_FUNCTION_TYPE_NAME = "MEMBER_FUNCTION_TYPE";
+    static final String CREATE_MEMBER_FUNCTION_TYPE = CREATE_TYPE_PREFIX + MEMBER_FUNCTION_TYPE_NAME + " AS OBJECT(" +
+            "\n    status1 varchar2(5)," +
+            "\n    status2 varchar2(5)," +
+            "\n    status3 varchar2(5)," +
+            "\n    member function my_function1 return varchar2," +
+            "\n    member function my_function2 return varchar2," +
+            "\n    static member function my_function3 return varchar2," +
+            "\n    member function my_function4 return varchar2," +
+            "\n    static member function my_function5 return varchar2," +
+            "\n    MEMBER PROCEDURE display1 (SELF IN OUT NOCOPY solid_typ)," +
+            "\n    MEMBER PROCEDURE display2 (SELF IN OUT NOCOPY solid_typ)," +
+            "\n    static MEMBER PROCEDURE display3 (SELF IN OUT NOCOPY solid_typ)," +
+            "\n    static MEMBER PROCEDURE display4 (SELF IN OUT NOCOPY solid_typ)," +
+            "\n    member function my_function6 return varchar2," +
+            "\n    static member function my_function7 return varchar2" +
+            "\n)";
+    
+    @Test
+    public void testTypeWithMemberFunctions() {
+        parser.ReInit(new StringReader(CREATE_MEMBER_FUNCTION_TYPE));
+        boolean worked = true;
+        String message = "";
+        ObjectType typeWithMemberFunctions = null;
+        try {
+            typeWithMemberFunctions = (ObjectType)parser.parseType();
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("Parse error:\n" + message, worked);
+        assertNotNull("Type should not be null", typeWithMemberFunctions);
+        assertEquals("Incorrect type name: " + MEMBER_FUNCTION_TYPE_NAME, MEMBER_FUNCTION_TYPE_NAME, typeWithMemberFunctions.getTypeName());
+        assertEquals("Type should have three fields", 3, typeWithMemberFunctions.getFields().size());
+    }
+    
+    static final String MEMBER_FUNCTION_CONS_TYPE_NAME = "MEMBER_FUNCTION_CONS_TYPE";
+    static final String CREATE_MEMBER_FUNCTION_CONS_TYPE = 
+        "CREATE OR REPLACE TYPE " + MEMBER_FUNCTION_CONS_TYPE_NAME + " AS OBJECT(" +
+        "\n    status1 varchar2(5)," +
+        "\n    status2 varchar2(5)," +
+        "\n    status3 varchar2(5)," +
+        "\n    constructor function my_type (" +
+        "\n       i_status        in varchar2," +
+        "\n       i_comments      in varchar2 := null" +
+        "\n    ) return self as result," +
+        "\n    constructor function my_type (" +
+        "\n       i_status        in boolean," +
+        "\n       i_orauser       in varchar2," +
+        "\n       i_comments      in varchar2" +
+        "\n    ) return self as result," +
+        "\n    member function my_function1 return varchar2," +
+        "\n    member function my_function2 return varchar2," +
+        "\n    static member function my_function3 return varchar2," +
+        "\n    member function my_function4 return varchar2," +
+        "\n    static member function my_function5 return varchar2," +
+        "\n    MEMBER PROCEDURE display1 (SELF IN OUT NOCOPY solid_typ)," +
+        "\n    MEMBER PROCEDURE display2 (SELF IN OUT NOCOPY solid_typ)," +
+        "\n    static MEMBER PROCEDURE display3 (SELF IN OUT NOCOPY solid_typ)," +
+        "\n    static MEMBER PROCEDURE display4 (SELF IN OUT NOCOPY solid_typ)," +
+        "\n    member function my_function6 return varchar2," +
+        "\n    static member function my_function7 return varchar2" +
+        "\n)";
+    
+    @Test
+    public void testTypeWithMemberFunctionsAndConstructors() {
+        parser.ReInit(new StringReader(CREATE_MEMBER_FUNCTION_CONS_TYPE));
+        boolean worked = true;
+        String message = "";
+        ObjectType typeWithMemberFunctions = null;
+        try {
+            typeWithMemberFunctions = (ObjectType)parser.parseType();
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+            message = pe.getMessage();
+            worked = false;
+        }
+        assertTrue("Parse error:\n" + message, worked);
+        assertNotNull("Type should not be null", typeWithMemberFunctions);
+        assertEquals("incorrect type name: " + MEMBER_FUNCTION_CONS_TYPE_NAME, MEMBER_FUNCTION_CONS_TYPE_NAME, 
+                typeWithMemberFunctions.getTypeName());
+        assertEquals("Type should have three fields", 3, typeWithMemberFunctions.getFields().size());
     }
 
 }
