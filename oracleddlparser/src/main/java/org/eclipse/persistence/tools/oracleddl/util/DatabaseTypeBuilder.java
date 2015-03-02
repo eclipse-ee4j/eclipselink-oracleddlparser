@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Oracle. All rights reserved.
+ * Copyright (c) 2011, 2015 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
  * which accompanies this distribution.
@@ -609,6 +609,12 @@ public class DatabaseTypeBuilder {
                         int idx = tableName.indexOf(ROWTYPE_MACRO);
                         tableName = tableName.substring(0,idx);
                     }
+                    if (tableName.indexOf('.') > 0) {
+                        String prefix = tableName.substring(0, tableName.indexOf('.'));
+                        if(schemaPattern.equalsIgnoreCase(prefix)) {
+                            tableName = typeName.substring(schemaPattern.length() + 1);
+                        }
+                    }
                     resolvedType = (CompositeDatabaseType)typesRepository.getDatabaseType(tableName);
                     if (resolvedType == null) {
                         TableType tableType = null;
@@ -650,90 +656,10 @@ public class DatabaseTypeBuilder {
                     }
                 }
                 if (resolvedType == null) {
-                    int objectTypeCode = getObjectType(conn, schemaPattern, typeName1);
-                    switch (objectTypeCode) {
-                        case OBJECT_TYPE_FUNCTION_CODE :
-                            List<FunctionType> functions = buildFunctions(conn, schemaPattern, typeName1, false);
-                            if (functions != null && functions.size() > 0) {
-                                resolvedType = functions.get(0); // only care about first one
-                            }
-                            break;
-                        case OBJECT_TYPE_PACKAGE_CODE :
-                            PLSQLPackageType plsqlPkg = null;
-                            // we may have already processed this package
-                            if (processedPackages != null) {
-                                for (PLSQLPackageType pkg : processedPackages) {
-                                    if (pkg.getPackageName().equals(typeName1)) {
-                                        plsqlPkg = pkg;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (plsqlPkg == null) {
-                                List<PLSQLPackageType> packages = buildPackages(conn, schemaPattern, typeName1, false);
-                                if (packages != null && packages.size() > 0) {
-                                    plsqlPkg = packages.get(0);  // only care about first one
-                                    if (processedPackages != null) {
-                                        processedPackages.add(plsqlPkg);
-                                    }
-                                }
-                            }
-                            if (plsqlPkg != null) {
-                                // we may have a dotted scenario, i.e. 'PackageName.TypeName'
-                                if (typeName2 == null) {
-                                    resolvedType = plsqlPkg;
-                                } else {
-                                    DatabaseType dbType = findField(typeName2, plsqlPkg);
-                                    if (dbType != null && dbType.isComposite()) {
-                                        resolvedType = (CompositeDatabaseType) dbType;
-                                    }
-                                }
-                            }
-                            break;
-                        case OBJECT_TYPE_PROCEDURE_CODE :
-                            List<ProcedureType> procedures = buildProcedures(conn, schemaPattern, typeName1, false);
-                            if (procedures != null && procedures.size() > 0) {
-                                resolvedType = procedures.get(0); // only care about first one
-                            }
-                            break;
-                        case OBJECT_TYPE_TABLE_CODE :
-                            List<TableType> tables = buildTables(conn, schemaPattern, typeName1, false);
-                            if (tables != null && tables.size() > 0) {
-                                TableType tableType = tables.get(0); // only care about first one
-                                resolvedType = tableType;
-                                if (typeName2 != null) {
-                                    DatabaseType foundType = findField(typeName2, resolvedType);
-                                    if (foundType != null) {
-                                        resolvedType = (CompositeDatabaseType)foundType;
-                                    }
-                                }
-                                // always a chance that tableType has some unresolved column type
-                                if (!tableType.isResolved()) {
-                                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
-                                    unresolvedTypesVisitor.visit(tableType);
-                                    for (UnresolvedType u2Type : unresolvedTypesVisitor.getUnresolvedTypes()) {
-                                        if (!stac.contains(u2Type)) {
-                                            stac.push(u2Type);
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-                        case OBJECT_TYPE_TYPE_CODE :
-                            List<CompositeDatabaseType> types = buildTypes(conn, schemaPattern, typeName1, false);
-                            if (types != null && types.size() > 0) {
-                                resolvedType = types.get(0); // only care about first one
-                                if (typeName2 != null) {
-                                    DatabaseType foundType = findField(typeName2, resolvedType);
-                                    if (foundType != null) {
-                                        resolvedType = (CompositeDatabaseType)foundType;
-                                    }
-                                }
-                            }
-                            break;
-                        case OBJECT_TYPE_UNKNOWN_CODE :
-                        default :
-                            break;
+                    if (!typeName1.equalsIgnoreCase(schemaPattern)) {
+                        resolvedType = resolveType(conn, schemaPattern, typeName1, typeName2, processedPackages, stac);
+                    } else {
+                        resolvedType = resolveType(conn, schemaPattern, typeName2, null, processedPackages, stac);
                     }
                 }
             }
@@ -778,6 +704,98 @@ public class DatabaseTypeBuilder {
                 done = true;
             }
         }
+    }
+
+    private CompositeDatabaseType resolveType(Connection conn, String schemaPattern, String typeName1, String typeName2, List<PLSQLPackageType> processedPackages, Stack<UnresolvedType> stac) throws ParseException {
+        CompositeDatabaseType resolvedType = null;
+        int objectTypeCode = getObjectType(conn, schemaPattern, typeName1);
+        switch (objectTypeCode) {
+        case OBJECT_TYPE_FUNCTION_CODE:
+            List<FunctionType> functions = buildFunctions(conn, schemaPattern, typeName1, false);
+            if (functions != null && functions.size() > 0) {
+                resolvedType = functions.get(0); // only care about first one
+            }
+            break;
+        case OBJECT_TYPE_PACKAGE_CODE:
+            PLSQLPackageType plsqlPkg = null;
+            // we may have already processed this package
+            if (processedPackages != null) {
+                for (PLSQLPackageType pkg : processedPackages) {
+                    if (pkg.getPackageName().equals(typeName1)) {
+                        plsqlPkg = pkg;
+                        break;
+                    }
+                }
+            }
+            if (plsqlPkg == null) {
+                List<PLSQLPackageType> packages = buildPackages(conn, schemaPattern, typeName1, false);
+                if (packages != null && packages.size() > 0) {
+                    plsqlPkg = packages.get(0); // only care about first one
+                    if (processedPackages != null) {
+                        processedPackages.add(plsqlPkg);
+                    }
+                }
+            }
+            if (plsqlPkg != null) {
+                // we may have a dotted scenario, i.e. 'PackageName.TypeName'
+                if (typeName2 == null) {
+                    resolvedType = plsqlPkg;
+                } else {
+                    DatabaseType dbType = findField(typeName2, plsqlPkg);
+                    if (dbType != null && dbType.isComposite()) {
+                        resolvedType = (CompositeDatabaseType) dbType;
+                    }
+                }
+            }
+            break;
+        case OBJECT_TYPE_PROCEDURE_CODE:
+            List<ProcedureType> procedures = buildProcedures(conn, schemaPattern, typeName1, false);
+            if (procedures != null && procedures.size() > 0) {
+                resolvedType = procedures.get(0); // only care about first one
+            }
+            break;
+        case OBJECT_TYPE_TABLE_CODE:
+            List<TableType> tables = buildTables(conn, schemaPattern, typeName1, false);
+            if (tables != null && tables.size() > 0) {
+                TableType tableType = tables.get(0); // only care about first
+                                                     // one
+                resolvedType = tableType;
+                if (typeName2 != null) {
+                    DatabaseType foundType = findField(typeName2, resolvedType);
+                    if (foundType != null) {
+                        resolvedType = (CompositeDatabaseType) foundType;
+                    }
+                }
+                // always a chance that tableType has some unresolved column
+                // type
+                if (!tableType.isResolved()) {
+                    UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
+                    unresolvedTypesVisitor.visit(tableType);
+                    for (UnresolvedType u2Type : unresolvedTypesVisitor.getUnresolvedTypes()) {
+                        if (!stac.contains(u2Type)) {
+                            stac.push(u2Type);
+                        }
+                    }
+                }
+            }
+            break;
+        case OBJECT_TYPE_TYPE_CODE:
+            List<CompositeDatabaseType> types = buildTypes(conn, schemaPattern, typeName1, false);
+            if (types != null && types.size() > 0) {
+                resolvedType = types.get(0); // only care about first one
+                if (typeName2 != null) {
+                    DatabaseType foundType = findField(typeName2, resolvedType);
+                    if (foundType != null) {
+                        resolvedType = (CompositeDatabaseType) foundType;
+                    }
+                }
+            }
+            break;
+        case OBJECT_TYPE_UNKNOWN_CODE:
+        default:
+            break;
+        }
+        return resolvedType;
     }
 
     /**
