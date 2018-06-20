@@ -1,16 +1,16 @@
-/*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
- * which accompanies this distribution.
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at
- * http://www.eclipse.org/org/documents/edl-v10.php.
+/*
+ * Copyright (c) 2011, 2018 Oracle and/or its affiliates. All rights reserved.
  *
- * Contributors:
- *     Mike Norman - June 10 2011, created DDL parser package
- *     David McCann - July 2011, visit tests
- ******************************************************************************/
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
+// Contributors:
+//     Mike Norman - June 10 2011, created DDL parser package
+//     David McCann - July 2011, visit tests
 package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
@@ -42,19 +42,19 @@ public class FunctionDDLTestSuite {
     //JUnit fixture(s)
     static DDLParser parser = null;
 
-	@BeforeClass
-	static public void setUp() {
+    @BeforeClass
+    static public void setUp() {
         parser = new DDLParser(new InputStream() {
             public int read() throws IOException {
                 return 0;
             }
         });
         parser.setTypesRepository(new DatabaseTypesRepository());
-	}
+    }
 
     static final String EMPTY_FUNCTION = "EMPTY_FUNCTION";
-	static final String CREATE_EMPTY_FUNCTION =
-	    CREATE_FUNCTION_PREFIX + EMPTY_FUNCTION + " RETURN DECIMAL IS BEGIN RETURN 0; END";
+    static final String CREATE_EMPTY_FUNCTION =
+        CREATE_FUNCTION_PREFIX + EMPTY_FUNCTION + " RETURN DECIMAL IS BEGIN RETURN 0; END";
     @Test
     public void testEmptyFunction() {
         parser.ReInit(new StringReader(CREATE_EMPTY_FUNCTION));
@@ -75,7 +75,7 @@ public class FunctionDDLTestSuite {
     static final String SIMPLE_ARG = "DEPT";
     static final String CREATE_SIMPLE_FUNCTION =
         CREATE_FUNCTION_PREFIX + SIMPLE_FUNCTION + " (" + SIMPLE_ARG + " IN DECIMAL) RETURN DECIMAL AS " +
-    	"BEGIN " +
+        "BEGIN " +
             "SELECT max(SAL) INTO MAXSAL FROM SIMPLESF WHERE DEPTNO = DEPT; " +
             "RETURN(MAXSAL); " +
         "END";

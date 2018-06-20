@@ -1,15 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2011, 2015 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
- * which accompanies this distribution.
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at
- * http://www.eclipse.org/org/documents/edl-v10.php.
+/*
+ * Copyright (c) 2011, 2018 Oracle and/or its affiliates. All rights reserved.
  *
- * Contributors:
- *     Mike Norman - June 10 2011, created DDL parser package
- ******************************************************************************/
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
+// Contributors:
+//     Mike Norman - June 10 2011, created DDL parser package
 package org.eclipse.persistence.tools.oracleddl.util;
 
 //javase imports
@@ -54,7 +54,7 @@ import org.eclipse.persistence.tools.oracleddl.parser.DDLParser;
 import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 
 public class DatabaseTypeBuilder {
-   
+
     //misc. string constants
     public static final String BEGIN = "BEGIN";
     public static final String END = "END";
@@ -497,7 +497,7 @@ public class DatabaseTypeBuilder {
 
     /**
      * Attempt to resolve any types that the DDLParser could not resolve.
-     *  
+     *
      * @param conn Database connection
      * @param schemaPattern Database schemas where to resolve types
      * @param parser Parser to get types repository from
@@ -678,7 +678,7 @@ public class DatabaseTypeBuilder {
                     owningType.setEnclosedType(resolvedType);
                 }
                 typesRepository.setDatabaseType(resolvedType.getTypeName(), resolvedType);
-                
+
                 // update any other types in the unresolved list that reference the resolved type
                 for (UnresolvedType unresolvedType : unresolvedTypes) {
                     if (unresolvedType.getTypeName().equals(typeName)) {
@@ -687,7 +687,7 @@ public class DatabaseTypeBuilder {
                         }
                     }
                 }
-                
+
                 // always a chance that resolvedType refers to something that is un-resolved
                 if (!resolvedType.isResolved()) {
                     UnresolvedTypesVisitor unresolvedTypesVisitor = new UnresolvedTypesVisitor();
@@ -799,9 +799,9 @@ public class DatabaseTypeBuilder {
     }
 
     /**
-     * Attempt to determine the database type (Function, Package, Table, etc.) for a 
+     * Attempt to determine the database type (Function, Package, Table, etc.) for a
      * given a Schema and Type name.
-     * 
+     *
      * Types are translated to integer values as follows:
      * <ul>
      * <li>FUNCTION = 1</li>
@@ -912,7 +912,7 @@ public class DatabaseTypeBuilder {
 
     /**
      * Attempt to find a field matching 'fieldName' in a given DatabaseType.
-     * 
+     *
      */
     static DatabaseType findField(String fieldName, DatabaseType targetType) {
         // remove '%' from field name
@@ -952,7 +952,7 @@ public class DatabaseTypeBuilder {
                 if (cursorType.getCursorName().equals(fieldName)) {
                     return cursorType;
                 }
-                
+
             }
             // check types
             for (PLSQLType plsqlType : packageType.getTypes()) {
@@ -963,7 +963,7 @@ public class DatabaseTypeBuilder {
             // check procedures
             for (ProcedureType procType : packageType.getProcedures()) {
                 if (procType.getProcedureName().equals(fieldName)) {
-                    return procType; 
+                    return procType;
                 }
             }
             // check local variables

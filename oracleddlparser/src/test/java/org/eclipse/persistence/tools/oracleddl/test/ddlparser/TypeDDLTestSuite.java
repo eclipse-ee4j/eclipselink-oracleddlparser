@@ -1,16 +1,16 @@
-/*******************************************************************************
- * Copyright (c) 2011-2014 Oracle. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
- * which accompanies this distribution.
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at
- * http://www.eclipse.org/org/documents/edl-v10.php.
+/*
+ * Copyright (c) 2011, 2018 Oracle and/or its affiliates. All rights reserved.
  *
- * Contributors:
- *     Mike Norman - June 10 2011, created DDL parser package
- *     David McCann - July 2011, visit tests
- ******************************************************************************/
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
+// Contributors:
+//     Mike Norman - June 10 2011, created DDL parser package
+//     David McCann - July 2011, visit tests
 package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
@@ -45,22 +45,22 @@ public class TypeDDLTestSuite {
     //JUnit fixture(s)
     static DDLParser parser = null;
 
-	@BeforeClass
-	static public void setUp() {
+    @BeforeClass
+    static public void setUp() {
         parser = new DDLParser(new InputStream() {
             public int read() throws IOException {
                 return 0;
             }
         });
         parser.setTypesRepository(new DatabaseTypesRepository());
-	}
+    }
 
-	/*
+    /*
       CREATE OR REPLACE TYPE EMP_INFO AS OBJECT (
         ID      NUMERIC(5),
         NAME    VARCHAR2(50)
       );
-	 */
+     */
     static final String SIMPLE_TYPE = "EMP_INFO";
     static final String SIMPLE_TYPE_FIELD1_NAME = "ID";
     static final String SIMPLE_TYPE_FIELD1_TYPE = "NUMERIC(5)";
@@ -245,7 +245,7 @@ public class TypeDDLTestSuite {
     static final String CREATE_TYPE_WITH_KEYWORD =
         CREATE_TYPE_PREFIX + TYPE_W_KEYWORDS + " IS OBJECT (" +
             "\n" + TWKW_FIELD1_NAME + " " + TWKW_FIELD1_TYPE + "," +
-            "\n" + TWKW_FIELD2_NAME + " " + TWKW_FIELD2_TYPE + 
+            "\n" + TWKW_FIELD2_NAME + " " + TWKW_FIELD2_TYPE +
         "\n);";
     @Test
     public void testKeywordType() {
@@ -264,7 +264,7 @@ public class TypeDDLTestSuite {
         assertEquals("incorrect type name " + TYPE_W_KEYWORDS,
             TYPE_W_KEYWORDS, typeWithKeyword.getTypeName());
     }
-    
+
     static final String TYPE_NAME = "CUSTOM_CONS_TYPE";
     static final String CREATE_TYPE_WITH_MULTIPLE_CONSTRUCTORS = CREATE_TYPE_PREFIX + TYPE_NAME + " AS OBJECT(" +
             "\n    status varchar2(5)," +
@@ -288,7 +288,7 @@ public class TypeDDLTestSuite {
         assertTrue("type with multiple constructors did not parse:\n" + message, worked);
         assertEquals("incorrect type name " + TYPE_NAME, TYPE_NAME, typeWithMultipleConstructors.getTypeName());
     }
-    
+
     static final String MEMBER_FUNCTION_TYPE_NAME = "MEMBER_FUNCTION_TYPE";
     static final String CREATE_MEMBER_FUNCTION_TYPE = CREATE_TYPE_PREFIX + MEMBER_FUNCTION_TYPE_NAME + " AS OBJECT(" +
             "\n    status1 varchar2(5)," +
@@ -306,7 +306,7 @@ public class TypeDDLTestSuite {
             "\n    member function my_function6 return varchar2," +
             "\n    static member function my_function7 return varchar2" +
             "\n)";
-    
+
     @Test
     public void testTypeWithMemberFunctions() {
         parser.ReInit(new StringReader(CREATE_MEMBER_FUNCTION_TYPE));
@@ -325,9 +325,9 @@ public class TypeDDLTestSuite {
         assertEquals("Incorrect type name: " + MEMBER_FUNCTION_TYPE_NAME, MEMBER_FUNCTION_TYPE_NAME, typeWithMemberFunctions.getTypeName());
         assertEquals("Type should have three fields", 3, typeWithMemberFunctions.getFields().size());
     }
-    
+
     static final String MEMBER_FUNCTION_CONS_TYPE_NAME = "MEMBER_FUNCTION_CONS_TYPE";
-    static final String CREATE_MEMBER_FUNCTION_CONS_TYPE = 
+    static final String CREATE_MEMBER_FUNCTION_CONS_TYPE =
         "CREATE OR REPLACE TYPE " + MEMBER_FUNCTION_CONS_TYPE_NAME + " AS OBJECT(" +
         "\n    status1 varchar2(5)," +
         "\n    status2 varchar2(5)," +
@@ -353,7 +353,7 @@ public class TypeDDLTestSuite {
         "\n    member function my_function6 return varchar2," +
         "\n    static member function my_function7 return varchar2" +
         "\n)";
-    
+
     @Test
     public void testTypeWithMemberFunctionsAndConstructors() {
         parser.ReInit(new StringReader(CREATE_MEMBER_FUNCTION_CONS_TYPE));
@@ -369,7 +369,7 @@ public class TypeDDLTestSuite {
         }
         assertTrue("Parse error:\n" + message, worked);
         assertNotNull("Type should not be null", typeWithMemberFunctions);
-        assertEquals("incorrect type name: " + MEMBER_FUNCTION_CONS_TYPE_NAME, MEMBER_FUNCTION_CONS_TYPE_NAME, 
+        assertEquals("incorrect type name: " + MEMBER_FUNCTION_CONS_TYPE_NAME, MEMBER_FUNCTION_CONS_TYPE_NAME,
                 typeWithMemberFunctions.getTypeName());
         assertEquals("Type should have three fields", 3, typeWithMemberFunctions.getFields().size());
     }
