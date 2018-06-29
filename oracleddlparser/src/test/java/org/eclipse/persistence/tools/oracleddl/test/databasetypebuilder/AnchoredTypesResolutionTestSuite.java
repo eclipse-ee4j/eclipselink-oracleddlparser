@@ -1,15 +1,17 @@
-/*******************************************************************************
- * Copyright (c) 2012, 2014 Oracle. All rights reserved.
+/*
+ * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
+ *
  * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0
- * which accompanies this distribution.
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0,
+ * or the Eclipse Distribution License v. 1.0 which is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
- * Contributors:
- *     Mike Norman - Feb 1 2012, created anchored types (%TYPE, %ROWTYPE) tests
- ******************************************************************************/
+ * SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
+ */
+
+// Contributors:
+//     Mike Norman - Feb 1 2012, created anchored types (%TYPE, %ROWTYPE) tests
 package org.eclipse.persistence.tools.oracleddl.test.databasetypebuilder;
 
 //javase imports
@@ -155,48 +157,48 @@ public class AnchoredTypesResolutionTestSuite {
 
         // check for any remaining unresolved types
         UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
-	    visitor.visit(plsqlPackageType);
-	    assertEquals(ANCHORED_TYPES_TEST4_PACKAGE + " should not have any unresolved types",
-	        0, visitor.getUnresolvedTypes().size());
-	    
-	    // check TableTypes to ensure a single instance
-	    TableType tt1 = getTableType(cursorType);
-	    TableType tt2 = getTableType(plsqlPackageType.getCursors().get(1));
-	    TableType tt3 = getTableType(plsqlPackageType.getLocalVariables().get(0));
-	    TableType tt4 = getTableType(plsqlType2);
-	    
-	    assertEquals("Expected types ["+cursorType+"] and ["+plsqlPackageType.getCursors().get(1)+"] " +
-	    		"to have the same TableType instance", tt1, tt2);
-	    assertEquals("Expected types ["+plsqlPackageType.getCursors().get(1)+"] and ["+plsqlPackageType.getLocalVariables().get(0)+"] " +
-	    		"to have the same TableType instance", tt2, tt3);
-	    assertEquals("Expected types ["+plsqlPackageType.getLocalVariables().get(0)+"] and ["+plsqlType2+"] " +
-	    		"to have the same TableType instance", tt3, tt4);
+        visitor.visit(plsqlPackageType);
+        assertEquals(ANCHORED_TYPES_TEST4_PACKAGE + " should not have any unresolved types",
+            0, visitor.getUnresolvedTypes().size());
+
+        // check TableTypes to ensure a single instance
+        TableType tt1 = getTableType(cursorType);
+        TableType tt2 = getTableType(plsqlPackageType.getCursors().get(1));
+        TableType tt3 = getTableType(plsqlPackageType.getLocalVariables().get(0));
+        TableType tt4 = getTableType(plsqlType2);
+
+        assertEquals("Expected types ["+cursorType+"] and ["+plsqlPackageType.getCursors().get(1)+"] " +
+                "to have the same TableType instance", tt1, tt2);
+        assertEquals("Expected types ["+plsqlPackageType.getCursors().get(1)+"] and ["+plsqlPackageType.getLocalVariables().get(0)+"] " +
+                "to have the same TableType instance", tt2, tt3);
+        assertEquals("Expected types ["+plsqlPackageType.getLocalVariables().get(0)+"] and ["+plsqlType2+"] " +
+                "to have the same TableType instance", tt3, tt4);
     }
 
     /**
-     * Iterates to/returns the last enclosedType.  
+     * Iterates to/returns the last enclosedType.
      * Tests for non null and isTableType.
      */
-	protected TableType getTableType(CompositeDatabaseType owningType) {
-	    DatabaseType enclosedType = null;
-		try {
-		    boolean done = false;
-		    while (!done) {
-		    	if (owningType.getEnclosedType() != null) {
-		    		enclosedType = owningType.getEnclosedType();
-		    		assertTrue("Expected composite enclosedType, but was [" +owningType.getTypeName()+ "]", enclosedType.isComposite());
-		    		owningType = (CompositeDatabaseType) enclosedType;
-		    	} else {
-		    		done = true;
-		    	}
-		    }
-		    assertNotNull(enclosedType);
-		    assertTrue("Expected TableType instance but was [" + enclosedType.getClass().getName() + "]", enclosedType.isTableType());
-		} catch (Exception x) {
-			fail("An unexpected exception occurred attempting to retrieve TableType from type [" + owningType.getTypeName() + "].  Exception message: " + x.getMessage());
-		}
-	    return (TableType) enclosedType;
-	}
+    protected TableType getTableType(CompositeDatabaseType owningType) {
+        DatabaseType enclosedType = null;
+        try {
+            boolean done = false;
+            while (!done) {
+                if (owningType.getEnclosedType() != null) {
+                    enclosedType = owningType.getEnclosedType();
+                    assertTrue("Expected composite enclosedType, but was [" +owningType.getTypeName()+ "]", enclosedType.isComposite());
+                    owningType = (CompositeDatabaseType) enclosedType;
+                } else {
+                    done = true;
+                }
+            }
+            assertNotNull(enclosedType);
+            assertTrue("Expected TableType instance but was [" + enclosedType.getClass().getName() + "]", enclosedType.isTableType());
+        } catch (Exception x) {
+            fail("An unexpected exception occurred attempting to retrieve TableType from type [" + owningType.getTypeName() + "].  Exception message: " + x.getMessage());
+        }
+        return (TableType) enclosedType;
+    }
 }
 
 
