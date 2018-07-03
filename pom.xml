@@ -14,7 +14,7 @@
 -->
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
     <name>EclipseLink Oracle DDL Aggregator</name>
@@ -24,18 +24,13 @@
     <packaging>pom</packaging>
     <url>http://www.eclipse.org/eclipselink/</url>
 
-    <!-- tycho requires maven >= 3.0 -->
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
-
     <modules>
+        <module>oracleddl.target</module>
         <module>oracleddlparser</module>
         <module>oracleddl.feature</module>
         <module>oracleddl.source.feature</module>
         <module>oracleddl.repository</module>
         <module>oracleddl.parent</module>
-        <module>oracleddl.target</module>
     </modules>
 
     <build>
