@@ -14,7 +14,7 @@
 -->
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
     <name>EclipseLink Oracle DDL Parser</name>
@@ -29,145 +29,146 @@
     </parent>
 
     <properties>
-      <maven-project-info-reports-plugin.version>2.4</maven-project-info-reports-plugin.version>
-      <maven-surefire-plugin.version>2.11</maven-surefire-plugin.version>
-      <maven-surefire-report-plugin.version>2.11</maven-surefire-report-plugin.version>
-      <jxr-maven-plugin.version>2.3</jxr-maven-plugin.version>
-      <!-- tests related properties -->
-      <db.oracle.url>jdbc:oracle:thin:@localhost:1521:ORCL</db.oracle.url>
-      <db.oracle.user>scott</db.oracle.user>
-      <db.oracle.pwd>tiger</db.oracle.pwd>
-      <db.oracle.driver>oracle.jdbc.OracleDriver</db.oracle.driver>
-      <db.ddl.create>false</db.ddl.create>
-      <db.ddl.drop>false</db.ddl.drop>
-      <db.ddl.debug>false</db.ddl.debug>
+        <ojdbc.jar>${basedir}/../../extension.lib.external/ojdbc6.jar</ojdbc.jar>
+        <maven-project-info-reports-plugin.version>2.4</maven-project-info-reports-plugin.version>
+        <maven-surefire-plugin.version>2.11</maven-surefire-plugin.version>
+        <maven-surefire-report-plugin.version>2.11</maven-surefire-report-plugin.version>
+        <jxr-maven-plugin.version>2.3</jxr-maven-plugin.version>
+        <!-- tests related properties -->
+        <db.oracle.url>jdbc:oracle:thin:@localhost:1521:ORCL</db.oracle.url>
+        <db.oracle.user>scott</db.oracle.user>
+        <db.oracle.pwd>tiger</db.oracle.pwd>
+        <db.oracle.driver>oracle.jdbc.OracleDriver</db.oracle.driver>
+        <db.ddl.create>false</db.ddl.create>
+        <db.ddl.drop>false</db.ddl.drop>
+        <db.ddl.debug>false</db.ddl.debug>
     </properties>
 
     <dependencies>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit4-version}</version>
-        <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit4-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>javacc-maven-plugin</artifactId>
-          <version>2.6</version>
-          <executions>
-            <execution>
-              <id>jjtree-javacc</id>
-              <goals>
-                <goal>jjtree-javacc</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>${maven-project-info-reports-plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jxr-plugin</artifactId>
-          <version>${jxr-maven-plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.5.1</version>
-          <executions>
-              <execution>
-                  <id>test</id>
-                  <phase>test</phase>
-                  <goals>
-                      <goal>testCompile</goal>
-                  </goals>
-              </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire-plugin.version}</version>
-          <executions>
-            <execution>
-              <id>test</id>
-              <phase>test</phase>
-              <configuration>
-                  <systemPropertyVariables>
-                   <db.user>${db.oracle.user}</db.user>
-                   <db.pwd>${db.oracle.pwd}</db.pwd>
-                   <db.url>${db.oracle.url}</db.url>
-                   <db.driver>${db.oracle.driver}</db.driver>
-                   <db.ddl.create>${db.ddl.create}</db.ddl.create>
-                   <db.ddl.drop>${db.ddl.drop}</db.ddl.drop>
-                   <db.ddl.debug>${db.ddl.debug}</db.ddl.debug>
-                  </systemPropertyVariables>
-                  <forkMode>once</forkMode>
-                  <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                  <includes>
-                      <include>**/AllTests.java</include>
-                  </includes>
-                  <!-- enable debugger on port 5005 -->
-                  <!--<debugForkedProcess>true</debugForkedProcess>-->
-              </configuration>
-              <goals>
-                <goal>test</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>${maven-surefire-report-plugin.version}</version>
-          <executions>
-            <execution>
-              <id>generate-test-report</id>
-              <phase>test</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javacc-maven-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>jjtree-javacc</id>
+                        <goals>
+                            <goal>jjtree-javacc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${maven-project-info-reports-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>${jxr-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <phase>test</phase>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <db.user>${db.oracle.user}</db.user>
+                                <db.pwd>${db.oracle.pwd}</db.pwd>
+                                <db.url>${db.oracle.url}</db.url>
+                                <db.driver>${db.oracle.driver}</db.driver>
+                                <db.ddl.create>${db.ddl.create}</db.ddl.create>
+                                <db.ddl.drop>${db.ddl.drop}</db.ddl.drop>
+                                <db.ddl.debug>${db.ddl.debug}</db.ddl.debug>
+                            </systemPropertyVariables>
+                            <forkMode>once</forkMode>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <includes>
+                                <include>**/AllTests.java</include>
+                            </includes>
+                            <!-- enable debugger on port 5005 -->
+                            <!--<debugForkedProcess>true</debugForkedProcess>-->
+                        </configuration>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${maven-surefire-report-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-test-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <reporting>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jxr-plugin</artifactId>
-          <version>${jxr-maven-plugin.version}</version>
-          <configuration>
-            <aggregate>true</aggregate>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>${maven-surefire-report-plugin.version}</version>
-          <configuration>
-            <forkMode>once</forkMode>
-            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-          </configuration>
-        </plugin>
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-            <version>3.0.0</version>
-            <configuration>
-                <threshold>Low</threshold>
-            </configuration>
-        </plugin>
-      </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>${jxr-maven-plugin.version}</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${maven-surefire-report-plugin.version}</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <threshold>Low</threshold>
+                </configuration>
+            </plugin>
+        </plugins>
     </reporting>
 
     <profiles>
@@ -175,7 +176,7 @@
             <id>system-jdbc-driver</id>
             <activation>
                 <file>
-                    <exists>${basedir}/../../extension.lib.external/ojdbc6.jar</exists>
+                    <exists>${ojdbc.jar}</exists>
                 </file>
             </activation>
             <dependencies>
@@ -184,7 +185,7 @@
                     <artifactId>ojdbc6</artifactId>
                     <version>11.2.0</version>
                     <scope>system</scope>
-                    <systemPath>${basedir}/../../extension.lib.external/ojdbc6.jar</systemPath>
+                    <systemPath>${ojdbc.jar}</systemPath>
                 </dependency>
             </dependencies>
         </profile>
@@ -192,7 +193,7 @@
             <id>repo-jdbc-driver</id>
             <activation>
                 <file>
-                    <missing>${basedir}/../../extension.lib.external/ojdbc6.jar</missing>
+                    <missing>${ojdbc.jar}</missing>
                 </file>
             </activation>
             <dependencies>
