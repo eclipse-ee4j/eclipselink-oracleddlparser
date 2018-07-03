@@ -14,7 +14,7 @@
 -->
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
     <name>EclipseLink Oracle DDL Parent</name>
@@ -75,6 +75,13 @@
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>
+                    <target>
+                        <artifact>
+                            <groupId>org.eclipse.persistence</groupId>
+                            <artifactId>oracleddl.target</artifactId>
+                            <version>${project.version}</version>
+                        </artifact>
+                    </target>
                     <!-- resolver>p2</resolver - default?? -->
                     <environments>
                         <environment>
@@ -113,6 +120,16 @@
                             <arch>x86_64</arch>
                         </environment>
                     </environments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-packaging-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
