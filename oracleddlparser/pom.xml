@@ -29,7 +29,6 @@
     </parent>
 
     <properties>
-        <ojdbc.jar>${basedir}/../../extension.lib.external/ojdbc6.jar</ojdbc.jar>
         <maven-project-info-reports-plugin.version>2.4</maven-project-info-reports-plugin.version>
         <maven-surefire-plugin.version>2.11</maven-surefire-plugin.version>
         <maven-surefire-report-plugin.version>2.11</maven-surefire-report-plugin.version>
@@ -176,7 +175,7 @@
             <id>system-jdbc-driver</id>
             <activation>
                 <file>
-                    <exists>${ojdbc.jar}</exists>
+                    <exists>${basedir}/../../extension.lib.external/ojdbc6.jar</exists>
                 </file>
             </activation>
             <dependencies>
@@ -185,7 +184,7 @@
                     <artifactId>ojdbc6</artifactId>
                     <version>11.2.0</version>
                     <scope>system</scope>
-                    <systemPath>${ojdbc.jar}</systemPath>
+                    <systemPath>${basedir}/../../extension.lib.external/ojdbc6.jar</systemPath>
                 </dependency>
             </dependencies>
         </profile>
@@ -193,7 +192,7 @@
             <id>repo-jdbc-driver</id>
             <activation>
                 <file>
-                    <missing>${ojdbc.jar}</missing>
+                    <missing>${basedir}/../../extension.lib.external/ojdbc6.jar</missing>
                 </file>
             </activation>
             <dependencies>
