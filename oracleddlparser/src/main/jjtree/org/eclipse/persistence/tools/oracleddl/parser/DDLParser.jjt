@@ -850,8 +850,9 @@ void packageDeclaration(PLSQLPackageType packageType) :
     | cursorDeclaration(packageType)
     | procedureSpec(packageType)
     | functionSpec(packageType)
-    | LOOKAHEAD(2) variableDeclaration(packageType)
     | pragmaDeclaration()
+    <O_SEMICOLON>
+    | LOOKAHEAD(2) variableDeclaration(packageType)
 }
 
 void variableDeclaration(PLSQLPackageType packageType):
