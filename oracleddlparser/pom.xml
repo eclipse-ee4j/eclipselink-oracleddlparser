@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2018, 2020 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0 which is available at
@@ -17,33 +17,100 @@
          xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>EclipseLink Oracle DDL Parser</name>
-    <artifactId>org.eclipse.persistence.oracleddlparser</artifactId>
-    <packaging>eclipse-plugin</packaging>
-
     <parent>
-        <groupId>org.eclipse.persistence</groupId>
-        <artifactId>oracleddl.parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../oracleddl.parent/pom.xml</relativePath>
+        <groupId>org.eclipse.ee4j</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.6</version>
+        <relativePath/>
     </parent>
 
+    <groupId>org.eclipse.persistence</groupId>
+    <artifactId>org.eclipse.persistence.oracleddlparser</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>EclipseLink Oracle DDL Parser</name>
+    <description>EclipseLink Oracle DDL Parser, part of the project EclipseLink.</description>
+    <url>http://www.eclipse.org/eclipselink/</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/eclipse-ee4j/eclipselink-oracleddlparser.git</connection>
+        <url>https://github.com/eclipse-ee4j/eclipselink-oracleddlparser.git</url>
+    </scm>
+
+    <organization>
+        <name>Eclipse.org - EclipseLink Project</name>
+        <url>http://www.eclipse.org/eclipselink</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License - v 2.0</name>
+            <url>http://www.eclipse.org/legal/epl-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>Eclipse Distribution License - v 1.0</name>
+            <url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/eclipse-ee4j/eclipselink-oracleddlparser/issues</url>
+    </issueManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>EclipseLink user's mailing list</name>
+            <post>eclipselink-users@eclipse.org</post>
+            <subscribe>https://accounts.eclipse.org/mailing-list/eclipselink-users</subscribe>
+            <unsubscribe>https://accounts.eclipse.org/mailing-list/eclipselink-users</unsubscribe>
+            <archive>https://dev.eclipse.org/mhonarc/lists/eclipselink-users/</archive>
+        </mailingList>
+        <mailingList>
+            <name>EclipseLink developer's mailing list</name>
+            <post>eclipselink-dev@eclipse.org</post>
+            <subscribe>https://accounts.eclipse.org/mailing-list/eclipselink-dev</subscribe>
+            <unsubscribe>https://accounts.eclipse.org/mailing-list/eclipselink-dev</unsubscribe>
+            <archive>https://dev.eclipse.org/mhonarc/lists/eclipselink-dev/</archive>
+        </mailingList>
+    </mailingLists>
+
     <properties>
-        <maven-project-info-reports-plugin.version>2.4</maven-project-info-reports-plugin.version>
-        <maven-surefire-plugin.version>2.11</maven-surefire-plugin.version>
-        <maven-surefire-report-plugin.version>2.11</maven-surefire-report-plugin.version>
-        <jxr-maven-plugin.version>2.3</jxr-maven-plugin.version>
+        <copyright.exclude>${project.basedir}/../etc/copyright-exclude</copyright.exclude>
+        <copyright.ignoreyear>false</copyright.ignoreyear>
+        <copyright.scmonly>true</copyright.scmonly>
+        <copyright.template>${project.basedir}/../etc/copyright.txt</copyright.template>
+        <copyright.update>false</copyright.update>
+        <spotbugs.skip>false</spotbugs.skip>
+        <spotbugs.threshold>Low</spotbugs.threshold>
+        <spotbugs.version>4.0.4</spotbugs.version>
+        <legal.doc.source>../</legal.doc.source>
+
+        <oracle.jdbc.version>19.3.0.0</oracle.jdbc.version>
+        <junit4-version>4.13</junit4-version>
+
         <!-- tests related properties -->
         <db.oracle.url>jdbc:oracle:thin:@localhost:1521:ORCL</db.oracle.url>
         <db.oracle.user>scott</db.oracle.user>
         <db.oracle.pwd>tiger</db.oracle.pwd>
         <db.oracle.driver>oracle.jdbc.OracleDriver</db.oracle.driver>
-        <db.ddl.create>false</db.ddl.create>
-        <db.ddl.drop>false</db.ddl.drop>
+        <db.ddl.create>true</db.ddl.create>
+        <db.ddl.drop>true</db.ddl.drop>
         <db.ddl.debug>false</db.ddl.debug>
+
+        <!-- When Oracle DB is set up, use '-Poracle' which overrides this property -->
+        <jtest.includes>non/existing/tests</jtest.includes>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>${oracle.jdbc.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -53,11 +120,167 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.glassfish.copyright</groupId>
+                    <artifactId>glassfish-copyright-maven-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>javacc-maven-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>5.1.1</version>
+                    <configuration>
+                        <instructions>
+                            <_noextraheaders>true</_noextraheaders>
+                        </instructions>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.0.0-M3</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[11,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.6.0,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                            <DependencyConvergence />
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-legal-resource</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${legal.doc.source}</directory>
+                                    <includes>
+                                        <include>NOTICE.md</include>
+                                        <include>LICENSE.md</include>
+                                    </includes>
+                                    <targetPath>META-INF</targetPath>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.glassfish.copyright</groupId>
+                <artifactId>glassfish-copyright-maven-plugin</artifactId>
+                <configuration>
+                    <templateFile>${copyright.template}</templateFile>
+                    <excludeFile>${copyright.exclude}</excludeFile>
+                    <!-- skip files not under SCM-->
+                    <scmOnly>${copyright.scmonly}</scmOnly>
+                    <!-- for use with repair -->
+                    <update>${copyright.update}</update>
+                    <!-- check that year is correct -->
+                    <ignoreYear>${copyright.ignoreyear}</ignoreYear>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <configuration>
+                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                    <revisionOnScmFailure>false</revisionOnScmFailure>
+                    <shortRevisionLength>7</shortRevisionLength>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>javacc-maven-plugin</artifactId>
-                <version>2.6</version>
                 <executions>
                     <execution>
                         <id>jjtree-javacc</id>
@@ -69,24 +292,44 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${maven-project-info-reports-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>${jxr-maven-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <configuration>
+                    <release>9</release>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                    </compilerArgs>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>test</id>
-                        <phase>test</phase>
+                        <id>base-compile</id>
                         <goals>
-                            <goal>testCompile</goal>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <release>8</release>
+                            <excludes>
+                                <exclude>module-info.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <niceManifest>true</niceManifest>
+                    <instructions>
+                        <_noextraheaders>true</_noextraheaders>
+                        <HK2-Bundle-Name>${project.groupId}:${project.artifactId}</HK2-Bundle-Name>
+                        <Implementation-Build-Id>${buildNumber}</Implementation-Build-Id>
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <goals>
+                            <goal>manifest</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -94,115 +337,129 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>test</id>
-                        <phase>test</phase>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <db.user>${db.oracle.user}</db.user>
-                                <db.pwd>${db.oracle.pwd}</db.pwd>
-                                <db.url>${db.oracle.url}</db.url>
-                                <db.driver>${db.oracle.driver}</db.driver>
-                                <db.ddl.create>${db.ddl.create}</db.ddl.create>
-                                <db.ddl.drop>${db.ddl.drop}</db.ddl.drop>
-                                <db.ddl.debug>${db.ddl.debug}</db.ddl.debug>
-                            </systemPropertyVariables>
-                            <forkMode>once</forkMode>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <includes>
-                                <include>**/AllTests.java</include>
-                            </includes>
-                            <!-- enable debugger on port 5005 -->
-                            <!--<debugForkedProcess>true</debugForkedProcess>-->
-                        </configuration>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                    <systemPropertyVariables>
+                        <db.user>${db.oracle.user}</db.user>
+                        <db.pwd>${db.oracle.pwd}</db.pwd>
+                        <db.url>${db.oracle.url}</db.url>
+                        <db.driver>${db.oracle.driver}</db.driver>
+                        <db.ddl.create>${db.ddl.create}</db.ddl.create>
+                        <db.ddl.drop>${db.ddl.drop}</db.ddl.drop>
+                        <db.ddl.debug>${db.ddl.debug}</db.ddl.debug>
+                    </systemPropertyVariables>
+                    <forkMode>once</forkMode>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <includes>
+                        <include>${jtest.includes}</include>
+                    </includes>
+                    <!-- enable debugger on port 5005 -->
+                    <!--<debugForkedProcess>true</debugForkedProcess>-->
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${maven-surefire-report-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-test-report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addDefaultEntries>false</addDefaultEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultEntries>false</addDefaultEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Build-Id>${buildNumber}</Implementation-Build-Id>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultEntries>false</addDefaultEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Build-Id>${buildNumber}</Implementation-Build-Id>
+                        </manifestEntries>
+                    </archive>
+                    <release>11</release>
+                    <notimestamp>true</notimestamp>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <configuration>
+                    <skip>${spotbugs.skip}</skip>
+                    <threshold>${spotbugs.threshold}</threshold>
+                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+                    <excludeFilterFile>
+                        ${spotbugs.exclude}
+                    </excludeFilterFile>
+                    <fork>true</fork>
+                    <jvmArgs>-Xms64m -Xmx256m</jvmArgs>
+                </configuration>
             </plugin>
         </plugins>
     </build>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>${jxr-maven-plugin.version}</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${maven-surefire-report-plugin.version}</version>
-                <configuration>
-                    <forkMode>once</forkMode>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <threshold>Low</threshold>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
-
     <profiles>
         <profile>
-            <id>system-jdbc-driver</id>
-            <activation>
-                <file>
-                    <exists>${basedir}/../../extension.lib.external/ojdbc6.jar</exists>
-                </file>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.oracle</groupId>
-                    <artifactId>ojdbc6</artifactId>
-                    <version>11.2.0</version>
-                    <scope>system</scope>
-                    <systemPath>${basedir}/../../extension.lib.external/ojdbc6.jar</systemPath>
-                </dependency>
-            </dependencies>
+            <id>oracle</id>
+            <properties>
+                <jtest.includes>**/AllTests.java</jtest.includes>
+            </properties>
         </profile>
         <profile>
-            <id>repo-jdbc-driver</id>
-            <activation>
-                <file>
-                    <missing>${basedir}/../../extension.lib.external/ojdbc6.jar</missing>
-                </file>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.oracle</groupId>
-                    <artifactId>ojdbc6</artifactId>
-                    <version>11.2.0</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
+            <id>coverage</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <version>0.8.5</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>default-report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
+
 </project>
