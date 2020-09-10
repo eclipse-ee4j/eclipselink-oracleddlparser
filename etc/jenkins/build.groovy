@@ -34,7 +34,7 @@ pipeline {
         // Initialize build environment
         stage('Init') {
             steps {
-                git branch: '${GIT_BRANCH}', url: '${GIT_REPOSITORY_URL}'
+                git branch: GIT_BRANCH, credentialsId: SSH_CREDENTIALS_ID, url: GIT_REPOSITORY_URL
                 withCredentials([file(credentialsId: 'secret-subkeys.asc', variable: 'KEYRING')]) {
                     sh label: '', script: '''
                         gpg --batch --import "${KEYRING}"
