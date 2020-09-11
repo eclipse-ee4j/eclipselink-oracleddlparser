@@ -117,7 +117,7 @@ spec:
         stage('Init') {
             steps {
                 container('el-build') {
-                    git branch: '${GIT_BRANCH}', credentialsId: '${SSH_CREDENTIALS_ID}', url: '${GIT_REPOSITORY_URL}'
+                    git branch: GIT_BRANCH, credentialsId: SSH_CREDENTIALS_ID, url: GIT_REPOSITORY_URL
                     withCredentials([file(credentialsId: 'secret-subkeys.asc', variable: 'KEYRING')]) {
                         sh label: '', script: '''
                             gpg --batch --import "${KEYRING}"
@@ -138,7 +138,7 @@ spec:
         stage('Build and release Oracle DDL Parser') {
             steps {
                 container('el-build') {
-                    git branch: '${GIT_BRANCH}', credentialsId: '${SSH_CREDENTIALS_ID}', url: '${GIT_REPOSITORY_URL}'
+                    git branch: GIT_BRANCH, credentialsId: SSH_CREDENTIALS_ID, url: GIT_REPOSITORY_URL
                     sshagent(['SSH_CREDENTIALS_ID']) {
                         sh '''
                             etc/jenkins/release.sh "${DDLPARSER_VERSION}" "${NEXT_DDLPARSER_VERSION}" "${DRY_RUN}" "${OVERWRITE}"
