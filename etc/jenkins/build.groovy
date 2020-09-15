@@ -9,7 +9,7 @@
 //  SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 
 // Job input parameters:
-//   GIT_BRANCH           - Branch to release
+//   GIT_BRANCH_RELEASE   - Branch to release
 
 // Job internal argumets:
 //   GIT_USER_NAME       - Git user name (for commits)
@@ -34,7 +34,7 @@ pipeline {
         // Initialize build environment
         stage('Init') {
             steps {
-                git branch: GIT_BRANCH, credentialsId: SSH_CREDENTIALS_ID, url: GIT_REPOSITORY_URL
+                git branch: GIT_BRANCH_RELEASE, credentialsId: SSH_CREDENTIALS_ID, url: GIT_REPOSITORY_URL
                 withCredentials([file(credentialsId: 'secret-subkeys.asc', variable: 'KEYRING')]) {
                     sh label: '', script: '''
                         gpg --batch --import "${KEYRING}"
