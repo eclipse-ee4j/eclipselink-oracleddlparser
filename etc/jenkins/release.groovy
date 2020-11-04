@@ -140,7 +140,7 @@ spec:
             steps {
                 container('el-build') {
                     git branch: GIT_BRANCH_RELEASE, credentialsId: SSH_CREDENTIALS_ID, url: GIT_REPOSITORY_URL
-                    sshagent(['SSH_CREDENTIALS_ID']) {
+                    sshagent([SSH_CREDENTIALS_ID]) {
                         sh '''
                             etc/jenkins/release.sh "${DDLPARSER_VERSION}" "${NEXT_DDLPARSER_VERSION}" "${DRY_RUN}" "${OVERWRITE}"
                         '''
