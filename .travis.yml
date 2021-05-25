@@ -13,14 +13,6 @@
 language: java
 dist: focal
 
-env:
-  global:
-    - MAVEN_OPTS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
-
-jobs:
-  allow_failures:
-    - jdk: openjdk-ea
-
 jdk:
   - openjdk11
   - openjdk-ea
@@ -33,6 +25,5 @@ script:
   - echo 'RUNNING TESTS, BE PATIENT...'
   - echo 'ENVIRONMENT:'
   - env
-  - set -o pipefail
   - cd oracleddlparser
-  - mvn clean install -Dgpg.skip=true -Poss-release
+  - mvn clean package -Dgpg.skip=true -Poss-release
