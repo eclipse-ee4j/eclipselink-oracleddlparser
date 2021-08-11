@@ -138,9 +138,9 @@ spec:
         // Perform release
         stage('Build and release Oracle DDL Parser') {
             steps {
-                container('el-build') {
-                    git branch: GIT_BRANCH_RELEASE, credentialsId: SSH_CREDENTIALS_ID, url: GIT_REPOSITORY_URL
-                    sshagent([SSH_CREDENTIALS_ID]) {
+                git branch: GIT_BRANCH_RELEASE, credentialsId: SSH_CREDENTIALS_ID, url: GIT_REPOSITORY_URL
+                sshagent([SSH_CREDENTIALS_ID]) {
+                    container('el-build') {
                         sh '''
                             etc/jenkins/release.sh "${DDLPARSER_VERSION}" "${NEXT_DDLPARSER_VERSION}" "${DRY_RUN}" "${OVERWRITE}"
                         '''
