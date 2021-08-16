@@ -9,6 +9,9 @@
 [//]: # " SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause "
 
 # Oracle DDL Parser
+[![Maven Central](https://img.shields.io/maven-central/v/org.eclipse.persistence/org.eclipse.persistence.oracleddlparser.svg?label=Maven%20Central)](https://mvnrepository.com/artifact/org.eclipse.persistence/org.eclipse.persistence.oracleddlparser)
+[![Jakarta Staging (Snapshots)](https://img.shields.io/nexus/s/https/jakarta.oss.sonatype.org/org.eclipse.persistence/org.eclipse.persistence.oracleddlparser.svg)](https://jakarta.oss.sonatype.org/content/repositories/staging/org/eclipse/persistence/org.eclipse.persistence.oracleddlparser)
+[![Master Build Status](https://ci.eclipse.org/eclipselink/job/oracleddlparser-build/badge/icon)](https://ci.eclipse.org/eclipselink/job/oracleddlparser-build)
 
 This project is part of [EclipseLink](https://projects.eclipse.org/projects/ee4j.eclipselink).
 
