@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2018, 2020 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2018, 2023 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0 which is available at
@@ -88,11 +88,11 @@
         <spotbugs.version>4.0.4</spotbugs.version>
         <legal.doc.source>../</legal.doc.source>
 
-        <oracle.jdbc.version>19.3.0.0</oracle.jdbc.version>
-        <junit4-version>4.13.1</junit4-version>
+        <oracle.jdbc.version>21.9.0.0</oracle.jdbc.version>
+        <junit4-version>4.13.2</junit4-version>
 
         <!-- tests related properties -->
-        <db.oracle.url>jdbc:oracle:thin:@localhost:1521:ORCL</db.oracle.url>
+        <db.oracle.url>jdbc:oracle:thin:@localhost:1521/XEPDB1</db.oracle.url>
         <db.oracle.user>scott</db.oracle.user>
         <db.oracle.pwd>tiger</db.oracle.pwd>
         <db.oracle.driver>oracle.jdbc.OracleDriver</db.oracle.driver>
@@ -106,8 +106,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.oracle.ojdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
             <version>${oracle.jdbc.version}</version>
             <scope>test</scope>
         </dependency>
