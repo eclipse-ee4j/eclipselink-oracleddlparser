@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Oracle and/or its affiliates. All rights reserved.
+// Copyright (c) 2020, 2023 Oracle and/or its affiliates. All rights reserved.
 //
 // This program and the accompanying materials are made available under the
 // terms of the Eclipse Distribution License v. 1.0, which is available at
@@ -24,85 +24,7 @@
 
 pipeline {
 
-    agent {
-        kubernetes {
-            label 'el-master-agent-pod'
-            yaml """
-apiVersion: v1
-kind: Pod
-spec:
-
-  volumes:
-  - name: tools
-    persistentVolumeClaim:
-      claimName: tools-claim-jiro-eclipselink
-  - name: volume-known-hosts
-    configMap:
-      name: known-hosts      
-  - name: settings-xml
-    secret:
-      secretName: m2-secret-dir
-      items:
-      - key: settings.xml
-        path: settings.xml
-  - name: toolchains-xml
-    configMap:
-      name: m2-dir
-      items:
-      - key: toolchains.xml
-        path: toolchains.xml
-  - name: settings-security-xml
-    secret:
-      secretName: m2-secret-dir
-      items:
-      - key: settings-security.xml
-        path: settings-security.xml
-  - name: m2-repo
-    emptyDir: {}
-    
-  containers:
-  - name: jnlp
-    resources:
-      limits:
-        memory: "1Gi"
-        cpu: "1"
-      requests:
-        memory: "1Gi"
-        cpu: "500m"
-  - name: el-build
-    resources:
-      limits:
-        memory: "2Gi"
-        cpu: "2"
-      requests:
-        memory: "2Gi"
-        cpu: "1.5"
-    image: tkraus/el-build:1.1.8
-    volumeMounts:
-    - name: tools
-      mountPath: /opt/tools
-    - name: volume-known-hosts
-      mountPath: /home/jenkins/.ssh      
-    - name: settings-xml
-      mountPath: /home/jenkins/.m2/settings.xml
-      subPath: settings.xml
-      readOnly: true
-    - name: toolchains-xml
-      mountPath: /home/jenkins/.m2/toolchains.xml
-      subPath: toolchains.xml
-      readOnly: true
-    - name: settings-security-xml
-      mountPath: /home/jenkins/.m2/settings-security.xml
-      subPath: settings-security.xml
-      readOnly: true
-    - name: m2-repo
-      mountPath: /home/jenkins/.m2/repository
-    tty: true
-    command:
-    - cat
-"""
-        }
-    }
+    agent any
 
     tools {
         jdk 'openjdk-jdk11-latest'
@@ -112,7 +34,7 @@ spec:
     environment {
         DDLPARSER_DIR="${WORKSPACE}/oracleddlparser"
     }
-
+    
     stages {
         // Initialize build environment
         stage('Init') {
