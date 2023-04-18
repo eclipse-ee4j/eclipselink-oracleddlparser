@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -30,7 +30,7 @@ public class TestHelper {
     public static final String DATABASE_PASSWORD_KEY = "db.pwd";
     public static final String DEFAULT_DATABASE_PASSWORD = "tiger";
     public static final String DATABASE_URL_KEY = "db.url";
-    public static final String DEFAULT_DATABASE_URL = "jdbc:oracle:thin:@localhost:1521:ORCL";
+    public static final String DEFAULT_DATABASE_URL = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
     public static final String DATABASE_DDL_CREATE_KEY = "db.ddl.create";
     public static final String DEFAULT_DATABASE_DDL_CREATE = "false";
     public static final String DATABASE_DDL_DROP_KEY = "db.ddl.drop";

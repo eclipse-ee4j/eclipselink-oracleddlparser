@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -306,7 +306,8 @@ public class TypeDDLTestSuite {
             "\n    static MEMBER PROCEDURE display3 (SELF IN OUT NOCOPY solid_typ)," +
             "\n    static MEMBER PROCEDURE display4 (SELF IN OUT NOCOPY solid_typ)," +
             "\n    member function my_function6 return varchar2," +
-            "\n    static member function my_function7 return varchar2" +
+            "\n    static member function my_function7 return varchar2," +
+            "\n    map member function my_function8 return int" +
             "\n)";
 
     @Test
@@ -353,7 +354,8 @@ public class TypeDDLTestSuite {
         "\n    static MEMBER PROCEDURE display3 (SELF IN OUT NOCOPY solid_typ)," +
         "\n    static MEMBER PROCEDURE display4 (SELF IN OUT NOCOPY solid_typ)," +
         "\n    member function my_function6 return varchar2," +
-        "\n    static member function my_function7 return varchar2" +
+        "\n    static member function my_function7 return varchar2," +
+        "\n    map member function my_function8 return int" +
         "\n)";
 
     @Test

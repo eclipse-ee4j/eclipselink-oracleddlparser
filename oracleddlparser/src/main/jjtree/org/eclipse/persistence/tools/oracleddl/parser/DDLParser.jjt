@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -257,6 +257,7 @@ TOKEN [IGNORE_CASE]: {
     | <R_IS: "IS">
     | <R_LIKE: "LIKE">
     | <R_LOCK: "LOCK">
+    | <R_MAP: "MAP">
     | <R_MEMBER: "MEMBER">
     | <R_MINUS: "MINUS">
     | <R_MODE: "MODE">
@@ -1652,7 +1653,7 @@ void argumentList(ProcedureType procedureType) :
 void memberFunctionOrProcedureDeclaration() :
 {}
 {
-    [ <R_STATIC> ] [ <R_MEMBER> ]
+    [ <R_STATIC> ] [ <R_MAP> ] [ <R_MEMBER> ]
     [ ( <R_PROCEDURE> skipToClosingParen() <O_CLOSEPAREN> | <R_FUNCTION> skipToReturn() datatype() ) ]
     [ <O_COMMA> memberFunctionOrProcedureDeclaration() ]
 }
@@ -1942,7 +1943,7 @@ void memberFunctionOrProcedure():
 {    Token t = token;
 }
 {
-    [ <R_STATIC> ] <R_MEMBER> ( <R_FUNCTION> | <R_PROCEDURE> ) {
+    [ <R_STATIC> ] [ <R_MAP> ] <R_MEMBER> ( <R_FUNCTION> | <R_PROCEDURE> ) {
         token = t;
     }
 }
