@@ -79,10 +79,7 @@
 
     <properties>
         <copyright.exclude>${project.basedir}/../etc/copyright-exclude</copyright.exclude>
-        <copyright.ignoreyear>false</copyright.ignoreyear>
-        <copyright.scmonly>true</copyright.scmonly>
         <copyright.template>${project.basedir}/../etc/copyright.txt</copyright.template>
-        <copyright.update>false</copyright.update>
         <spotbugs.skip>false</spotbugs.skip>
         <spotbugs.threshold>Low</spotbugs.threshold>
         <spotbugs.version>4.7.3.4</spotbugs.version>
@@ -133,9 +130,9 @@
                     <version>3.3.0</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.glassfish.copyright</groupId>
-                    <artifactId>glassfish-copyright-maven-plugin</artifactId>
-                    <version>2.4</version>
+                    <groupId>io.helidon.build-tools</groupId>
+                    <artifactId>helidon-enforcer-plugin</artifactId>
+                    <version>3.0.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -239,21 +236,23 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--Copyright year in the header check-->
             <plugin>
-                <groupId>org.glassfish.copyright</groupId>
-                <artifactId>glassfish-copyright-maven-plugin</artifactId>
+                <groupId>io.helidon.build-tools</groupId>
+                <artifactId>helidon-enforcer-plugin</artifactId>
                 <configuration>
-                    <templateFile>${copyright.template}</templateFile>
-                    <excludeFile>${copyright.exclude}</excludeFile>
-                    <!-- skip files not under SCM-->
-                    <scmOnly>${copyright.scmonly}</scmOnly>
-                    <!-- for use with repair -->
-                    <update>${copyright.update}</update>
-                    <!-- check that year is correct -->
-                    <ignoreYear>${copyright.ignoreyear}</ignoreYear>
+                    <rules>
+                        <rule>copyright</rule>
+                    </rules>
+                    <copyrightConfig>
+                        <failOnError>true</failOnError>
+                        <templateFile>${copyright.template}</templateFile>
+                        <excludeFile>${copyright.exclude}</excludeFile>
+                    </copyrightConfig>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>copyright-check</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
