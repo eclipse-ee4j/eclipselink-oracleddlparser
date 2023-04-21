@@ -29,18 +29,6 @@ jobs:
         java_version: [ 17, 21-ea ]
 
     steps:
-      - name: Cancel previous runs of this workflow
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          all_but_latest: true
-          access_token: ${{ github.token }}
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
       - name: Checkout for build
         uses: actions/checkout@v3
       - name: Set up JDK
@@ -48,6 +36,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java_version }}
+          cache: maven
       - name: Verify
         run: mvn -B -V -U -C -Pstaging,oss-release clean package -Dgpg.skip=true -Dwarn.limit=15 -Dcomp.xlint=-Xlint:none -DskipTests
       - name: Upload dependency-check
