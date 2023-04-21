@@ -43,7 +43,9 @@ jobs:
           java-version: ${{ matrix.java_version }}
           cache: maven
       - name: Verify
-        run: mvn -B -V -U -C -Pstaging,oss-release clean package -Dgpg.skip=true -Dwarn.limit=15 -Dcomp.xlint=-Xlint:none -DskipTests
+        run: |
+          cd oracleddlparser
+          mvn -B -V -U -C -Pstaging clean package -Dgpg.skip=true -Dwarn.limit=15 -Dcomp.xlint=-Xlint:none -DskipTests
       - name: Upload dependency-check
         uses: actions/upload-artifact@v3
         with:
