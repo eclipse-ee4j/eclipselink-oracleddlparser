@@ -134,7 +134,7 @@
                 <plugin>
                     <groupId>io.helidon.build-tools</groupId>
                     <artifactId>helidon-enforcer-plugin</artifactId>
-                    <version>3.0.10</version>
+                    <version>4.0.16</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
