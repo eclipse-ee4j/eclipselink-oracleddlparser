@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -15,7 +15,6 @@
 package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 
@@ -47,7 +46,7 @@ public class AnchoredTypesTestSuite {
     @BeforeClass
     static public void setUp() {
         parser = new DDLParser(new InputStream() {
-            public int read() throws IOException {
+            public int read() {
                 return 0;
             }
         });
@@ -77,7 +76,7 @@ public class AnchoredTypesTestSuite {
         }
         assertTrue(ANCHORED_TYPES_TEST1_PACKAGE + " package should parse", worked);
         assertEquals(ANCHORED_TYPES_TEST1_PACKAGE + " package wrong name",
-            packageType.getPackageName(), ANCHORED_TYPES_TEST1_PACKAGE);
+                ANCHORED_TYPES_TEST1_PACKAGE, packageType.getPackageName());
         assertNotNull(ANCHORED_TYPES_TEST1_PACKAGE + " package should have types",
             packageType.getTypes());
         assertEquals(ANCHORED_TYPES_TEST1_PACKAGE + " package should have exactly 1 type", 1,
@@ -119,7 +118,7 @@ public class AnchoredTypesTestSuite {
         }
         assertTrue(ANCHORED_TYPES_TEST2_PACKAGE + " package should parse", worked);
         assertEquals(ANCHORED_TYPES_TEST2_PACKAGE + " package wrong name",
-            packageType.getPackageName(), ANCHORED_TYPES_TEST2_PACKAGE);
+                ANCHORED_TYPES_TEST2_PACKAGE, packageType.getPackageName());
         assertNotNull(ANCHORED_TYPES_TEST2_PACKAGE + " package should have types",
             packageType.getTypes());
         assertEquals(ANCHORED_TYPES_TEST2_PACKAGE + " package should have exactly 2 types", 2,
@@ -189,7 +188,7 @@ public class AnchoredTypesTestSuite {
         }
         assertTrue(ANCHORED_TYPES_TEST3_PACKAGE + " package should parse", worked);
         assertEquals(ANCHORED_TYPES_TEST3_PACKAGE + " package wrong name",
-            packageType.getPackageName(), ANCHORED_TYPES_TEST3_PACKAGE);
+                ANCHORED_TYPES_TEST3_PACKAGE, packageType.getPackageName());
         assertNotNull(ANCHORED_TYPES_TEST3_PACKAGE + " package should have variables",
             packageType.getLocalVariables());
         assertEquals(ANCHORED_TYPES_TEST3_PACKAGE + " package should have exactly 1 variables", 1,

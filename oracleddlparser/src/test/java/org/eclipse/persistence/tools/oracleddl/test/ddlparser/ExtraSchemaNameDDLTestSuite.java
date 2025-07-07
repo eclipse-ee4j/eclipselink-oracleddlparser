@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -65,7 +65,7 @@ public class ExtraSchemaNameDDLTestSuite {
     public void testSetSchemaNames() {
         DDLParser parser = new DDLParser(new StringReader(CREATE_EXTRA_SCHEMANAME_TEST_PACKAGE2));
         parser.setTypesRepository(new DatabaseTypesRepository());
-        ArrayList<String> schemaPatterns = new ArrayList<String>();
+        ArrayList<String> schemaPatterns = new ArrayList<>();
         schemaPatterns.add("SCOTT");
         parser.setSchemaPatterns(schemaPatterns);
         boolean worked = true;
@@ -95,7 +95,7 @@ public class ExtraSchemaNameDDLTestSuite {
     public void testSameROWTYPEType() {
         DDLParser parser = new DDLParser(new StringReader(CREATE_EXTRA_SCHEMANAME_TEST_PACKAGE3));
         parser.setTypesRepository(new DatabaseTypesRepository());
-        ArrayList<String> schemaPatterns = new ArrayList<String>();
+        ArrayList<String> schemaPatterns = new ArrayList<>();
         schemaPatterns.add("SCOTT");
         parser.setSchemaPatterns(schemaPatterns);
         boolean worked = true;

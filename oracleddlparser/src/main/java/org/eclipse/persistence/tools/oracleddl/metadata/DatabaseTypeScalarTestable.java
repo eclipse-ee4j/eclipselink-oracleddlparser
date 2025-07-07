@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -24,120 +24,120 @@ public interface DatabaseTypeScalarTestable {
 
     //scalar 'is-a' tests
 
-    public boolean isScalar(); // refers to singleton scalars from ScalarDatabaseTypeEnum
+    boolean isScalar(); // refers to singleton scalars from ScalarDatabaseTypeEnum
 
     /**
      * Indicates IntervalDayToSecond instance
      */
-    public boolean isIntervalDayToSecond();
+    boolean isIntervalDayToSecond();
 
     /**
      * Indicates IntervalYearToMonth instance
      */
-    public boolean isIntervalYearToMonth();
+    boolean isIntervalYearToMonth();
 
     /**
      * Indicates PrecisionType instance
      */
-    public boolean isPrecisionType();
+    boolean isPrecisionType();
 
     /**
      * Indicates DecimalType instance
      */
-    public boolean isDecimalType();
+    boolean isDecimalType();
 
     /**
      * Indicates DoubleType instance
      */
-    public boolean isDoubleType();
+    boolean isDoubleType();
 
     /**
      * Indicates FloatType instance
      */
-    public boolean isFloatType();
+    boolean isFloatType();
 
     /**
      * Indicates NumericType instance
      */
-    public boolean isNumericType();
+    boolean isNumericType();
 
     /**
      * Indicates RealType instance
      */
-    public boolean isRealType();
+    boolean isRealType();
 
     /**
      * Indicates SizedType instance
      */
-    public boolean isSizedType();
+    boolean isSizedType();
 
     /**
      * Indicates BinaryType instance
      */
-    public boolean isBinaryType();
+    boolean isBinaryType();
 
     /**
      * Indicates BlobType instance
      */
-    public boolean isBlobType();
+    boolean isBlobType();
 
     /**
      * Indicates LongRawType instance
      */
-    public boolean isLongRawType();
+    boolean isLongRawType();
 
     /**
      * Indicates RawType instance
      */
-    public boolean isRawType();
+    boolean isRawType();
 
     /**
      * Indicates CharType instance
      */
-    public boolean isCharType();
+    boolean isCharType();
 
     /**
      * Indicates NCharType instance
      */
-    public boolean isNCharType();
+    boolean isNCharType();
 
     /**
      * Indicates ClobType instance
      */
-    public boolean isClobType();
+    boolean isClobType();
 
     /**
      * Indicates NClobType instance
      */
-    public boolean isNClobType();
+    boolean isNClobType();
 
     /**
      * Indicates TimeStampType instance
      */
-    public boolean isTimeStampType();
+    boolean isTimeStampType();
 
     /**
      * Indicates URowIdType instance
      */
-    public boolean isURowIdType();
+    boolean isURowIdType();
 
     /**
      * Indicates VarCharType instance
      */
-    public boolean isVarCharType();
+    boolean isVarCharType();
 
     /**
      * Indicates VarChar2Type instance
      */
-    public boolean isVarChar2Type();
+    boolean isVarChar2Type();
 
     /**
      * Indicates Long instance
      */
-    public boolean isLongType();
+    boolean isLongType();
 
     /**
      * Indicates NVarChar2Type instance
      */
-    public boolean isNVarChar2Type();
+    boolean isNVarChar2Type();
 }

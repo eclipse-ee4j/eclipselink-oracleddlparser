@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -29,7 +29,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
 /**
  * Test FunctionType visit method chain.  Ensures that all required
  * information can be retrieved via FunctionType.accept().
- *
+ * <p>
  * This test covers:
  *  - FunctionType
  *  - DatabaseType
@@ -61,7 +61,7 @@ public class FunctionTypeTest {
         // visit
         FunctionTypeVisitor visitor = new FunctionTypeVisitor();
         function.accept(visitor);
-        assertEquals("FunctionType test failed:\n" + visitor.toString(), visitor.toString(), FUNCTION);
+        assertEquals("FunctionType test failed:\n" + visitor, visitor.toString(), FUNCTION);
     }
 
 }

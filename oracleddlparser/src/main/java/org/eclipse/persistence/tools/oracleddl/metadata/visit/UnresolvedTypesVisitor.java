@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -26,8 +26,11 @@ import org.eclipse.persistence.tools.oracleddl.metadata.UnresolvedType;
 
 public class UnresolvedTypesVisitor extends BaseDatabaseTypeVisitor {
 
-    protected List<UnresolvedType> unresolvedTypes = new ArrayList<UnresolvedType>();
-    protected Map<String, List<UnresolvedType>> uniq = new HashMap<String, List<UnresolvedType>>();
+    protected List<UnresolvedType> unresolvedTypes = new ArrayList<>();
+    protected Map<String, List<UnresolvedType>> uniq = new HashMap<>();
+
+    public UnresolvedTypesVisitor() {
+    }
 
     public List<UnresolvedType> getUnresolvedTypes() {
         return unresolvedTypes;
@@ -35,11 +38,7 @@ public class UnresolvedTypesVisitor extends BaseDatabaseTypeVisitor {
 
     public void visit(UnresolvedType unresolvedType) {
         String typeName = unresolvedType.getTypeName();
-        List<UnresolvedType> similarUnresolvedTypes = uniq.get(typeName);
-        if (similarUnresolvedTypes == null) {
-            similarUnresolvedTypes = new ArrayList<UnresolvedType>();
-            uniq.put(typeName, similarUnresolvedTypes);
-        }
+        List<UnresolvedType> similarUnresolvedTypes = uniq.computeIfAbsent(typeName, k -> new ArrayList<>());
         boolean addToUnresolvedTypes = false;
         for (UnresolvedType similarUnresolvedType : similarUnresolvedTypes) {
             if (unresolvedType.getOwningType() != similarUnresolvedType.getOwningType()) {

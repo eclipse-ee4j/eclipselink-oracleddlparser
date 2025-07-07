@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -24,80 +24,80 @@ public interface DatabaseTypeCompositeTestable {
 
     //composite 'is-a' tests
 
-    public boolean isComposite();
+    boolean isComposite();
 
     /**
      * Indicates FieldType instance
      */
-    public boolean isFieldType();
+    boolean isFieldType();
 
     /**
      * Indicates ArgumentType instance
      */
-    public boolean isArgumentType();
+    boolean isArgumentType();
 
     /**
      * Indicates ROWTYPEType instance
      */
-    public boolean isROWTYPEType();
+    boolean isROWTYPEType();
     /**
      * Indicates TYPEType instance
      */
-    public boolean isTYPEType();
+    boolean isTYPEType();
 
     /**
      * Indicates ObjectTableType instance
      */
-    public boolean isObjectTableType();
+    boolean isObjectTableType();
 
     /**
      * Indicates ObjectType instance
      */
-    public boolean isObjectType();
+    boolean isObjectType();
 
     /**
      * Indicates PLSQLType instance
      */
-    public boolean isPLSQLType();
+    boolean isPLSQLType();
 
     /**
      * Indicates PLSQLCollectionType instance
      */
-    public boolean isPLSQLCollectionType();
+    boolean isPLSQLCollectionType();
 
     /**
      * Indicates PLSQLPLSQLCursorType instance
      */
-    public boolean isPLSQLCursorType();
+    boolean isPLSQLCursorType();
 
     /**
      * Indicates PLSQLRecordType instance
      */
-    public boolean isPLSQLRecordType();
+    boolean isPLSQLRecordType();
 
     /**
      * Indicates PLSQLSubType instance
      */
-    public boolean isPLSQLSubType();
+    boolean isPLSQLSubType();
 
     /**
      * Indicates TableType instance
      */
-    public boolean isTableType();
+    boolean isTableType();
 
     /**
      * Indicates DbTableType instance
      */
-    public boolean isDbTableType();
+    boolean isDbTableType();
 
     /**
      * Indicates VArrayType instance
      */
-    public boolean isVArrayType();
+    boolean isVArrayType();
 
     //following 'is-a' tests don't really belong here, but
     //they definitely don't belong on DatabaseTypeScalarTestable
-    public boolean isProcedureType();
+    boolean isProcedureType();
 
-    public boolean isFunctionType();
+    boolean isFunctionType();
 }

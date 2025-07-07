@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -20,7 +20,7 @@ import org.eclipse.persistence.tools.oracleddl.metadata.visit.DatabaseTypeVisito
 public class TimeStampType extends SizedType implements DatabaseTypeVisitable {
 
     public static final String TYPENAME = "TIMESTAMP";
-    static final long DEFAULT_SIZE = 6l;
+    static final long DEFAULT_SIZE = 6L;
 
     protected boolean withTimeZone = false;
     protected boolean withLocalTimeZone = false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -20,6 +20,7 @@ package org.eclipse.persistence.tools.oracleddl.util;
  */
 public class DatabaseTypeBuilderException extends RuntimeException {
 
+    private static final long serialVersionUID = 7638966721076723727L;
     protected Throwable internalException;
 
     //exceptions are only built via the public static methods
@@ -32,8 +33,7 @@ public class DatabaseTypeBuilderException extends RuntimeException {
     static final String NO_TRANSFORMS = "no TRANSFORMS_FACTORY found";
     public static DatabaseTypeBuilderException noTransformsFactories() {
         String message = NO_TRANSFORMS;  // TODO i18n-ify
-        DatabaseTypeBuilderException dtbe = new DatabaseTypeBuilderException(message);
-        return dtbe;
+        return new DatabaseTypeBuilderException(message);
     }
 
     // DBMSMetadataSessionTransforms found in META-INF/services, but no properties returned
@@ -41,8 +41,7 @@ public class DatabaseTypeBuilderException extends RuntimeException {
         "TRANSFORMS_FACTORY found but no transform properties returned";
     public static DatabaseTypeBuilderException noTransformsProperties() {
         String message = NO_TRANSFORMS_PROPERTIES;  // TODO i18n-ify
-        DatabaseTypeBuilderException dtbe = new DatabaseTypeBuilderException(message);
-        return dtbe;
+        return new DatabaseTypeBuilderException(message);
     }
 
     /**

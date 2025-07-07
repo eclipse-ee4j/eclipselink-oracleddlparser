@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -16,7 +16,6 @@
 package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 
@@ -25,6 +24,7 @@ import org.junit.BeforeClass;
 //import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 //DDL imports
@@ -47,7 +47,7 @@ public class FunctionDDLTestSuite {
     @BeforeClass
     static public void setUp() {
         parser = new DDLParser(new InputStream() {
-            public int read() throws IOException {
+            public int read() {
                 return 0;
             }
         });
@@ -69,7 +69,7 @@ public class FunctionDDLTestSuite {
             worked = false;
         }
         assertTrue("empty function should parse", worked);
-        assertEquals("empty function wrong name", functionType.getProcedureName(), EMPTY_FUNCTION);
+        assertEquals("empty function wrong name", EMPTY_FUNCTION, functionType.getProcedureName());
         assertTrue("empty function should have no arguments", functionType.getArguments().isEmpty());
     }
 
@@ -100,19 +100,17 @@ public class FunctionDDLTestSuite {
         l.visit(functionType);
         assertTrue("simple function should not contain any unresolved datatypes",
             l.getUnresolvedTypes().isEmpty());
-        assertEquals("simple function wrong name", functionType.getProcedureName(), SIMPLE_FUNCTION);
+        assertEquals("simple function wrong name", SIMPLE_FUNCTION, functionType.getProcedureName());
         DatabaseType returnArg = functionType.getReturnArgument();
         assertEquals("simple function should have DECIMAL return type",
             new DecimalType().getTypeName(), returnArg.getTypeName());
-        assertTrue("dummy procedure should have 1 argument",
-            functionType.getArguments().size() == 1);
+        assertEquals("dummy procedure should have 1 argument", 1, functionType.getArguments().size());
         ArgumentType arg1 = functionType.getArguments().get(0);
-        assertEquals("dummy procedure's argument wrong name", arg1.getArgumentName(), SIMPLE_ARG);
+        assertEquals("dummy procedure's argument wrong name", SIMPLE_ARG, arg1.getArgumentName());
         DatabaseType arg1Type = arg1.getEnclosedType();
         assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
             new DecimalType().getTypeName(), arg1Type.getTypeName());
-        assertTrue("incorrect direction for " + arg1.getArgumentName(),
-            arg1.getDirection() == IN);
+        assertSame("incorrect direction for " + arg1.getArgumentName(), IN, arg1.getDirection());
     }
 
     static final String FUNCTION_W_KEYWORDS = "KEYWORDSF";

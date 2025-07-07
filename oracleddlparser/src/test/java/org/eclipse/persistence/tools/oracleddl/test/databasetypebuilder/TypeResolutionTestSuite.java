@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -39,7 +39,6 @@ import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLRecordType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ProcedureType;
 import org.eclipse.persistence.tools.oracleddl.metadata.TableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.visit.UnresolvedTypesVisitor;
-import org.eclipse.persistence.tools.oracleddl.parser.ParseException;
 import org.eclipse.persistence.tools.oracleddl.test.AllTests;
 import org.eclipse.persistence.tools.oracleddl.util.DatabaseTypeBuilder;
 
@@ -323,7 +322,7 @@ public class TypeResolutionTestSuite {
     }
 
     @Test
-    public void testUnresolvedTypeResolution() throws ParseException {
+    public void testUnresolvedTypeResolution() {
         assertEquals("incorrect procedure name", DDLRESOLVTEST_PACKAGE , ddlresolvtestPackage.getPackageName());
         UnresolvedTypesVisitor visitor = new UnresolvedTypesVisitor();
         visitor.visit(ddlresolvtestPackage);

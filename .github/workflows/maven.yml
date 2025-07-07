@@ -31,13 +31,13 @@ jobs:
 
     strategy:
       matrix:
-        java_version: [ 17, 21-ea ]
+        java_version: [ 17, 21 ]
 
     steps:
       - name: Checkout for build
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java_version }}
@@ -47,7 +47,7 @@ jobs:
           cd oracleddlparser
           mvn -B -V -U -C -Pstaging clean package -Dgpg.skip=true -Dwarn.limit=15 -Dcomp.xlint=-Xlint:none -DskipTests
       - name: Upload dependency-check
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dependency-check.html
           path: target/dependency-check-report.html

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -90,8 +90,8 @@ public class AnchoredTypesResolutionTestSuite {
     //JUnit fixture(s)
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
-    static List<String> expectedFieldNames = new ArrayList<String>();
-    static List<String> expectedPKFieldNames = new ArrayList<String>();
+    static List<String> expectedFieldNames = new ArrayList<>();
+    static List<String> expectedPKFieldNames = new ArrayList<>();
 
     static boolean ddlCreate = false;
     static boolean ddlDrop = false;

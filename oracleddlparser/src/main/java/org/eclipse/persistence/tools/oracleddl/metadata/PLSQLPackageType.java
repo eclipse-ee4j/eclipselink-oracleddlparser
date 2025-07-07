@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -74,14 +74,14 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
 
     public List<PLSQLType> getTypes() {
         if (types == null) {
-            types = new ArrayList<PLSQLType>();
+            types = new ArrayList<>();
         }
         return types;
     }
 
     public void addType(PLSQLType type) {
         if (types == null) {
-            types = new ArrayList<PLSQLType>();
+            types = new ArrayList<>();
         }
         if (!types.contains(type)) {
             types.add(type);
@@ -90,21 +90,21 @@ public class PLSQLPackageType extends DatabaseTypeTestableBase implements Compos
 
     public List<PLSQLCursorType> getCursors() {
         if (cursors == null) {
-            cursors = new ArrayList<PLSQLCursorType>();
+            cursors = new ArrayList<>();
         }
         return cursors;
     }
 
     public List<ProcedureType> getProcedures() {
         if (procedures == null) {
-            procedures = new ArrayList<ProcedureType>();
+            procedures = new ArrayList<>();
         }
         return procedures;
     }
 
     public List<FieldType> getLocalVariables() {
         if (localVariables == null) {
-            localVariables = new ArrayList<FieldType>();
+            localVariables = new ArrayList<>();
         }
         return localVariables;
     }

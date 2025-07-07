@@ -2,3 +2,6 @@
 *.class
 bin/
 target/
+.settings
+.project
+.idea
