@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -22,8 +22,9 @@ import java.util.TreeSet;
 //JUnit4 imports
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -40,7 +41,7 @@ public class TransformsTestSuite {
     @BeforeClass
     public static void setUp() {
         dtBuilder = new DatabaseTypeBuilder();
-        expectedTransformsKeys = new TreeSet<Object>();
+        expectedTransformsKeys = new TreeSet<>();
         expectedTransformsKeys.add("BODY");
         expectedTransformsKeys.add("CONSTRAINTS");
         expectedTransformsKeys.add("CONSTRAINTS_AS_ALTER");
@@ -78,9 +79,9 @@ public class TransformsTestSuite {
     
     @Test
     public void testTransformsKeys() {
-        TreeSet<Object> transformsKeySet = new TreeSet<Object>(expectedTransformsKeys.comparator());
-        transformsKeySet.addAll(transformProperties.keySet());  
-        assertTrue(expectedTransformsKeys.equals(transformsKeySet));
+        TreeSet<Object> transformsKeySet = new TreeSet<>(expectedTransformsKeys.comparator());
+        transformsKeySet.addAll(transformProperties.keySet());
+        assertEquals(expectedTransformsKeys, transformsKeySet);
     }
 
 }

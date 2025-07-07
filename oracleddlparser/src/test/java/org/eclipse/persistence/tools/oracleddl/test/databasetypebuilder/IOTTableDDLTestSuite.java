@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -74,8 +74,8 @@ public class IOTTableDDLTestSuite {
     static DatabaseTypeBuilder dtBuilder = DatabaseTypeBuilderTestSuite.dtBuilder;
     static Connection conn = AllTests.conn;
     static TableType tableType = null;
-    static List<String> expectedFieldNames = new ArrayList<String>();
-    static List<String> expectedPKFieldNames = new ArrayList<String>();
+    static List<String> expectedFieldNames = new ArrayList<>();
+    static List<String> expectedPKFieldNames = new ArrayList<>();
 
     static boolean ddlCreate = false;
     static boolean ddlDrop = false;
@@ -134,13 +134,13 @@ public class IOTTableDDLTestSuite {
     @Test
     public void testNumberOfColumns() {
         List<FieldType> columns = tableType.getColumns();
-        assertTrue("incorrect number of columns", columns.size() ==  3);
+        assertEquals("incorrect number of columns", 3, columns.size());
     }
 
     @Test
     public void testPrimaryKeys() {
         List<FieldType> columns = tableType.getColumns();
-        List<String> pkFieldNames = new ArrayList<String>();
+        List<String> pkFieldNames = new ArrayList<>();
         for (FieldType field : columns) {
             if ((field.pk())) {
                 pkFieldNames.add(field.getFieldName());
@@ -152,7 +152,7 @@ public class IOTTableDDLTestSuite {
     @Test
     public void testColumnNames() {
         List<FieldType> columns = tableType.getColumns();
-        List<String> fieldNames = new ArrayList<String>();
+        List<String> fieldNames = new ArrayList<>();
         for (FieldType field : columns) {
             fieldNames.add(field.getFieldName());
         }
@@ -175,8 +175,7 @@ public class IOTTableDDLTestSuite {
             new VarChar2Type().getTypeName(), col2Type.getTypeName());
         assertFalse("incorrect NULL constraint for column [" + IOTTABLE_FIELD2 + "]",
             field2.notNull());
-        assertTrue("incorrect size for column [" + IOTTABLE_FIELD2 + "]",
-            ((SizedType)col2Type).getSize() == 25);
+        assertEquals("incorrect size for column [" + IOTTABLE_FIELD2 + "]", 25, ((SizedType) col2Type).getSize());
 
         FieldType field3 = columns.get(2);
         DatabaseType col3Type = field3.getEnclosedType();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -33,8 +33,8 @@ public class TableTypeVisitor extends BaseDatabaseTypeVisitor {
     
     public String tableName;
     public String schema;
-    public List<String> columnData = new ArrayList<String>();
-    public List<String> pkColumns = new ArrayList<String>();
+    public List<String> columnData = new ArrayList<>();
+    public List<String> pkColumns = new ArrayList<>();
     
     public void beginVisit(TableType databaseType) {
         tableName = databaseType.getTableName();
@@ -65,7 +65,7 @@ public class TableTypeVisitor extends BaseDatabaseTypeVisitor {
             sb.append(col);
             sb.append("\n");
         }
-        if (pkColumns.size() > 0) {
+        if (!pkColumns.isEmpty()) {
             sb.append("\t");
             sb.append("PRIMARY KEY (");
             for (int i = 0; i < pkColumns.size();) {

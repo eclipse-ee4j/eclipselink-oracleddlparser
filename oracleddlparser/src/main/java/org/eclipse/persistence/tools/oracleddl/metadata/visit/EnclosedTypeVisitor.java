@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -21,7 +21,6 @@ import java.util.List;
 //DDL parser imports
 import org.eclipse.persistence.tools.oracleddl.metadata.ArgumentType;
 import org.eclipse.persistence.tools.oracleddl.metadata.CompositeDatabaseType;
-import org.eclipse.persistence.tools.oracleddl.metadata.DatabaseType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectTableType;
 import org.eclipse.persistence.tools.oracleddl.metadata.ObjectType;
 import org.eclipse.persistence.tools.oracleddl.metadata.PLSQLCollectionType;
@@ -38,7 +37,10 @@ import org.eclipse.persistence.tools.oracleddl.metadata.VArrayType;
  */
 public class EnclosedTypeVisitor extends BaseDatabaseTypeVisitor {
 
-    protected List<CompositeDatabaseType> cTypes = new ArrayList<CompositeDatabaseType>();
+    protected List<CompositeDatabaseType> cTypes = new ArrayList<>();
+
+    public EnclosedTypeVisitor() {
+    }
 
     /**
      * Returns the list of types that were processed during visits

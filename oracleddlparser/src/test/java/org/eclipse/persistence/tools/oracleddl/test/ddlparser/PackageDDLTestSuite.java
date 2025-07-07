@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -16,7 +16,6 @@
 package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
@@ -52,7 +51,7 @@ public class PackageDDLTestSuite {
     @BeforeClass
     static public void setUp() {
         parser = new DDLParser(new InputStream() {
-            public int read() throws IOException {
+            public int read() {
                 return 0;
             }
         });
@@ -78,7 +77,7 @@ public class PackageDDLTestSuite {
             worked = false;
         }
         assertTrue("empty package should parse", worked);
-        assertEquals("empty package wrong name", packageType.getPackageName(), EMPTY_PACKAGE);
+        assertEquals("empty package wrong name", EMPTY_PACKAGE, packageType.getPackageName());
         assertTrue("empty package should have no procedures", packageType.getProcedures().isEmpty());
         assertTrue("empty package should have no types", packageType.getTypes().isEmpty());
     }
@@ -122,7 +121,7 @@ public class PackageDDLTestSuite {
             worked = false;
         }
         assertTrue("simple package should parse", worked);
-        assertEquals("simple package has wrong name", packageType.getPackageName(), SIMPLE_PACKAGE);
+        assertEquals("simple package has wrong name", SIMPLE_PACKAGE, packageType.getPackageName());
         assertTrue("simple package should have no procedures", packageType.getProcedures().isEmpty());
         assertFalse("simple package should have types", packageType.getTypes().isEmpty());
         assertEquals("simple package should have exactly 1 type", 1, packageType.getTypes().size());
@@ -193,7 +192,7 @@ public class PackageDDLTestSuite {
             worked = false;
         }
         assertTrue("npackage should parse", worked);
-        assertEquals("npackage has wrong name", packageType.getPackageName(), NPACKAGE);
+        assertEquals("npackage has wrong name", NPACKAGE, packageType.getPackageName());
         assertTrue("npackage should have no procedures", packageType.getProcedures().isEmpty());
         assertFalse("npackage should have types", packageType.getTypes().isEmpty());
         assertEquals("npackage should have exactly 2 types", 2, packageType.getTypes().size());
@@ -239,8 +238,8 @@ public class PackageDDLTestSuite {
             worked = false;
         }
         assertTrue("package with collection should parse", worked);
-        assertEquals("package with collection has wrong name", packageType.getPackageName(),
-            PACKAGE_WCOLLECTION);
+        assertEquals("package with collection has wrong name", PACKAGE_WCOLLECTION,
+                packageType.getPackageName());
         assertTrue("package with collection should have no procedures", packageType.getProcedures().isEmpty());
         assertFalse("package with collection should have types", packageType.getTypes().isEmpty());
         assertEquals("package with collection should have exactly 1 type", 1,
@@ -309,7 +308,7 @@ public class PackageDDLTestSuite {
         }
         assertTrue("package with collection containing record should parse", worked);
         assertEquals("package with collection containing record has wrong name",
-            packageType.getPackageName(), PACKAGE_WCOLLECTION_WRECORD);
+                PACKAGE_WCOLLECTION_WRECORD, packageType.getPackageName());
         assertTrue("package with collection containing record should have no procedures",
             packageType.getProcedures().isEmpty());
         assertFalse("package with collection containing record should have types",
@@ -431,7 +430,7 @@ public class PackageDDLTestSuite {
         }
         assertTrue("package with deeply nested types should parse", worked);
         assertEquals("package with deeply nested types has wrong name",
-            packageType.getPackageName(), PACKAGE_WDEEPLY_NESTED_TYPES);
+                PACKAGE_WDEEPLY_NESTED_TYPES, packageType.getPackageName());
         assertTrue("package with deeply nested types should have no procedures",
             packageType.getProcedures().isEmpty());
         assertFalse("package with deeply nested types should have types",

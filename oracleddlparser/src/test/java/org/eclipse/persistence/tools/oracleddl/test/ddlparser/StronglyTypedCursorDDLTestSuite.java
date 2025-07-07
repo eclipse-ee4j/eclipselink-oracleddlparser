@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -16,13 +16,14 @@
 package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 
 //JUnit4 imports
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 //DDL imports
@@ -48,7 +49,7 @@ public class StronglyTypedCursorDDLTestSuite {
     @BeforeClass
     static public void setUp() {
         parser = new DDLParser(new InputStream() {
-            public int read() throws IOException {
+            public int read() {
                 return 0;
             }
         });
@@ -69,7 +70,6 @@ public class StronglyTypedCursorDDLTestSuite {
         assertTrue("cursor package should parse", worked);
         UnresolvedTypesVisitor l = new UnresolvedTypesVisitor();
         l.visit(packageType);
-        assertTrue("cursor package should contain two unresolved datatypes",
-            l.getUnresolvedTypes().size() == 2);
+        assertEquals("cursor package should contain two unresolved datatypes", 2, l.getUnresolvedTypes().size());
     }
 }

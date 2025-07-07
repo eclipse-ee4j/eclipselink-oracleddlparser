@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -133,9 +133,9 @@ public class DatabaseTypeBuilder {
     }
     protected List<TableType> buildTables(Connection conn, String schemaPattern,
         String tablePattern, boolean resolveTypes) throws ParseException {
-        List<String> schemaPatterns = new ArrayList<String>();
+        List<String> schemaPatterns = new ArrayList<>();
         schemaPatterns.add(schemaPattern);
-        List<String> tablePatterns = new ArrayList<String>();
+        List<String> tablePatterns = new ArrayList<>();
         tablePatterns.add(tablePattern);
         return buildTables(conn, schemaPatterns, tablePatterns, resolveTypes);
     }
@@ -146,8 +146,8 @@ public class DatabaseTypeBuilder {
     protected List<TableType> buildTables(Connection conn, List<String> schemaPatterns,
         List<String> tablePatterns, boolean resolveTypes) throws ParseException {
         List<TableType> tableTypes = null;
-        List<String> copyOfSchemaPatterns = new ArrayList<String>();
-        List<String> copyOfTablePatterns = new ArrayList<String>();
+        List<String> copyOfSchemaPatterns = new ArrayList<>();
+        List<String> copyOfTablePatterns = new ArrayList<>();
         String getDDlStmt = buildDDLStmt(OBJECT_TYPE_TABLE, schemaPatterns, tablePatterns,
             copyOfSchemaPatterns, copyOfTablePatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
@@ -155,9 +155,8 @@ public class DatabaseTypeBuilder {
                 copyOfTablePatterns);
             if (ddls != null) {
                 //need 'set' semantics to ensure no duplicates; using TreeSet also sorts
-                TreeSet<String> distinctDDLs = new TreeSet<String>();
-                distinctDDLs.addAll(ddls);
-                tableTypes = new ArrayList<TableType>();
+                TreeSet<String> distinctDDLs = new TreeSet<>(ddls);
+                tableTypes = new ArrayList<>();
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     TableType tableType = parser.parseTable();
@@ -182,9 +181,9 @@ public class DatabaseTypeBuilder {
     }
     protected List<PLSQLPackageType> buildPackages(Connection conn, String schemaPattern,
         String packagePattern, boolean resolveTypes) throws ParseException {
-        List<String> schemaPatterns = new ArrayList<String>();
+        List<String> schemaPatterns = new ArrayList<>();
         schemaPatterns.add(schemaPattern);
-        List<String> packagePatterns = new ArrayList<String>();
+        List<String> packagePatterns = new ArrayList<>();
         packagePatterns.add(packagePattern);
         return buildPackages(conn, schemaPatterns, packagePatterns, resolveTypes);
     }
@@ -195,8 +194,8 @@ public class DatabaseTypeBuilder {
     protected List<PLSQLPackageType> buildPackages(Connection conn, List<String> schemaPatterns,
         List<String> packagePatterns, boolean resolveTypes) throws ParseException {
         List<PLSQLPackageType> packageTypes = null;
-        List<String> copyOfSchemaPatterns = new ArrayList<String>();
-        List<String> copyOfPackagePatterns = new ArrayList<String>();
+        List<String> copyOfSchemaPatterns = new ArrayList<>();
+        List<String> copyOfPackagePatterns = new ArrayList<>();
         String getDDlStmt = buildDDLStmt(OBJECT_TYPE_PACKAGE, schemaPatterns, packagePatterns,
             copyOfSchemaPatterns, copyOfPackagePatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
@@ -204,10 +203,9 @@ public class DatabaseTypeBuilder {
                 copyOfPackagePatterns);
             if (ddls != null) {
                 //need 'set' semantics to ensure no duplicates
-                TreeSet<String> distinctDDLs = new TreeSet<String>();
-                distinctDDLs.addAll(ddls);
-                packageTypes = new ArrayList<PLSQLPackageType>();
-                Map<PLSQLPackageType, DDLParser> parserMap = new HashMap<PLSQLPackageType, DDLParser>();
+                TreeSet<String> distinctDDLs = new TreeSet<>(ddls);
+                packageTypes = new ArrayList<>();
+                Map<PLSQLPackageType, DDLParser> parserMap = new HashMap<>();
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     PLSQLPackageType packageType = parser.parsePLSQLPackage();
@@ -235,9 +233,9 @@ public class DatabaseTypeBuilder {
     }
     protected List<ProcedureType> buildProcedures(Connection conn, String schemaPattern,
         String procedurePattern, boolean resolveTypes) throws ParseException {
-        List<String> schemaPatterns = new ArrayList<String>();
+        List<String> schemaPatterns = new ArrayList<>();
         schemaPatterns.add(schemaPattern);
-        List<String> procedurePatterns = new ArrayList<String>();
+        List<String> procedurePatterns = new ArrayList<>();
         procedurePatterns.add(procedurePattern);
         return buildProcedures(conn, schemaPatterns, procedurePatterns, resolveTypes);
     }
@@ -248,8 +246,8 @@ public class DatabaseTypeBuilder {
     protected List<ProcedureType> buildProcedures(Connection conn, List<String> schemaPatterns,
         List<String> procedurePatterns, boolean resolveTypes) throws ParseException {
         List<ProcedureType> procedureTypes = null;
-        List<String> copyOfSchemaPatterns = new ArrayList<String>();
-        List<String> copyOfProcedurePatterns = new ArrayList<String>();
+        List<String> copyOfSchemaPatterns = new ArrayList<>();
+        List<String> copyOfProcedurePatterns = new ArrayList<>();
         String getDDlStmt = buildDDLStmt(OBJECT_TYPE_PROCEDURE, schemaPatterns, procedurePatterns,
             copyOfSchemaPatterns, copyOfProcedurePatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
@@ -257,9 +255,8 @@ public class DatabaseTypeBuilder {
                 copyOfProcedurePatterns);
             if (ddls != null) {
                 //need 'set' semantics to ensure no duplicates
-                TreeSet<String> distinctDDLs = new TreeSet<String>();
-                distinctDDLs.addAll(ddls);
-                procedureTypes = new ArrayList<ProcedureType>();
+                TreeSet<String> distinctDDLs = new TreeSet<>(ddls);
+                procedureTypes = new ArrayList<>();
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     ProcedureType procedureType = parser.parseTopLevelProcedure();
@@ -284,9 +281,9 @@ public class DatabaseTypeBuilder {
     }
     protected List<FunctionType> buildFunctions(Connection conn, String schemaPattern,
         String functionPattern, boolean resolveTypes) throws ParseException {
-        List<String> schemaPatterns = new ArrayList<String>();
+        List<String> schemaPatterns = new ArrayList<>();
         schemaPatterns.add(schemaPattern);
-        List<String> functionPatterns = new ArrayList<String>();
+        List<String> functionPatterns = new ArrayList<>();
         functionPatterns.add(functionPattern);
         return buildFunctions(conn, schemaPatterns, functionPatterns, resolveTypes);
     }
@@ -297,8 +294,8 @@ public class DatabaseTypeBuilder {
     protected List<FunctionType> buildFunctions(Connection conn, List<String> schemaPatterns,
         List<String> functionPatterns, boolean resolveTypes) throws ParseException {
         List<FunctionType> functionsTypes = null;
-        List<String> copyOfSchemaPatterns = new ArrayList<String>();
-        List<String> copyOfFunctionPatterns = new ArrayList<String>();
+        List<String> copyOfSchemaPatterns = new ArrayList<>();
+        List<String> copyOfFunctionPatterns = new ArrayList<>();
         String getDDlStmt = buildDDLStmt(OBJECT_TYPE_FUNCTION, schemaPatterns, functionPatterns,
             copyOfSchemaPatterns, copyOfFunctionPatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
@@ -306,9 +303,8 @@ public class DatabaseTypeBuilder {
                 copyOfFunctionPatterns);
             if (ddls != null) {
                 //need 'set' semantics to ensure no duplicates
-                TreeSet<String> distinctDDLs = new TreeSet<String>();
-                distinctDDLs.addAll(ddls);
-                functionsTypes = new ArrayList<FunctionType>();
+                TreeSet<String> distinctDDLs = new TreeSet<>(ddls);
+                functionsTypes = new ArrayList<>();
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     FunctionType functionType = parser.parseTopLevelFunction();
@@ -333,9 +329,9 @@ public class DatabaseTypeBuilder {
     }
     protected List<CompositeDatabaseType> buildTypes(Connection conn, String schemaPattern,
         String namePattern, boolean resolveTypes) throws ParseException {
-        List<String> schemaPatterns = new ArrayList<String>();
+        List<String> schemaPatterns = new ArrayList<>();
         schemaPatterns.add(schemaPattern);
-        List<String> namePatterns = new ArrayList<String>();
+        List<String> namePatterns = new ArrayList<>();
         namePatterns.add(namePattern);
         return buildTypes(conn, schemaPatterns, namePatterns, resolveTypes);
     }
@@ -346,8 +342,8 @@ public class DatabaseTypeBuilder {
     protected List<CompositeDatabaseType> buildTypes(Connection conn, List<String> schemaPatterns,
         List<String> namePatterns, boolean resolveTypes) throws ParseException {
         List<CompositeDatabaseType> databaseTypes = null;
-        List<String> copyOfSchemaPatterns = new ArrayList<String>();
-        List<String> copyOfNamePatterns = new ArrayList<String>();
+        List<String> copyOfSchemaPatterns = new ArrayList<>();
+        List<String> copyOfNamePatterns = new ArrayList<>();
         String getDDlStmt = buildDDLStmt(OBJECT_TYPE_TYPE, schemaPatterns, namePatterns,
             copyOfSchemaPatterns, copyOfNamePatterns);
         if (setDbmsMetadataSessionTransforms(conn)) {
@@ -355,9 +351,8 @@ public class DatabaseTypeBuilder {
                 copyOfNamePatterns);
             if (ddls != null) {
                 //need 'set' semantics to ensure no duplicates
-                TreeSet<String> distinctDDLs = new TreeSet<String>();
-                distinctDDLs.addAll(ddls);
-                databaseTypes = new ArrayList<CompositeDatabaseType>();
+                TreeSet<String> distinctDDLs = new TreeSet<>(ddls);
+                databaseTypes = new ArrayList<>();
                 for (String ddl : distinctDDLs) {
                     DDLParser parser = newDDLParser(ddl, copyOfSchemaPatterns);
                     CompositeDatabaseType databaseType = parser.parseType();
@@ -442,7 +437,7 @@ public class DatabaseTypeBuilder {
             }
             rs = pStmt.executeQuery();
             if (rs.next()) {
-                ddls = new ArrayList<String>();
+                ddls = new ArrayList<>();
                 do {
                     Clob clob = rs.getClob(RESULT);
                     String ddl = null;
@@ -527,8 +522,8 @@ public class DatabaseTypeBuilder {
     protected void resolvedTypes(Connection conn, String schemaPattern, DDLParser parser,
         List<UnresolvedType> unresolvedTypes, DatabaseType databaseType, List<PLSQLPackageType> processedPackages) throws ParseException {
         // need to process non '%' named items 1st such that we can resolve the '%' ones later
-        List<String> percentNameList = new ArrayList<String>();
-        List<String> nonPercentNameList = new ArrayList<String>();
+        List<String> percentNameList = new ArrayList<>();
+        List<String> nonPercentNameList = new ArrayList<>();
         for (UnresolvedType uType : unresolvedTypes) {
             CompositeDatabaseType owningType = uType.getOwningType();
             if (owningType != null && (owningType.isTYPEType() || owningType.isROWTYPEType())) {
@@ -548,7 +543,7 @@ public class DatabaseTypeBuilder {
         Collections.reverse(percentNameList);
         Collections.reverse(nonPercentNameList);
         // iterate over the collections and add unresolved types based on type name
-        List<UnresolvedType> percentList = new ArrayList<UnresolvedType>();
+        List<UnresolvedType> percentList = new ArrayList<>();
         for (String tname : percentNameList) {
             for (UnresolvedType uType : unresolvedTypes) {
                 if (uType.getTypeName().equals(tname)) {
@@ -557,7 +552,7 @@ public class DatabaseTypeBuilder {
                 }
             }
         }
-        List<UnresolvedType> nonPercentList = new ArrayList<UnresolvedType>();
+        List<UnresolvedType> nonPercentList = new ArrayList<>();
         for (String tname : nonPercentNameList) {
             for (UnresolvedType uType : unresolvedTypes) {
                 if (uType.getTypeName().equals(tname)) {
@@ -566,7 +561,7 @@ public class DatabaseTypeBuilder {
                 }
             }
         }
-        Stack<UnresolvedType> stac = new Stack<UnresolvedType>();
+        Stack<UnresolvedType> stac = new Stack<>();
         // need to process non % entries first
         for (UnresolvedType uPercentType : percentList) {
             if (!stac.contains(uPercentType)) {
@@ -591,14 +586,14 @@ public class DatabaseTypeBuilder {
             // handle dotted scenario, i.e. "PackageName.TypeName" or "SchemaName.TypeName"
             if (dotIdx != -1) {
                 typeName1 = typeName.substring(0, dotIdx);
-                typeName2 = typeName.substring(dotIdx+1, typeName.length());
+                typeName2 = typeName.substring(dotIdx+1);
 
                 // handle second dotted scenario, i.e. "SchemaName.TableName.ColumnName"
                 dotIdx = typeName2.indexOf('.');
                 if (dotIdx != -1) {
                     String tmpStr = typeName2;
                     typeName1 = tmpStr.substring(0, dotIdx);
-                    typeName2 = tmpStr.substring(dotIdx+1, tmpStr.length());
+                    typeName2 = tmpStr.substring(dotIdx+1);
                 }
             }
             // check type repository first
@@ -621,7 +616,7 @@ public class DatabaseTypeBuilder {
                     if (resolvedType == null) {
                         TableType tableType = null;
                         List<TableType> tables = buildTables(conn, schemaPattern, tableName, false);
-                        if (tables != null && tables.size() > 0) {
+                        if (tables != null && !tables.isEmpty()) {
                             tableType = tables.get(0);
                             typesRepository.setDatabaseType(tableType.getTableName(), tableType);
                             rType.setEnclosedType(tableType);
@@ -714,7 +709,7 @@ public class DatabaseTypeBuilder {
         switch (objectTypeCode) {
         case OBJECT_TYPE_FUNCTION_CODE:
             List<FunctionType> functions = buildFunctions(conn, schemaPattern, typeName1, false);
-            if (functions != null && functions.size() > 0) {
+            if (functions != null && !functions.isEmpty()) {
                 resolvedType = functions.get(0); // only care about first one
             }
             break;
@@ -731,7 +726,7 @@ public class DatabaseTypeBuilder {
             }
             if (plsqlPkg == null) {
                 List<PLSQLPackageType> packages = buildPackages(conn, schemaPattern, typeName1, false);
-                if (packages != null && packages.size() > 0) {
+                if (packages != null && !packages.isEmpty()) {
                     plsqlPkg = packages.get(0); // only care about first one
                     if (processedPackages != null) {
                         processedPackages.add(plsqlPkg);
@@ -752,13 +747,13 @@ public class DatabaseTypeBuilder {
             break;
         case OBJECT_TYPE_PROCEDURE_CODE:
             List<ProcedureType> procedures = buildProcedures(conn, schemaPattern, typeName1, false);
-            if (procedures != null && procedures.size() > 0) {
+            if (procedures != null && !procedures.isEmpty()) {
                 resolvedType = procedures.get(0); // only care about first one
             }
             break;
         case OBJECT_TYPE_TABLE_CODE:
             List<TableType> tables = buildTables(conn, schemaPattern, typeName1, false);
-            if (tables != null && tables.size() > 0) {
+            if (tables != null && !tables.isEmpty()) {
                 TableType tableType = tables.get(0); // only care about first
                                                      // one
                 resolvedType = tableType;
@@ -783,7 +778,7 @@ public class DatabaseTypeBuilder {
             break;
         case OBJECT_TYPE_TYPE_CODE:
             List<CompositeDatabaseType> types = buildTypes(conn, schemaPattern, typeName1, false);
-            if (types != null && types.size() > 0) {
+            if (types != null && !types.isEmpty()) {
                 resolvedType = types.get(0); // only care about first one
                 if (typeName2 != null) {
                     DatabaseType foundType = findField(typeName2, resolvedType);
@@ -803,7 +798,7 @@ public class DatabaseTypeBuilder {
     /**
      * Attempt to determine the database type (Function, Package, Table, etc.) for a
      * given a Schema and Type name.
-     *
+     * <p>
      * Types are translated to integer values as follows:
      * <ul>
      * <li>FUNCTION = 1</li>
@@ -908,7 +903,7 @@ public class DatabaseTypeBuilder {
     }
 
     static boolean schemaPatternExcludesAdminSchemas(String schemaPattern) {
-        return (schemaPattern == null || schemaPattern.length() == 0 ||
+        return (schemaPattern == null || schemaPattern.isEmpty() ||
             TOPLEVEL.equals(schemaPattern) || PERCENT.equals(schemaPattern));
     }
 

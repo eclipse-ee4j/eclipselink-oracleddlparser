@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -55,87 +55,87 @@ import org.eclipse.persistence.tools.oracleddl.metadata.VarCharType;
 public interface DatabaseTypeVisitor {
 
     //scalar visit callbacks
-    public void visit(BinaryType databaseType);
-    public void visit(BlobType databaseType);
-    public void visit(LongRawType databaseType);
-    public void visit(RawType databaseType);
-    public void visit(CharType databaseType);
-    public void visit(ClobType databaseType);
-    public void visit(DecimalType databaseType);
-    public void visit(DoubleType databaseType);
-    public void visit(FloatType databaseType);
-    public void visit(IntervalDayToSecond databaseType);
-    public void visit(IntervalYearToMonth databaseType);
-    public void visit(NClobType databaseType);
-    public void visit(NumericType databaseType);
-    public void visit(RealType databaseType);
-    public void visit(ScalarDatabaseTypeEnum databaseType);
-    public void visit(UnresolvedType databaseType);
-    public void visit(UnresolvedSizedType databaseType);
-    public void visit(URowIdType databaseType);
-    public void visit(VarCharType databaseType);
-    public void visit(VarChar2Type databaseType);
-    public void visit(LongType databaseType);
-    public void visit(TimeStampType databaseType);
+    void visit(BinaryType databaseType);
+    void visit(BlobType databaseType);
+    void visit(LongRawType databaseType);
+    void visit(RawType databaseType);
+    void visit(CharType databaseType);
+    void visit(ClobType databaseType);
+    void visit(DecimalType databaseType);
+    void visit(DoubleType databaseType);
+    void visit(FloatType databaseType);
+    void visit(IntervalDayToSecond databaseType);
+    void visit(IntervalYearToMonth databaseType);
+    void visit(NClobType databaseType);
+    void visit(NumericType databaseType);
+    void visit(RealType databaseType);
+    void visit(ScalarDatabaseTypeEnum databaseType);
+    void visit(UnresolvedType databaseType);
+    void visit(UnresolvedSizedType databaseType);
+    void visit(URowIdType databaseType);
+    void visit(VarCharType databaseType);
+    void visit(VarChar2Type databaseType);
+    void visit(LongType databaseType);
+    void visit(TimeStampType databaseType);
 
-    public void beginVisit(ArgumentType databaseType);
-    public void visit(ArgumentType databaseType);
-    public void endVisit(ArgumentType databaseType);
+    void beginVisit(ArgumentType databaseType);
+    void visit(ArgumentType databaseType);
+    void endVisit(ArgumentType databaseType);
 
-    public void beginVisit(FieldType databaseType);
-    public void visit(FieldType databaseType);
-    public void endVisit(FieldType databaseType);
+    void beginVisit(FieldType databaseType);
+    void visit(FieldType databaseType);
+    void endVisit(FieldType databaseType);
 
-    public void beginVisit(PLSQLCursorType databaseType);
-    public void visit(PLSQLCursorType databaseType);
-    public void endVisit(PLSQLCursorType databaseType);
+    void beginVisit(PLSQLCursorType databaseType);
+    void visit(PLSQLCursorType databaseType);
+    void endVisit(PLSQLCursorType databaseType);
 
-    public void beginVisit(PLSQLPackageType databaseType);
-    public void visit(PLSQLPackageType databaseType);
-    public void endVisit(PLSQLPackageType databaseType);
+    void beginVisit(PLSQLPackageType databaseType);
+    void visit(PLSQLPackageType databaseType);
+    void endVisit(PLSQLPackageType databaseType);
 
-    public void beginVisit(PLSQLRecordType databaseType);
-    public void visit(PLSQLRecordType plsqlRecordType);
-    public void endVisit(PLSQLRecordType databaseType);
+    void beginVisit(PLSQLRecordType databaseType);
+    void visit(PLSQLRecordType plsqlRecordType);
+    void endVisit(PLSQLRecordType databaseType);
 
-    public void beginVisit(PLSQLCollectionType databaseType);
-    public void visit(PLSQLCollectionType plsqlCollectionType);
-    public void endVisit(PLSQLCollectionType databaseType);
+    void beginVisit(PLSQLCollectionType databaseType);
+    void visit(PLSQLCollectionType plsqlCollectionType);
+    void endVisit(PLSQLCollectionType databaseType);
 
-    public void beginVisit(ProcedureType databaseType);
-    public void visit(ProcedureType databaseType);
-    public void endVisit(ProcedureType databaseType);
+    void beginVisit(ProcedureType databaseType);
+    void visit(ProcedureType databaseType);
+    void endVisit(ProcedureType databaseType);
 
-    public void beginVisit(FunctionType databaseType);
-    public void visit(FunctionType databaseType);
-    public void endVisit(FunctionType databaseType);
+    void beginVisit(FunctionType databaseType);
+    void visit(FunctionType databaseType);
+    void endVisit(FunctionType databaseType);
 
-    public void beginVisit(TableType databaseType);
-    public void visit(TableType databaseType);
-    public void endVisit(TableType databaseType);
+    void beginVisit(TableType databaseType);
+    void visit(TableType databaseType);
+    void endVisit(TableType databaseType);
 
-    public void beginVisit(ObjectType databaseType);
-    public void visit(ObjectType databaseType);
-    public void endVisit(ObjectType databaseType);
+    void beginVisit(ObjectType databaseType);
+    void visit(ObjectType databaseType);
+    void endVisit(ObjectType databaseType);
 
-    public void beginVisit(VArrayType databaseType);
-    public void visit(VArrayType databaseType);
-    public void endVisit(VArrayType databaseType);
+    void beginVisit(VArrayType databaseType);
+    void visit(VArrayType databaseType);
+    void endVisit(VArrayType databaseType);
 
-    public void beginVisit(ObjectTableType databaseType);
-    public void visit(ObjectTableType databaseType);
-    public void endVisit(ObjectTableType databaseType);
+    void beginVisit(ObjectTableType databaseType);
+    void visit(ObjectTableType databaseType);
+    void endVisit(ObjectTableType databaseType);
 
-    public void beginVisit(ROWTYPEType databaseType);
-    public void visit(ROWTYPEType databaseType);
-    public void endVisit(ROWTYPEType databaseType);
+    void beginVisit(ROWTYPEType databaseType);
+    void visit(ROWTYPEType databaseType);
+    void endVisit(ROWTYPEType databaseType);
 
-    public void beginVisit(TYPEType databaseType);
-    public void visit(TYPEType databaseType);
-    public void endVisit(TYPEType databaseType);
+    void beginVisit(TYPEType databaseType);
+    void visit(TYPEType databaseType);
+    void endVisit(TYPEType databaseType);
 
-    public void beginVisit(PLSQLSubType databaseType);
-    public void visit(PLSQLSubType plsqlSubType);
-    public void endVisit(PLSQLSubType databaseType);
+    void beginVisit(PLSQLSubType databaseType);
+    void visit(PLSQLSubType plsqlSubType);
+    void endVisit(PLSQLSubType databaseType);
 
 }

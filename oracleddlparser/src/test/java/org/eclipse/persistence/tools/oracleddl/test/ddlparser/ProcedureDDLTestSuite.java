@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2023 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2025 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -16,7 +16,6 @@
 package org.eclipse.persistence.tools.oracleddl.test.ddlparser;
 
 //javase imports
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 
@@ -25,6 +24,7 @@ import org.junit.BeforeClass;
 //import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 //DDL imports
@@ -51,7 +51,7 @@ public class ProcedureDDLTestSuite {
     @BeforeClass
     static public void setUp() {
         parser = new DDLParser(new InputStream() {
-            public int read() throws IOException {
+            public int read() {
                 return 0;
             }
         });
@@ -74,7 +74,7 @@ public class ProcedureDDLTestSuite {
             worked = false;
         }
         assertTrue("empty procedure should parse", worked);
-        assertEquals("empty procedure wrong name", procedureType.getProcedureName(), EMPTY_PROCEDURE);
+        assertEquals("empty procedure wrong name", EMPTY_PROCEDURE, procedureType.getProcedureName());
         assertTrue("empty procedure should have no arguments", procedureType.getArguments().isEmpty());
     }
 
@@ -103,11 +103,10 @@ public class ProcedureDDLTestSuite {
         l.visit(procedureType);
         assertTrue("dummy procedure should not contain any unresolved datatypes",
             l.getUnresolvedTypes().isEmpty());
-        assertEquals("dummy procedure wrong name", procedureType.getProcedureName(), DUMMY_PROCEDURE);
-        assertTrue("dummy procedure should have 1 argument",
-            procedureType.getArguments().size() == 1);
+        assertEquals("dummy procedure wrong name", DUMMY_PROCEDURE, procedureType.getProcedureName());
+        assertEquals("dummy procedure should have 1 argument", 1, procedureType.getArguments().size());
         ArgumentType arg1 = procedureType.getArguments().get(0);
-        assertEquals("dummy procedure's argument wrong name", arg1.getArgumentName(), DUMMY_ARG);
+        assertEquals("dummy procedure's argument wrong name", DUMMY_ARG, arg1.getArgumentName());
     }
 
     static final String DUMMY_PROCEDURE_SCHEMA = "SCOTT";
@@ -134,12 +133,11 @@ public class ProcedureDDLTestSuite {
         l.visit(procedureType);
         assertTrue("dummy procedure(with schema) should not contain any unresolved datatypes",
             l.getUnresolvedTypes().isEmpty());
-        assertEquals("dummy procedure wrong schema", procedureType.getSchema(), DUMMY_PROCEDURE_SCHEMA);
-        assertEquals("dummy procedure wrong name", procedureType.getProcedureName(), DUMMY_PROCEDURE);
-        assertTrue("dummy procedure should have 1 argument",
-            procedureType.getArguments().size() == 1);
+        assertEquals("dummy procedure wrong schema", DUMMY_PROCEDURE_SCHEMA, procedureType.getSchema());
+        assertEquals("dummy procedure wrong name", DUMMY_PROCEDURE, procedureType.getProcedureName());
+        assertEquals("dummy procedure should have 1 argument", 1, procedureType.getArguments().size());
         ArgumentType arg1 = procedureType.getArguments().get(0);
-        assertEquals("dummy procedure's argument wrong name", arg1.getArgumentName(), DUMMY_ARG);
+        assertEquals("dummy procedure's argument wrong name", DUMMY_ARG, arg1.getArgumentName());
     }
 
     static final String PROCEDURE_W_IN_OUT_ARGS = "INOUTARGSSP";
@@ -170,34 +168,30 @@ public class ProcedureDDLTestSuite {
         l.visit(procedureType);
         assertTrue("procedure with in and out args should not contain any unresolved datatypes",
             l.getUnresolvedTypes().isEmpty());
-        assertEquals("procedure with in and out args wrong name", procedureType.getProcedureName(),
-            PROCEDURE_W_IN_OUT_ARGS);
-        assertTrue("procedure with in and out args should have 3 arguments",
-            procedureType.getArguments().size() == 3);
+        assertEquals("procedure with in and out args wrong name", PROCEDURE_W_IN_OUT_ARGS,
+                procedureType.getProcedureName());
+        assertEquals("procedure with in and out args should have 3 arguments", 3, procedureType.getArguments().size());
         ArgumentType arg1 = procedureType.getArguments().get(0);
-        assertEquals("procedure with in and out args - arg1 wrong name", arg1.getArgumentName(),
-            IN_ARG);
+        assertEquals("procedure with in and out args - arg1 wrong name", IN_ARG,
+                arg1.getArgumentName());
         DatabaseType arg1Type = arg1.getEnclosedType();
         assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
             new VarChar2Type().getTypeName(), arg1Type.getTypeName());
-        assertTrue("incorrect direction for " + arg1.getArgumentName(),
-            arg1.getDirection() == IN);
+        assertSame("incorrect direction for " + arg1.getArgumentName(), IN, arg1.getDirection());
         ArgumentType arg2 = procedureType.getArguments().get(1);
-        assertEquals("procedure with in and out args - arg2 wrong name", arg2.getArgumentName(),
-            OUT_ARG);
+        assertEquals("procedure with in and out args - arg2 wrong name", OUT_ARG,
+                arg2.getArgumentName());
         DatabaseType arg2Type = arg2.getEnclosedType();
         assertEquals("incorrect type for " + arg2.getArgumentName() + " type",
             new VarChar2Type().getTypeName(), arg2Type.getTypeName());
-        assertTrue("incorrect direction for " + arg2.getArgumentName(),
-            arg2.getDirection() == OUT);
+        assertSame("incorrect direction for " + arg2.getArgumentName(), OUT, arg2.getDirection());
         ArgumentType arg3 = procedureType.getArguments().get(2);
-        assertEquals("procedure with in and out args - arg3 wrong name", arg3.getArgumentName(),
-            OUT_ARG2);
+        assertEquals("procedure with in and out args - arg3 wrong name", OUT_ARG2,
+                arg3.getArgumentName());
         DatabaseType arg3Type = arg3.getEnclosedType();
         assertEquals("incorrect type for " + arg3.getArgumentName() + " type",
             new NumericType().getTypeName(), arg3Type.getTypeName());
-        assertTrue("incorrect direction for " + arg3.getArgumentName(),
-            arg3.getDirection() == OUT);
+        assertSame("incorrect direction for " + arg3.getArgumentName(), OUT, arg3.getDirection());
     }
 
     static final String PROCEDURE_W_SYS_REFCURSOR = "GETALL";
@@ -226,18 +220,16 @@ public class ProcedureDDLTestSuite {
         l.visit(procedureType);
         assertTrue("procedure with SYS_REFCURSOR should not contain any unresolved datatypes",
             l.getUnresolvedTypes().isEmpty());
-        assertEquals("procedure with SYS_REFCURSOR wrong name", procedureType.getProcedureName(),
-            PROCEDURE_W_SYS_REFCURSOR);
-        assertTrue("procedure with SYS_REFCURSOR should have 1 argument",
-            procedureType.getArguments().size() == 1);
+        assertEquals("procedure with SYS_REFCURSOR wrong name", PROCEDURE_W_SYS_REFCURSOR,
+                procedureType.getProcedureName());
+        assertEquals("procedure with SYS_REFCURSOR should have 1 argument", 1, procedureType.getArguments().size());
         ArgumentType arg1 = procedureType.getArguments().get(0);
-        assertEquals("procedure with SYS_REFCURSOR - arg1 wrong name", arg1.getArgumentName(),
-            SYS_REF_OUT_ARG);
+        assertEquals("procedure with SYS_REFCURSOR - arg1 wrong name", SYS_REF_OUT_ARG,
+                arg1.getArgumentName());
         DatabaseType arg1Type = arg1.getEnclosedType();
         assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
             SYS_REFCURSOR_TYPE.getTypeName(), arg1Type.getTypeName());
-        assertTrue("incorrect direction for " + arg1.getArgumentName(),
-            arg1.getDirection() == OUT);
+        assertSame("incorrect direction for " + arg1.getArgumentName(), OUT, arg1.getDirection());
     }
 
     static final String PROCEDURE_W_INOUT_ARG = "INOUTARGSP";
@@ -266,18 +258,16 @@ public class ProcedureDDLTestSuite {
         l.visit(procedureType);
         assertTrue("procedure with INOUT arg should not contain any unresolved datatypes",
             l.getUnresolvedTypes().isEmpty());
-        assertEquals("procedure with INOUT arg wrong name", procedureType.getProcedureName(),
-            PROCEDURE_W_INOUT_ARG);
-        assertTrue("procedure with INOUT arg should have 1 argument",
-            procedureType.getArguments().size() == 1);
+        assertEquals("procedure with INOUT arg wrong name", PROCEDURE_W_INOUT_ARG,
+                procedureType.getProcedureName());
+        assertEquals("procedure with INOUT arg should have 1 argument", 1, procedureType.getArguments().size());
         ArgumentType arg1 = procedureType.getArguments().get(0);
-        assertEquals("procedure with INOUT arg - arg1 wrong name", arg1.getArgumentName(),
-            INOUT_ARG);
+        assertEquals("procedure with INOUT arg - arg1 wrong name", INOUT_ARG,
+                arg1.getArgumentName());
         DatabaseType arg1Type = arg1.getEnclosedType();
         assertEquals("incorrect type for " + arg1.getArgumentName() + " type",
             new NumericType().getTypeName(), arg1Type.getTypeName());
-        assertTrue("incorrect direction for " + arg1.getArgumentName(),
-            arg1.getDirection() == INOUT);
+        assertSame("incorrect direction for " + arg1.getArgumentName(), INOUT, arg1.getDirection());
     }
 
     static final String PROCEDURE_W_KEYWORDS = "KEYWORDSP";

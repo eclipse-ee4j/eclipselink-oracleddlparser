@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2018, 2023 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2018, 2025 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0 which is available at
@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.eclipse.ee4j</groupId>
         <artifactId>project</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.9</version>
         <relativePath/>
     </parent>
 
@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
     <name>EclipseLink Oracle DDL Parser</name>
     <description>EclipseLink Oracle DDL Parser, part of the project EclipseLink.</description>
-    <url>http://www.eclipse.org/eclipselink/</url>
+    <url>https://www.eclipse.org/eclipselink/</url>
 
     <scm>
         <connection>scm:git:https://github.com/eclipse-ee4j/eclipselink-oracleddlparser.git</connection>
@@ -39,18 +39,18 @@
 
     <organization>
         <name>Eclipse.org - EclipseLink Project</name>
-        <url>http://www.eclipse.org/eclipselink</url>
+        <url>https://www.eclipse.org/eclipselink</url>
     </organization>
 
     <licenses>
         <license>
             <name>Eclipse Public License - v 2.0</name>
-            <url>http://www.eclipse.org/legal/epl-2.0</url>
+            <url>https://www.eclipse.org/legal/epl-2.0</url>
             <distribution>repo</distribution>
         </license>
         <license>
             <name>Eclipse Distribution License - v 1.0</name>
-            <url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+            <url>https://www.eclipse.org/org/documents/edl-v10.php</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -80,12 +80,14 @@
     <properties>
         <copyright.exclude>${project.basedir}/../etc/copyright-exclude</copyright.exclude>
         <copyright.template>${project.basedir}/../etc/copyright.txt</copyright.template>
+        <spotbugs.exclude/>
         <spotbugs.skip>false</spotbugs.skip>
-        <spotbugs.threshold>Low</spotbugs.threshold>
-        <spotbugs.version>4.7.3.4</spotbugs.version>
+        <spotbugs.threshold>Normal</spotbugs.threshold>
+        <spotbugs.version>4.8.3</spotbugs.version>
+        <findsecbugs.version>1.11.0</findsecbugs.version>
         <legal.doc.source>../</legal.doc.source>
 
-        <oracle.jdbc.version>23.2.0.0</oracle.jdbc.version>
+        <oracle.jdbc.version>23.8.0.25.04</oracle.jdbc.version>
         <junit4-version>4.13.2</junit4-version>
 
         <!-- tests related properties -->
@@ -122,47 +124,42 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>io.helidon.build-tools</groupId>
                     <artifactId>helidon-enforcer-plugin</artifactId>
-                    <version>3.0.4</version>
+                    <version>4.0.16</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>javacc-maven-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.14.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.8</version>
-                    <configuration>
-                        <instructions>
-                            <_noextraheaders>true</_noextraheaders>
-                        </instructions>
-                    </configuration>
+                    <version>6.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.5.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.4.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -172,17 +169,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.11.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
                     <version>${spotbugs.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.13</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -205,8 +207,8 @@
                                 <requireMavenVersion>
                                     <version>[3.6.0,)</version>
                                 </requireMavenVersion>
+                                <dependencyConvergence />
                             </rules>
-                            <DependencyConvergence />
                         </configuration>
                     </execution>
                 </executions>
@@ -215,6 +217,13 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <id>parse-version</id>
+                        <goals>
+                            <goal>parse-version</goal>
+                        </goals>
+                    </execution>
                     <execution>
                         <id>add-legal-resource</id>
                         <phase>generate-resources</phase>
@@ -270,6 +279,7 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>create-version</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>create</goal>
@@ -319,12 +329,26 @@
                 <configuration>
                     <niceManifest>true</niceManifest>
                     <instructions>
-                        <_noextraheaders>true</_noextraheaders>
                         <HK2-Bundle-Name>${project.groupId}:${project.artifactId}</HK2-Bundle-Name>
+                        <Extension-Name>${artifactId}</Extension-Name>
+                        <Specification-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</Specification-Version>
+                        <Implementation-Version>${project.version}</Implementation-Version>
                         <Implementation-Build-Id>${buildNumber}</Implementation-Build-Id>
                     </instructions>
                 </configuration>
                 <executions>
+                    <execution>
+                        <id>osgi-ify-project-version</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>cleanVersions</goal>
+                        </goals>
+                        <configuration>
+                            <versions>
+                                <bundleVersion>${project.version}</bundleVersion>
+                            </versions>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>bundle-manifest</id>
                         <goals>
@@ -347,7 +371,6 @@
                         <db.ddl.drop>${db.ddl.drop}</db.ddl.drop>
                         <db.ddl.debug>${db.ddl.debug}</db.ddl.debug>
                     </systemPropertyVariables>
-                    <forkMode>once</forkMode>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <includes>
                         <include>${jtest.includes}</include>
@@ -379,6 +402,14 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
+                            <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+                            <Bundle-Name>EclipseLink ASM Source</Bundle-Name>
+                            <Bundle-SymbolicName>${artifactId}.source</Bundle-SymbolicName>
+                            <Bundle-Version>${bundleVersion}</Bundle-Version>
+                            <Eclipse-SourceBundle>${artifactId};version="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</Eclipse-SourceBundle>
+                            <Specification-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</Specification-Version>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Build-Id>${buildNumber}</Implementation-Build-Id>
                             <Implementation-Build-Id>${buildNumber}</Implementation-Build-Id>
                         </manifestEntries>
                     </archive>
@@ -399,20 +430,31 @@
                     </archive>
                     <release>11</release>
                     <notimestamp>true</notimestamp>
+                    <doclint>-reference</doclint>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.8.6.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>${spotbugs.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <skip>${spotbugs.skip}</skip>
                     <threshold>${spotbugs.threshold}</threshold>
-                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                    <excludeFilterFile>
-                        ${spotbugs.exclude}
-                    </excludeFilterFile>
-                    <fork>true</fork>
-                    <jvmArgs>-Xms64m -Xmx256m</jvmArgs>
+                    <excludeFilterFile>${spotbugs.exclude}</excludeFilterFile>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>${findsecbugs.version}</version>
+                        </plugin>
+                    </plugins>
                 </configuration>
             </plugin>
         </plugins>
@@ -426,17 +468,27 @@
             </properties>
         </profile>
         <profile>
+            <id>spotbugs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>spotbugs</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>coverage</id>
             <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.jacoco</groupId>
-                            <artifactId>jacoco-maven-plugin</artifactId>
-                            <version>0.8.9</version>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
