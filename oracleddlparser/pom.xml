@@ -330,7 +330,7 @@
                     <niceManifest>true</niceManifest>
                     <instructions>
                         <HK2-Bundle-Name>${project.groupId}:${project.artifactId}</HK2-Bundle-Name>
-                        <Extension-Name>${artifactId}</Extension-Name>
+                        <Extension-Name>${project.artifactId}</Extension-Name>
                         <Specification-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</Specification-Version>
                         <Implementation-Version>${project.version}</Implementation-Version>
                         <Implementation-Build-Id>${buildNumber}</Implementation-Build-Id>
@@ -404,9 +404,9 @@
                         <manifestEntries>
                             <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                             <Bundle-Name>EclipseLink ASM Source</Bundle-Name>
-                            <Bundle-SymbolicName>${artifactId}.source</Bundle-SymbolicName>
+                            <Bundle-SymbolicName>${project.artifactId}.source</Bundle-SymbolicName>
                             <Bundle-Version>${bundleVersion}</Bundle-Version>
-                            <Eclipse-SourceBundle>${artifactId};version="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</Eclipse-SourceBundle>
+                            <Eclipse-SourceBundle>${project.artifactId};version="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</Eclipse-SourceBundle>
                             <Specification-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</Specification-Version>
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <Implementation-Build-Id>${buildNumber}</Implementation-Build-Id>
