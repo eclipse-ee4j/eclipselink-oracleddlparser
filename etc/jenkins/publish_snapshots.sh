@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# Copyright (c) 2021 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2021, 2025 Oracle and/or its affiliates. All rights reserved.
 #
 # This program and the accompanying materials are made available under the
 # terms of the Eclipse Distribution License v. 1.0, which is available at
@@ -18,7 +18,7 @@ else
     echo '-[ Oracle DDL Parser publish to Jakarta Snapshots ]-----------------------------------------------------------'
     cd "${DDLPARSER_DIR}"
     mvn --no-transfer-progress -U -C -B -V \
-      -Psnapshots -DskipTests \
+      -Psnapshot-build -DskipTests \
       -Ddoclint=none -Ddeploy \
       deploy
 fi
